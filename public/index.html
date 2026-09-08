@@ -1,0 +1,11 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Converse</title><meta name="theme-color" content="#121416"><meta name="apple-mobile-web-app-capable" content="yes"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/icon-192.png">
+<link rel="stylesheet" href="/styles.css">
+<aside aria-label="Model selection"><details id="model-panel"><summary>Models</summary><div class="model-panel-body"><section class="models" aria-label="Models"></section><p class="note">Five recent models, plus GPT-4o and Gemini 3.1 Pro. Gemini is ordered by version.</p></div></details></aside>
+<dialog id="unlock"><form id="unlock-form"><h2>Open Converse</h2><p class="note">Enter your app access password.</p><input id="password" type="password" autocomplete="current-password" aria-label="Access password" required><button>Unlock</button><p id="unlock-error" role="status"></p></form></dialog><main><header><h1>Converse</h1><button type="button" id="install" hidden>Install app</button></header>
+<p class="note">Use @GPT, @Claude or @Gemini. Mention several to hear from each. Without a mention, the last selection replies. Each sees the full chat with speaker and model tags.</p>
+<div id="chat" aria-live="polite"><div id="empty">One conversation. Your choice of models.</div></div>
+<form id="composer"><input id="markdown-file" type="file" accept=".md,.markdown,text/markdown" aria-label="Choose Markdown file" hidden><div id="attachment" class="note" hidden><span id="filename"></span> <button id="remove-file" type="button">Remove</button></div><textarea aria-label="Message" placeholder="@GPT Ask anything…"></textarea><footer><button id="upload" type="button">Upload Markdown</button><button id="export" type="button" disabled>Export chat to MD</button><span id="status" role="status">Loading models…</span><button id="send" disabled>Send</button></footer><p class="note">Enter to send · Shift+Enter for a new line · Export before closing; chats aren’t saved.</p></form></main>
+<script src="/vendor/marked.js"></script>
+<script src="/vendor/purify.js"></script>
+<script src="/app.js" defer></script></html>
