@@ -25,3 +25,16 @@ Replies stream and render sanitized Markdown. Copy retains original Markdown. Up
 ## Development
 
 `npm test` runs offline API contract checks. `npm run check` checks JavaScript syntax. Core API adapters live in `lib/providers.js`, Vercel handlers in `api/`, UI in `public/`. Local dev invokes the same handlers. Vendored Marked 18.0.12 and DOMPurify 3.4.15 retain their upstream license headers. No deployment is performed by these scripts.
+
+Model selections persist on this device. New chat clears the conversation after confirmation. Streaming follows new text only while you are at the bottom. Expired sessions reopen the unlock dialog.
+
+Install development tools with npm install. Run npm run test:browser for desktop and phone-sized Chromium checks using installed Microsoft Edge, including offline restore, Markdown safety, attachment routing, and session recovery. These emulate a phone viewport, not a physical iPhone. npm run format formats maintained source.
+
+
+### Provenance and exports
+
+Export JSON saves the versioned canonical record; Markdown is the readable transcript. Records include stable conversation/participant/message IDs, timestamps, routing mentions, reply links, and separate attachments with SHA-256 hashes of original file bytes. Markdown attachments use code fences longer than any backtick run in their contents to isolate nested transcripts.
+
+Completed calls retain context message/attachment IDs, the application system prompt and version, history transformation version, explicit generation settings, requested model, provider-reported model/response IDs and raw provider usage when available. Parallel replies share the same context snapshot. Failed replies persist but are excluded from future context. Provider defaults and nondeterminism prevent guaranteed inference reproducibility.
+
+Legacy chats migrate with unknown timestamps; pasted historical attachments are not inferred. Participant IDs remain stable across model changes; current names remain GPT/Claude/Gemini. Missing usage, pricing and cost are null. Pricing estimates, spending dashboards, participant renaming and JSON import are deferred. Storage remains device-local; export important chats.

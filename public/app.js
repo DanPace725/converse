@@ -1,3 +1,64 @@
+const uid = (prefix) => prefix + "_" + crypto.randomUUID();
+const now = () => new Date().toISOString();
+let conversation = {
+  schema_version: 1,
+  conversation_id: uid("conv"),
+  created_at: now(),
+  participants: [
+    { participant_id: "human", display_name: "You" },
+    ...["GPT", "Claude", "Gemini"].map((name) => ({
+      participant_id: name.toLowerCase(),
+      display_name: name,
+    })),
+  ],
+  attachments: [],
+};
+function messageRecord(data) {
+  return {
+    message_id: uid("msg"),
+    timestamp: now(),
+    participant_id:
+      data.role === "user" ? "human" : data.provider.toLowerCase(),
+    reply_to: null,
+    mentions: [],
+    attachment_ids: [],
+    ...data,
+  };
+}
+function attachmentText(a) {
+  // A fence longer than any run in the document cannot be closed by its contents.
+  const fence = "`".repeat(
+    Math.max(3, ...[...a.content.matchAll(/`+/g)].map((m) => m[0].length + 1)),
+  );
+  return (
+    "\n\n:::attachment " +
+    JSON.stringify({
+      attachment_id: a.attachment_id,
+      name: a.name,
+      mime_type: a.mime_type,
+      sha256: a.sha256,
+    }) +
+    "\n" +
+    fence +
+    "text\n" +
+    a.content +
+    "\n" +
+    fence +
+    "\n:::end-attachment"
+  );
+}
+function messageText(m) {
+  return (
+    m.content +
+    (m.attachment_ids || [])
+      .map((id) =>
+        attachmentText(
+          conversation.attachments.find((a) => a.attachment_id === id),
+        ),
+      )
+      .join("")
+  );
+}
 const names = ["GPT", "Claude", "Gemini"],
   messages = [],
   fields = {},
@@ -204,7 +265,19 @@ $("#markdown-file").onchange = async () => {
       throw Error("Please choose a Markdown file smaller than 200 KB.");
     const content = await file.text();
     if (!content.trim()) throw Error("That Markdown file is empty.");
-    attachment = { name: file.name, content };
+    const digest = await crypto.subtle.digest(
+      "SHA-256",
+      await file.arrayBuffer(),
+    );
+    attachment = {
+      attachment_id: uid("att"),
+      name: file.name,
+      mime_type: "text/markdown",
+      content,
+      sha256: [...new Uint8Array(digest)]
+        .map((b) => b.toString(16).padStart(2, "0"))
+        .join(""),
+    };
     $("#filename").textContent = file.name;
     $("#attachment").hidden = false;
     $("#status").textContent =
@@ -223,14 +296,7 @@ $("#composer").onsubmit = async (e) => {
   if (busy || readingFile) return;
   const draft = $("textarea").value.trim();
   if (!draft && !attachment) return;
-  const text =
-    draft +
-    (attachment
-      ? "\n\n---\nMarkdown file: " +
-        attachment.name +
-        "\n\n" +
-        attachment.content
-      : "");
+  const text = draft;
   const mentions = [...draft.matchAll(/@(GPT|Claude|Gemini)\b/gi)].map((m) =>
     names.find((n) => n.toLowerCase() === m[1].toLowerCase()),
   );
@@ -248,19 +314,47 @@ $("#composer").onsubmit = async (e) => {
   $("#remove-file").disabled = true;
   $("#send").disabled = true;
   Object.values(fields).forEach((f) => (f.disabled = true));
-  messages.push({ role: "user", content: text });
+  const userMessage = messageRecord({
+    role: "user",
+    content: text,
+    mentions: [...new Set(mentions)].map((n) => n.toLowerCase()),
+    attachment_ids: attachment ? [attachment.attachment_id] : [],
+  });
+  if (attachment) conversation.attachments.push(attachment);
+  messages.push(userMessage);
   saveChat();
-  add("You", text);
+  add("You", messageText(userMessage));
   $("textarea").value = "";
   attachment = null;
   $("#attachment").hidden = true;
   $("#export").disabled = true;
+  $("#export-json").disabled = true;
   $("#status").textContent = "Waiting for " + targets.join(", ") + "…";
-  const snapshot = messages.map((m) => ({ ...m }));
+  const snapshot = messages
+    .filter((m) => m.status !== "failed")
+    .map((m) => ({ ...m, content: messageText(m), invocation: undefined }));
   const results = await Promise.all(
     targets.map(async (provider) => {
       const model = fields[provider].value.trim(),
         p = add(provider, "Thinking…", model);
+      const record = messageRecord({
+        role: "assistant",
+        provider,
+        model,
+        content: "",
+        reply_to: userMessage.message_id,
+        status: "pending",
+        invocation: {
+          context_message_ids: snapshot.map((m) => m.message_id),
+          attachment_ids: [
+            ...new Set(snapshot.flatMap((m) => m.attachment_ids || [])),
+          ],
+          started_at: now(),
+        },
+        usage: null,
+        pricing: null,
+        estimated_cost_usd: null,
+      });
       let answer = "";
       try {
         const r = await fetch("/api/chat", {
@@ -289,7 +383,11 @@ $("#composer").onsubmit = async (e) => {
             answer += d.delta;
             renderReply(p, answer);
           }
-          if (d.done) done = true;
+          if (d.done) {
+            done = true;
+            Object.assign(record.invocation, d.provenance || {});
+            record.usage = d.usage || null;
+          }
         }
         try {
           while (true) {
@@ -310,13 +408,24 @@ $("#composer").onsubmit = async (e) => {
           await reader.cancel().catch(() => {});
           reader.releaseLock();
         }
-        return { role: "assistant", provider, model, content: answer };
+        return {
+          ...record,
+          content: answer,
+          status: "complete",
+          completed_at: now(),
+        };
       } catch (e) {
         p.className = "error";
         p.rawMarkdown = answer || e.message;
         p.textContent =
           (answer ? answer + "\n\n[Incomplete response]\n" : "") + e.message;
-        return null;
+        return {
+          ...record,
+          content: answer,
+          status: "failed",
+          error: e.message,
+          completed_at: now(),
+        };
       }
     }),
   );
@@ -327,6 +436,7 @@ $("#composer").onsubmit = async (e) => {
   $("#upload").disabled = false;
   $("#remove-file").disabled = false;
   $("#export").disabled = false;
+  $("#export-json").disabled = false;
   $("#send").disabled = false;
   Object.values(fields).forEach((f) => (f.disabled = !f.options.length));
   $("#status").textContent = "Ready · " + targets.map((n) => "@" + n).join(" ");
@@ -343,16 +453,40 @@ $("textarea").onkeydown = (e) => {
     $("#composer").requestSubmit();
   }
 };
+$("#export-json").onclick = () => {
+  const url = URL.createObjectURL(
+    new Blob(
+      [
+        JSON.stringify(
+          { ...conversation, messages, exported_at: now() },
+          null,
+          2,
+        ),
+      ],
+      { type: "application/json" },
+    ),
+  );
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = conversation.conversation_id + ".json";
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+};
 $("#export").onclick = () => {
   const md =
-    "# Model chat\n\n" +
+    "# Model chat\n\nConversation: " +
+    conversation.conversation_id +
+    "\nExported: " +
+    now() +
+    "\n\n" +
     messages
       .map(
         (m) =>
           "## " +
           (m.role === "user" ? "You" : m.provider + " — " + m.model) +
           "\n\n" +
-          m.content,
+          messageText(m) +
+          (m.status === "failed" ? "\n\n[Failed response] " + m.error : ""),
       )
       .join("\n\n---\n\n") +
     "\n";
@@ -368,7 +502,10 @@ $("#export").onclick = () => {
 
 function saveChat() {
   try {
-    localStorage.setItem("converse-chat", JSON.stringify(messages));
+    localStorage.setItem(
+      "converse-chat",
+      JSON.stringify({ ...conversation, messages }),
+    );
   } catch {
     $("#status").textContent =
       "Device storage is full. Export to save your chat.";
@@ -376,23 +513,36 @@ function saveChat() {
 }
 try {
   const saved = JSON.parse(localStorage.getItem("converse-chat") || "[]");
-  if (Array.isArray(saved)) {
-    for (const m of saved) {
+  const rows = Array.isArray(saved)
+    ? saved
+    : saved?.schema_version === 1
+      ? saved.messages
+      : [];
+  if (!Array.isArray(saved) && saved?.schema_version === 1)
+    conversation = saved;
+  else if (rows.length) conversation.created_at = null;
+  if (Array.isArray(rows)) {
+    for (let m of rows) {
       if (
         !m ||
         !["user", "assistant"].includes(m.role) ||
         typeof m.content !== "string"
       )
         continue;
+      m = messageRecord({ ...m, timestamp: m.timestamp || null });
       messages.push(m);
       const p = add(
         m.role === "user" ? "You" : m.provider,
-        m.content,
+        messageText(m),
         m.model || "",
       );
-      if (m.role === "assistant") renderReply(p, m.content);
+      if (m.status === "failed") {
+        p.className = "error";
+        p.textContent = m.content + "\n[Failed response] " + m.error;
+      } else if (m.role === "assistant") renderReply(p, m.content);
     }
     $("#export").disabled = !messages.length;
+    if (messages.length) saveChat();
   }
 } catch {}
 $("#unlock-form").onsubmit = async (e) => {
@@ -428,6 +578,12 @@ $("#new-chat").onclick = () => {
   )
     return;
   messages.length = 0;
+  conversation = {
+    ...conversation,
+    conversation_id: uid("conv"),
+    created_at: now(),
+    attachments: [],
+  };
   saveChat();
   targets = ["GPT"];
   attachment = null;

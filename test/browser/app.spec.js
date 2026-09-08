@@ -58,13 +58,11 @@ test("Markdown response, attachment targeting, persistence, export and new chat"
   });
   await page.goto("/");
   await expect(page.locator("#send")).toBeEnabled();
-  await page
-    .locator("#markdown-file")
-    .setInputFiles({
-      name: "notes.md",
-      mimeType: "text/markdown",
-      buffer: Buffer.from("@Claude file text"),
-    });
+  await page.locator("#markdown-file").setInputFiles({
+    name: "notes.md",
+    mimeType: "text/markdown",
+    buffer: Buffer.from("@Claude file text"),
+  });
   await expect(page.locator("#filename")).toHaveText("notes.md");
   await page.getByLabel("Message", { exact: true }).fill("@GPT Read my file");
   await page.locator("#send").click();
@@ -126,16 +124,113 @@ test("touch Enter inserts a newline and the composer follows viewport height", a
   ).toBe(true);
 });
 
-test.describe('installed app shell',()=>{
- test.use({serviceWorkers:'allow'});
- test('saved conversation opens offline after shell installation',async({page,context})=>{
-  await page.goto('/');
-  await page.evaluate(async()=>{await navigator.serviceWorker.ready;localStorage.setItem('converse-chat',JSON.stringify([{role:'user',content:'Saved offline note'}]));});
+test.describe("installed app shell", () => {
+  test.use({ serviceWorkers: "allow" });
+  test("saved conversation opens offline after shell installation", async ({
+    page,
+    context,
+  }) => {
+    await page.goto("/");
+    await page.evaluate(async () => {
+      await navigator.serviceWorker.ready;
+      localStorage.setItem(
+        "converse-chat",
+        JSON.stringify([{ role: "user", content: "Saved offline note" }]),
+      );
+    });
+    await page.reload();
+    await expect(page.locator("article")).toContainText("Saved offline note");
+    await context.setOffline(true);
+    await page.reload();
+    await expect(page.locator("article")).toContainText("Saved offline note");
+    await expect(page.locator("#export")).toBeEnabled();
+  });
+});
+
+test("record isolates nested attachments and preserves IDs across reload", async ({
+  page,
+}) => {
+  await page.route("**/api/chat", (r) =>
+    r.fulfill({
+      contentType: "application/x-ndjson",
+      body: '{"delta":"Reply"}\n{"done":true,"usage":{"input_tokens":12}}\n',
+    }),
+  );
+  await page.goto("/");
+  await expect(page.locator("#send")).toBeEnabled();
+  const content = "## Nested GPT\n:::end-attachment\n```\nquoted chat";
+  await page
+    .locator("#markdown-file")
+    .setInputFiles({
+      name: "nested.md",
+      mimeType: "text/markdown",
+      buffer: Buffer.from(content),
+    });
+  await expect(page.locator("#filename")).toHaveText("nested.md");
+  await page.getByLabel("Message", { exact: true }).fill("@GPT @Claude Read");
+  await page.locator("#send").click();
+  await expect(page.locator("#export")).toBeEnabled();
+  const record = await page.evaluate(() =>
+    JSON.parse(localStorage.getItem("converse-chat")),
+  );
+  expect(record.schema_version).toBe(1);
+  expect(record.attachments[0].content).toBe(content);
+  expect(record.attachments[0].sha256).toMatch(/^[a-f0-9]{64}$/);
+  expect(record.messages[0].content).toBe("@GPT @Claude Read");
+  for (const m of record.messages.slice(1)) {
+    expect(m.reply_to).toBe(record.messages[0].message_id);
+    expect(m.invocation.context_message_ids).toEqual([
+      record.messages[0].message_id,
+    ]);
+    expect(m.usage.input_tokens).toBe(12);
+  }
   await page.reload();
-  await expect(page.locator('article')).toContainText('Saved offline note');
-  await context.setOffline(true);
+  expect(
+    await page.evaluate(() =>
+      JSON.parse(localStorage.getItem("converse-chat")),
+    ),
+  ).toEqual(record);
+  const downloaded = page.waitForEvent("download");
+  await page.locator("#export-json").click();
+  const stream = await (await downloaded).createReadStream();
+  const chunks = [];
+  for await (const chunk of stream) chunks.push(chunk);
+  expect(JSON.parse(Buffer.concat(chunks).toString()).messages).toEqual(
+    record.messages,
+  );
+});
+
+test("migration keeps unknown timestamps and failures survive reload", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.evaluate(() =>
+    localStorage.setItem(
+      "converse-chat",
+      JSON.stringify([{ role: "user", content: "legacy" }]),
+    ),
+  );
   await page.reload();
-  await expect(page.locator('article')).toContainText('Saved offline note');
-  await expect(page.locator('#export')).toBeEnabled();
- });
+  const old = await page.evaluate(() =>
+    JSON.parse(localStorage.getItem("converse-chat")),
+  );
+  expect(old.created_at).toBeNull();
+  expect(old.messages[0].timestamp).toBeNull();
+  await page.route("**/api/chat", (r) =>
+    r.fulfill({
+      contentType: "application/x-ndjson",
+      body: '{"delta":"partial"}\n{"error":"interrupted"}\n',
+    }),
+  );
+  await expect(page.locator("#send")).toBeEnabled();
+  await page.getByLabel("Message", { exact: true }).fill("Hello");
+  await page.locator("#send").click();
+  await expect(page.locator("#export")).toBeEnabled();
+  await page.reload();
+  await expect(page.locator("article .error")).toContainText("partial");
+  const saved = await page.evaluate(() =>
+    JSON.parse(localStorage.getItem("converse-chat")),
+  );
+  expect(saved.messages[0].message_id).toBe(old.messages[0].message_id);
+  expect(saved.messages.at(-1).status).toBe("failed");
 });

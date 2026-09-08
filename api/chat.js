@@ -21,8 +21,12 @@ export default async function handler(req, res) {
     if (!res.destroyed) res.write(JSON.stringify(data) + "\n");
   };
   try {
-    await chat(input, (delta) => write({ delta }), controller.signal);
-    write({ done: true });
+    const result = await chat(
+      input,
+      (delta) => write({ delta }),
+      controller.signal,
+    );
+    write({ done: true, usage: result.usage, provenance: result.provenance });
   } catch (e) {
     write({ error: redact(e) });
   }

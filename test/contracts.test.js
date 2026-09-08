@@ -46,7 +46,7 @@ test("stream parser handles split events and preserves speaker ownership", async
     sent = JSON.parse(options.body);
     const data = [
       'data: {"type":"response.output_text.delta","delta":"Hi"}\r\n\r',
-      '\ndata: {"type":"response.output_text.delta","delta":" there"}\n\ndata: {"type":"response.completed"}\n\n',
+      '\ndata: {"type":"response.output_text.delta","delta":" there"}\n\ndata: {"type":"response.completed","response":{"id":"resp_123","model":"gpt-exact","usage":{"input_tokens":123,"output_tokens":7}}}\n\n',
     ];
     return new Response(
       new ReadableStream({
@@ -59,7 +59,7 @@ test("stream parser handles split events and preserves speaker ownership", async
   };
   try {
     let text = "";
-    await chat(
+    const result = await chat(
       {
         provider: "GPT",
         model: "gpt-4o-2024-11-20",
@@ -77,6 +77,9 @@ test("stream parser handles split events and preserves speaker ownership", async
       (s) => (text += s),
     );
     assert.equal(text, "Hi there");
+    assert.equal(result.usage.input_tokens, 123);
+    assert.equal(result.provenance.reported_model, "gpt-exact");
+    assert.equal(result.provenance.system_prompt, sent.instructions);
     assert.equal(sent.model, "gpt-4o-2024-11-20");
     assert.equal(sent.input[1].role, "user");
     assert.match(sent.input[1].content, /Claude/);
