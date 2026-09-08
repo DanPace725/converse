@@ -8,7 +8,13 @@
   },
   "scripts": {
     "dev": "node --env-file-if-exists=.env scripts/dev.js",
-    "test": "node --test",
-    "check": "node scripts/check.js"
+    "test": "node --test test/*.test.js",
+    "check": "node scripts/check.js",
+    "test:browser": "playwright test",
+    "format": "prettier --write api lib public/app.js public/index.html public/styles.css public/sw.js scripts test playwright.config.js README.md package.json vercel.json"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "prettier": "^3.9.6"
   }
 }
