@@ -23,6 +23,8 @@ Production was checked at `https://converse-cyan.vercel.app`: Luna answered one 
 
 ## Deliberate MVP limits
 
+Revision-11 testing found a JSONB round-trip issue after structured state updates: object-key reordering caused serialization-hash attribution checks to reject the next user projection. Attribution now compares the exact source identity fields and still rejects changed/missing/extra identity data. Projection failures are now recorded as source-linked turn failures, so exports and the transcript surface those errors. The saved failing audit continued in an offline simulation with all three remembered entries preserved, and the Neon test now sends another message from a fresh instance after saving state. Existing audits and their hashes are not rewritten.
+
 Ordinary multi-provider chats remain browser-local. Existing CLI/SQLite chats remain on this PC; bulk import and JSON restore are follow-ups. Context answers arrive when the turn finishes. There is no durable job queue or automatic resumption of an interrupted model call; reload the saved chat to inspect progress/failure, wait for an active lease to finish/expire, and send a new message if needed. Reads rebuild the full conversation index, and JSON exports are assembled in memory before streaming; optimizing very long audits is later work. Preview context testing requires a separate Neon branch and Preview credentials.
 
 Garden savings compare original source text to current context text using `ceil(UTF-8 bytes / 4)`. They exclude instructions, metadata, tool exchanges and management calls, so they are an estimate of context-text reduction rather than billed or net cost savings.

@@ -100,18 +100,23 @@ test(
           content: "Keep all originals.",
         }),
       );
+      // A new request reloads remembered attribution through PostgreSQL JSONB.
+      await new ContextRepository(db, options).run(id, true, (service) =>
+        service.ask(id, { ...input, message_id: 'msg_after_state', content: 'Continue using the saved goal.' }),
+      );
+      assert.equal(calls, 2);
       const record = await new ContextRepository(db, options).run(
         id,
         false,
         (service) => downloadRecord(service, id),
       );
-      assert.equal(record.messages.length, 2);
+      assert.equal(record.messages.length, 4);
       assert.equal(record.messages[1].reply_to, input.message_id);
       assert.equal(
         record.context_layer.snapshots.length,
         record.context_layer.context.revision,
       );
-      assert.equal(record.context_layer.metrics.input_tokens, 100);
+      assert.equal(record.context_layer.metrics.input_tokens, 200);
       assert.ok(
         record.context_layer.events.some(
           (event) => event.content === "Remember café 🌱.",
