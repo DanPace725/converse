@@ -26,6 +26,54 @@ async function openMenu(page) {
   if ((await page.locator("#more-menu").getAttribute("open")) === null)
     await page.locator("#more-menu > summary").click();
 }
+test("late pre-login failures do not reopen unlock or hide context modes", async ({
+  page,
+}) => {
+  let signedIn = false,
+    releaseStatus;
+  const delayedStatus = new Promise((resolve) => {
+    releaseStatus = resolve;
+  });
+  await page.route("**/api/models", (r) =>
+    r.fulfill(
+      signedIn
+        ? { json: catalog }
+        : { status: 401, json: { error: "Unlock to continue." } },
+    ),
+  );
+  await page.route("**/api/session", async (r) => {
+    signedIn = true;
+    await r.fulfill({ json: { ok: true } });
+  });
+  let statusRequests = 0;
+  await page.route("**/api/conclave?action=status", async (r) => {
+    if (++statusRequests === 1) {
+      await delayedStatus;
+      return r.fulfill({ status: 401, json: { error: "Unlock to continue." } });
+    }
+    return r.fulfill({
+      json: {
+        available: true,
+        credentials: { openai: true, jev: true },
+        defaults: { jev: true },
+      },
+    });
+  });
+  await page.route("**/api/conclave?action=list", (r) =>
+    r.fulfill({ json: { conversations: [] } }),
+  );
+  await page.goto("/");
+  await expect(page.locator("#unlock")).toBeVisible();
+  await expect.poll(() => statusRequests).toBe(1);
+  await page.getByLabel("Access password").fill("fixture-password");
+  await page.locator("#unlock-form button").click();
+  await expect(page.locator("#status")).toHaveText("Ready");
+  releaseStatus();
+  await expect(page.locator("#mode-switch")).toBeVisible();
+  await expect(page.locator("#unlock")).not.toBeVisible();
+  await expect(page.locator("#context-jev")).toBeChecked();
+});
+
 test("model selection survives reload and layout fits the viewport", async ({
   page,
 }) => {

@@ -88,6 +88,7 @@
   const currentId = () => conversation.context_layer?.conversation_id;
 
   async function request(action, input) {
+    const generation = sessionGeneration;
     const query = input
       ? ""
       : "?action=" +
@@ -105,7 +106,7 @@
           }
         : { cache: "no-store" },
     );
-    if (response.status === 401) unlock();
+    if (response.status === 401 && generation === sessionGeneration) unlock();
     const data = await response.json().catch(() => ({
       error: "Context service unavailable. Try again shortly.",
     }));
@@ -276,6 +277,7 @@
 
   async function refresh() {
     if (refreshing || busy) return;
+    const generation = sessionGeneration;
     refreshing = true;
     try {
       capabilities = await request("status");
@@ -300,6 +302,8 @@
           error.message + " Cached transcript remains available.";
     } finally {
       refreshing = false;
+      // Login can complete while an earlier capability request is still pending.
+      if (generation !== sessionGeneration) refresh();
     }
   }
 

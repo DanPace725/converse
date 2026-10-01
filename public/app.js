@@ -82,6 +82,7 @@ function rememberModels() {
     );
   } catch {}
 }
+let sessionGeneration = 0;
 function unlock() {
   if (!$("#unlock").open) $("#unlock").showModal();
 }
@@ -106,8 +107,10 @@ for (const name of names) {
   input.onchange = rememberModels;
 }
 async function loadModels() {
+  const generation = sessionGeneration;
   return fetch("/api/models")
     .then(async (r) => {
+      if (generation !== sessionGeneration) return null;
       if (r.status === 401) {
         unlock();
         throw Error("Unlock to load models.");
@@ -116,6 +119,7 @@ async function loadModels() {
       return r.json();
     })
     .then((data) => {
+      if (!data || generation !== sessionGeneration) return;
       for (const name of names) {
         const d = data[name];
         const previous = fields[name].value || preferences[name];
@@ -146,6 +150,7 @@ async function loadModels() {
       window.contextLayer?.refresh();
     })
     .catch((e) => {
+      if (generation !== sessionGeneration) return;
       $("#status").textContent = "Could not load models: " + e.message;
     });
 }
@@ -767,6 +772,7 @@ $("#unlock-form").onsubmit = async (e) => {
       body: JSON.stringify({ password: $("#password").value }),
     });
     if (r.ok) {
+      sessionGeneration++;
       $("#password").value = "";
       $("#unlock").close();
       await loadModels();
