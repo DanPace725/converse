@@ -5,7 +5,42 @@
     saved = $("#context-chat"),
     jev = $("#context-jev");
   const reasoning = $("#context-reasoning"),
+    provider = $("#context-provider"),
     agentMode = $("#agent-mode");
+  provider.value =
+    localStorage.getItem("converse-context-provider") || "openai";
+  if (!provider.value) provider.value = "openai";
+  const providerName = () =>
+    provider.value === "anthropic" ? "Claude" : "GPT";
+  function selectRecipient(content) {
+    const mentions = [
+      ...new Set(
+        [...content.matchAll(/@(GPT|Claude|Gemini)\b/gi)].map((m) =>
+          m[1].toLowerCase(),
+        ),
+      ),
+    ];
+    if (mentions.includes("gemini") || mentions.length > 1)
+      throw Error(
+        "Choose one assistant, @GPT or @Claude, for Context and Agent modes.",
+      );
+    if (mentions.length)
+      provider.value = mentions[0] === "claude" ? "anthropic" : "openai";
+    controls();
+    const name = providerName();
+    if (!fields[name].value || !capabilities?.credentials?.[provider.value])
+      throw Error(
+        "Choose an available " +
+          name +
+          " model in Models; its server API key is required.",
+      );
+    return { name, provider: provider.value, model: fields[name].value };
+  }
+  provider.onchange = () => {
+    localStorage.setItem("converse-context-provider", provider.value);
+    controls();
+    window.converseSync?.();
+  };
   agentMode.checked = localStorage.getItem("converse-agent-mode") === "true";
   let progressTimer = null,
     progressGeneration = 0,
@@ -82,6 +117,7 @@
     capabilities = null,
     refreshing = false;
   let agent = null,
+    latestView = null,
     driving = false,
     stopRequested = false;
   const enabled = () => toggle.checked || !!conversation.context_layer;
@@ -118,18 +154,23 @@
     for (const input of panel.querySelectorAll("input, select, button"))
       input.disabled = busy;
     jev.disabled = busy || !capabilities?.credentials?.jev;
-    $("#remember-state").disabled = busy || !currentId();
-    $("#context-inspect").hidden = !enabled();
+    reasoning.disabled = busy || provider.value === "anthropic";
+    reasoning.title =
+      provider.value === "anthropic"
+        ? "Claude uses its default reasoning; this control applies to GPT."
+        : "";
+    $("#workspace-open").hidden = !available || !enabled();
+    window.workspaceEditor?.syncControls();
     $("#context-watch").hidden = !available || !enabled();
     window.contextGarden?.adopt(enabled() ? currentId() : null);
     const running = agent?.status === "running";
+    provider.disabled = busy || running;
     agentMode.disabled = busy || running || !available;
     $("#send").textContent = agentMode.checked ? "Run agent" : "Send";
     $("#agent-resume").hidden = !running;
     $("#agent-resume").disabled = busy || !available;
     $("#agent-stop").hidden = !running;
     $("#agent-stop").disabled = stopRequested || (busy && !driving);
-    if (running) $("#remember-state").disabled = true;
     if (running) $("#send").disabled = true;
   }
 
@@ -157,6 +198,8 @@
   }
 
   function apply(view) {
+    latestView = view;
+    window.workspaceEditor?.adopt(view);
     agent = view.agent || null;
     const legacyAgent = agent && !agent.harness_version;
     $("#agent-budget").value = legacyAgent
@@ -186,17 +229,18 @@
     };
     messages.splice(0, messages.length, ...view.messages);
     toggle.checked = true;
+    provider.value = view.settings.provider || "openai";
     reasoning.value = view.settings.reasoning;
     // Version 1 forced Jev off in all agent runs; enable the new default when reopening those trials.
     jev.checked =
       (legacyAgent ? true : !!view.settings.jev) &&
       !!capabilities?.credentials?.jev;
     if (
-      [...fields.GPT.options].some(
+      [...fields[providerName()].options].some(
         (option) => option.value === view.settings.model,
       )
     )
-      fields.GPT.value = view.settings.model;
+      fields[providerName()].value = view.settings.model;
     const metrics = view.metrics;
     $("#context-stats").textContent =
       "Revision " +
@@ -208,20 +252,9 @@
       " input / " +
       (metrics.output_tokens ?? "unknown") +
       " output tokens (all calls)";
-    $("#context-preview").textContent =
-      view.context.segments
-        .map(
-          (item) =>
-            (item.state_key ? "Remembered " + item.state_key : item.type) +
-            " · " +
-            item.status +
-            "\n" +
-            item.content,
-        )
-        .join("\n\n") || "No working context yet.";
     $("#context-note").textContent =
       view.backup_warning ||
-      "GPT replies use saved context. JSON export includes original sources, revisions, Jev decisions and usage.";
+      "GPT and Claude replies use saved context. JSON export includes original sources, revisions, Jev decisions and usage.";
     $("#agent-status").textContent = agent
       ? `${agent.status} · ${agent.steps}/${agent.limits.max_steps} steps · ${agent.input_tokens} input / ${agent.output_tokens} output tokens` +
         (agent.usage_complete === false ? " (partial usage)" : "") +
@@ -374,20 +407,19 @@
   const startAgent = async () => {
     if (busy || agent?.status === "running" || !enabled()) return;
     const content = $("textarea").value.trim();
-    if (
-      (!content && !attachment) ||
-      !fields.GPT.value ||
-      !capabilities?.credentials?.openai
-    ) {
+    if (!content && !attachment) {
       $("#status").textContent =
-        "Enter an objective and choose an available GPT model.";
+        "Enter an objective or attach a Markdown document.";
       return;
     }
     setBusy(true);
     try {
+      const recipient = selectRecipient(content);
       const settings = {
-        model: fields.GPT.value,
-        reasoning: reasoning.value,
+        provider: recipient.provider,
+        model: recipient.model,
+        reasoning:
+          recipient.provider === "anthropic" ? "none" : reasoning.value,
         jev: jev.checked,
         budget: Number($("#agent-budget").value),
         output: Number($("#agent-output").value),
@@ -469,20 +501,18 @@
     if (busy || readingFile) return;
     const content = $("textarea").value.trim();
     if (!content && !attachment) return;
-    if (/@(Claude|Gemini)\b/i.test(content)) {
-      $("#status").textContent =
-        "Context mode currently replies with GPT. Choose its model in Models.";
+    let recipient;
+    try {
+      recipient = selectRecipient(content);
+    } catch (error) {
+      $("#status").textContent = error.message;
       return;
     }
-    if (!fields.GPT.value || !capabilities?.credentials?.openai) {
-      $("#status").textContent =
-        "Choose an available GPT model; the server needs OPENAI_API_KEY.";
-      return;
-    }
-    const model = fields.GPT.value;
+    const model = recipient.model;
     const settings = {
+      provider: recipient.provider,
       model,
-      reasoning: reasoning.value,
+      reasoning: recipient.provider === "anthropic" ? "none" : reasoning.value,
       jev: jev.checked,
       budget: Number($("#agent-budget").value),
       output: Number($("#agent-output").value),
@@ -506,11 +536,12 @@
       messages.push(user);
       saveChat();
       add("You", messageText(user));
-      add("GPT", "Thinking…", model);
+      add(recipient.name, "Thinking…", model);
       $("textarea").value = "";
       attachment = null;
       $("#attachment").hidden = true;
-      $("#status").textContent = "GPT is answering with the context layer…";
+      $("#status").textContent =
+        recipient.name + " is answering with the context layer…";
       const view = await request("ask", {
         conversation_id: currentId(),
         message_id: user.message_id,
@@ -608,33 +639,14 @@
     }
   };
 
-  $("#remember-state").onclick = async () => {
-    if (busy || !currentId()) return;
-    setBusy(true);
-    try {
-      apply(
-        await request("remember", {
-          conversation_id: currentId(),
-          key: $("#remember-key").value.trim(),
-          type: $("#remember-type").value,
-          content: $("#remember-text").value.trim(),
-        }),
-      );
-      $("#remember-text").value = "";
-      $("#status").textContent = "State saved · no model call";
-    } catch (error) {
-      $("#status").textContent = error.message;
-    } finally {
-      setBusy(false);
-    }
-  };
-
   const newChat = $("#new-chat").onclick;
   $("#new-chat").onclick = () => {
     const prior = conversation.conversation_id;
     newChat();
     if (prior === conversation.conversation_id) return;
     agent = null;
+    latestView = null;
+    window.workspaceEditor?.adopt(null);
     toggle.checked = available;
     jev.checked = !!capabilities?.credentials?.jev;
     $("#agent-budget").value = capabilities?.defaults?.budget || 256000;
@@ -645,13 +657,39 @@
     $("#agent-files").hidden = true;
     saved.value = "";
     $("#context-stats").textContent = "";
-    $("#context-preview").textContent = "Start or open a context chat.";
     $("#context-note").textContent =
-      "GPT replies use saved context. JSON export includes the full audit record.";
+      "GPT and Claude replies use saved context. JSON export includes the full audit record.";
     controls();
   };
 
   window.contextLayer = {
+    editorView: () => latestView,
+    refreshView: () => request('view'),
+    saveEdit: async (action, input) => {
+      if (busy) throw Error('Wait for the current request before saving.');
+      if (!available || !currentId()) throw Error('Reconnect to a saved context chat before saving.');
+      setBusy(true);
+      try {
+        const view = await request(action, { ...input, conversation_id: currentId() });
+        apply(view);
+        return view;
+      } finally { setBusy(false); }
+    },
+    readItem: async (kind, id) => {
+      const action = kind === 'source' ? 'source_event' : 'context_bundle';
+      const param = kind === 'source' ? 'event' : 'bundle';
+      const response = await fetch('/api/conclave?action=' + action + '&conversation=' + encodeURIComponent(currentId()) + '&' + param + '=' + encodeURIComponent(id), { cache: 'no-store' });
+      if (response.status === 401) unlock();
+      const data = await response.json();
+      if (!response.ok) throw Error(data.error || 'Could not load the text.');
+      return data;
+    },
+    providerName,
+    selectProvider: (name) => {
+      if (busy || agent?.status === "running") return;
+      provider.value = name === "Claude" ? "anthropic" : "openai";
+      provider.onchange();
+    },
     enabled,
     currentId,
     refresh,

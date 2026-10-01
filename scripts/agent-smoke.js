@@ -11,6 +11,10 @@ if (!process.argv.includes("--live")) {
   process.exit(0);
 }
 const directory = new URL("../.agent-smoke/", import.meta.url);
+const argument = (name) =>
+  process.argv
+    .find((arg) => arg.startsWith(`--${name}=`))
+    ?.slice(name.length + 3);
 mkdirSync(directory, { recursive: true });
 const store = new Store(directory.pathname.replace(/^\/(\w:)/, "$1"));
 try {
@@ -21,7 +25,9 @@ try {
     content:
       "Use calculate to multiply 17 by 23. Write the result and a short explanation to proof.md with workspace_write. Read proof.md back with workspace_read to verify it, then give your final report. Do not stop before those three tools have succeeded.",
     settings: {
-      model: process.env.CONCLAVE_MODEL || "gpt-6-luna",
+      provider:
+        argument("provider") || process.env.CONCLAVE_PROVIDER || "openai",
+      model: argument("model") || process.env.CONCLAVE_MODEL || "gpt-6-luna",
       reasoning: "low",
     },
     limits: { max_steps: 8, duration_seconds: 240, max_total_tokens: 150000 },

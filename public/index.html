@@ -16,14 +16,13 @@
     <symbol id="i-menu" viewBox="0 0 24 24">
       <path d="M4 7h16M4 12h16M4 17h16" />
     </symbol>
-    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" /></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24">
+      <path d="M12 5v14M5 12h14" />
+    </symbol>
     <symbol id="i-more" viewBox="0 0 24 24">
-      <circle cx="5" cy="12" r="1.4" fill="currentColor" /><circle
-        cx="12"
-        cy="12"
-        r="1.4"
-        fill="currentColor"
-      /><circle cx="19" cy="12" r="1.4" fill="currentColor" />
+      <circle cx="5" cy="12" r="1.4" fill="currentColor" />
+      <circle cx="12" cy="12" r="1.4" fill="currentColor" />
+      <circle cx="19" cy="12" r="1.4" fill="currentColor" />
     </symbol>
     <symbol id="i-clip" viewBox="0 0 24 24">
       <path
@@ -31,22 +30,21 @@
       />
     </symbol>
     <symbol id="i-tune" viewBox="0 0 24 24">
-      <path
-        d="M4 7h9M17 7h3M4 17h3M11 17h9M15 5v4M9 15v4"
-      />
+      <path d="M4 7h9M17 7h3M4 17h3M11 17h9M15 5v4M9 15v4" />
     </symbol>
     <symbol id="i-garden" viewBox="0 0 24 24">
-      <circle cx="12" cy="12" r="3" /><ellipse
-        cx="12"
-        cy="12"
-        rx="9"
-        ry="6"
-      />
+      <circle cx="12" cy="12" r="3" />
+      <ellipse cx="12" cy="12" rx="9" ry="6" />
     </symbol>
-    <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6" /></symbol>
-    <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18" /></symbol>
+    <symbol id="i-down" viewBox="0 0 24 24">
+      <path d="M12 5v14M6 13l6 6 6-6" />
+    </symbol>
+    <symbol id="i-close" viewBox="0 0 24 24">
+      <path d="M6 6l12 12M18 6 6 18" />
+    </symbol>
     <symbol id="i-sidebar" viewBox="0 0 24 24">
-      <rect x="3.5" y="4.5" width="17" height="15" rx="2.5" /><path d="M9.5 4.5v15" />
+      <rect x="3.5" y="4.5" width="17" height="15" rx="2.5" />
+      <path d="M9.5 4.5v15" />
     </symbol>
   </svg>
   <div id="scrim" hidden></div>
@@ -124,8 +122,22 @@
       </button>
       <div class="chat-heading">
         <h1 id="chat-title">New chat</h1>
-        <span id="mode-badge" class="mode-badge">Chat · saved on this device</span>
+        <span id="mode-badge" class="mode-badge"
+          >Chat · saved on this device</span
+        >
       </div>
+      <button
+        id="workspace-open"
+        class="ghost-button"
+        type="button"
+        hidden
+        aria-expanded="false"
+        aria-controls="workspace-editor"
+        title="Open documents, context and remembered state"
+      >
+        <svg aria-hidden="true"><use href="#i-sidebar" /></svg
+        ><span>Workspace</span>
+      </button>
       <button
         id="context-watch"
         class="ghost-button"
@@ -229,7 +241,11 @@
             >
               <svg><use href="#i-tune" /></svg>
             </summary>
-            <div class="sheet" role="group" aria-label="Context and agent settings">
+            <div
+              class="sheet"
+              role="group"
+              aria-label="Context and agent settings"
+            >
               <div class="sheet-head">
                 <h2>Settings</h2>
                 <span class="note">Used by Context and Agent modes</span>
@@ -249,6 +265,12 @@
               >
               <div class="context-controls">
                 <label
+                  >Assistant<select id="context-provider">
+                    <option value="openai">GPT</option>
+                    <option value="anthropic">Claude</option>
+                  </select></label
+                >
+                <label
                   >Reasoning<select id="context-reasoning">
                     <option value="none">None</option>
                     <option value="low" selected>Low</option>
@@ -262,8 +284,8 @@
                 >
               </div>
               <p class="note" id="context-note">
-                GPT replies use saved context. JSON export includes the full
-                audit record.
+                GPT and Claude replies use saved context. JSON export includes
+                the full audit record.
               </p>
               <p class="note" id="context-stats"></p>
               <details id="agent-panel">
@@ -321,32 +343,6 @@
                 <p class="note" id="agent-status">No agent run yet.</p>
                 <pre id="agent-files" hidden></pre>
               </details>
-              <details id="context-inspect">
-                <summary>Working context and remembered state</summary>
-                <pre id="context-preview">Start or open a context chat.</pre>
-                <div class="remember-controls">
-                  <input
-                    id="remember-key"
-                    aria-label="State key"
-                    placeholder="budget.total"
-                    maxlength="80"
-                  />
-                  <select id="remember-type" aria-label="State type">
-                    <option value="constraint">Constraint</option>
-                    <option value="objective">Objective</option>
-                    <option value="decision">Decision</option>
-                    <option value="question">Question</option>
-                    <option value="evidence">Evidence</option>
-                  </select>
-                  <input
-                    id="remember-text"
-                    aria-label="Remembered text"
-                    placeholder="Exact detail to remember"
-                    maxlength="2000"
-                  />
-                  <button id="remember-state" type="button">Remember</button>
-                </div>
-              </details>
             </div>
           </details>
           <span id="status" role="status">Loading models…</span
@@ -355,6 +351,123 @@
       </div>
     </form>
   </main>
+  <aside id="workspace-editor" hidden aria-label="Workspace">
+    <header class="editor-head">
+      <h2>Workspace</h2>
+      <button type="button" id="editor-refresh" class="link-button">
+        Refresh
+      </button>
+      <button
+        type="button"
+        id="editor-close"
+        class="icon-button"
+        aria-label="Close workspace"
+      >
+        <svg><use href="#i-close" /></svg>
+      </button>
+    </header>
+    <div id="editor-tabs" role="tablist" aria-label="Workspace views">
+      <button
+        type="button"
+        role="tab"
+        data-tab="documents"
+        id="tab-documents"
+        aria-selected="true"
+        aria-controls="editor-pane"
+      >
+        Documents
+      </button>
+      <button
+        type="button"
+        role="tab"
+        data-tab="context"
+        id="tab-context"
+        aria-selected="false"
+        aria-controls="editor-pane"
+        tabindex="-1"
+      >
+        Context
+      </button>
+      <button
+        type="button"
+        role="tab"
+        data-tab="state"
+        id="tab-state"
+        aria-selected="false"
+        aria-controls="editor-pane"
+        tabindex="-1"
+      >
+        State
+      </button>
+    </div>
+    <div id="editor-pane" role="tabpanel" aria-labelledby="tab-documents">
+      <p id="editor-note" class="note">
+        Open a saved context chat to inspect its workspace.
+      </p>
+      <div id="editor-items" aria-label="Workspace items"></div>
+      <button id="editor-new-state" type="button" hidden>
+        Add remembered entry
+      </button>
+      <section id="editor-document" hidden>
+        <h3 id="editor-title"></h3>
+        <p id="editor-meta" class="note"></p>
+        <div class="editor-toolbar">
+          <button type="button" id="editor-edit">Edit</button>
+          <button type="button" id="editor-preview-toggle" hidden>
+            Preview
+          </button>
+          <button type="button" id="editor-download">Download</button>
+          <button type="button" id="editor-discard" hidden>
+            Discard draft
+          </button>
+        </div>
+        <label id="editor-path-row" hidden
+          >Workspace filename<input
+            id="editor-path"
+            maxlength="160"
+            autocomplete="off"
+        /></label>
+        <div id="editor-state-fields" hidden>
+          <label
+            >State key<input
+              id="editor-state-key"
+              maxlength="80"
+              autocomplete="off"
+          /></label>
+          <label
+            >Type<select id="editor-state-type">
+              <option value="constraint">Constraint</option>
+              <option value="objective">Objective</option>
+              <option value="decision">Decision</option>
+              <option value="question">Question</option>
+              <option value="evidence">Evidence</option>
+            </select></label
+          >
+          <label
+            >Status<select id="editor-state-status">
+              <option value="active">Active</option>
+              <option value="unresolved">Unresolved</option>
+              <option value="superseded">Superseded</option>
+            </select></label
+          >
+        </div>
+        <textarea
+          id="editor-text"
+          aria-label="Document text"
+          spellcheck="false"
+          hidden
+        ></textarea>
+        <div id="editor-preview" class="markdown"></div>
+        <p id="editor-feedback" role="status" class="note"></p>
+        <div class="editor-save-row">
+          <button type="button" id="editor-save" hidden>Save</button
+          ><button type="button" id="editor-latest" hidden>
+            Load latest version
+          </button>
+        </div>
+      </section>
+    </div>
+  </aside>
   <aside id="context-garden" hidden aria-label="Context garden">
     <header class="garden-header">
       <div>
@@ -450,5 +563,6 @@
   <script src="/app.js" defer></script>
   <script src="/context-garden.js" defer></script>
   <script src="/conclave.js" defer></script>
+  <script src="/workspace-editor.js" defer></script>
   <script src="/ui.js" defer></script>
 </html>

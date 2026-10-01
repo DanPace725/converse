@@ -209,115 +209,123 @@ test("agent cannot complete after writing until every page of the current versio
   }
 });
 
-for (const mode of ["chat", "agent", "token-limit", "missing-usage"])
-  test("default Jev under pressure: " + mode, async () => {
-    const store = new Store(undefined, { memory: true });
-    let taskCalls = 0,
-      decisionCalls = 0;
-    const service = new ConclaveService(store, {
-      availability: () => ({ openai: true, jev: true }),
-      decisionFactory: () => ({
-        select: async (plan, segments, query, invoke) => {
-          decisionCalls++;
-          await invoke(
-            { model: "jev-fixture", questions: {} },
-            "attention-selection",
-            {
-              budget: 8000,
-              output: 0,
-              provider: {
-                name: "typesafe",
-                respond: async (p, options) => {
-                  if (mode !== "chat")
-                    assert.ok(options.signal instanceof AbortSignal);
-                  return {
-                    usage:
-                      mode === "missing-usage"
-                        ? null
-                        : {
-                            input_tokens: mode === "token-limit" ? 9000 : 17,
-                            output_tokens: 3,
-                          },
-                  };
+for (const provider of ["openai", "anthropic"])
+  for (const mode of ["chat", "agent", "token-limit", "missing-usage"])
+    test("default Jev under pressure: " + provider + " " + mode, async () => {
+      const store = new Store(undefined, { memory: true });
+      let taskCalls = 0,
+        decisionCalls = 0;
+      const service = new ConclaveService(store, {
+        availability: () => ({ openai: true, anthropic: true, jev: true }),
+        decisionFactory: () => ({
+          select: async (plan, segments, query, invoke) => {
+            decisionCalls++;
+            await invoke(
+              { model: "jev-fixture", questions: {} },
+              "attention-selection",
+              {
+                budget: 8000,
+                output: 0,
+                provider: {
+                  name: "typesafe",
+                  respond: async (p, options) => {
+                    if (mode !== "chat")
+                      assert.ok(options.signal instanceof AbortSignal);
+                    return {
+                      usage:
+                        mode === "missing-usage"
+                          ? null
+                          : {
+                              input_tokens: mode === "token-limit" ? 9000 : 17,
+                              output_tokens: 3,
+                            },
+                    };
+                  },
                 },
               },
+            );
+            return {
+              decisions: plan.entries
+                .filter((e) => !e.protected)
+                .map((e) => ({
+                  bundle_id: e.bundle_id,
+                  action: "offload",
+                  priority: 0,
+                  reason: "older recoverable material",
+                })),
+            };
+          },
+        }),
+        providerFactory: () => ({
+          name: provider,
+          respond: async () => {
+            taskCalls++;
+            return final;
+          },
+        }),
+      });
+      try {
+        const id = service.create().conversation_id,
+          h = service.harness(id);
+        for (let n = 0; n < 5; n++)
+          h.addMessage("assistant", "Old draft " + n + " " + "x".repeat(10000));
+        for (let n = 0; n < 4; n++)
+          h.addMessage("assistant", "Recent short item " + n);
+        const input = {
+          message_id: "msg_pressure",
+          content: "Use current context.",
+          settings: {
+            provider,
+            model: provider === "anthropic" ? "claude-fixture" : "fixture",
+            budget: 64000,
+            output: 1024,
+          },
+        };
+        let view;
+        if (mode === "chat") view = await service.ask(id, input);
+        else {
+          view = await service.agentStart(id, {
+            ...input,
+            limits: {
+              max_total_tokens: mode === "token-limit" ? 10000 : 250000,
             },
-          );
-          return {
-            decisions: plan.entries
-              .filter((e) => !e.protected)
-              .map((e) => ({
-                bundle_id: e.bundle_id,
-                action: "offload",
-                priority: 0,
-                reason: "older recoverable material",
-              })),
-          };
-        },
-      }),
-      providerFactory: () => ({
-        name: "openai",
-        respond: async () => {
-          taskCalls++;
-          return final;
-        },
-      }),
-    });
-    try {
-      const id = service.create().conversation_id,
-        h = service.harness(id);
-      for (let n = 0; n < 5; n++)
-        h.addMessage("assistant", "Old draft " + n + " " + "x".repeat(10000));
-      for (let n = 0; n < 4; n++)
-        h.addMessage("assistant", "Recent short item " + n);
-      const input = {
-        message_id: "msg_pressure",
-        content: "Use current context.",
-        settings: { model: "fixture", budget: 64000, output: 1024 },
-      };
-      let view;
-      if (mode === "chat") view = await service.ask(id, input);
-      else {
-        view = await service.agentStart(id, {
-          ...input,
-          limits: { max_total_tokens: mode === "token-limit" ? 10000 : 250000 },
-        });
-        view = await service.agentStep(id, next(view));
-      }
-      assert.equal(view.settings.jev, true);
-      assert.equal(decisionCalls, 1);
-      assert.equal(view.metrics.decision_calls, 1);
-      if (mode === "token-limit" || mode === "missing-usage") {
-        assert.equal(taskCalls, 0);
-        assert.equal(
-          view.agent.status,
-          mode === "token-limit" ? "token_limit" : "failed",
-        );
-        assert.equal(
-          view.agent.input_tokens,
-          mode === "token-limit" ? 9000 : 0,
-        );
-      } else {
-        assert.equal(taskCalls, 1);
-        assert.equal(view.metrics.input_tokens, 117);
-        if (mode === "agent") {
-          assert.equal(view.agent.status, "completed");
-          assert.equal(view.agent.input_tokens, 117);
+          });
+          view = await service.agentStep(id, next(view));
         }
+        assert.equal(view.settings.jev, true);
+        assert.equal(decisionCalls, 1);
+        assert.equal(view.metrics.decision_calls, 1);
+        if (mode === "token-limit" || mode === "missing-usage") {
+          assert.equal(taskCalls, 0);
+          assert.equal(
+            view.agent.status,
+            mode === "token-limit" ? "token_limit" : "failed",
+          );
+          assert.equal(
+            view.agent.input_tokens,
+            mode === "token-limit" ? 9000 : 0,
+          );
+        } else {
+          assert.equal(taskCalls, 1);
+          assert.equal(view.metrics.input_tokens, 117);
+          if (mode === "agent") {
+            assert.equal(view.agent.status, "completed");
+            assert.equal(view.agent.input_tokens, 117);
+          }
+        }
+        assert.ok(
+          store
+            .events(id)
+            .some(
+              (e) =>
+                e.kind === "inference_request" &&
+                e.content === "attention-selection",
+            ),
+        );
+      } finally {
+        store.close();
       }
-      assert.ok(
-        store
-          .events(id)
-          .some(
-            (e) =>
-              e.kind === "inference_request" &&
-              e.content === "attention-selection",
-          ),
-      );
-    } finally {
-      store.close();
-    }
-  });
+    });
 
 test("oversized older drafts are offloaded instead of skipped by compaction batch packing", () => {
   const draft = segment("x".repeat(20000), ["event_old"], {

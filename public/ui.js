@@ -8,7 +8,9 @@
     agentToggle = $("#agent-mode"),
     saved = $("#context-chat"),
     wide = matchMedia("(min-width: 900px)");
-  const radios = [...document.querySelectorAll('#mode-switch input[name="mode"]')];
+  const radios = [
+    ...document.querySelectorAll('#mode-switch input[name="mode"]'),
+  ];
   const radio = (value) => radios.find((r) => r.value === value);
   const mentioned = (text) => [
     ...new Set(
@@ -64,7 +66,9 @@
     $("#model-panel").open = true;
     if (!drawerOpen()) setDrawer(true);
     const provider =
-      mode() === "chat" ? (mentioned(box.value)[0] ?? targets[0]) : "GPT";
+      mode() === "chat"
+        ? (mentioned(box.value)[0] ?? targets[0])
+        : window.contextLayer?.providerName?.() || "GPT";
     setTimeout(() => fields[provider]?.focus(), wide.matches ? 0 : 230);
   };
 
@@ -73,7 +77,10 @@
     if (!value || isNaN(date)) return "";
     const today = new Date();
     if (date.toDateString() === today.toDateString())
-      return date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+      return date.toLocaleTimeString([], {
+        hour: "numeric",
+        minute: "2-digit",
+      });
     return date.toLocaleDateString([], {
       month: "short",
       day: "numeric",
@@ -207,15 +214,20 @@
 
   // ----- Recipients -----
   function renderRecipients(current) {
-    const typed = current === "chat" ? mentioned(box.value) : [];
-    const chosen = current === "chat" ? (typed.length ? typed : targets) : ["GPT"];
+    const typed = mentioned(box.value);
+    const chosen = typed.length
+      ? typed
+      : current === "chat"
+        ? targets
+        : [window.contextLayer?.providerName?.() || "GPT"];
     const container = $("#recipients");
-    const shown = current === "chat" ? names : ["GPT"];
+    const shown = current === "chat" ? names : ["GPT", "Claude"];
     const signature = JSON.stringify([
       current,
       chosen,
       typed.length > 0,
       busy,
+      agentToggle.disabled,
       shown.map((n) => [fields[n].value, fields[n].options.length]),
     ]);
     if (container.dataset.signature === signature) return;
@@ -234,17 +246,21 @@
       const model = document.createElement("small");
       model.textContent = fields[name].value;
       chip.append(name, model);
-      const fixed = current !== "chat" || typed.length > 0;
+      const fixed = typed.length > 0;
       chip.disabled = busy || !fields[name].options.length;
+      if (current !== "chat" && !$("#agent-resume").hidden)
+        chip.disabled = true;
       if (fixed) {
         chip.setAttribute("aria-disabled", "true");
-        chip.title =
-          current !== "chat"
-            ? "Context and Agent modes reply with GPT"
-            : "Recipients come from the @mentions in your message";
+        chip.title = "Recipients come from the @mentions in your message";
       } else chip.title = "Toggle " + name;
       chip.onclick = () => {
         if (fixed || busy) return;
+        if (current !== "chat") {
+          window.contextLayer?.selectProvider(name);
+          sync();
+          return;
+        }
         const next = targets.includes(name)
           ? targets.filter((n) => n !== name)
           : names.filter((n) => n === name || targets.includes(n));
@@ -276,7 +292,7 @@
       context: !locked || isContextChat || current === "context",
       agent:
         current === "agent" ||
-        (!agentToggle.disabled || busy) && (!locked || isContextChat),
+        ((!agentToggle.disabled || busy) && (!locked || isContextChat)),
     };
     for (const r of radios) {
       r.disabled = busy || !allowed[r.value];
@@ -298,7 +314,9 @@
         ? mentioned(box.value).length
           ? mentioned(box.value)
           : targets
-        : ["GPT"];
+        : mentioned(box.value).length
+          ? mentioned(box.value)
+          : [window.contextLayer?.providerName?.() || "GPT"];
     box.placeholder =
       current === "agent"
         ? "Describe an objective for the agent…"
@@ -316,7 +334,8 @@
         ? titleOf({ ...conversation, messages })
         : "New chat";
     const empty = $("#empty");
-    if (empty && empty.dataset.mode !== current && !messages.length) showEmpty();
+    if (empty && empty.dataset.mode !== current && !messages.length)
+      showEmpty();
     const progress = $("#run-progress").textContent.trim();
     $("#agent-mode-bar").classList.toggle(
       "has-run",
@@ -375,7 +394,8 @@
   chat.addEventListener(
     "scroll",
     () => {
-      jump.hidden = chat.scrollHeight - chat.scrollTop - chat.clientHeight < 240;
+      jump.hidden =
+        chat.scrollHeight - chat.scrollTop - chat.clientHeight < 240;
     },
     { passive: true },
   );
@@ -398,7 +418,8 @@
   document.addEventListener("click", (event) => {
     for (const panel of popovers)
       if (panel.open && !panel.contains(event.target)) panel.open = false;
-    if (event.target.closest(".menu-items button")) $("#more-menu").open = false;
+    if (event.target.closest(".menu-items button"))
+      $("#more-menu").open = false;
   });
   document.addEventListener("keydown", (event) => {
     if (event.key !== "Escape") return;

@@ -14,6 +14,7 @@ const handler = createContextHandler({
     const status = ConclaveService.prototype.status.call({
       availability: () => ({
         openai: !!process.env.OPENAI_API_KEY,
+        anthropic: !!process.env.ANTHROPIC_API_KEY,
         jev: !!(process.env.JEV_API_KEY || process.env.TYPESAFE_API_KEY),
       }),
     });
@@ -28,6 +29,16 @@ const handler = createContextHandler({
   view: (id) => read(id, (service) => service.view(id)),
   workspaceFile: (id, path) =>
     read(id, (service) => service.workspaceFile(id, path)),
+  sourceEvent: (id, eventId) =>
+    read(id, (service) => service.sourceEvent(id, eventId)),
+  contextBundle: (id, bundleId) =>
+    read(id, (service) => service.contextBundle(id, bundleId)),
+  saveDocument: (id, input) =>
+    repository().run(id, true, (service) => service.saveDocument(id, input)),
+  saveContext: (id, input) =>
+    repository().run(id, true, (service) => service.saveContext(id, input)),
+  saveState: (id, input) =>
+    repository().run(id, true, (service) => service.saveState(id, input)),
   export: (id) => read(id, (service) => service.export(id)),
   download: (id) => read(id, (service) => downloadRecord(service, id)),
   activity: (id, options) =>

@@ -47,6 +47,7 @@
       item.id.slice(-8) +
       "\n" +
       (item.preview || "(empty source)");
+    window.workspaceEditor?.inspect(item, source);
   }
   function interactive(node, item, source = false) {
     node.setAttribute("tabindex", "0");
@@ -420,6 +421,7 @@
   }
   watch.onclick = () => {
     if (!panel.hidden) return close();
+    window.workspaceEditor?.close();
     panel.hidden = false;
     watch.setAttribute("aria-expanded", "true");
     el("garden-close").focus();
@@ -476,6 +478,7 @@
     }
   });
   window.contextGarden = {
+    close,
     setActive: (value) => {
       locallyBusy = value;
       schedule(0);
