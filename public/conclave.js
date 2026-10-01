@@ -7,6 +7,12 @@
   const reasoning = $("#context-reasoning"),
     provider = $("#context-provider"),
     agentMode = $("#agent-mode");
+  const limitMode = $('#agent-limit-mode');
+  limitMode.value = localStorage.getItem('converse-agent-limit-mode') || 'adaptive';
+  limitMode.onchange = () => {
+    localStorage.setItem('converse-agent-limit-mode', limitMode.value);
+    controls();
+  };
   provider.value =
     localStorage.getItem("converse-context-provider") || "openai";
   if (!provider.value) provider.value = "openai";
@@ -155,6 +161,14 @@
       input.disabled = busy;
     jev.disabled = busy || !capabilities?.credentials?.jev;
     reasoning.disabled = busy || provider.value === "anthropic";
+    const none = reasoning.querySelector('option[value="none"]');
+    none.disabled = provider.value === 'openai' && fields.GPT.value === 'gpt-6.1-sol';
+    if (none.disabled && reasoning.value === 'none') reasoning.value = 'low';
+    for (const id of ['agent-minutes', 'agent-steps', 'agent-tokens'])
+      $('#' + id).disabled = busy || limitMode.value === 'adaptive';
+    $('#agent-limit-note').textContent = limitMode.value === 'adaptive'
+      ? 'Automatic testing grows time, steps and total-token allowances as needed, up to 60 minutes, 200 steps and 2,000,000 tokens including the next-call reserve. The model can finish earlier; Stop is always available.'
+      : 'Fixed limits stop at the first guard reached. Max steps is a ceiling, not a target. The total allowance reserves conservative UTF-8 input units plus output tokens before each call.';
     reasoning.title =
       provider.value === "anthropic"
         ? "Claude uses its default reasoning; this control applies to GPT."
@@ -189,7 +203,7 @@
         const notice = document.createElement("p");
         notice.className = "error";
         notice.textContent =
-          "The answer failed. This message and failure details remain saved.";
+          "The answer failed: " + (message.failure || "Inspect the saved audit for details.");
         element.parentNode.append(notice);
       }
     }
@@ -260,13 +274,30 @@
     $("#context-note").textContent =
       view.backup_warning ||
       "GPT and Claude replies use saved context. JSON export includes original sources, revisions, Jev decisions and usage.";
+    const runMetrics = agent?.metrics;
+    const purposeText = Object.entries(runMetrics?.usage_by_purpose || {}).map(([purpose, usage]) =>
+      `${purpose === 'attention-selection' ? 'Jev selection' : purpose === 'compaction' ? 'Context compaction' : 'Task'}: ${usage.calls} calls, ${usage.input_tokens} input / ${usage.output_tokens} output`).join(' · ');
+    const notice = $('#agent-notice');
+    const toolErrors = runMetrics?.tool_errors || [];
+    notice.hidden = !agent || (agent.status === 'running' && !toolErrors.length);
+    notice.dataset.error = String(!!agent && (agent.status !== 'running' && agent.status !== 'completed' || toolErrors.length > 0));
+    notice.textContent = [agent?.stop?.message,
+      toolErrors.length ? `${toolErrors.length} tool errors: ` + toolErrors.slice(-3).map(e => `${e.tool}: ${e.message}`).join(' · ') : ''].filter(Boolean).join(' ');
     $("#agent-status").textContent = agent
       ? `${agent.status} · ${agent.steps}/${agent.limits.max_steps} steps · ${agent.input_tokens} input / ${agent.output_tokens} output tokens` +
         (agent.usage_complete === false ? " (partial usage)" : "") +
         (agent.tools.length
           ? " · " + agent.tools.map((t) => t.name).join(" → ")
           : "") +
-        (agent.error ? " · " + agent.error : "")
+        ` · ${Math.round(agent.elapsed_seconds || 0)}s · ${agent.limit_mode === 'adaptive' ? 'Automatic testing' : 'Fixed limits'}` +
+        (purposeText ? ' · ' + purposeText : '') +
+        (runMetrics ? ` · ${runMetrics.tool_calls} tool calls, ${toolErrors.length} errors · ${runMetrics.readbacks} readbacks · ${runMetrics.cached_input_tokens} reported cached input tokens (included in input)` : '') +
+        (runMetrics && !runMetrics.usage_by_purpose['attention-selection'] ?
+          !agent.settings.jev ? ' · Jev: disabled for this run' :
+          !capabilities?.credentials?.jev ? ' · Jev: unavailable; deterministic selection' :
+          ' · Jev: no call this run (selection runs under context pressure)' : '') +
+        (runMetrics?.limit_adjustments ? ` · ${runMetrics.limit_adjustments} automatic limit increases` : '') +
+        (agent.stop ? ' · ' + agent.stop.message : '')
       : "No agent run yet.";
     $("#agent-files").hidden = !agent?.files.length;
     $("#agent-files").textContent =
@@ -430,6 +461,12 @@
         budget: Number($("#agent-budget").value),
         output: Number($("#agent-output").value),
       };
+      const limits = limitMode.value === 'adaptive' ? { mode: 'adaptive' } : {
+        mode: 'fixed',
+        duration_seconds: Number($("#agent-minutes").value) * 60,
+        max_steps: Number($("#agent-steps").value),
+        max_total_tokens: Number($("#agent-tokens").value),
+      };
       await ensure();
       const user = messageRecord({ role: "user", content,
         ...(editingMessage ? { revises_message_id: editingMessage.message_id } : {}) });
@@ -442,11 +479,7 @@
             content || "Use the attached document as the agent objective.",
           attachments: attachment ? [attachment] : [],
           settings,
-          limits: {
-            duration_seconds: Number($("#agent-minutes").value) * 60,
-            max_steps: Number($("#agent-steps").value),
-            max_total_tokens: Number($("#agent-tokens").value),
-          },
+          limits,
         }),
       );
       $("textarea").value = "";
@@ -666,6 +699,7 @@
     $("#workspace-panel").hidden = true;
     watchProgress(false);
     $("#agent-status").textContent = "No agent run yet.";
+    $('#agent-notice').hidden = true;
     $("#agent-files").hidden = true;
     saved.value = "";
     $("#context-stats").textContent = "";

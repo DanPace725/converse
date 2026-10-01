@@ -1,5 +1,7 @@
 # Agent Mode and workspace follow-up — 2026-10-01
 
+Follow-up: the [two-export limit review](reports/agent-limits-export-review-2026-10-01.md) diagnoses early total-token reservation stops and records the new Automatic testing profile, specific composer-visible stop reasons and run-scoped usage/tool metrics. These later changes are local and have not been deployed.
+
 Implemented in Converse after the [Makerspace trial review](reports/makerspace-agent-review-2026-10-01.md). The original trial and frozen audit were not rewritten. These changes affect subsequent turns.
 
 ## User flow

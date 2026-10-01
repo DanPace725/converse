@@ -386,6 +386,64 @@ async function openAgent(page, url) {
   await expect(page.locator("#send")).toHaveText("Run agent");
 }
 
+test('fixed token guard explains its reserve beside the composer and automatic testing needs no numeric limits', async ({page}, testInfo) => {
+  let calls = 0;
+  const app = await fixture(async () => {
+    calls++;
+    return {...(calls >= 6 ? final : response([call('calculate', {operation: 'add', values: [1, 2]}, calls)])),
+      usage: {input_tokens: 50000, output_tokens: 10}};
+  });
+  try {
+    await openAgent(page, app.url);
+    await page.locator('#context-panel > summary').click();
+    await page.locator('#agent-panel > summary').click();
+    await expect(page.locator('#agent-limit-mode')).toHaveValue('adaptive');
+    await expect(page.locator('#agent-tokens')).toBeDisabled();
+    await page.locator('#agent-limit-mode').selectOption('fixed');
+    await page.locator('#agent-tokens').fill('1000');
+    await page.locator('#sheet-close').click();
+    await page.getByLabel('Message', {exact: true}).fill('Calculate six times.');
+    await page.locator('#send').click();
+    await expect(page.locator('#agent-notice')).toBeVisible();
+    await expect(page.locator('#agent-notice')).toContainText('0 reported tokens');
+    await expect(page.locator('#agent-notice')).toContainText('above the 1000 allowance');
+    expect(calls).toBe(0);
+    await page.screenshot({path: testInfo.outputPath('token-guard.png'), fullPage: true});
+    await page.reload();
+    await expect(page.locator('#agent-notice')).toContainText('above the 1000 allowance');
+    await expect(page.locator('#agent-limit-mode')).toHaveValue('fixed');
+    await page.locator('#context-panel > summary').click();
+    await page.locator('#agent-panel > summary').click();
+    await page.locator('#agent-limit-mode').selectOption('adaptive');
+    await expect(page.locator('#agent-tokens')).toBeDisabled();
+    await page.locator('#sheet-close').click();
+    await page.getByLabel('Message', {exact: true}).fill('Continue the calculation with automatic limits.');
+    await page.locator('#send').click();
+    await expect(page.locator('#agent-status')).toContainText('completed');
+    await expect(page.locator('#agent-status')).toContainText('automatic limit increases');
+    expect(calls).toBe(6);
+    const id = app.service.list()[0].conversation_id, agent = app.service.view(id).agent;
+    expect(agent.limit_mode).toBe('adaptive');
+    expect(agent.limits.max_total_tokens).toBe(500000);
+    expect(agent.input_tokens).toBe(300000);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  } finally {await app.close();}
+});
+
+test('provider rejection remains visible in the transcript and beside run controls after reload', async ({page}) => {
+  const app = await fixture(async () => {throw Error('OpenAI 400: unsupported reasoning fixture');});
+  try {
+    await openAgent(page, app.url);
+    await page.getByLabel('Message', {exact: true}).fill('Write a report.');
+    await page.locator('#send').click();
+    await expect(page.locator('#agent-notice')).toContainText('OpenAI 400: unsupported reasoning fixture');
+    await expect(page.locator('#chat .error')).toContainText('unsupported reasoning fixture');
+    await page.reload();
+    await expect(page.locator('#agent-notice')).toBeVisible();
+    await expect(page.locator('#chat .error')).toContainText('unsupported reasoning fixture');
+  } finally {await app.close();}
+});
+
 test("browser drives real HTTP/service/storage, renders artifacts and resumes after reload", async ({
   page,
 }, testInfo) => {

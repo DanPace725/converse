@@ -203,6 +203,7 @@
         </details>
         <button id="agent-resume" type="button" hidden>Resume run</button>
         <button id="agent-stop" type="button" hidden>Stop</button>
+        <p id="agent-notice" role="status" hidden></p>
       </div>
       <input
         id="markdown-file"
@@ -301,6 +302,10 @@
                   and manage context. Keep this tab open while it runs.
                 </p>
                 <div class="context-controls">
+                  <label>Run limits<select id="agent-limit-mode">
+                    <option value="adaptive" selected>Automatic testing</option>
+                    <option value="fixed">Fixed limits</option>
+                  </select></label>
                   <label
                     >Minutes<input
                       id="agent-minutes"
@@ -336,7 +341,7 @@
                       value="16384"
                   /></label>
                   <label
-                    >Total token limit<input
+                    >Total tokens + next-call reserve<input
                       id="agent-tokens"
                       type="number"
                       min="1000"
@@ -345,6 +350,7 @@
                       value="250000"
                   /></label>
                 </div>
+                <p class="note" id="agent-limit-note">Automatic testing grows time, steps and total-token allowances as needed, up to 60 minutes, 200 steps and 2,000,000 tokens including the next-call reserve. The model can finish earlier; Stop is always available.</p>
                 <p class="note" id="agent-status">No agent run yet.</p>
                 <pre id="agent-files" hidden></pre>
               </details>

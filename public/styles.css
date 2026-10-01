@@ -1039,6 +1039,13 @@ article > .error:not(.content) {
   min-width: 140px;
   color: var(--muted);
 }
+#agent-notice {
+  flex-basis: 100%;
+  margin: 0;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+#agent-notice[data-error="true"] { color: var(--danger); }
 .is-working #run-progress::before {
   content: "";
   display: inline-block;
