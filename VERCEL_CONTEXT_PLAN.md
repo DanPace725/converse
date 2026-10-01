@@ -19,6 +19,8 @@ The production schema was applied through the checked-in Drizzle migration after
 
 The focused check covers fresh-instance persistence, in-flight garden visibility, overlapping requests, completed/conflicting retries, remembered state, exports and database-enforced audit immutability with a fake model provider. Existing HTTP/guard contracts and syntax checks also pass. No long-form or load tests were added.
 
+Production was checked at `https://converse-cyan.vercel.app`: Luna answered one short context turn (1,156 input / 7 output tokens), the same chat restored after reload, and the live garden showed its saved sources and revision. The downloaded JSON passed checks for two transcript messages, two snapshots, all eight audit events, source links and provider usage. This check made one model call and no Jev call; long-form Jev behavior remains for conversational testing.
+
 ## Deliberate MVP limits
 
 Ordinary multi-provider chats remain browser-local. Existing CLI/SQLite chats remain on this PC; bulk import and JSON restore are follow-ups. Context answers arrive when the turn finishes. There is no durable job queue or automatic resumption of an interrupted model call; reload the saved chat to inspect progress/failure, wait for an active lease to finish/expire, and send a new message if needed. Reads rebuild the full conversation index, and JSON exports are assembled in memory before streaming; optimizing very long audits is later work. Preview context testing requires a separate Neon branch and Preview credentials.
