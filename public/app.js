@@ -150,6 +150,7 @@ async function loadModels() {
       }
       $("#status").textContent = "Ready";
       $("#send").disabled = false;
+      window.contextLayer?.refresh();
     })
     .catch((e) => {
       $("#status").textContent = "Could not load models: " + e.message;
@@ -454,11 +455,16 @@ $("textarea").onkeydown = (e) => {
   }
 };
 $("#export-json").onclick = () => {
+  if (window.contextLayer?.downloadExport()) return;
   const url = URL.createObjectURL(
     new Blob(
       [
         JSON.stringify(
-          { ...conversation, messages, exported_at: now() },
+          {
+            ...conversation,
+            messages,
+            exported_at: now(),
+          },
           null,
           2,
         ),
@@ -584,6 +590,7 @@ $("#new-chat").onclick = () => {
     created_at: now(),
     attachments: [],
   };
+  delete conversation.context_layer;
   saveChat();
   targets = ["GPT"];
   attachment = null;

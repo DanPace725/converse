@@ -4,11 +4,31 @@ A small installable chat app for GPT, Claude and Gemini. Responsive on phones, t
 
 ## Local
 
-Requires Node.js 22+. Set provider keys in your environment or copy `.env.example` to `.env` and fill it in, then run `npm run dev` (or `node --env-file-if-exists=.env scripts/dev.js`). Open http://127.0.0.1:3211.
+Requires Node.js 22.13+ (Node 24 on Vercel). Run `npm install`. Set provider keys in your environment or copy `.env.example` to `.env` and fill it in, then run `npm run dev` (or `node --env-file-if-exists=.env scripts/dev.js`). Open http://127.0.0.1:3211.
 
-## Vercel
+## Context layer
+
+Open **Context layer** above the composer and enable it for a new chat. Use the selected GPT model with reasoning and optional native Jev selection, reopen saved context chats, inspect working context, remember a named state entry, or watch the context garden. Replies appear after the layered answer completes. Provider keys stay on the server.
+
+With `DATABASE_URL`, local and hosted requests use Neon. Context chats, originals, audit events and immutable snapshots survive reloads and new function instances. **Export JSON** downloads the canonical transcript plus the complete `context_layer` record, including source IDs, provider inputs/usage, tool exchanges, Jev decisions and failures. The browser keeps display data and the conversation ID; the audit stays on the server. Existing SQLite chats remain on this PC and are not automatically uploaded.
+
+Without `DATABASE_URL`, local development falls back to SQLite in `CONCLAVE_DATA_DIR` or the sibling `.conclave` folder and reads Windows User/Machine provider keys. Vercel always uses Neon. Ordinary multi-provider chats retain their browser-local storage and streaming behavior.
+
+## Neon setup
+
+The app workspace is linked locally to Neon project `divine-bar-20917398` (`converse`), branch `production`. `neon.ts` declares Neon Auth; Postgres and Auth are already provisioned. The CLI's `neon deploy` applies this service configuration, not the Converse web app.
+
+Run Neon commands from this repository directory. Use `neon config plan` to preview service changes, `neon deploy --no-env-pull` to apply them, and `neon env pull --file .env` to refresh local connection settings. `.neon` and `.env` are git-ignored; `.env` matches the local dev command's environment file. The installed Neon plugin supplies skills and MCP access; no duplicate installation is required.
+
+The database schema is versioned in `lib/db-schema.js` and `drizzle/`. Generate later schema changes with `npm run db:generate`; test migrations on a separate Neon branch, then run `npm run db:migrate` using the direct `DATABASE_URL_UNPOOLED`. Runtime connections use pooled `DATABASE_URL`. Migrations are explicit and are not run during function requests or Git deployments. App access still uses the existing app password; Neon Auth is provisioned but is not wired into the UI.
+
+## Vercel deployment
+
+The bundled Conclave engine and `api/conclave.js` deploy with this repository. See [hosted context notes](VERCEL_CONTEXT_PLAN.md) for storage, coordination, export and MVP limits.
 
 Import this repository using the **Other** framework preset. The included `vercel.json` serves `public/` and runs `api/*.js` as Node functions. No build command is required. Add `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GEMINI_API_KEY` and a long random `APP_PASSWORD` in Vercel environment settings, then deploy. Local PC environment variables are not transferred to Vercel. Hosted API access fails closed unless APP_PASSWORD is set. The app password grants access to your provider budget; use a strong random value. Rotate it to invalidate sessions. For broader sharing use a full identity/rate-limiting service or Vercel deployment protection.
+
+For context mode, add the pooled `DATABASE_URL` as a server-side Production secret, and `JEV_API_KEY` (or `TYPESAFE_API_KEY`) to enable Jev. Existing provider keys and `APP_PASSWORD` are reused. Preview deployments need their own database branch and environment settings to offer context mode. Pushes to `main` trigger the existing Git deployment. Environment changes require a new deployment; secrets never belong in Git or `public/`.
 
 Unlock with the app password; sessions use a secure HttpOnly cookie for seven days. API keys are never sent to the frontend. This implementation is intended for personal use.
 
@@ -30,11 +50,10 @@ Model selections persist on this device. New chat clears the conversation after 
 
 Install development tools with npm install. Run npm run test:browser for desktop and phone-sized Chromium checks using installed Microsoft Edge, including offline restore, Markdown safety, attachment routing, and session recovery. These emulate a phone viewport, not a physical iPhone. npm run format formats maintained source.
 
-
 ### Provenance and exports
 
 Export JSON saves the versioned canonical record; Markdown is the readable transcript. Records include stable conversation/participant/message IDs, timestamps, routing mentions, reply links, and separate attachments with SHA-256 hashes of original file bytes. Markdown attachments use code fences longer than any backtick run in their contents to isolate nested transcripts.
 
 Completed calls retain context message/attachment IDs, the application system prompt and version, history transformation version, explicit generation settings, requested model, provider-reported model/response IDs and raw provider usage when available. Parallel replies share the same context snapshot. Failed replies persist but are excluded from future context. Provider defaults and nondeterminism prevent guaranteed inference reproducibility.
 
-Legacy chats migrate with unknown timestamps; pasted historical attachments are not inferred. Participant IDs remain stable across model changes; current names remain GPT/Claude/Gemini. Missing usage, pricing and cost are null. Pricing estimates, spending dashboards, participant renaming and JSON import are deferred. Storage remains device-local; export important chats.
+Legacy chats migrate with unknown timestamps; pasted historical attachments are not inferred. Participant IDs remain stable across model changes; current names remain GPT/Claude/Gemini. Missing usage, pricing and cost are null. Pricing estimates, spending dashboards, participant renaming and JSON import are deferred. Ordinary chats remain device-local; context chats use server storage. Export important chats.

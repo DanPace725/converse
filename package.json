@@ -4,17 +4,28 @@
   "private": true,
   "type": "module",
   "engines": {
-    "node": ">=22"
+    "node": ">=22.13"
   },
   "scripts": {
     "dev": "node --env-file-if-exists=.env scripts/dev.js",
     "test": "node --test test/*.test.js",
     "check": "node scripts/check.js",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "node --env-file-if-exists=.env scripts/migrate.js",
+    "test:neon": "node --env-file=.env.neon-test --test test/neon.test.js",
     "test:browser": "playwright test",
     "format": "prettier --write api lib public/app.js public/index.html public/styles.css public/sw.js scripts test playwright.config.js README.md package.json vercel.json"
   },
   "devDependencies": {
     "@playwright/test": "^1.63.0",
+    "drizzle-kit": "^0.31.11",
     "prettier": "^3.9.6"
+  },
+  "dependencies": {
+    "@neon/config": "^1.8.3",
+    "@neon/env": "^1.4.8",
+    "@vercel/functions": "^3.9.9",
+    "drizzle-orm": "^0.45.3",
+    "pg": "^8.23.1"
   }
 }

@@ -1,9 +1,11 @@
-const CACHE = "converse-shell-v3";
+const CACHE = "converse-shell-v7";
 const SHELL = [
   "/",
   "/index.html",
   "/styles.css",
   "/app.js",
+  "/conclave.js",
+  "/context-garden.js",
   "/vendor/marked.js",
   "/vendor/purify.js",
   "/manifest.webmanifest",

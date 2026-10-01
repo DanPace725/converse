@@ -47,12 +47,70 @@
     <p class="note">
       Use @GPT, @Claude or @Gemini. Mention several to hear from each. Without a
       mention, the last selection replies. Each sees the full chat with speaker
-      and model tags.
+      and model tags. Local context mode uses a smaller working context with
+      saved source history.
     </p>
     <div id="chat" aria-live="polite">
       <div id="empty">One conversation. Your choice of models.</div>
     </div>
     <form id="composer">
+      <details id="context-panel" hidden>
+        <summary>Context layer</summary>
+        <div class="context-controls">
+          <label class="check-label"
+            ><input id="context-mode" type="checkbox" /> Use context
+            layer</label
+          >
+          <label
+            >Saved context chat<select id="context-chat">
+              <option value="">Choose a saved chat…</option>
+            </select></label
+          >
+          <label
+            >Reasoning<select id="context-reasoning">
+              <option value="none">None</option>
+              <option value="low" selected>Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+            </select></label
+          >
+          <label class="check-label"
+            ><input id="context-jev" type="checkbox" checked /> Jev
+            selection</label
+          >
+        </div>
+        <p class="note" id="context-note">
+          GPT replies use saved context. JSON export includes the full audit
+          record.
+        </p>
+        <p class="note" id="context-stats"></p>
+        <details id="context-inspect">
+          <summary>Working context and remembered state</summary>
+          <pre id="context-preview">Start or open a context chat.</pre>
+          <div class="remember-controls">
+            <input
+              id="remember-key"
+              aria-label="State key"
+              placeholder="budget.total"
+              maxlength="80"
+            />
+            <select id="remember-type" aria-label="State type">
+              <option value="constraint">Constraint</option>
+              <option value="objective">Objective</option>
+              <option value="decision">Decision</option>
+              <option value="question">Question</option>
+              <option value="evidence">Evidence</option>
+            </select>
+            <input
+              id="remember-text"
+              aria-label="Remembered text"
+              placeholder="Exact detail to remember"
+              maxlength="2000"
+            />
+            <button id="remember-state" type="button">Remember</button>
+          </div>
+        </details>
+      </details>
       <input
         id="markdown-file"
         type="file"
@@ -72,13 +130,116 @@
         <button id="upload" type="button">Upload Markdown</button
         ><button id="export" type="button" disabled>Export chat to MD</button
         ><button id="export-json" type="button">Export JSON</button
+        ><button
+          id="context-watch"
+          type="button"
+          hidden
+          aria-expanded="false"
+          aria-controls="context-garden"
+        >
+          Watch context</button
         ><span id="status" role="status">Loading models…</span
         ><button id="send" disabled>Send</button>
       </footer>
-      <p class="note">Chat is saved on this device. Export to keep a copy.</p>
+      <p class="note">
+        Context chats are saved on the server. Other chats stay on this device.
+        Export JSON to keep a copy.
+      </p>
     </form>
   </main>
+  <aside id="context-garden" hidden aria-label="Context garden">
+    <header class="garden-header">
+      <div>
+        <span class="garden-eyebrow">A WINDOW INTO MEMORY</span>
+        <h2>Context garden</h2>
+      </div>
+      <button id="garden-close" type="button" aria-label="Close context garden">
+        ×
+      </button>
+    </header>
+    <div class="garden-phase">
+      <span id="garden-mode">LIVE</span
+      ><span id="garden-phase">Waiting for a conversation</span>
+    </div>
+    <svg
+      id="garden-scene"
+      viewBox="0 0 400 292"
+      role="group"
+      aria-label="Working context surrounded by saved source history"
+    >
+      <defs>
+        <radialGradient id="garden-wash">
+          <stop stop-color="#8aebce" stop-opacity=".13" />
+          <stop offset="1" stop-color="#8aebce" stop-opacity="0" />
+        </radialGradient>
+        <filter id="garden-glow" x="-100%" y="-100%" width="300%" height="300%">
+          <feGaussianBlur stdDeviation="3" />
+        </filter>
+      </defs>
+      <ellipse cx="200" cy="146" rx="150" ry="117" fill="url(#garden-wash)" />
+      <ellipse class="garden-orbit" cx="200" cy="146" rx="172" ry="109" />
+      <ellipse class="garden-boundary" cx="200" cy="146" rx="116" ry="83" />
+      <text class="garden-map-label" x="200" y="20" text-anchor="middle">
+        SAVED SOURCE HISTORY
+      </text>
+      <g id="garden-history"></g>
+      <g id="garden-links"></g>
+      <g id="garden-nodes"></g>
+      <g class="garden-heart">
+        <circle cx="200" cy="146" r="29" />
+        <text x="200" y="143" text-anchor="middle">WORKING</text>
+        <text x="200" y="156" text-anchor="middle">CONTEXT</text>
+      </g>
+      <text
+        id="garden-revision"
+        class="garden-map-label"
+        x="200"
+        y="279"
+        text-anchor="middle"
+      >
+        Waiting for saved context
+      </text>
+    </svg>
+    <div
+      class="garden-savings"
+      title="Approximate context-text tokens at 4 UTF-8 bytes per token. Full history includes messages, documents and manual state sources. Excludes instructions, metadata, tools and selection/compaction costs; this is not billed usage or net cost savings."
+    >
+      <div>
+        <span>Est. tokens saved</span
+        ><strong id="garden-tokens-saved">—</strong>
+      </div>
+      <span id="garden-token-comparison"
+        >Full conversation → working context</span
+      >
+    </div>
+    <div class="garden-counts">
+      <div>
+        <strong id="garden-working">0</strong><span>working pieces</span>
+      </div>
+      <div><strong id="garden-anchors">0</strong><span>protected</span></div>
+      <div><strong id="garden-saved">0</strong><span>saved sources</span></div>
+    </div>
+    <div class="garden-legend">
+      <span class="garden-raw">● Messages</span
+      ><span class="garden-summary">● Summaries</span
+      ><span class="garden-anchor">◆ Anchors</span
+      ><span class="garden-reference">○ References</span>
+    </div>
+    <p id="garden-caption" aria-live="polite">
+      Start or open a context chat to watch it grow.
+    </p>
+    <p id="garden-detail">
+      Select a point to peek inside. Size reflects text length.
+    </p>
+    <div class="garden-footer">
+      <button id="garden-replay" type="button" disabled>
+        Replay recent changes</button
+      ><span>Recorded events · no extra model calls</span>
+    </div>
+  </aside>
   <script src="/vendor/marked.js"></script>
   <script src="/vendor/purify.js"></script>
   <script src="/app.js" defer></script>
+  <script src="/context-garden.js" defer></script>
+  <script src="/conclave.js" defer></script>
 </html>
