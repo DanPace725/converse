@@ -6,6 +6,10 @@ Hosted adaptations: `Store` can use an in-memory database without file views; `C
 
 Keep these adaptations when refreshing the snapshot. The separate CLI checkout remains unchanged.
 
+Model identity: Conclave is a context-management method, not an assistant persona. The shared chat/agent prompt identifies the current runtime provider/model, and request-time source attribution labels original authors in working bundles, compaction input and history retrieval. Assistant events now retain requested and reported models directly; older completed turns recover them from saved inference records. Unknown models stay unknown. Preserve this Converse-only adaptation on refresh.
+
+Conversation features: generated titles are append-only metadata events, reflected in list/view/export and the hosted conversation row. Revised user messages are new source events linked to the originals; Context and Agent validate the original within the conversation and include the revision link in model inputs. These additions do not rewrite snapshots or change the database schema.
+
 Shared correctness fixes are also applied to the CLI source: attribution compares event identity fields independently of JSON object-key order, and user-projection errors create source-linked turn failures before inference.
 
 Converse-only agent extension (2026-10-01): `agent.js` adds a checkpointed, browser-driven runner and virtual text workspace. The service adds agent actions and configurable context/output budgets; the provider accepts an optional per-run abort signal. Workspace source attribution uses the task provider (`openai` or `anthropic`), not the human actor. Keep these extensions on refresh. The sibling CLI does not yet expose this runner.

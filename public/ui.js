@@ -88,6 +88,7 @@
     });
   }
   const titleOf = (record) => {
+    if (record.title) return record.title;
     const first = (record.messages || []).find((m) => m.role === "user");
     const text = first?.content
       ?.replace(/@(GPT|Claude|Gemini)\b/gi, "")
@@ -279,6 +280,8 @@
     agent: "Agent · saved on server",
   };
   function sync() {
+    for (const button of document.querySelectorAll('.edit-message'))
+      button.disabled = busy || window.contextLayer?.editorView?.()?.agent?.status === 'running';
     const current = mode();
     const available = !$("#agent-mode-bar").hidden;
     body.dataset.mode = current;

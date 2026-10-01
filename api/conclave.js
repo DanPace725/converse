@@ -26,6 +26,7 @@ const handler = createContextHandler({
   },
   list: () => repository().list(),
   create: (title) => repository().create(title),
+  name: (id, input) => repository().run(id, true, (service) => service.name(id, input)),
   view: (id) => read(id, (service) => service.view(id)),
   workspaceFile: (id, path) =>
     read(id, (service) => service.workspaceFile(id, path)),

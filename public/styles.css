@@ -717,6 +717,8 @@ article:hover .msg-actions,
   opacity: 1;
 }
 .copy-response,
+.copy-message,
+.edit-message,
 .copy-code {
   min-height: 30px;
   padding: 3px 10px;
@@ -725,7 +727,34 @@ article:hover .msg-actions,
   background: transparent;
   border-color: transparent;
 }
-.copy-response:hover:not(:disabled) {
+
+.msg-user .msg-actions {
+  justify-content: flex-end;
+}
+.message-edit-note {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 14px 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+.edit-message:hover:not(:disabled) {
+  background: var(--surface-2);
+  color: var(--text);
+}
+.markdown .katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.35em 0;
+  max-width: 100%;
+}
+.markdown .katex {
+  font-size: 1.08em;
+}
+.copy-response:hover:not(:disabled),
+.copy-message:hover:not(:disabled) {
   background: var(--surface-2);
   color: var(--text);
 }

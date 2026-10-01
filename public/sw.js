@@ -1,4 +1,4 @@
-const CACHE = "converse-shell-v13";
+const CACHE = "converse-shell-v14";
 const SHELL = [
   "/",
   "/index.html",
@@ -10,6 +10,14 @@ const SHELL = [
   "/context-garden.js",
   "/vendor/marked.js",
   "/vendor/purify.js",
+  "/math.js",
+  "/vendor/katex/katex.min.js",
+  "/vendor/katex/katex.min.css",
+  ...['AMS-Regular', 'Caligraphic-Bold', 'Caligraphic-Regular', 'Fraktur-Bold', 'Fraktur-Regular',
+    'Main-Bold', 'Main-BoldItalic', 'Main-Italic', 'Main-Regular', 'Math-BoldItalic', 'Math-Italic',
+    'SansSerif-Bold', 'SansSerif-Italic', 'SansSerif-Regular', 'Script-Regular', 'Size1-Regular',
+    'Size2-Regular', 'Size3-Regular', 'Size4-Regular', 'Typewriter-Regular']
+    .map(font => '/vendor/katex/fonts/KaTeX_' + font + '.woff2'),
   "/manifest.webmanifest",
   "/icon-192.png",
   "/icon-512.png",

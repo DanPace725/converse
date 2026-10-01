@@ -80,6 +80,41 @@ const final = response([
   },
 ]);
 
+for (const mode of ['context', 'agent']) test(`${mode} saves generated names and resends edited user messages with math responses`, async ({ page }) => {
+  const app = await fixture(async () => response([
+    { type: 'message', content: [{ type: 'output_text', text: String.raw`The result is \(3 + 3 = 6\).` }] },
+  ]));
+  const titles = [];
+  await page.route('**/api/title', async route => {
+    titles.push(route.request().postDataJSON());
+    await route.fulfill({ json: { title: 'Arithmetic Review', usage: { output_tokens: 3 } } });
+  });
+  try {
+    await page.goto(app.url);
+    await expect(page.locator('#mode-switch')).toBeVisible();
+    await page.locator(`#mode-switch label:has(input[value="${mode}"])`).click();
+    await page.getByRole('textbox', { name: 'Message', exact: true }).fill('Calculate 2 + 2.');
+    await page.locator('#send').click();
+    await expect(page.locator('#chat-title')).toHaveText('Arithmetic Review');
+    await expect(page.locator('article .katex')).toHaveCount(1);
+    await page.locator('.msg-user').first().getByRole('button', { name: 'Edit your message' }).click();
+    await page.getByRole('textbox', { name: 'Message', exact: true }).fill('Calculate 3 + 3.');
+    await page.locator('#send').click();
+    await expect(page.locator('.msg-user')).toHaveCount(2);
+    await expect(page.locator('#send')).toBeEnabled();
+    await expect(page.locator('#message-edit')).toBeHidden();
+    const id = app.service.list()[0].conversation_id;
+    const saved = app.service.view(id);
+    expect(saved.title).toBe('Arithmetic Review');
+    expect(saved.messages[2].revises_message_id).toBe(saved.messages[0].message_id);
+    expect(saved.messages[0].content).toBe('Calculate 2 + 2.');
+    await page.reload();
+    await expect(page.locator('#chat-title')).toHaveText('Arithmetic Review');
+    await expect(page.locator('.msg-user')).toHaveCount(2);
+    expect(titles).toHaveLength(1);
+  } finally { await app.close(); }
+});
+
 test("Workspace panel edits documents, source copies, context and state without inference", async ({
   page,
 }, testInfo) => {
@@ -199,7 +234,9 @@ test("Workspace panel edits documents, source copies, context and state without 
     await page.locator("#editor-close").click();
     await expect(page.locator("#workspace-editor")).toBeHidden();
     await page.locator("#context-watch").click();
-    await page.locator('#garden-nodes [role="button"]').first().click();
+    // Keyboard activation avoids overlapping decorative SVG auras intercepting clicks.
+    await page.locator('#garden-nodes [role="button"]').first().focus();
+    await page.locator('#garden-nodes [role="button"]').first().press('Enter');
     await expect(page.locator("#workspace-editor")).toBeVisible();
     await expect(page.locator("#editor-document")).toBeVisible();
     await expect(page.locator("#context-garden")).toBeHidden();

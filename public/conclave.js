@@ -181,6 +181,8 @@
         message.role === "user" ? "You" : message.provider,
         messageText(message),
         message.model || "",
+        false,
+        message,
       );
       if (message.role === "assistant") renderReply(element, message.content);
       if (message.answer_failed) {
@@ -198,6 +200,7 @@
   }
 
   function apply(view) {
+    if (conversation.conversation_id !== view.conversation_id) finishMessageEdit();
     latestView = view;
     window.workspaceEditor?.adopt(view);
     agent = view.agent || null;
@@ -219,6 +222,8 @@
       schema_version: 1,
       conversation_id: view.conversation_id,
       created_at: view.created_at,
+      title: view.title,
+      title_generated: view.title_generated,
       attachments: view.attachments,
       context_layer: {
         schema_version: 1,
@@ -371,6 +376,7 @@
       field.disabled = value || !field.options.length;
     });
     controls();
+    if (!value) void autoNameConversation();
   }
 
   async function driveAgent() {
@@ -425,11 +431,13 @@
         output: Number($("#agent-output").value),
       };
       await ensure();
-      const user = messageRecord({ role: "user", content });
+      const user = messageRecord({ role: "user", content,
+        ...(editingMessage ? { revises_message_id: editingMessage.message_id } : {}) });
       apply(
         await request("agent_start", {
           conversation_id: currentId(),
           message_id: user.message_id,
+          revises_message_id: user.revises_message_id,
           content:
             content || "Use the attached document as the agent objective.",
           attachments: attachment ? [attachment] : [],
@@ -442,6 +450,7 @@
         }),
       );
       $("textarea").value = "";
+      finishMessageEdit();
       attachment = null;
       $("#attachment").hidden = true;
     } catch (error) {
@@ -525,6 +534,7 @@
         role: "user",
         content,
         attachment_ids: attachment ? [attachment.attachment_id] : [],
+        ...(editingMessage ? { revises_message_id: editingMessage.message_id } : {}),
       });
       const documents = attachment ? [attachment] : [];
       submitted = {
@@ -535,7 +545,7 @@
       if (attachment) conversation.attachments.push(attachment);
       messages.push(user);
       saveChat();
-      add("You", messageText(user));
+      add("You", messageText(user), '', false, user);
       add(recipient.name, "Thinking…", model);
       $("textarea").value = "";
       attachment = null;
@@ -545,11 +555,13 @@
       const view = await request("ask", {
         conversation_id: currentId(),
         message_id: user.message_id,
+        revises_message_id: user.revises_message_id,
         content,
         attachments: documents,
         settings,
       });
       apply(view);
+      finishMessageEdit();
       $("#status").textContent = "Ready · context saved";
     } catch (error) {
       if (currentId()) {
@@ -663,6 +675,16 @@
   };
 
   window.contextLayer = {
+    name: async (id, result) => {
+      const view = await request('conversation_name', { conversation_id: id, ...result });
+      if (currentId() === id) {
+        conversation.title = view.title;
+        conversation.title_generated = view.title_generated;
+        if (latestView) { latestView.title = view.title; latestView.title_generated = view.title_generated; }
+        saveChat();
+      }
+      await refreshList();
+    },
     editorView: () => latestView,
     refreshView: () => request('view'),
     saveEdit: async (action, input) => {

@@ -67,6 +67,35 @@ let targets = ["GPT"],
   busy = false,
   attachment = null,
   readingFile = false;
+let editingMessage = null, editReturnDraft = null;
+function refreshAttachment() {
+  $('#attachment').hidden = !attachment;
+  if (attachment) $('#filename').textContent = attachment.name;
+}
+function finishMessageEdit(restore = false) {
+  if (restore && editReturnDraft) {
+    $('textarea').value = editReturnDraft.content;
+    attachment = editReturnDraft.attachment;
+    refreshAttachment();
+    $('textarea').dispatchEvent(new Event('input'));
+  }
+  editingMessage = null;
+  editReturnDraft = null;
+  $('#message-edit').hidden = true;
+}
+function editMessage(message) {
+  if (busy || window.contextLayer?.editorView?.()?.agent?.status === 'running') return;
+  if (!editingMessage) editReturnDraft = { content: $('textarea').value, attachment };
+  editingMessage = message;
+  $('textarea').value = message.content;
+  const original = conversation.attachments.find(a => a.attachment_id === message.attachment_ids?.[0]);
+  attachment = original ? { ...original, attachment_id: uid('att'), copied_from_attachment_id: original.attachment_id } : null;
+  refreshAttachment();
+  $('#message-edit').hidden = false;
+  $('textarea').dispatchEvent(new Event('input'));
+  $('textarea').focus();
+}
+$('#cancel-message-edit').onclick = () => finishMessageEdit(true);
 let preferences = {};
 try {
   preferences =
@@ -163,7 +192,8 @@ function renderReply(element, text) {
   }
   const follow = nearBottom();
   element.className = "content markdown";
-  element.innerHTML = DOMPurify.sanitize(marked.parse(text, { gfm: true }), {
+  const math = window.converseMath?.parse(text);
+  element.innerHTML = DOMPurify.sanitize(math?.html || marked.parse(text, { gfm: true }), {
     ALLOWED_TAGS: [
       "p",
       "br",
@@ -191,6 +221,7 @@ function renderReply(element, text) {
       "td",
       "a",
       "input",
+      "span",
     ],
     ALLOWED_ATTR: [
       "href",
@@ -200,9 +231,11 @@ function renderReply(element, text) {
       "type",
       "checked",
       "disabled",
+      "data-converse-math",
     ],
     ALLOW_DATA_ATTR: false,
   });
+  if (math) window.converseMath.render(element, math.formulas);
   for (const link of element.querySelectorAll("a")) {
     link.target = "_blank";
     link.rel = "noopener noreferrer";
@@ -260,7 +293,7 @@ function showText(element, text) {
   element.textContent = body;
   element.append(...cards);
 }
-function add(who, text, model = "", error = false) {
+function add(who, text, model = "", error = false, message = null) {
   $("#empty")?.remove();
   const user = who === "You";
   const a = document.createElement("article"),
@@ -290,16 +323,25 @@ function add(who, text, model = "", error = false) {
     bubble.append(p);
     a.append(head, bubble);
   } else a.append(head, p);
-  if (model) {
+  if (model || (user && message)) {
     const actions = document.createElement("div");
     actions.className = "msg-actions";
     actions.append(
       copyButton(
-        "copy-response",
-        "Copy " + who + " response",
-        () => p.rawMarkdown ?? p.textContent,
+        user ? "copy-message" : "copy-response",
+        user ? "Copy your message" : "Copy " + who + " response",
+        () => user ? message.content : p.rawMarkdown ?? p.textContent,
       ),
     );
+    if (user) {
+      const edit = document.createElement('button');
+      edit.type = 'button';
+      edit.className = 'edit-message';
+      edit.textContent = 'Edit';
+      edit.setAttribute('aria-label', 'Edit your message');
+      edit.onclick = () => editMessage(message);
+      actions.append(edit);
+    }
     a.append(actions);
   }
   $("#chat").append(a);
@@ -443,11 +485,13 @@ $("#composer").onsubmit = async (e) => {
     content: text,
     mentions: [...new Set(mentions)].map((n) => n.toLowerCase()),
     attachment_ids: attachment ? [attachment.attachment_id] : [],
+    ...(editingMessage ? { revises_message_id: editingMessage.message_id } : {}),
   });
   if (attachment) conversation.attachments.push(attachment);
   messages.push(userMessage);
   saveChat();
-  add("You", messageText(userMessage));
+  add("You", messageText(userMessage), '', false, userMessage);
+  finishMessageEdit();
   $("textarea").value = "";
   attachment = null;
   $("#attachment").hidden = true;
@@ -456,7 +500,7 @@ $("#composer").onsubmit = async (e) => {
   $("#status").textContent = "Waiting for " + targets.join(", ") + "…";
   const snapshot = messages
     .filter((m) => m.status !== "failed")
-    .map((m) => ({ ...m, content: messageText(m), invocation: undefined }));
+    .map((m) => ({ ...m, content: (m.revises_message_id ? `[Application metadata: revision of message ${m.revises_message_id}]\n` : '') + messageText(m), invocation: undefined }));
   const results = await Promise.all(
     targets.map(async (provider) => {
       const model = fields[provider].value.trim(),
@@ -564,6 +608,7 @@ $("#composer").onsubmit = async (e) => {
   $("#send").disabled = false;
   Object.values(fields).forEach((f) => (f.disabled = !f.options.length));
   $("#status").textContent = "Ready";
+  void autoNameConversation();
   if (window.matchMedia("(pointer:fine)").matches) $("textarea").focus();
 };
 $("textarea").onkeydown = (e) => {
@@ -640,7 +685,42 @@ function saveChat() {
       "Device storage is full. Export to save your chat.";
   }
 }
+
+const titleRequests = new Map();
+async function autoNameConversation() {
+  if (busy || conversation.title_generated || window.contextLayer?.editorView?.()?.agent?.status === 'running') return;
+  const first = messages.find(m => m.role === 'user');
+  const assistant = messages.find(m => m.role === 'assistant' && m.status !== 'failed');
+  if (!first || !assistant) return;
+  const id = conversation.conversation_id, server = !!conversation.context_layer;
+  if (!titleRequests.has(id)) {
+    titleRequests.set(id, (async () => {
+      try {
+        const response = await fetch('/api/title', { method: 'POST', signal: AbortSignal.timeout(35000), headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ provider: assistant.provider, model: assistant.invocation?.requested_model || assistant.model,
+            content: (first.content || 'Discuss the attached document: ' + (conversation.attachments[0]?.name || 'document')).slice(0, 4000) }) });
+        if (!response.ok) return null;
+        return await response.json();
+      } catch { return null; }
+    })());
+  }
+  const result = await titleRequests.get(id);
+  if (!result?.title) return;
+  try {
+    if (server) {
+      // A later turn may have started while naming; save the cached result when idle.
+      if (busy) return;
+      await window.contextLayer.name(id, result);
+    } else {
+      const update = record => ({ ...record, title: result.title, title_generated: true, title_generation: result });
+      if (conversation.conversation_id === id) { conversation = update(conversation); saveChat(); }
+      else writeArchive(readArchive().map(record => record.conversation_id === id ? update(record) : record));
+    }
+    window.converseSync?.();
+  } catch { /* Keep the first-message fallback when naming/storage is unavailable. */ }
+}
 function loadRecord(saved) {
+  finishMessageEdit();
   const rows = Array.isArray(saved)
     ? saved
     : saved?.schema_version === 1
@@ -667,6 +747,8 @@ function loadRecord(saved) {
         m.role === "user" ? "You" : m.provider,
         messageText(m),
         m.model || "",
+        false,
+        m,
       );
       if (m.status === "failed") {
         p.className = "error";
@@ -802,6 +884,10 @@ $("#new-chat").onclick = () => {
     attachments: [],
   };
   delete conversation.context_layer;
+  delete conversation.title;
+  delete conversation.title_generated;
+  delete conversation.title_generation;
+  finishMessageEdit();
   saveChat();
   targets = ["GPT"];
   attachment = null;

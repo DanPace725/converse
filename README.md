@@ -10,9 +10,17 @@ Requires Node.js 22.13+ (Node 24 on Vercel). Run `npm install`. Set provider key
 
 New chats use the context layer when the server supports it. Pick **Chat**, **Context** or **Agent** in the mode switch above the composer; the badge next to the chat title shows the current mode and where it is saved. Choose **GPT** or **Claude** in the recipient chips and select its model in **Models**, or type **@GPT** or **@Claude** to override the recipient for one message. Context and Agent modes use one assistant per turn; you can switch assistants within the same saved conversation. The ⚙ settings button opens the assistant selector, reasoning, Jev and limits. GPT exposes reasoning effort; Claude uses its default reasoning and the GPT effort control is disabled. Reopen saved context chats from the sidebar, open **Workspace** for documents/context/state, or watch the context garden. Replies appear after the layered answer completes. Provider keys stay on the server; Claude requires `ANTHROPIC_API_KEY` on the local or hosted server.
 
+Conclave describes the context-management method; each assistant retains its selected provider/model identity. In both Context and Agent modes, model inputs label the authors of source messages, including through summaries, state, offloading and retrieval. Earlier GPT replies remain attributed to GPT when Claude takes over, and vice versa. Older completed turns recover model labels from saved inference records; missing model information stays unknown. Original message text and saved snapshots are preserved. Offline switch/attribution checks: `node --test test/model-identity.test.js`.
+
 With `DATABASE_URL`, local and hosted requests use Neon. Context chats, originals, audit events and immutable snapshots survive reloads and new function instances. **Export JSON** downloads the canonical transcript plus the complete `context_layer` record, including source IDs, provider inputs/usage, tool exchanges, Jev decisions and failures. The browser keeps display data and the conversation ID; the audit stays on the server. Existing SQLite chats remain on this PC and are not automatically uploaded.
 
 Without `DATABASE_URL`, local development falls back to SQLite in `CONCLAVE_DATA_DIR` or the sibling `.conclave` folder and reads Windows User/Machine provider keys. Vercel always uses Neon. Ordinary multi-provider chats retain their browser-local storage and streaming behavior.
+
+New chats receive a short automatic title after the first completed reply, using one bounded request to the selected model with the first user message. Titles are saved on the device for Chat mode and on the server for Context/Agent modes. If naming is unavailable, the first-message title remains. Naming usage/provenance is retained separately from task-model usage.
+
+User messages have **Copy** and **Edit** controls. Edit restores the original text and attachment to the composer; Cancel restores your unsent draft. Sending the revision creates a new turn linked to the original, preserving previous messages, responses and source history in every mode.
+
+Responses render inline and display LaTeX using bundled [KaTeX](https://katex.org/docs/autorender.html): `$…$`, `$$…$$`, `\(…\)`, `\[…\]`, and equation/align/gather environments. Math is recognized before Markdown parsing, while code and currency text stay literal. Copy and exports retain the original Markdown/LaTeX. Fonts and rendering assets are included in the offline shell; unsupported/malformed equations remain readable.
 
 ## Workspace panel
 

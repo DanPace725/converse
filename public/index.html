@@ -12,6 +12,7 @@
     href="/icon-192.png"
   />
   <link rel="stylesheet" href="/styles.css" />
+  <link rel="stylesheet" href="/vendor/katex/katex.min.css" />
   <svg hidden aria-hidden="true">
     <symbol id="i-menu" viewBox="0 0 24 24">
       <path d="M4 7h16M4 12h16M4 17h16" />
@@ -211,6 +212,10 @@
         hidden
       />
       <div class="composer-box">
+        <div id="message-edit" class="message-edit-note" hidden>
+          <span>Editing an earlier message · sends as a new turn</span>
+          <button id="cancel-message-edit" type="button" class="link-button">Cancel</button>
+        </div>
         <div id="attachment" class="attachment-pill" hidden>
           <span class="file-icon" aria-hidden="true">MD</span
           ><span id="filename"></span>
@@ -560,6 +565,8 @@
   </aside>
   <script src="/vendor/marked.js"></script>
   <script src="/vendor/purify.js"></script>
+  <script src="/vendor/katex/katex.min.js"></script>
+  <script src="/math.js"></script>
   <script src="/app.js" defer></script>
   <script src="/context-garden.js" defer></script>
   <script src="/conclave.js" defer></script>

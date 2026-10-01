@@ -1,15 +1,117 @@
 import { test, expect } from "@playwright/test";
+import { mkdirSync } from 'node:fs';
 const catalog = {
   GPT: { models: ["gpt-6-astra", "gpt-4o-2024-11-20"] },
   Claude: { models: ["claude-sonnet-5"] },
   Gemini: { models: ["gemini-3.1-pro-preview"] },
 };
 test.beforeEach(async ({ page }) => {
+  await page.route('**/api/title', route => route.fulfill({ status: 503, json: { error: 'Naming unavailable in this fixture' } }));
   // These tests exercise the separate browser-local multi-provider path.
   await page.route("**/api/conclave?action=status", (r) =>
     r.fulfill({ json: { available: false } }),
   );
   await page.route("**/api/models", (r) => r.fulfill({ json: catalog }));
+});
+
+test('automatic names persist and user Copy/Edit resends a linked revision with its attachment', async ({ page }, testInfo) => {
+  let titles = 0;
+  const calls = [];
+  await page.addInitScript(() => Object.defineProperty(navigator, 'clipboard', {
+    value: { writeText: async text => { window.copiedText = text; } },
+  }));
+  await page.route('**/api/title', async route => {
+    titles++;
+    expect(route.request().postDataJSON().provider).toBe('GPT');
+    await route.fulfill({ json: { title: 'Project Memory Design' } });
+  });
+  await page.route('**/api/chat', async route => {
+    calls.push(route.request().postDataJSON());
+    await route.fulfill({ contentType: 'application/x-ndjson', body: JSON.stringify({ delta: 'A useful answer.' }) + '\n' + JSON.stringify({ done: true }) + '\n' });
+  });
+  await page.goto('/');
+  await page.locator('#markdown-file').setInputFiles({ name: 'notes.md', mimeType: 'text/markdown', buffer: Buffer.from('# Notes\nKeep the original.') });
+  await page.getByRole('textbox', { name: 'Message', exact: true }).fill('Help me design project memory.');
+  await page.locator('#send').click();
+  await expect(page.locator('#chat-title')).toHaveText('Project Memory Design');
+  await page.locator('.msg-user').first().getByRole('button', { name: 'Copy your message' }).click();
+  expect(await page.evaluate(() => window.copiedText)).toBe('Help me design project memory.');
+  await page.getByRole('textbox', { name: 'Message', exact: true }).fill('Unsent draft.');
+  await page.locator('.msg-user').first().getByRole('button', { name: 'Edit your message' }).click();
+  await expect(page.getByRole('textbox', { name: 'Message', exact: true })).toHaveValue('Help me design project memory.');
+  await expect(page.locator('#filename')).toHaveText('notes.md');
+  await page.locator('#cancel-message-edit').click();
+  await expect(page.getByRole('textbox', { name: 'Message', exact: true })).toHaveValue('Unsent draft.');
+  await expect(page.locator('#attachment')).toBeHidden();
+  await page.locator('.msg-user').first().getByRole('button', { name: 'Edit your message' }).click();
+  await page.getByRole('textbox', { name: 'Message', exact: true }).fill('Use three memory layers instead.');
+  await expect(page.locator('#send')).toBeInViewport({ ratio: 1 });
+  mkdirSync('.agent-smoke', { recursive: true });
+  await page.screenshot({ path: `.agent-smoke/message-edit-${testInfo.project.name}.png` });
+  await page.locator('#send').click();
+  await expect(page.locator('.msg-user')).toHaveCount(2);
+  await expect(page.locator('#message-edit')).toBeHidden();
+  await expect(page.locator('#send')).toBeEnabled();
+  expect(calls[1].messages.at(-1).content).toContain('Application metadata: revision of message');
+  const record = await page.evaluate(() => JSON.parse(localStorage.getItem('converse-chat')));
+  expect(record.messages[2].revises_message_id).toBe(record.messages[0].message_id);
+  expect(record.attachments).toHaveLength(2);
+  expect(record.attachments[0].content).toBe(record.attachments[1].content);
+  expect(record.attachments[0].attachment_id).not.toBe(record.attachments[1].attachment_id);
+  await page.reload();
+  await expect(page.locator('#chat-title')).toHaveText('Project Memory Design');
+  expect(titles).toBe(1);
+  await newChat(page);
+  await expect(page.locator('#chat-title')).toHaveText('New chat');
+});
+
+test('model math renders safely before Markdown consumes delimiters and preserves raw Copy/export', async ({ page }, testInfo) => {
+  const math = String.raw`Inline \(\frac{a_1}{b_2}\) and $x_i^2$.
+
+\[\begin{aligned}a&=b+c\\d&=e\end{aligned}\]
+
+$$\int_0^1 x^2\,dx = \frac{1}{3}$$
+
+Currency costs $5 and $10. Code stays literal: \`$z$\`.
+
+\`\`\`latex
+\[x_y\]
+\`\`\`
+
+Invalid math \(\frac{1}\) stays readable. Untrusted math \(\href{javascript:alert(1)}{click}\).
+<img src=x onerror="window.mathInjected=true">`;
+  // Remove template-literal escapes from the Markdown backticks only.
+  const responseText = math.replace(/\\`/g, '`');
+  const errors = [];
+  page.on('pageerror', error => errors.push(error.message));
+  await page.addInitScript(() => Object.defineProperty(navigator, 'clipboard', {
+    value: { writeText: async text => { window.copiedText = text; } },
+  }));
+  await page.route('**/api/chat', route => route.fulfill({ contentType: 'application/x-ndjson', body:
+    JSON.stringify({ delta: responseText.slice(0, 20) }) + '\n' + JSON.stringify({ delta: responseText.slice(20) }) + '\n' + JSON.stringify({ done: true }) + '\n' }));
+  await page.goto('/');
+  await page.getByRole('textbox', { name: 'Message', exact: true }).fill('Show some equations.');
+  await page.locator('#send').click();
+  await expect(page.locator('#send')).toBeEnabled();
+  const answer = page.locator('article[data-provider="gpt"]');
+  await expect(answer.locator('.katex')).toHaveCount(5);
+  await expect(answer.locator('.katex-display')).toHaveCount(2);
+  await expect(answer.locator('math')).toHaveCount(5);
+  await expect(answer.locator('pre code')).toHaveText(String.raw`\[x_y\]`);
+  await expect(answer.locator('code .katex')).toHaveCount(0);
+  await expect(answer).toContainText('Currency costs $5 and $10.');
+  await expect(answer.locator('.katex-error')).toHaveCount(1);
+  await expect(answer.locator('img, a[href^="javascript:"]')).toHaveCount(0);
+  expect(await page.evaluate(() => window.mathInjected)).toBeUndefined();
+  await answer.getByRole('button', { name: 'Copy GPT response' }).click();
+  expect(await page.evaluate(() => window.copiedText)).toBe(responseText);
+  expect(await page.evaluate(() => JSON.parse(localStorage.getItem('converse-chat')).messages.at(-1).content)).toBe(responseText);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  mkdirSync('.agent-smoke', { recursive: true });
+  await page.screenshot({ path: `.agent-smoke/math-${testInfo.project.name}.png` });
+  await page.reload();
+  await expect(page.locator('article[data-provider="gpt"] .katex')).toHaveCount(5);
+  expect(errors).toEqual([]);
 });
 async function openModels(page) {
   // Phones show models inside the chats drawer.
