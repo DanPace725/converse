@@ -4,7 +4,7 @@
     name="viewport"
     content="width=device-width,initial-scale=1,viewport-fit=cover"
   /><title>Converse</title
-  ><meta name="theme-color" content="#121416" /><meta
+  ><meta name="theme-color" content="#0f1113" /><meta
     name="apple-mobile-web-app-capable"
     content="yes"
   /><link rel="manifest" href="/manifest.webmanifest" /><link
@@ -12,20 +12,92 @@
     href="/icon-192.png"
   />
   <link rel="stylesheet" href="/styles.css" />
-  <aside aria-label="Model selection">
-    <details id="model-panel">
+  <svg hidden aria-hidden="true">
+    <symbol id="i-menu" viewBox="0 0 24 24">
+      <path d="M4 7h16M4 12h16M4 17h16" />
+    </symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" /></symbol>
+    <symbol id="i-more" viewBox="0 0 24 24">
+      <circle cx="5" cy="12" r="1.4" fill="currentColor" /><circle
+        cx="12"
+        cy="12"
+        r="1.4"
+        fill="currentColor"
+      /><circle cx="19" cy="12" r="1.4" fill="currentColor" />
+    </symbol>
+    <symbol id="i-clip" viewBox="0 0 24 24">
+      <path
+        d="M20.5 11.5 12.4 19.6a5 5 0 0 1-7.1-7.1l8.5-8.5a3.3 3.3 0 0 1 4.7 4.7l-8.5 8.5a1.7 1.7 0 0 1-2.4-2.4l7.8-7.8"
+      />
+    </symbol>
+    <symbol id="i-tune" viewBox="0 0 24 24">
+      <path
+        d="M4 7h9M17 7h3M4 17h3M11 17h9M15 5v4M9 15v4"
+      />
+    </symbol>
+    <symbol id="i-garden" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="3" /><ellipse
+        cx="12"
+        cy="12"
+        rx="9"
+        ry="6"
+      />
+    </symbol>
+    <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6" /></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18" /></symbol>
+    <symbol id="i-sidebar" viewBox="0 0 24 24">
+      <rect x="3.5" y="4.5" width="17" height="15" rx="2.5" /><path d="M9.5 4.5v15" />
+    </symbol>
+  </svg>
+  <div id="scrim" hidden></div>
+  <nav id="sidebar" aria-label="Chats and models">
+    <div class="sidebar-head">
+      <span class="brand"
+        ><img src="/icon-192.png" alt="" width="24" height="24" />Converse</span
+      >
+      <button
+        type="button"
+        id="sidebar-close"
+        class="icon-button"
+        aria-label="Close chats"
+      >
+        <svg><use href="#i-close" /></svg>
+      </button>
+    </div>
+    <button type="button" id="new-chat" class="new-chat">
+      <svg aria-hidden="true"><use href="#i-plus" /></svg>New chat
+    </button>
+    <input
+      id="chat-search"
+      type="search"
+      placeholder="Search chats"
+      aria-label="Search chats"
+      autocomplete="off"
+    />
+    <div class="chat-lists">
+      <section id="local-section">
+        <h2>On this device</h2>
+        <ul id="local-chats" class="chat-list"></ul>
+      </section>
+      <section id="server-section" hidden>
+        <h2>Saved on server</h2>
+        <ul id="server-chats" class="chat-list"></ul>
+      </section>
+      <p id="no-chats" class="note">Your chats will appear here.</p>
+    </div>
+    <details id="model-panel" open>
       <summary>Models</summary>
       <div class="model-panel-body">
         <section class="models" aria-label="Models"></section>
         <p class="note">
-          Five recent models, plus GPT-4o and Gemini 3.1 Pro. Gemini is ordered
-          by version.
+          Five recent models per provider, plus GPT-4o and Gemini 3.1 Pro.
         </p>
       </div>
     </details>
-  </aside>
+  </nav>
   <dialog id="unlock">
     <form id="unlock-form">
+      <img src="/icon-192.png" alt="" width="40" height="40" />
       <h2>Open Converse</h2>
       <p class="note">Enter your app access password.</p>
       <input
@@ -39,146 +111,86 @@
     </form>
   </dialog>
   <main>
-    <header>
-      <h1>Converse</h1>
-      <button type="button" id="new-chat">New chat</button
-      ><button type="button" id="install" hidden>Install app</button>
+    <header class="topbar">
+      <button
+        type="button"
+        id="menu"
+        class="icon-button"
+        aria-label="Show chats"
+        aria-controls="sidebar"
+        aria-expanded="false"
+      >
+        <svg><use href="#i-sidebar" /></svg>
+      </button>
+      <div class="chat-heading">
+        <h1 id="chat-title">New chat</h1>
+        <span id="mode-badge" class="mode-badge">Chat · saved on this device</span>
+      </div>
+      <button
+        id="context-watch"
+        class="ghost-button"
+        type="button"
+        hidden
+        aria-expanded="false"
+        aria-controls="context-garden"
+        title="Watch the context garden"
+      >
+        <svg aria-hidden="true"><use href="#i-garden" /></svg
+        ><span>Context garden</span>
+      </button>
+      <details id="more-menu" class="menu">
+        <summary class="icon-button" aria-label="More actions">
+          <svg><use href="#i-more" /></svg>
+        </summary>
+        <div class="menu-items">
+          <button id="export" type="button" disabled>Export Markdown</button
+          ><button id="export-json" type="button">Export JSON</button
+          ><button type="button" id="install" hidden>Install app</button>
+        </div>
+      </details>
     </header>
-    <p class="note">
-      Use @GPT, @Claude or @Gemini. Mention several to hear from each. Without a
-      mention, the last selection replies. Each sees the full chat with speaker
-      and model tags. Context mode uses a smaller working context with saved
-      source history.
-    </p>
     <div id="chat" aria-live="polite">
-      <div id="empty">One conversation. Your choice of models.</div>
+      <div id="empty"></div>
     </div>
+    <button type="button" id="jump" hidden aria-label="Jump to latest message">
+      <svg aria-hidden="true"><use href="#i-down" /></svg>Latest
+    </button>
     <form id="composer">
-      <div id="agent-mode-bar" class="mode-bar" hidden>
-        <label class="check-label"
-          ><input id="agent-mode" type="checkbox" /> Agent Mode</label
-        >
+      <div class="composer-top">
+        <div id="mode-switch" role="radiogroup" aria-label="Chat mode" hidden>
+          <label
+            ><input type="radio" name="mode" value="chat" checked /><span
+              >Chat</span
+            ></label
+          ><label
+            ><input type="radio" name="mode" value="context" /><span
+              >Context</span
+            ></label
+          ><label
+            ><input type="radio" name="mode" value="agent" /><span
+              >Agent</span
+            ></label
+          >
+          <span hidden
+            ><input id="context-mode" type="checkbox" /><input
+              id="agent-mode"
+              type="checkbox"
+          /></span>
+        </div>
+        <div id="recipients" aria-label="Who replies"></div>
+        <button type="button" id="models-link" class="link-button">
+          Models
+        </button>
+      </div>
+      <div id="agent-mode-bar" class="run-strip" hidden>
         <span id="run-progress" role="status" aria-live="polite">Ready</span>
+        <details id="workspace-panel" hidden>
+          <summary id="workspace-label">Workspace files</summary>
+          <div id="workspace-downloads"></div>
+        </details>
         <button id="agent-resume" type="button" hidden>Resume run</button>
         <button id="agent-stop" type="button" hidden>Stop</button>
       </div>
-      <details id="workspace-panel" hidden>
-        <summary id="workspace-label">Workspace files</summary>
-        <div id="workspace-downloads"></div>
-      </details>
-      <details id="context-panel" hidden>
-        <summary>Context layer</summary>
-        <div class="context-controls">
-          <label class="check-label"
-            ><input id="context-mode" type="checkbox" /> Use context
-            layer</label
-          >
-          <label
-            >Saved context chat<select id="context-chat">
-              <option value="">Choose a saved chat…</option>
-            </select></label
-          >
-          <label
-            >Reasoning<select id="context-reasoning">
-              <option value="none">None</option>
-              <option value="low" selected>Low</option>
-              <option value="medium">Medium</option>
-              <option value="high">High</option>
-            </select></label
-          >
-          <label class="check-label"
-            ><input id="context-jev" type="checkbox" checked /> Jev
-            selection</label
-          >
-        </div>
-        <p class="note" id="context-note">
-          GPT replies use saved context. JSON export includes the full audit
-          record.
-        </p>
-        <p class="note" id="context-stats"></p>
-        <details id="agent-panel">
-          <summary>Agent limits and audit</summary>
-          <p class="note">
-            Use your message as an objective. The agent can calculate,
-            read/write saved workspace text, retrieve history and manage
-            context. Keep this tab open while it runs.
-          </p>
-          <div class="context-controls">
-            <label
-              >Minutes<input
-                id="agent-minutes"
-                type="number"
-                min="1"
-                max="60"
-                value="10"
-            /></label>
-            <label
-              >Max steps<input
-                id="agent-steps"
-                type="number"
-                min="1"
-                max="200"
-                value="40"
-            /></label>
-            <label
-              >Context budget for chat and agent (estimated units)<input
-                id="agent-budget"
-                type="number"
-                min="64000"
-                max="512000"
-                step="1000"
-                value="256000"
-            /></label>
-            <label
-              >Output tokens per chat or agent call<input
-                id="agent-output"
-                type="number"
-                min="1024"
-                max="32768"
-                step="1024"
-                value="16384"
-            /></label>
-            <label
-              >Total token limit<input
-                id="agent-tokens"
-                type="number"
-                min="1000"
-                max="2000000"
-                step="1000"
-                value="250000"
-            /></label>
-          </div>
-
-          <p class="note" id="agent-status">No agent run yet.</p>
-          <pre id="agent-files" hidden></pre>
-        </details>
-        <details id="context-inspect">
-          <summary>Working context and remembered state</summary>
-          <pre id="context-preview">Start or open a context chat.</pre>
-          <div class="remember-controls">
-            <input
-              id="remember-key"
-              aria-label="State key"
-              placeholder="budget.total"
-              maxlength="80"
-            />
-            <select id="remember-type" aria-label="State type">
-              <option value="constraint">Constraint</option>
-              <option value="objective">Objective</option>
-              <option value="decision">Decision</option>
-              <option value="question">Question</option>
-              <option value="evidence">Evidence</option>
-            </select>
-            <input
-              id="remember-text"
-              aria-label="Remembered text"
-              placeholder="Exact detail to remember"
-              maxlength="2000"
-            />
-            <button id="remember-state" type="button">Remember</button>
-          </div>
-        </details>
-      </details>
       <input
         id="markdown-file"
         type="file"
@@ -186,33 +198,161 @@
         aria-label="Choose Markdown file"
         hidden
       />
-      <div id="attachment" class="note" hidden>
-        <span id="filename"></span>
-        <button id="remove-file" type="button">Remove</button>
+      <div class="composer-box">
+        <div id="attachment" class="attachment-pill" hidden>
+          <span class="file-icon" aria-hidden="true">MD</span
+          ><span id="filename"></span>
+          <button id="remove-file" type="button" aria-label="Remove attachment">
+            <svg aria-hidden="true"><use href="#i-close" /></svg>
+          </button>
+        </div>
+        <textarea
+          aria-label="Message"
+          placeholder="Message GPT…"
+          rows="1"
+        ></textarea>
+        <div class="composer-actions">
+          <button
+            id="upload"
+            type="button"
+            class="icon-button"
+            aria-label="Attach a Markdown file"
+            title="Attach a Markdown file (up to 200 KB)"
+          >
+            <svg><use href="#i-clip" /></svg>
+          </button>
+          <details id="context-panel" hidden>
+            <summary
+              class="icon-button"
+              aria-label="Context and agent settings"
+              title="Context and agent settings"
+            >
+              <svg><use href="#i-tune" /></svg>
+            </summary>
+            <div class="sheet" role="group" aria-label="Context and agent settings">
+              <div class="sheet-head">
+                <h2>Settings</h2>
+                <span class="note">Used by Context and Agent modes</span>
+                <button
+                  type="button"
+                  id="sheet-close"
+                  class="icon-button"
+                  aria-label="Close settings"
+                >
+                  <svg><use href="#i-close" /></svg>
+                </button>
+              </div>
+              <label hidden
+                >Saved context chat<select id="context-chat">
+                  <option value="">Choose a saved chat…</option>
+                </select></label
+              >
+              <div class="context-controls">
+                <label
+                  >Reasoning<select id="context-reasoning">
+                    <option value="none">None</option>
+                    <option value="low" selected>Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                  </select></label
+                >
+                <label class="check-label"
+                  ><input id="context-jev" type="checkbox" checked /> Jev
+                  selection</label
+                >
+              </div>
+              <p class="note" id="context-note">
+                GPT replies use saved context. JSON export includes the full
+                audit record.
+              </p>
+              <p class="note" id="context-stats"></p>
+              <details id="agent-panel">
+                <summary>Limits and agent audit</summary>
+                <p class="note">
+                  In Agent mode your message is the objective. The agent can
+                  calculate, read/write saved workspace text, retrieve history
+                  and manage context. Keep this tab open while it runs.
+                </p>
+                <div class="context-controls">
+                  <label
+                    >Minutes<input
+                      id="agent-minutes"
+                      type="number"
+                      min="1"
+                      max="60"
+                      value="10"
+                  /></label>
+                  <label
+                    >Max steps<input
+                      id="agent-steps"
+                      type="number"
+                      min="1"
+                      max="200"
+                      value="40"
+                  /></label>
+                  <label
+                    >Context budget (est. units)<input
+                      id="agent-budget"
+                      type="number"
+                      min="64000"
+                      max="512000"
+                      step="1000"
+                      value="256000"
+                  /></label>
+                  <label
+                    >Output tokens per call<input
+                      id="agent-output"
+                      type="number"
+                      min="1024"
+                      max="32768"
+                      step="1024"
+                      value="16384"
+                  /></label>
+                  <label
+                    >Total token limit<input
+                      id="agent-tokens"
+                      type="number"
+                      min="1000"
+                      max="2000000"
+                      step="1000"
+                      value="250000"
+                  /></label>
+                </div>
+                <p class="note" id="agent-status">No agent run yet.</p>
+                <pre id="agent-files" hidden></pre>
+              </details>
+              <details id="context-inspect">
+                <summary>Working context and remembered state</summary>
+                <pre id="context-preview">Start or open a context chat.</pre>
+                <div class="remember-controls">
+                  <input
+                    id="remember-key"
+                    aria-label="State key"
+                    placeholder="budget.total"
+                    maxlength="80"
+                  />
+                  <select id="remember-type" aria-label="State type">
+                    <option value="constraint">Constraint</option>
+                    <option value="objective">Objective</option>
+                    <option value="decision">Decision</option>
+                    <option value="question">Question</option>
+                    <option value="evidence">Evidence</option>
+                  </select>
+                  <input
+                    id="remember-text"
+                    aria-label="Remembered text"
+                    placeholder="Exact detail to remember"
+                    maxlength="2000"
+                  />
+                  <button id="remember-state" type="button">Remember</button>
+                </div>
+              </details>
+            </div>
+          </details>
+          <span id="status" role="status">Loading models…</span
+          ><button id="send" disabled>Send</button>
+        </div>
       </div>
-      <textarea
-        aria-label="Message"
-        placeholder="@GPT Ask anything…"
-      ></textarea>
-      <footer>
-        <button id="upload" type="button">Upload Markdown</button
-        ><button id="export" type="button" disabled>Export chat to MD</button
-        ><button id="export-json" type="button">Export JSON</button
-        ><button
-          id="context-watch"
-          type="button"
-          hidden
-          aria-expanded="false"
-          aria-controls="context-garden"
-        >
-          Watch context</button
-        ><span id="status" role="status">Loading models…</span
-        ><button id="send" disabled>Send</button>
-      </footer>
-      <p class="note">
-        Context chats are saved on the server. Other chats stay on this device.
-        Export JSON to keep a copy.
-      </p>
     </form>
   </main>
   <aside id="context-garden" hidden aria-label="Context garden">
@@ -310,4 +450,5 @@
   <script src="/app.js" defer></script>
   <script src="/context-garden.js" defer></script>
   <script src="/conclave.js" defer></script>
+  <script src="/ui.js" defer></script>
 </html>

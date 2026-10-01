@@ -8,7 +8,7 @@ Requires Node.js 22.13+ (Node 24 on Vercel). Run `npm install`. Set provider key
 
 ## Context layer
 
-New chats use the context layer when the server supports it. Open **Context layer** above the composer to change its settings. Use the selected GPT model with reasoning and native Jev selection enabled by default, reopen saved context chats, inspect working context, remember a named state entry, or watch the context garden. Replies appear after the layered answer completes. Provider keys stay on the server.
+New chats use the context layer when the server supports it. Pick **Chat**, **Context** or **Agent** in the mode switch above the composer; the badge next to the chat title shows the current mode and where it is saved. The ⚙ settings button opens reasoning, Jev, limits, working context and remembered state. Use the selected GPT model with reasoning and native Jev selection enabled by default, reopen saved context chats from the sidebar, inspect working context, remember a named state entry, or watch the context garden. Replies appear after the layered answer completes. Provider keys stay on the server.
 
 With `DATABASE_URL`, local and hosted requests use Neon. Context chats, originals, audit events and immutable snapshots survive reloads and new function instances. **Export JSON** downloads the canonical transcript plus the complete `context_layer` record, including source IDs, provider inputs/usage, tool exchanges, Jev decisions and failures. The browser keeps display data and the conversation ID; the audit stays on the server. Existing SQLite chats remain on this PC and are not automatically uploaded.
 
@@ -16,9 +16,9 @@ Without `DATABASE_URL`, local development falls back to SQLite in `CONCLAVE_DATA
 
 ## Agent proof of concept
 
-Turn on **Agent Mode** beside the composer, enter an objective, and press **Run agent** (the normal Send button). Turn it off to return to context chat. The selected GPT model continues making tool calls until it returns a final answer or reaches a limit. Start with: “Calculate 17 × 23, write the result to proof.md, read it back, then report what you verified.” You can attach one Markdown source document.
+Choose **Agent** in the mode switch, enter an objective, and press **Run agent** (the normal Send button). Switch back to **Context** to continue as a context chat. The selected GPT model continues making tool calls until it returns a final answer or reaches a limit. Start with: “Calculate 17 × 23, write the result to proof.md, read it back, then report what you verified.” You can attach one Markdown source document.
 
-Tools include arithmetic; listing, reading, writing and applying exact text patches in a saved **virtual text workspace**; and Conclave's existing history retrieval, context editing, offloading and structured state updates. Files live in the conversation's SQLite/Neon history, with previous versions preserved. They are not host filesystem paths. Both context chat and agent mode have these workspace tools. **Workspace files** beside the composer provides direct downloads; Export JSON contains full files, provider inputs, tool exchanges and run checkpoints. Workspace limits are 20 files, 100 KB per file and 500 KB total current text.
+Tools include arithmetic; listing, reading, writing and applying exact text patches in a saved **virtual text workspace**; and Conclave's existing history retrieval, context editing, offloading and structured state updates. Files live in the conversation's SQLite/Neon history, with previous versions preserved. They are not host filesystem paths. Both context chat and agent mode have these workspace tools. **Workspace files** in the run strip above the composer provides direct downloads; Export JSON contains full files, provider inputs, tool exchanges and run checkpoints. Workspace limits are 20 files, 100 KB per file and 500 KB total current text.
 
 Defaults: 10 minutes, 40 model steps, 256,000 context-budget units, 16,384 output tokens per call, and 250,000 total provider input/output tokens. All are adjustable in the panel. Context units are the engine's conservative UTF-8 byte proxy, not actual tokens or a promise of the model's context capacity. The total-token check reserves estimated input plus maximum output before each call and uses reported usage afterward; it can stop below the selected total. Missing usage stops the run. Provider failures and output exhaustion remain explicit failures; no automatic model substitution or paid retries.
 
@@ -56,15 +56,15 @@ On Android/desktop Chromium, use Install app when offered or the browser install
 
 ## Chat
 
-Use @GPT, @Claude or @Gemini; multiple mentions request parallel responses. Without mentions, previous recipients reply. Models see shared history with provider/model attribution. Five recent models appear per provider plus GPT-4o pinned to `gpt-4o-2024-11-20` and Gemini `gemini-3.1-pro-preview`. Gemini ordering uses versions, not release dates. Availability depends on provider access/quota.
+Toggle the GPT, Claude and Gemini chips above the composer, or type @GPT, @Claude or @Gemini; multiple recipients reply in parallel. Mentions in a message override the chips for that message, and the chips show who will reply. Models see shared history with provider/model attribution. Five recent models appear per provider plus GPT-4o pinned to `gpt-4o-2024-11-20` and Gemini `gemini-3.1-pro-preview`. Gemini ordering uses versions, not release dates. Availability depends on provider access/quota.
 
-Replies stream and render sanitized Markdown. Copy retains original Markdown. Upload one Markdown file up to 200 KB. Mentions inside attachments do not select recipients. Export is next to Send. Enter sends on desktop; on touch devices Enter inserts a new line. The current chat is saved in this browser's local storage, not synced to other devices. Do not use on shared devices for sensitive conversations. Failed partial replies are visible but excluded from history/export. Refreshing during a reply loses that unfinished reply.
+Replies stream and render sanitized Markdown. Copy retains original Markdown. Upload one Markdown file up to 200 KB. Mentions inside attachments do not select recipients. Export Markdown and Export JSON are in the ⋯ menu at the top right. Enter sends on desktop; on touch devices Enter inserts a new line. The current chat is saved in this browser's local storage, not synced to other devices. Do not use on shared devices for sensitive conversations. Failed partial replies are visible but excluded from history/export. Refreshing during a reply loses that unfinished reply.
 
 ## Development
 
 `npm test` runs offline API contract checks. `npm run check` checks JavaScript syntax. Core API adapters live in `lib/providers.js`, Vercel handlers in `api/`, UI in `public/`. Local dev invokes the same handlers. Vendored Marked 18.0.12 and DOMPurify 3.4.15 retain their upstream license headers. No deployment is performed by these scripts.
 
-Model selections persist on this device. New chat clears the conversation after confirmation. Streaming follows new text only while you are at the bottom. Expired sessions reopen the unlock dialog.
+Model selections persist on this device. New chat moves the current device chat to **On this device** in the sidebar (the 20 most recent are kept) instead of deleting it; reopen or delete chats there. Saved context chats are listed under **Saved on server**. Streaming follows new text only while you are at the bottom. Expired sessions reopen the unlock dialog.
 
 Install development tools with npm install. Run npm run test:browser for desktop and phone-sized Chromium checks using installed Microsoft Edge, including offline restore, Markdown safety, attachment routing, and session recovery. These emulate a phone viewport, not a physical iPhone. npm run format formats maintained source.
 

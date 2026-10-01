@@ -81,11 +81,10 @@ const final = response([
 ]);
 async function openAgent(page, url) {
   await page.goto(url);
-  await expect(page.locator("#context-panel")).toBeVisible();
-  await page.locator("#context-panel > summary").click();
-  await page.locator("#context-mode").check();
-  await page.locator("#agent-panel > summary").click();
-  await page.locator("#agent-mode").check();
+  await expect(page.locator("#mode-switch")).toBeVisible();
+  await page.getByRole("radio", { name: "Agent" }).check();
+  await expect(page.locator("#agent-mode")).toBeChecked();
+  await expect(page.locator("#send")).toHaveText("Run agent");
 }
 
 test("browser drives real HTTP/service/storage, renders artifacts and resumes after reload", async ({
@@ -141,6 +140,7 @@ test("browser drives real HTTP/service/storage, renders artifacts and resumes af
       fullPage: true,
     });
     const download = page.waitForEvent("download");
+    await page.locator("#more-menu > summary").click();
     await page.locator("#export-json").click();
     const record = JSON.parse(
       await readFile(await (await download).path(), "utf8"),
@@ -160,8 +160,6 @@ test("browser drives real HTTP/service/storage, renders artifacts and resumes af
       settings: { model: "fixture" },
     });
     await page.reload();
-    await page.locator("#context-panel > summary").click();
-    await page.locator("#agent-panel > summary").click();
     await expect(page.locator("#agent-resume")).toBeVisible();
     expect(calls).toBe(4);
     await page.locator("#agent-resume").click();
@@ -198,7 +196,6 @@ test("Stop waits for the current call and prevents further steps", async ({
     await page.getByLabel("Message", { exact: true }).fill("Keep calculating.");
     await page.locator("#send").click();
     await expect(page.locator("#agent-stop")).toBeEnabled();
-    await page.locator("#context-panel > summary").click();
     await expect(page.locator("#run-progress")).toContainText("Model working");
     await expect(page.locator("#context-garden")).toBeHidden();
     await page.locator("#agent-stop").click();
@@ -261,7 +258,8 @@ test("Agent Mode and normal Send share files, Jev defaults and budgets", async (
     await page.locator("#send").click();
     await expect(page.locator("#agent-status")).toContainText("completed");
     await expect(page.locator("#send")).toBeEnabled();
-    await page.locator("#agent-mode").uncheck();
+    await page.getByRole("radio", { name: "Context" }).check();
+    await expect(page.locator("#agent-mode")).not.toBeChecked();
     await expect(page.locator("#send")).toHaveText("Send");
     await page
       .getByLabel("Message", { exact: true })

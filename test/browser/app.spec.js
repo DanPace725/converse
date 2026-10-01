@@ -12,13 +12,19 @@ test.beforeEach(async ({ page }) => {
   await page.route("**/api/models", (r) => r.fulfill({ json: catalog }));
 });
 async function openModels(page) {
-  if (
-    !(await page
-      .locator("#model-panel")
-      .getAttribute("open")
-      .then((x) => x !== null))
-  )
-    await page.locator("#model-panel summary").click();
+  // Phones show models inside the chats drawer.
+  if (!(await page.locator("#model-panel").isVisible()))
+    await page.locator("#menu").click();
+  await expect(page.getByLabel("GPT model", { exact: true })).toBeVisible();
+}
+async function newChat(page) {
+  if (!(await page.locator("#new-chat").isVisible()))
+    await page.locator("#menu").click();
+  await page.locator("#new-chat").click();
+}
+async function openMenu(page) {
+  if ((await page.locator("#more-menu").getAttribute("open")) === null)
+    await page.locator("#more-menu > summary").click();
 }
 test("model selection survives reload and layout fits the viewport", async ({
   page,
@@ -38,8 +44,11 @@ test("model selection survives reload and layout fits the viewport", async ({
   await expect(page.getByLabel("GPT model", { exact: true })).toHaveValue(
     "gpt-4o-2024-11-20",
   );
-  await page.locator("#model-panel summary").click();
+  if (await page.locator("#sidebar-close").isVisible())
+    await page.locator("#sidebar-close").click();
   await expect(page.locator("#send")).toBeInViewport();
+  await expect(page.locator("#more-menu > summary")).toBeInViewport();
+  await openMenu(page);
   await expect(page.locator("#export")).toBeInViewport();
   expect(
     await page.evaluate(
@@ -84,10 +93,11 @@ test("Markdown response, attachment targeting, persistence, export and new chat"
   await page.reload();
   await expect(page.locator(".markdown strong")).toHaveText("Correct");
   const download = page.waitForEvent("download");
+  await openMenu(page);
   await page.locator("#export").click();
   expect((await download).suggestedFilename()).toMatch(/\.md$/);
   page.on("dialog", (d) => d.accept());
-  await page.locator("#new-chat").click();
+  await newChat(page);
   await expect(page.locator("#empty")).toBeVisible();
   await page.reload();
   await expect(page.locator("#empty")).toBeVisible();
@@ -198,6 +208,7 @@ test("record isolates nested attachments and preserves IDs across reload", async
     ),
   ).toEqual(record);
   const downloaded = page.waitForEvent("download");
+  await openMenu(page);
   await page.locator("#export-json").click();
   const stream = await (await downloaded).createReadStream();
   const chunks = [];
@@ -240,4 +251,49 @@ test("migration keeps unknown timestamps and failures survive reload", async ({
   );
   expect(saved.messages[0].message_id).toBe(old.messages[0].message_id);
   expect(saved.messages.at(-1).status).toBe("failed");
+});
+
+test("new chat keeps earlier device chats, recipients toggle and starters fill the composer", async ({
+  page,
+}) => {
+  let sent = [];
+  await page.route("**/api/chat", async (r) => {
+    sent.push(r.request().postDataJSON().provider);
+    await r.fulfill({
+      contentType: "application/x-ndjson",
+      body: '{"delta":"Hi"}\n{"done":true}\n',
+    });
+  });
+  await page.goto("/");
+  await expect(page.locator("#send")).toBeEnabled();
+  await expect(page.locator("#mode-switch")).toBeHidden();
+  await page.locator('.chip[data-name="Claude"]').click();
+  await expect(page.locator('.chip[data-name="Claude"]')).toHaveAttribute(
+    "aria-pressed",
+    "true",
+  );
+  await page.getByLabel("Message", { exact: true }).fill("First question");
+  await page.locator("#send").click();
+  await expect(page.locator("article.msg[data-provider]")).toHaveCount(2);
+  expect(sent.sort()).toEqual(["Claude", "GPT"]);
+  await expect(page.locator("#chat-title")).toHaveText("First question");
+  await newChat(page);
+  await expect(page.locator("#empty")).toBeVisible();
+  await page.locator("#empty .starters button").first().click();
+  await expect(page.getByLabel("Message", { exact: true })).not.toHaveValue("");
+  if (!(await page.locator("#local-chats").isVisible()))
+    await page.locator("#menu").click();
+  const earlier = page.locator("#local-chats .chat-item", {
+    hasText: "First question",
+  });
+  await expect(earlier).toBeVisible();
+  await earlier.click();
+  await expect(page.locator(".msg-user")).toContainText("First question");
+  await expect(page.locator("#chat-title")).toHaveText("First question");
+  await page.reload();
+  await expect(page.locator(".msg-user")).toContainText("First question");
+  await expect(page.locator('.chip[data-name="Claude"]')).toHaveAttribute(
+    "aria-pressed",
+    "true",
+  );
 });

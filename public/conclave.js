@@ -116,7 +116,7 @@
   function controls() {
     for (const input of panel.querySelectorAll("input, select, button"))
       input.disabled = busy;
-    jev.disabled = busy || !capabilities?.credentials.jev;
+    jev.disabled = busy || !capabilities?.credentials?.jev;
     $("#remember-state").disabled = busy || !currentId();
     $("#context-inspect").hidden = !enabled();
     $("#context-watch").hidden = !available || !enabled();
@@ -149,12 +149,7 @@
         element.parentNode.append(notice);
       }
     }
-    if (!messages.length) {
-      const empty = document.createElement("div");
-      empty.id = "empty";
-      empty.textContent = "One conversation. Your choice of models.";
-      $("#chat").append(empty);
-    }
+    if (!messages.length) showEmpty();
     $("#export").disabled = !messages.length;
     $("#export-json").disabled = busy;
     followBottom();
@@ -164,10 +159,10 @@
     agent = view.agent || null;
     const legacyAgent = agent && !agent.harness_version;
     $("#agent-budget").value = legacyAgent
-      ? capabilities.defaults.budget
+      ? capabilities?.defaults?.budget
       : view.settings.budget;
     $("#agent-output").value = legacyAgent
-      ? capabilities.defaults.output
+      ? capabilities?.defaults?.output
       : view.settings.output;
     if (agent) {
       $("#agent-minutes").value = agent.limits.duration_seconds / 60;
@@ -194,7 +189,7 @@
     // Version 1 forced Jev off in all agent runs; enable the new default when reopening those trials.
     jev.checked =
       (legacyAgent ? true : !!view.settings.jev) &&
-      !!capabilities?.credentials.jev;
+      !!capabilities?.credentials?.jev;
     if (
       [...fields.GPT.options].some(
         (option) => option.value === view.settings.model,
@@ -267,13 +262,15 @@
   async function refreshList() {
     const data = await request("list");
     saved.replaceChildren(new Option("Choose a saved chat…", ""));
-    for (const chat of data.conversations)
-      saved.add(
-        new Option(
-          chat.title + " · " + chat.conversation_id.slice(-8),
-          chat.conversation_id,
-        ),
+    for (const chat of data.conversations) {
+      const option = new Option(
+        chat.title + " · " + chat.conversation_id.slice(-8),
+        chat.conversation_id,
       );
+      option.dataset.title = chat.title;
+      option.dataset.time = chat.timestamp || "";
+      saved.add(option);
+    }
     saved.value = currentId() || "";
   }
 
@@ -288,7 +285,7 @@
       panel.hidden = false;
       $("#agent-mode-bar").hidden = false;
       if (!messages.length && !currentId()) toggle.checked = true;
-      if (!currentId()) jev.checked = capabilities.credentials.jev;
+      if (!currentId()) jev.checked = capabilities.credentials?.jev;
       await refreshList();
       if (currentId()) apply(await request("view"));
       controls();
@@ -376,7 +373,7 @@
     if (
       (!content && !attachment) ||
       !fields.GPT.value ||
-      !capabilities?.credentials.openai
+      !capabilities?.credentials?.openai
     ) {
       $("#status").textContent =
         "Enter an objective and choose an available GPT model.";
@@ -473,7 +470,7 @@
         "Context mode currently replies with GPT. Choose its model in Models.";
       return;
     }
-    if (!fields.GPT.value || !capabilities?.credentials.openai) {
+    if (!fields.GPT.value || !capabilities?.credentials?.openai) {
       $("#status").textContent =
         "Choose an available GPT model; the server needs OPENAI_API_KEY.";
       return;
@@ -635,9 +632,9 @@
     if (prior === conversation.conversation_id) return;
     agent = null;
     toggle.checked = available;
-    jev.checked = !!capabilities?.credentials.jev;
-    $("#agent-budget").value = capabilities?.defaults.budget || 256000;
-    $("#agent-output").value = capabilities?.defaults.output || 16384;
+    jev.checked = !!capabilities?.credentials?.jev;
+    $("#agent-budget").value = capabilities?.defaults?.budget || 256000;
+    $("#agent-output").value = capabilities?.defaults?.output || 16384;
     $("#workspace-panel").hidden = true;
     watchProgress(false);
     $("#agent-status").textContent = "No agent run yet.";

@@ -94,13 +94,6 @@ function followBottom() {
   c.scrollTop = c.scrollHeight;
 }
 
-$("#model-panel").open = window.matchMedia("(min-width:1200px)").matches;
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" && $("#model-panel").open) {
-    $("#model-panel").open = false;
-    $("#model-panel summary").focus();
-  }
-});
 for (const name of names) {
   const label = document.createElement("label");
   label.textContent = "@" + name;
@@ -213,40 +206,165 @@ function renderReply(element, text) {
     input.type = "checkbox";
     input.disabled = true;
   }
+  for (const pre of element.querySelectorAll("pre")) {
+    const code = pre.querySelector("code") || pre;
+    pre.append(copyButton("copy-code", "Copy code", () => code.textContent));
+  }
   if (follow) followBottom();
+}
+function copyButton(className, label, text) {
+  const copy = document.createElement("button");
+  copy.type = "button";
+  copy.className = className;
+  copy.textContent = "Copy";
+  copy.setAttribute("aria-label", label);
+  copy.onclick = async () => {
+    try {
+      await navigator.clipboard.writeText(text());
+      copy.textContent = "Copied";
+    } catch {
+      copy.textContent = "Copy failed";
+    }
+    setTimeout(() => (copy.textContent = "Copy"), 1800);
+  };
+  return copy;
+}
+// Display-only: attachments become collapsible cards; records keep the full text.
+const attachmentPattern =
+  /\n\n:::attachment (\{.*\})\n(`{3,})text\n([\s\S]*?)\n\2\n:::end-attachment/g;
+function showText(element, text) {
+  const cards = [];
+  const body = text.replace(attachmentPattern, (_, meta, fence, content) => {
+    let name = "Attachment";
+    try {
+      name = JSON.parse(meta).name || name;
+    } catch {}
+    const card = document.createElement("details");
+    card.className = "attachment-card";
+    const summary = document.createElement("summary"),
+      icon = document.createElement("span"),
+      pre = document.createElement("pre");
+    icon.className = "file-icon";
+    icon.textContent = "MD";
+    summary.append(icon, name);
+    pre.textContent = content;
+    card.append(summary, pre);
+    cards.push(card);
+    return "";
+  });
+  element.textContent = body;
+  element.append(...cards);
 }
 function add(who, text, model = "", error = false) {
   $("#empty")?.remove();
+  const user = who === "You";
   const a = document.createElement("article"),
+    head = document.createElement("div"),
+    avatar = document.createElement("span"),
     h = document.createElement("strong"),
     s = document.createElement("small"),
     p = document.createElement("div");
+  a.className = user ? "msg msg-user" : "msg";
+  if (!user) a.dataset.provider = who.toLowerCase();
+  head.className = "msg-head";
+  avatar.className = "avatar";
+  avatar.setAttribute("aria-hidden", "true");
+  avatar.textContent = who.slice(0, 1);
   h.textContent = who;
   s.textContent = model;
+  head.append(avatar, h, s);
   p.className = error ? "error" : "content";
-  p.textContent = text;
   p.rawMarkdown = text;
-  a.append(h, s, p);
+  if (text === "Thinking…") {
+    p.innerHTML =
+      '<span class="typing" role="img" aria-label="Thinking"><i></i><i></i><i></i></span>';
+  } else showText(p, text);
+  if (user) {
+    const bubble = document.createElement("div");
+    bubble.className = "bubble";
+    bubble.append(p);
+    a.append(head, bubble);
+  } else a.append(head, p);
   if (model) {
-    const copy = document.createElement("button");
-    copy.type = "button";
-    copy.className = "copy-response";
-    copy.textContent = "Copy";
-    copy.setAttribute("aria-label", "Copy " + who + " response");
-    copy.onclick = async () => {
-      try {
-        await navigator.clipboard.writeText(p.rawMarkdown ?? p.textContent);
-        copy.textContent = "Copied";
-      } catch {
-        copy.textContent = "Copy failed";
-      }
-      setTimeout(() => (copy.textContent = "Copy"), 1800);
-    };
-    a.append(copy);
+    const actions = document.createElement("div");
+    actions.className = "msg-actions";
+    actions.append(
+      copyButton(
+        "copy-response",
+        "Copy " + who + " response",
+        () => p.rawMarkdown ?? p.textContent,
+      ),
+    );
+    a.append(actions);
   }
   $("#chat").append(a);
   a.scrollIntoView({ behavior: "smooth", block: "nearest" });
   return p;
+}
+const starters = {
+  chat: [
+    ["Compare perspectives", "@GPT @Claude @Gemini What's the strongest argument for and against a four-day work week?"],
+    ["Get a second opinion", "@Claude Review this plan and point out what I'm missing: "],
+    ["Brainstorm together", "@GPT @Gemini Give me five unusual ideas for a weekend project."],
+    ["Explain simply", "@GPT Explain how vaccines train the immune system, like I'm 12."],
+  ],
+  context: [
+    ["Start a long project", "I'm planning a project. I'll share goals and constraints as we go; keep track of them."],
+    ["Work through a document", "Summarize the attached document and list open questions."],
+    ["Make decisions stick", "Help me decide between three options. Record each decision we make."],
+  ],
+  agent: [
+    ["Verify a calculation", "Calculate 17 × 23, write the result to proof.md, read it back, then report what you verified."],
+    ["Draft a file", "Write a one-page project brief to brief.md with goals, risks and next steps, then read it back."],
+  ],
+};
+const modeIntro = {
+  chat: [
+    "Ask one model or several",
+    "Pick who replies below, or type @GPT, @Claude or @Gemini. Each model sees the whole conversation. Saved on this device.",
+  ],
+  context: [
+    "A conversation that remembers",
+    "GPT replies from a curated working context while the full history is saved on the server. Good for long threads.",
+  ],
+  agent: [
+    "Give the agent an objective",
+    "GPT works step by step with tools: calculating, writing and reading workspace files. Keep this tab open while it runs.",
+  ],
+};
+function emptyState(mode = window.converseMode?.() || "chat") {
+  const empty = document.createElement("div"),
+    title = document.createElement("h2"),
+    text = document.createElement("p"),
+    list = document.createElement("div");
+  empty.id = "empty";
+  empty.dataset.mode = mode;
+  title.textContent = modeIntro[mode][0];
+  text.textContent = modeIntro[mode][1];
+  list.className = "starters";
+  for (const [label, prompt] of starters[mode]) {
+    const button = document.createElement("button"),
+      strong = document.createElement("strong"),
+      span = document.createElement("span");
+    button.type = "button";
+    strong.textContent = label;
+    span.textContent = prompt;
+    button.append(strong, span);
+    button.onclick = () => {
+      const box = $("textarea");
+      box.value = prompt;
+      box.dispatchEvent(new Event("input"));
+      box.focus();
+      box.setSelectionRange(prompt.length, prompt.length);
+    };
+    list.append(button);
+  }
+  empty.append(title, text, list);
+  return empty;
+}
+function showEmpty() {
+  $("#empty")?.remove();
+  $("#chat").append(emptyState());
 }
 $("#upload").onclick = () => $("#markdown-file").click();
 $("#remove-file").onclick = () => {
@@ -440,7 +558,7 @@ $("#composer").onsubmit = async (e) => {
   $("#export-json").disabled = false;
   $("#send").disabled = false;
   Object.values(fields).forEach((f) => (f.disabled = !f.options.length));
-  $("#status").textContent = "Ready · " + targets.map((n) => "@" + n).join(" ");
+  $("#status").textContent = "Ready";
   if (window.matchMedia("(pointer:fine)").matches) $("textarea").focus();
 };
 $("textarea").onkeydown = (e) => {
@@ -517,16 +635,19 @@ function saveChat() {
       "Device storage is full. Export to save your chat.";
   }
 }
-try {
-  const saved = JSON.parse(localStorage.getItem("converse-chat") || "[]");
+function loadRecord(saved) {
   const rows = Array.isArray(saved)
     ? saved
     : saved?.schema_version === 1
       ? saved.messages
       : [];
-  if (!Array.isArray(saved) && saved?.schema_version === 1)
-    conversation = saved;
-  else if (rows.length) conversation.created_at = null;
+  if (!Array.isArray(saved) && saved?.schema_version === 1) {
+    conversation = { ...saved };
+    delete conversation.messages;
+    delete conversation.archived_at;
+  } else if (rows.length) conversation.created_at = null;
+  messages.length = 0;
+  $("#chat").replaceChildren();
   if (Array.isArray(rows)) {
     for (let m of rows) {
       if (
@@ -547,10 +668,93 @@ try {
         p.textContent = m.content + "\n[Failed response] " + m.error;
       } else if (m.role === "assistant") renderReply(p, m.content);
     }
-    $("#export").disabled = !messages.length;
-    if (messages.length) saveChat();
   }
-} catch {}
+  if (!messages.length) showEmpty();
+  $("#export").disabled = !messages.length;
+}
+try {
+  const saved = JSON.parse(localStorage.getItem("converse-chat") || "[]");
+  loadRecord(saved);
+  targets = recipientsOf({ messages });
+  if (messages.length) saveChat();
+} catch {
+  if (!messages.length) showEmpty();
+}
+
+// Earlier device-local chats; context chats live on the server instead.
+const ARCHIVE = "converse-archive";
+function readArchive() {
+  try {
+    const list = JSON.parse(localStorage.getItem(ARCHIVE) || "[]");
+    return Array.isArray(list) ? list.filter((c) => c?.conversation_id) : [];
+  } catch {
+    return [];
+  }
+}
+function writeArchive(list) {
+  list = list.slice(0, 20);
+  for (;;) {
+    try {
+      localStorage.setItem(ARCHIVE, JSON.stringify(list));
+      return true;
+    } catch {
+      // Drop the oldest chats until the archive fits in device storage.
+      if (list.length <= 1) return false;
+      list.pop();
+    }
+  }
+}
+function archiveCurrent() {
+  if (!messages.length || conversation.context_layer) return true;
+  const list = readArchive().filter(
+    (c) => c.conversation_id !== conversation.conversation_id,
+  );
+  list.unshift({ ...conversation, messages: [...messages], archived_at: now() });
+  return writeArchive(list);
+}
+// Restore the providers that answered the latest message.
+function recipientsOf(record) {
+  const rows = record.messages || [];
+  const last = rows.findLast((m) => m.role === "user");
+  const picked = names.filter((n) =>
+    rows.some(
+      (m) =>
+        m.role === "assistant" &&
+        m.provider === n &&
+        last &&
+        m.reply_to === last.message_id,
+    ),
+  );
+  return picked.length ? picked : ["GPT"];
+}
+window.localChats = {
+  list: readArchive,
+  archiveCurrent,
+  open(id) {
+    if (busy) return;
+    const record = readArchive().find((c) => c.conversation_id === id);
+    if (!record) return;
+    $("#new-chat").onclick();
+    if (messages.length) return;
+    writeArchive(readArchive().filter((c) => c.conversation_id !== id));
+    loadRecord(record);
+    saveChat();
+    targets = recipientsOf(record);
+    // A device-local chat never uses the context layer.
+    $("#context-mode").checked = false;
+    if ($("#agent-mode").checked) {
+      $("#agent-mode").checked = false;
+      $("#agent-mode").dispatchEvent(new Event("change"));
+    }
+    $("#status").textContent = "Opened chat from this device";
+    followBottom();
+    window.converseSync?.();
+  },
+  remove(id) {
+    writeArchive(readArchive().filter((c) => c.conversation_id !== id));
+    window.converseSync?.();
+  },
+};
 $("#unlock-form").onsubmit = async (e) => {
   e.preventDefault();
   const button = $("#unlock-form button");
@@ -578,8 +782,9 @@ $("#new-chat").onclick = () => {
   if (busy) return;
   if (
     messages.length &&
+    !archiveCurrent() &&
     !confirm(
-      "Start a new chat? Export first if you want to keep this conversation.",
+      "This device is out of space for saved chats. Start a new chat anyway? Export first to keep this conversation.",
     )
   )
     return;
@@ -597,12 +802,10 @@ $("#new-chat").onclick = () => {
   $("#attachment").hidden = true;
   $("textarea").value = "";
   $("#chat").replaceChildren();
-  const empty = document.createElement("div");
-  empty.id = "empty";
-  empty.textContent = "One conversation. Your choice of models.";
-  $("#chat").append(empty);
+  showEmpty();
   $("#export").disabled = true;
-  $("#status").textContent = "New chat · @GPT";
+  $("#status").textContent = "New chat";
+  window.converseSync?.();
 };
 // Use the visible viewport so the composer stays above mobile software keyboards.
 function resizeViewport() {
