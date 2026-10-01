@@ -179,6 +179,7 @@ try {
   );
   assert.equal(record.conversation_id, conversation);
   const audit = record.context_layer;
+  await downloadedJson.saveAs(localPath("audit.json"));
   assert.ok(audit.events.some((e) => e.kind === "agent_checkpoint"));
   assert.ok(
     audit.events.some((e) => e.kind === "document" && e.content === original),
@@ -188,9 +189,10 @@ try {
       (e) => e.kind === "document" && e.content === edited.content,
     ),
   );
-  assert.ok(audit.events.some((e) => e.kind === "workspace_readback"));
+  assert.ok(audit.events.some((e) => e.kind === "workspace_read"));
+  assert.ok(audit.metrics.workspace_readbacks >= 2);
+  assert.equal(audit.metrics.usage_complete, true);
   assert.deepEqual(errors, []);
-  await downloadedJson.saveAs(localPath("audit.json"));
   await page.screenshot({
     path: localPath("context-edited.png"),
     fullPage: true,

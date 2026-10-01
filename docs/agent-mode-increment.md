@@ -4,7 +4,7 @@ Implemented in Converse after the [Makerspace trial review](reports/makerspace-a
 
 ## User flow
 
-- **Agent Mode** is beside the message box. With it on, ordinary Send/Enter starts the agent using the message as its objective. With it off, Send performs a context-chat turn. The choice survives reloads.
+- **Agent Mode** uses the redesign's **Chat / Context / Agent** selector above the message box. Choose **Agent** to make ordinary Send/Enter start the runner using the message as its objective. Choose **Context** to continue a saved context chat. The choice survives reloads.
 - New chats use saved context when the server supports it. The separate browser-local multi-provider path remains available through the context setting.
 - A compact status line shows model work, Jev selection, context management and tool activity, with elapsed time and agent step count. Stop and Resume are outside the context panel and garden. There is no invented percentage complete.
 - **Workspace files** offers a direct download for each current file. These files remain virtual conversation documents in SQLite/Neon; downloads produce usable local copies.
@@ -41,4 +41,8 @@ Exports now separate provider usage by purpose as well as provider, and count re
 
 Live audits are saved under ignored `.agent-smoke/latest.json` and `.agent-smoke/jev-review/latest.json`. Reproduce opt-in checks with `scripts/agent-smoke.js --live` and `scripts/agent-jev-smoke.js --live`; they use provider credentials and spend tokens.
 
-The local preview is at http://127.0.0.1:3213. This increment is not deployed to Vercel. The browser still drives the loop; a durable queue/worker and stronger content acceptance checks remain useful next increments.
+Validation after Claude's UI redesign: JavaScript syntax, 27 offline checks, 21 desktop/mobile browser checks, and the disposable Neon persistence check passed. The desktop touch-only check is intentionally skipped. Agent selection, progress, Stop/Resume, downloads and shared workspace edits work through the redesigned controls.
+
+Production integration was verified on 2026-10-01 at https://converse-cyan.vercel.app, including Claude's redesigned UI. The hosted agent completed four steps; a Context follow-up patched the same workspace file, and reloads plus file/JSON downloads preserved both versions and their read receipts in Neon. The short run confirmed default Jev availability/settings but did not invoke Jev under pressure. See the [hosted integration report](reports/hosted-agent-integration-2026-10-01.md) for deployment identity, usage and evidence.
+
+The local preview is at http://127.0.0.1:3213. The browser still drives the loop; a durable queue/worker and stronger content acceptance checks remain useful next increments.
