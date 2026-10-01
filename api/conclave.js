@@ -26,6 +26,8 @@ const handler = createContextHandler({
   list: () => repository().list(),
   create: (title) => repository().create(title),
   view: (id) => read(id, (service) => service.view(id)),
+  workspaceFile: (id, path) =>
+    read(id, (service) => service.workspaceFile(id, path)),
   export: (id) => read(id, (service) => service.export(id)),
   download: (id) => read(id, (service) => downloadRecord(service, id)),
   activity: (id, options) =>
@@ -34,5 +36,11 @@ const handler = createContextHandler({
     repository().run(id, true, (service) => service.ask(id, input)),
   remember: (id, input) =>
     repository().run(id, true, (service) => service.remember(id, input)),
+  agentStart: (id, input) =>
+    repository().run(id, true, (service) => service.agentStart(id, input)),
+  agentStep: (id, input) =>
+    repository().run(id, true, (service) => service.agentStep(id, input)),
+  agentStop: (id, input) =>
+    repository().run(id, true, (service) => service.agentStop(id, input)),
 });
 export default handler;

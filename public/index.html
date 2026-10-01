@@ -47,13 +47,25 @@
     <p class="note">
       Use @GPT, @Claude or @Gemini. Mention several to hear from each. Without a
       mention, the last selection replies. Each sees the full chat with speaker
-      and model tags. Context mode uses a smaller working context with
-      saved source history.
+      and model tags. Context mode uses a smaller working context with saved
+      source history.
     </p>
     <div id="chat" aria-live="polite">
       <div id="empty">One conversation. Your choice of models.</div>
     </div>
     <form id="composer">
+      <div id="agent-mode-bar" class="mode-bar" hidden>
+        <label class="check-label"
+          ><input id="agent-mode" type="checkbox" /> Agent Mode</label
+        >
+        <span id="run-progress" role="status" aria-live="polite">Ready</span>
+        <button id="agent-resume" type="button" hidden>Resume run</button>
+        <button id="agent-stop" type="button" hidden>Stop</button>
+      </div>
+      <details id="workspace-panel" hidden>
+        <summary id="workspace-label">Workspace files</summary>
+        <div id="workspace-downloads"></div>
+      </details>
       <details id="context-panel" hidden>
         <summary>Context layer</summary>
         <div class="context-controls">
@@ -84,6 +96,62 @@
           record.
         </p>
         <p class="note" id="context-stats"></p>
+        <details id="agent-panel">
+          <summary>Agent limits and audit</summary>
+          <p class="note">
+            Use your message as an objective. The agent can calculate,
+            read/write saved workspace text, retrieve history and manage
+            context. Keep this tab open while it runs.
+          </p>
+          <div class="context-controls">
+            <label
+              >Minutes<input
+                id="agent-minutes"
+                type="number"
+                min="1"
+                max="60"
+                value="10"
+            /></label>
+            <label
+              >Max steps<input
+                id="agent-steps"
+                type="number"
+                min="1"
+                max="200"
+                value="40"
+            /></label>
+            <label
+              >Context budget for chat and agent (estimated units)<input
+                id="agent-budget"
+                type="number"
+                min="64000"
+                max="512000"
+                step="1000"
+                value="256000"
+            /></label>
+            <label
+              >Output tokens per chat or agent call<input
+                id="agent-output"
+                type="number"
+                min="1024"
+                max="32768"
+                step="1024"
+                value="16384"
+            /></label>
+            <label
+              >Total token limit<input
+                id="agent-tokens"
+                type="number"
+                min="1000"
+                max="2000000"
+                step="1000"
+                value="250000"
+            /></label>
+          </div>
+
+          <p class="note" id="agent-status">No agent run yet.</p>
+          <pre id="agent-files" hidden></pre>
+        </details>
         <details id="context-inspect">
           <summary>Working context and remembered state</summary>
           <pre id="context-preview">Start or open a context chat.</pre>

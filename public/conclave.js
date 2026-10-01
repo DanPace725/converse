@@ -4,10 +4,86 @@
     toggle = $("#context-mode"),
     saved = $("#context-chat"),
     jev = $("#context-jev");
-  const reasoning = $("#context-reasoning");
+  const reasoning = $("#context-reasoning"),
+    agentMode = $("#agent-mode");
+  agentMode.checked = localStorage.getItem("converse-agent-mode") === "true";
+  let progressTimer = null,
+    progressGeneration = 0,
+    progressStarted = 0;
+  function progressText(text) {
+    $("#run-progress").textContent = text;
+  }
+  function watchProgress(value) {
+    clearTimeout(progressTimer);
+    const generation = ++progressGeneration;
+    if (!value) {
+      $("#agent-mode-bar").classList.remove("is-working");
+      progressText(
+        agent && (agentMode.checked || agent.status === "running")
+          ? agent.status +
+              " · " +
+              agent.steps +
+              " steps" +
+              (agent.status === "running"
+                ? " · paused; resume to continue"
+                : "")
+          : "Ready",
+      );
+      return;
+    }
+    progressStarted = Date.now();
+    $("#agent-mode-bar").classList.add("is-working");
+    progressText(agentMode.checked ? "Starting agent…" : "Working…");
+    const poll = async () => {
+      if (generation !== progressGeneration || !busy) return;
+      if (currentId()) {
+        try {
+          const response = await fetch(
+            "/api/conclave?action=activity&conversation=" +
+              encodeURIComponent(currentId()),
+            { cache: "no-store" },
+          );
+          if (!response.ok) throw Error("Progress unavailable");
+          const activity = await response.json();
+          if (generation !== progressGeneration) return;
+          const event = activity.latest;
+          const label =
+            event?.kind === "inference_request"
+              ? event.label === "attention-selection"
+                ? "Jev selecting context"
+                : event.label === "compaction"
+                  ? "Managing context"
+                  : "Model working"
+              : event?.kind === "tool_call"
+                ? "Using " + event.label
+                : event?.kind === "tool_result"
+                  ? "Finished " + event.tool
+                  : event?.kind === "document"
+                    ? "Saving workspace file"
+                    : "Working";
+          progressText(
+            (driving ? "Agent · step " + (agent.steps + 1) + " · " : "") +
+              label +
+              " · " +
+              Math.floor((Date.now() - progressStarted) / 1000) +
+              "s",
+          );
+        } catch {
+          if (generation === progressGeneration)
+            progressText("Working · progress connection unavailable");
+        }
+      }
+      if (generation === progressGeneration && busy)
+        progressTimer = setTimeout(poll, 1200);
+    };
+    progressTimer = setTimeout(poll, 300);
+  }
   let available = false,
     capabilities = null,
     refreshing = false;
+  let agent = null,
+    driving = false,
+    stopRequested = false;
   const enabled = () => toggle.checked || !!conversation.context_layer;
   const currentId = () => conversation.context_layer?.conversation_id;
 
@@ -45,6 +121,15 @@
     $("#context-inspect").hidden = !enabled();
     $("#context-watch").hidden = !available || !enabled();
     window.contextGarden?.adopt(enabled() ? currentId() : null);
+    const running = agent?.status === "running";
+    agentMode.disabled = busy || running || !available;
+    $("#send").textContent = agentMode.checked ? "Run agent" : "Send";
+    $("#agent-resume").hidden = !running;
+    $("#agent-resume").disabled = busy || !available;
+    $("#agent-stop").hidden = !running;
+    $("#agent-stop").disabled = stopRequested || (busy && !driving);
+    if (running) $("#remember-state").disabled = true;
+    if (running) $("#send").disabled = true;
   }
 
   function renderMessages() {
@@ -76,6 +161,19 @@
   }
 
   function apply(view) {
+    agent = view.agent || null;
+    const legacyAgent = agent && !agent.harness_version;
+    $("#agent-budget").value = legacyAgent
+      ? capabilities.defaults.budget
+      : view.settings.budget;
+    $("#agent-output").value = legacyAgent
+      ? capabilities.defaults.output
+      : view.settings.output;
+    if (agent) {
+      $("#agent-minutes").value = agent.limits.duration_seconds / 60;
+      $("#agent-steps").value = agent.limits.max_steps;
+      $("#agent-tokens").value = agent.limits.max_total_tokens;
+    }
     // The server retains audits; localStorage only needs display records.
     conversation = {
       ...conversation,
@@ -93,7 +191,10 @@
     messages.splice(0, messages.length, ...view.messages);
     toggle.checked = true;
     reasoning.value = view.settings.reasoning;
-    jev.checked = !!view.settings.jev && !!capabilities?.credentials.jev;
+    // Version 1 forced Jev off in all agent runs; enable the new default when reopening those trials.
+    jev.checked =
+      (legacyAgent ? true : !!view.settings.jev) &&
+      !!capabilities?.credentials.jev;
     if (
       [...fields.GPT.options].some(
         (option) => option.value === view.settings.model,
@@ -125,6 +226,38 @@
     $("#context-note").textContent =
       view.backup_warning ||
       "GPT replies use saved context. JSON export includes original sources, revisions, Jev decisions and usage.";
+    $("#agent-status").textContent = agent
+      ? `${agent.status} · ${agent.steps}/${agent.limits.max_steps} steps · ${agent.input_tokens} input / ${agent.output_tokens} output tokens` +
+        (agent.usage_complete === false ? " (partial usage)" : "") +
+        (agent.tools.length
+          ? " · " + agent.tools.map((t) => t.name).join(" → ")
+          : "") +
+        (agent.error ? " · " + agent.error : "")
+      : "No agent run yet.";
+    $("#agent-files").hidden = !agent?.files.length;
+    $("#agent-files").textContent =
+      agent?.files
+        .map(
+          (file) =>
+            `${file.path}\n${file.content.slice(0, 4000)}${file.content.length > 4000 ? "\n[Preview shortened; full text is in Export JSON.]" : ""}`,
+        )
+        .join("\n\n") || "";
+    const files = view.workspace || agent?.files || [];
+    $("#workspace-panel").hidden = !files.length;
+    $("#workspace-label").textContent = "Workspace files · " + files.length;
+    $("#workspace-downloads").replaceChildren();
+    for (const file of files) {
+      const link = document.createElement("a");
+      link.textContent = "Download " + file.path;
+      link.href =
+        "/api/conclave?action=workspace_file&conversation=" +
+        encodeURIComponent(view.conversation_id) +
+        "&path=" +
+        encodeURIComponent(file.path);
+      link.download = file.path.split("/").at(-1);
+      $("#workspace-downloads").append(link);
+    }
+    if (!busy) watchProgress(false);
     saved.value = view.conversation_id;
     saveChat();
     renderMessages();
@@ -153,12 +286,17 @@
         throw Error("Saved context chats are not configured on this server.");
       available = true;
       panel.hidden = false;
+      $("#agent-mode-bar").hidden = false;
+      if (!messages.length && !currentId()) toggle.checked = true;
       if (!currentId()) jev.checked = capabilities.credentials.jev;
       await refreshList();
       if (currentId()) apply(await request("view"));
       controls();
     } catch (error) {
       available = false;
+      if (!currentId()) agentMode.checked = false;
+      $("#agent-mode-bar").hidden = !currentId();
+      controls();
       panel.hidden = !currentId();
       if (currentId())
         $("#context-note").textContent =
@@ -184,6 +322,7 @@
 
   function setBusy(value) {
     busy = value;
+    watchProgress(value);
     window.contextGarden?.setActive(value);
     for (const id of [
       "new-chat",
@@ -200,8 +339,130 @@
     controls();
   }
 
+  async function driveAgent() {
+    driving = true;
+    stopRequested = false;
+    setBusy(true);
+    try {
+      while (agent?.status === "running") {
+        $("#status").textContent = stopRequested
+          ? "Stopping after the current step…"
+          : `Agent running · step ${agent.steps + 1}`;
+        apply(
+          await request(stopRequested ? "agent_stop" : "agent_step", {
+            conversation_id: currentId(),
+            run_id: agent.run_id,
+            expected_step: agent.steps,
+          }),
+        );
+      }
+      $("#status").textContent = "Agent " + agent.status + " · progress saved";
+    } catch (error) {
+      try {
+        apply(await request("view"));
+      } catch {}
+      $("#status").textContent =
+        error.message + " Reload or resume to inspect saved progress.";
+    } finally {
+      driving = false;
+      stopRequested = false;
+      setBusy(false);
+    }
+  }
+
+  const startAgent = async () => {
+    if (busy || agent?.status === "running" || !enabled()) return;
+    const content = $("textarea").value.trim();
+    if (
+      (!content && !attachment) ||
+      !fields.GPT.value ||
+      !capabilities?.credentials.openai
+    ) {
+      $("#status").textContent =
+        "Enter an objective and choose an available GPT model.";
+      return;
+    }
+    setBusy(true);
+    try {
+      const settings = {
+        model: fields.GPT.value,
+        reasoning: reasoning.value,
+        jev: jev.checked,
+        budget: Number($("#agent-budget").value),
+        output: Number($("#agent-output").value),
+      };
+      await ensure();
+      const user = messageRecord({ role: "user", content });
+      apply(
+        await request("agent_start", {
+          conversation_id: currentId(),
+          message_id: user.message_id,
+          content:
+            content || "Use the attached document as the agent objective.",
+          attachments: attachment ? [attachment] : [],
+          settings,
+          limits: {
+            duration_seconds: Number($("#agent-minutes").value) * 60,
+            max_steps: Number($("#agent-steps").value),
+            max_total_tokens: Number($("#agent-tokens").value),
+          },
+        }),
+      );
+      $("textarea").value = "";
+      attachment = null;
+      $("#attachment").hidden = true;
+    } catch (error) {
+      if (currentId()) {
+        try {
+          apply(await request("view"));
+        } catch {}
+      }
+      $("#status").textContent = error.message;
+      setBusy(false);
+      return;
+    }
+    await driveAgent();
+  };
+  $("#agent-resume").onclick = async () => {
+    if (busy) return;
+    try {
+      apply(await request("view"));
+      await driveAgent();
+    } catch (error) {
+      $("#status").textContent = error.message;
+    }
+  };
+  $("#agent-stop").onclick = async () => {
+    if (driving) {
+      stopRequested = true;
+      controls();
+      $("#status").textContent = "Stopping after the current step…";
+      return;
+    }
+    if (busy || !agent) return;
+    setBusy(true);
+    try {
+      apply(
+        await request("agent_stop", {
+          conversation_id: currentId(),
+          run_id: agent.run_id,
+        }),
+      );
+    } catch (error) {
+      $("#status").textContent = error.message;
+    } finally {
+      setBusy(false);
+    }
+  };
+
   const normalSubmit = $("#composer").onsubmit;
   $("#composer").onsubmit = async (event) => {
+    if (agentMode.checked) {
+      event.preventDefault();
+      if (busy || readingFile) return;
+      if (!enabled()) toggle.checked = true;
+      return startAgent();
+    }
     if (!enabled()) return normalSubmit(event);
     event.preventDefault();
     if (busy || readingFile) return;
@@ -218,7 +479,13 @@
       return;
     }
     const model = fields.GPT.value;
-    const settings = { model, reasoning: reasoning.value, jev: jev.checked };
+    const settings = {
+      model,
+      reasoning: reasoning.value,
+      jev: jev.checked,
+      budget: Number($("#agent-budget").value),
+      output: Number($("#agent-output").value),
+    };
     let submitted = null;
     setBusy(true);
     try {
@@ -278,6 +545,17 @@
     }
   };
 
+  agentMode.onchange = () => {
+    if (agentMode.checked && messages.length && !currentId()) {
+      agentMode.checked = false;
+      $("#status").textContent = "Start a new context chat to use Agent Mode.";
+    }
+    if (agentMode.checked) toggle.checked = true;
+    localStorage.setItem("converse-agent-mode", String(agentMode.checked));
+    controls();
+    if (!busy) watchProgress(false);
+  };
+
   toggle.onchange = () => {
     if (messages.length) {
       toggle.checked = !!currentId();
@@ -289,6 +567,10 @@
     ) {
       fields.GPT.value = "gpt-6-luna";
       rememberModels();
+    }
+    if (!toggle.checked && agentMode.checked) {
+      agentMode.checked = false;
+      localStorage.setItem("converse-agent-mode", "false");
     }
     controls();
   };
@@ -351,6 +633,15 @@
     const prior = conversation.conversation_id;
     newChat();
     if (prior === conversation.conversation_id) return;
+    agent = null;
+    toggle.checked = available;
+    jev.checked = !!capabilities?.credentials.jev;
+    $("#agent-budget").value = capabilities?.defaults.budget || 256000;
+    $("#agent-output").value = capabilities?.defaults.output || 16384;
+    $("#workspace-panel").hidden = true;
+    watchProgress(false);
+    $("#agent-status").textContent = "No agent run yet.";
+    $("#agent-files").hidden = true;
     saved.value = "";
     $("#context-stats").textContent = "";
     $("#context-preview").textContent = "Start or open a context chat.";

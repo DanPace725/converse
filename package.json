@@ -14,6 +14,7 @@
     "db:migrate": "node --env-file-if-exists=.env scripts/migrate.js",
     "test:neon": "node --env-file=.env.neon-test --test test/neon.test.js",
     "test:browser": "playwright test",
+    "test:agent:browser": "playwright test --config=playwright.agent.config.js",
     "format": "prettier --write api lib public/app.js public/index.html public/styles.css public/sw.js scripts test playwright.config.js README.md package.json vercel.json"
   },
   "devDependencies": {

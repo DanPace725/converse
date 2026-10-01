@@ -102,7 +102,11 @@ test(
       );
       // A new request reloads remembered attribution through PostgreSQL JSONB.
       await new ContextRepository(db, options).run(id, true, (service) =>
-        service.ask(id, { ...input, message_id: 'msg_after_state', content: 'Continue using the saved goal.' }),
+        service.ask(id, {
+          ...input,
+          message_id: "msg_after_state",
+          content: "Continue using the saved goal.",
+        }),
       );
       assert.equal(calls, 2);
       const record = await new ContextRepository(db, options).run(
@@ -148,6 +152,126 @@ test(
         .from(conversations)
         .where(eq(conversations.id, id));
       assert.equal(row.leaseToken, null);
+      let agentCalls = 0;
+      const agentOptions = {
+        serviceOptions: {
+          availability: () => ({ openai: true, jev: false }),
+          providerFactory: () => ({
+            name: "openai",
+            respond: async (payload) => {
+              agentCalls++;
+              const output =
+                agentCalls === 1
+                  ? [
+                      {
+                        type: "function_call",
+                        call_id: "call_file",
+                        name: "workspace_write",
+                        arguments: JSON.stringify({
+                          path: "neon-proof.md",
+                          content: "# Saved\nFresh request proof.",
+                        }),
+                      },
+                    ]
+                  : agentCalls === 2
+                    ? [
+                        {
+                          type: "function_call",
+                          call_id: "call_read",
+                          name: "workspace_read",
+                          arguments: JSON.stringify({
+                            path: "neon-proof.md",
+                            offset: 0,
+                          }),
+                        },
+                      ]
+                    : [
+                        {
+                          type: "message",
+                          content: [
+                            {
+                              type: "output_text",
+                              text: "Verified saved workspace.",
+                            },
+                          ],
+                        },
+                      ];
+              if (agentCalls === 2)
+                assert.ok(
+                  payload.input.some(
+                    (i) =>
+                      i.call_id === "call_file" &&
+                      i.type === "function_call_output",
+                  ),
+                );
+              return {
+                status: "completed",
+                model: "fixture",
+                usage: { input_tokens: 100, output_tokens: 10 },
+                output,
+              };
+            },
+          }),
+        },
+      };
+      const agentId = (
+        await new ContextRepository(db, agentOptions).create(
+          "Disposable agent hosting check",
+        )
+      ).conversation_id;
+      let agent = await new ContextRepository(db, agentOptions).run(
+        agentId,
+        true,
+        (service) =>
+          service.agentStart(agentId, {
+            message_id: "msg_agent_neon",
+            content: "Write a saved file.",
+            settings: { model: "fixture" },
+          }),
+      );
+      const firstStep = { run_id: agent.agent.run_id, expected_step: 0 };
+      agent = await new ContextRepository(db, agentOptions).run(
+        agentId,
+        true,
+        (service) => service.agentStep(agentId, firstStep),
+      );
+      await new ContextRepository(db, agentOptions).run(
+        agentId,
+        true,
+        (service) => service.agentStep(agentId, firstStep),
+      );
+      assert.equal(agentCalls, 1);
+      const reloaded = await new ContextRepository(db, agentOptions).run(
+        agentId,
+        false,
+        (service) => service.view(agentId),
+      );
+      assert.equal(
+        reloaded.agent.files[0].content,
+        "# Saved\nFresh request proof.",
+      );
+      agent = await new ContextRepository(db, agentOptions).run(
+        agentId,
+        true,
+        (service) =>
+          service.agentStep(agentId, {
+            run_id: agent.agent.run_id,
+            expected_step: agent.agent.steps,
+          }),
+      );
+      assert.equal(agent.agent.status, "running");
+      agent = await new ContextRepository(db, agentOptions).run(
+        agentId,
+        true,
+        (service) =>
+          service.agentStep(agentId, {
+            run_id: agent.agent.run_id,
+            expected_step: agent.agent.steps,
+          }),
+      );
+      assert.equal(agent.agent.status, "completed");
+      assert.equal(agent.agent.input_tokens, 300);
+      assert.equal(agentCalls, 3);
     } finally {
       finish();
       await pool.end();

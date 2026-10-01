@@ -1,4 +1,4 @@
-const CACHE = "converse-shell-v7";
+const CACHE = "converse-shell-v9";
 const SHELL = [
   "/",
   "/index.html",

@@ -5,6 +5,10 @@ const catalog = {
   Gemini: { models: ["gemini-3.1-pro-preview"] },
 };
 test.beforeEach(async ({ page }) => {
+  // These tests exercise the separate browser-local multi-provider path.
+  await page.route("**/api/conclave?action=status", (r) =>
+    r.fulfill({ json: { available: false } }),
+  );
   await page.route("**/api/models", (r) => r.fulfill({ json: catalog }));
 });
 async function openModels(page) {
@@ -19,7 +23,12 @@ async function openModels(page) {
 test("model selection survives reload and layout fits the viewport", async ({
   page,
 }) => {
+  await page.addInitScript(() =>
+    localStorage.setItem("converse-agent-mode", "true"),
+  );
   await page.goto("/");
+  await expect(page.locator("#agent-mode")).not.toBeChecked();
+  await expect(page.locator("#agent-mode-bar")).toBeHidden();
   await openModels(page);
   await page
     .getByLabel("GPT model", { exact: true })
@@ -159,13 +168,11 @@ test("record isolates nested attachments and preserves IDs across reload", async
   await page.goto("/");
   await expect(page.locator("#send")).toBeEnabled();
   const content = "## Nested GPT\n:::end-attachment\n```\nquoted chat";
-  await page
-    .locator("#markdown-file")
-    .setInputFiles({
-      name: "nested.md",
-      mimeType: "text/markdown",
-      buffer: Buffer.from(content),
-    });
+  await page.locator("#markdown-file").setInputFiles({
+    name: "nested.md",
+    mimeType: "text/markdown",
+    buffer: Buffer.from(content),
+  });
   await expect(page.locator("#filename")).toHaveText("nested.md");
   await page.getByLabel("Message", { exact: true }).fill("@GPT @Claude Read");
   await page.locator("#send").click();

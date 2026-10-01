@@ -115,7 +115,8 @@ select {
 .remember-controls select {
   width: auto;
 }
-#context-preview {
+#context-preview,
+#agent-files {
   max-height: 200px;
   overflow: auto;
   white-space: pre-wrap;
@@ -836,4 +837,58 @@ input:focus-visible {
   .garden-lineage {
     opacity: 0.35;
   }
+}
+
+.mode-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  padding: 0.35rem 0;
+  font-size: 0.8rem;
+}
+.mode-bar[hidden] { display: none; }
+.mode-bar .check-label {
+  font-weight: 600;
+  white-space: nowrap;
+}
+#run-progress {
+  flex: 1;
+  min-width: 140px;
+  color: var(--muted, #a4adb9);
+}
+.is-working #run-progress::before {
+  content: "";
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-right: 0.45rem;
+  border-radius: 50%;
+  background: #83dec2;
+  animation: working-pulse 1.5s infinite;
+}
+@keyframes working-pulse {
+  50% {
+    opacity: 0.35;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .is-working #run-progress::before {
+    animation: none;
+  }
+}
+#workspace-panel {
+  font-size: 0.8rem;
+  margin-bottom: 0.35rem;
+}
+#workspace-downloads {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1rem;
+  padding: 0.5rem 0;
+  max-height: 100px;
+  overflow: auto;
+}
+#workspace-downloads a {
+  color: inherit;
 }
