@@ -42,6 +42,8 @@ The **byte guard** is a separate conservative application limit: serialized requ
 
 GPT and Claude Context/Agent responses have a **180-second per-response allowance**, separate from the Agent's overall minutes. Hosted requests also have a 200-second deadline, including context preparation. The earlier deadline wins. Timeout errors identify the response or hosted limit; completed actions and partial diagnostics stay saved. Incomplete tool calls are not executed or automatically retried. Start a follow-up using saved progress after a failed run.
 
+An Agent step is one model response, with up to **16 tool calls** executed in order. The model is told to batch independent work and wait for results before dependent actions. Larger batches execute no tools and receive a correction to split the work on subsequent steps. These responses still count toward the run's time, step, and token limits.
+
 Claude effort is sent through Anthropic's native effort setting where supported. Levels vary by model. Default uses the provider default. Effort is guidance, not a hard thinking-token budget. Provider reasoning summaries and progress updates are reported rationale, not verified evidence or full private reasoning. Opaque signatures and encrypted continuation data are not displayed or shared through telemetry.
 
 Models should inspect telemetry when a retrieval is unexpectedly partial, a revision conflicts, a task approaches a guard, or an earlier action needs checking. Avoid repetitive audits or context edits solely to reduce token counts. Preserve constraints, caveats, unresolved choices, and source attribution. Retrieve original evidence when a summary does not settle the question.
