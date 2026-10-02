@@ -100,7 +100,9 @@ for (const filename of readdirSync(sourceDir).filter(f => /^conv_.*\.json$/.test
     unmatched_tool_calls: toolCalls.filter(c => results.filter(r => r.metadata.call_id === c.metadata.call_id).length !== 1).map(c => c.seq),
     orphan_tool_results: results.filter(r => !toolCalls.some(c => c.metadata.call_id === r.metadata.call_id)).map(r => r.seq),
     snapshot_count: audit.snapshots.length,
-    snapshot_content_mismatches: audit.snapshots.filter(s => hash(canonical(events.find(e => e.id === s.receipt_id)?.metadata.segments)) !== hash(canonical(s.segments))).map(s => s.revision),
+    // Only older receipts embed a second copy of the segments to compare.
+    snapshot_content_mismatches: audit.snapshots.filter(s => { const copy = events.find(e => e.id === s.receipt_id)?.metadata.segments; return copy && hash(canonical(copy)) !== hash(canonical(s.segments)); }).map(s => s.revision),
+    snapshots_without_receipt: audit.snapshots.filter(s => !events.some(e => e.id === s.receipt_id && e.kind === 'context_transform')).map(s => s.revision),
     serialization_hash_unverifiable_revisions: audit.snapshots.filter(s => events.find(e => e.id === s.receipt_id)?.metadata.after_hash !== hash(s.segments)).map(s => s.revision),
     segment_hash_failures: audit.snapshots.flatMap(s => s.segments.filter(b => b.content_hash !== hash(b.content)).map(b => ({revision: s.revision, id: b.id}))),
     dangling_source_ids: [...new Set(audit.snapshots.flatMap(s => s.segments.flatMap(b => b.source_event_ids)).filter(id => !events.some(e => e.id === id)))],
