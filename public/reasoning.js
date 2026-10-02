@@ -5,17 +5,25 @@ window.reasoningUI = (() => {
   const expanded = new Set(),
     openedSteps = new Set(),
     providers = { openai: "GPT", anthropic: "Claude", gemini: "Gemini" };
-  const usable = (r) => r && (r.text || r.opaque_available);
-  // OpenAI summaries lead with **Headings**; Claude thinking is prose.
+  const usable = (r) => r && (r.text || r.opaque_available || r.narration);
+  const lastSentence = (text) => {
+    // Sentence ends need following space, so "proof.md" stays whole.
+    const clean = text.replace(/\s+/g, " ").trim();
+    const parts = clean.split(/(?<=[.!?])\s+/).filter(Boolean);
+    // Mid-stream, the trailing piece is often half a sentence; keep the last whole one.
+    const last = parts.at(-1) || clean;
+    return parts.length > 1 && !/[.!?]$/.test(last) ? parts.at(-2) : last;
+  };
+  // What the model said it was doing (text beside a tool call) wins; otherwise
+  // OpenAI summaries lead with **Headings** and Claude thinking is prose.
   function snippet(record) {
     const text = record?.text || "";
-    if (!text) return record?.opaque_available ? "Reasoning hidden by the provider" : "";
-    const headings = [...text.matchAll(/\*\*([^*\n]{3,140})\*\*/g)];
-    let line = headings.at(-1)?.[1];
-    if (!line) {
-      const clean = text.replace(/\s+/g, " ").trim();
-      line = clean.match(/[^.!?]+[.!?]+/g)?.at(-1) || clean;
-    }
+    let line = record?.narration ? lastSentence(record.narration) : "";
+    if (!line && !text)
+      return record?.opaque_available ? "Reasoning hidden by the provider" : "";
+    line ||=
+      [...text.matchAll(/\*\*([^*\n]{3,140})\*\*/g)].at(-1)?.[1] ||
+      lastSentence(text);
     line = line.trim();
     return line.length > 96 ? line.slice(0, 95).trimEnd() + "…" : line;
   }
@@ -71,8 +79,11 @@ window.reasoningUI = (() => {
     details = document.createElement("details");
     details.dataset.reasoningId = id;
     details.open = openedSteps.has(id);
-    details.append(document.createElement("summary"), document.createElement("div"));
-    details.lastChild.className = "thought-text";
+    const said = document.createElement("div"),
+      text = document.createElement("div");
+    said.className = "thought-said";
+    text.className = "thought-text";
+    details.append(document.createElement("summary"), said, text);
     details.addEventListener("toggle", () =>
       details.open ? openedSteps.add(id) : openedSteps.delete(id),
     );
@@ -84,8 +95,9 @@ window.reasoningUI = (() => {
     const records = [...el.records.values()];
     const live = el.dataset.state === "live";
     const latest = records.at(-1);
+    // A record is only "partial" once its reply has stopped streaming.
     const partial = records.some((r) => r.status && !["completed", "partial"].includes(r.status)) ||
-      (!live && records.some((r) => r.status === "partial"));
+      (!live && !el.closest(".is-streaming") && records.some((r) => r.status === "partial"));
     const [label, snip, meta, toggle] = ["label", "snippet", "meta"]
       .map((p) => el.querySelector(".thoughts-" + p))
       .concat(el.querySelector(".thoughts-toggle"));
@@ -104,9 +116,15 @@ window.reasoningUI = (() => {
         (records.length > 1 ? index + 1 + ". " : "") +
         (snippet(record) || "Reasoning") +
         (record.status && record.status !== "completed" ? ` (${record.status})` : "");
+      details.querySelector(".thought-said").textContent = record.narration || "";
+      const body =
+        record.text?.replace(/\*\*([^*\n]+)\*\*/g, "$1") ||
+        (record.opaque_available
+          ? "Only opaque reasoning was returned. Its text is unavailable."
+          : "");
+      details.lastChild.hidden = !body;
       details.lastChild.textContent =
-        (record.text?.replace(/\*\*([^*\n]+)\*\*/g, "$1") ||
-          "Only opaque reasoning was returned. Its text is unavailable.") +
+        body +
         (provider || record.model ? `\n\n${[provider, record.model].filter(Boolean).join(" · ")} · provider-reported rationale` : "") +
         (record.status === "incomplete" ? "\n[Incomplete provider response]" : record.status === "failed" ? "\n[Failed provider response]" : "");
     });

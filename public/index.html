@@ -555,29 +555,30 @@
         Waiting for saved context
       </text>
     </svg>
-    <div
-      class="garden-savings"
-      title="Context is the complete model input: instructions, tools, working memory, latest user message and tool history. Next-request tokens are estimated and calibrated to provider usage when available. Latest sent tokens are provider-reported."
-    >
-      <div>
-        <span>Context · next input tokens (est.)</span
-        ><strong id="garden-tokens-saved">—</strong>
+    <section class="garden-ledger" aria-label="What the working context saves">
+      <div class="ledger-head">
+        <span>Next request</span>
+        <strong id="garden-request-delta">—</strong>
       </div>
-      <span id="garden-token-comparison"
-        >Complete model input</span
-      >
-    </div>
-    <div
-      class="garden-ratio"
-      title="Text-only comparison at ~4 UTF-8 bytes per token: working context text versus every saved message, document and state source. Excludes instructions, tools and metadata."
-    >
-      <div>
-        <span>Working context vs full conversation</span
-        ><strong id="garden-ratio">—</strong>
+      <div class="ledger-row" id="garden-row-full">
+        <span class="ledger-name">Whole chat</span>
+        <span class="ledger-track"><i class="seg-fixed"></i><i class="seg-history"></i></span>
+        <span class="ledger-value" id="garden-full-tokens">—</span>
       </div>
-      <div class="garden-bar" aria-hidden="true"><i id="garden-ratio-bar"></i></div>
-      <span id="garden-ratio-detail">Waiting for saved context</span>
-    </div>
+      <div class="ledger-row" id="garden-row-sent">
+        <span class="ledger-name">Conclave</span>
+        <span class="ledger-track"><i class="seg-fixed"></i><i class="seg-working"></i></span>
+        <span class="ledger-value" id="garden-tokens-sent">—</span>
+      </div>
+      <div class="ledger-legend" aria-hidden="true">
+        <span class="key-fixed">Instructions &amp; tools</span
+        ><span class="key-history">Conversation</span>
+      </div>
+      <div class="ledger-total" id="garden-total">
+        <span>Saved so far</span><strong id="garden-total-saved">—</strong>
+        <small id="garden-total-detail"></small>
+      </div>
+    </section>
     <div class="garden-counts">
       <div>
         <strong id="garden-working">0</strong><span>working pieces</span>

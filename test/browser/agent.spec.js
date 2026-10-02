@@ -93,10 +93,12 @@ test('context garden shows complete input tokens and distinguishes cumulative us
     await expect(page.locator('#context-stats')).toContainText('cumulative, all calls');
     await expect(page.locator('#context-stats')).toContainText('Latest sent 34,587 input tokens');
     await page.locator('#context-watch').click();
-    await expect(page.locator('#garden-token-comparison')).toContainText('34,587');
-    await expect(page.locator('#garden-tokens-saved')).toHaveText(/^~[\d,]+$/);
-    await expect(page.locator('.garden-savings')).toContainText('Context · next input tokens (est.)');
-    await expect(page.locator('.garden-savings')).not.toContainText('tokens saved');
+    // Two bars on one scale: a plain chat's resend vs Conclave's next request.
+    await expect(page.locator('#garden-tokens-sent')).toHaveText(/^~[\d.,]+K?$/);
+    await expect(page.locator('#garden-full-tokens')).toHaveText(/^~[\d.,]+K?$/);
+    await expect(page.locator('#garden-row-sent')).toHaveAttribute('title', /34,587/);
+    await expect(page.locator('#garden-total-saved')).toHaveText(/tokens$/);
+    await expect(page.locator('#garden-total-detail')).toContainText('1 reply');
     await page.screenshot({ path: testInfo.outputPath('complete-input-context.png') });
     expect(errors).toEqual([]);
   } finally { await app.close(); }
@@ -433,7 +435,7 @@ test('desktop panel resizing persists and Context expands without a short nested
   } finally { await app.close(); }
 });
 
-for (const mode of ['context', 'agent']) test(`${mode} replaces tool previews and discards failed streaming text`, async ({ page }) => {
+for (const mode of ['context', 'agent']) test(`${mode} keeps tool-step narration in the thought trail and discards failed streaming text`, async ({ page }) => {
   let calls = 0, fail = false, release;
   const gate = new Promise(resolve => release = resolve);
   const app = await fixture(async (_payload, { onDelta }) => {
@@ -455,7 +457,9 @@ for (const mode of ['context', 'agent']) test(`${mode} replaces tool previews an
     await page.getByRole('textbox', { name: 'Message', exact: true }).fill('Calculate 1 + 2.');
     await page.locator('#send').click();
     await expect(page.locator('article[data-provisional] .content')).toHaveText('Final answer');
-    await expect(page.locator('#chat')).not.toContainText('Tool preview');
+    // Text beside a tool call narrates that step: it leaves the answer and joins the trail.
+    await expect(page.locator('article[data-provisional] .content')).not.toContainText('Tool preview');
+    await expect(page.locator('article[data-provisional] .thoughts-snippet')).toHaveText('Tool preview');
     release();
     await expect(page.locator('#send')).toBeEnabled();
     const id = app.service.list()[0].conversation_id;
@@ -470,6 +474,7 @@ for (const mode of ['context', 'agent']) test(`${mode} replaces tool previews an
     expect(app.service.view(id).messages.filter(m => m.role === 'assistant')).toHaveLength(1);
     await page.reload();
     await expect(page.locator('article[data-provider] .content')).toHaveText('Final answer');
+    await expect(page.locator('article[data-provider] .thoughts').first()).toContainText('Tool preview');
   } finally { release(); await app.close(); }
 });
 const messageForTest = text => ({ type: 'message', content: [{ type: 'output_text', text }] });

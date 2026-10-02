@@ -199,9 +199,14 @@
         if (data.type === "start") {
           const turn = beginLive(data.provider, data.model);
           turn.article.querySelector(".msg-head small").textContent = data.model || "";
-          // A new model step replaces any interim text from the previous one.
+          // Text written beside a tool call narrates that step: it moves into
+          // the thought trail rather than staying in (or vanishing from) the answer.
           turn.stream?.stop();
           turn.stream = null;
+          if (turn.text.trim() && turn.record) {
+            turn.record.narration = turn.text.trim();
+            window.reasoningUI.show(turn.article, turn.record);
+          }
           if (turn.text) turn.content.innerHTML = typing;
           turn.text = "";
           turn.record = { provider: data.provider, model: data.model, request_id: data.request_id, status: 'partial' };
@@ -210,7 +215,6 @@
         if (data.type === 'reasoning' && liveActive() && live.record)
           window.reasoningUI.delta(live.article, live.record, data);
         if (data.type !== 'reasoning' && typeof data.delta === "string" && data.delta && liveActive()) {
-          if (!live.stream) window.reasoningUI.live(live.article, false);
           live.stream ||= createStream(live.content, { onRender: updateTail });
           live.text += data.delta;
           live.stream.push(data.delta);

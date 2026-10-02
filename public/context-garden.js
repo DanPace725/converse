@@ -179,12 +179,7 @@
     el("garden-anchors").textContent =
       context.segments.filter(protectedItem).length;
     el("garden-saved").textContent = history.count;
-    ratio(context, history);
-    const input = live?.model_input;
-    el("garden-tokens-saved").textContent = input ? `~${input.next.estimated_tokens.toLocaleString()}` : "—";
-    el("garden-token-comparison").textContent = input?.latest?.input_tokens != null
-      ? `Latest sent: ${input.latest.input_tokens.toLocaleString()} reported input tokens · next estimate includes instructions, tools and history`
-      : "Complete request estimate, including instructions, tools and the latest user message";
+    ledger(context, history);
     el("garden-revision").textContent =
       `REVISION ${context.revision}` +
       (context.segments.length > 64 || history.count > 96
@@ -350,10 +345,7 @@
       if (token !== generation || panel.hidden || replaying) return;
       const first = !live;
       live = data;
-      el("garden-tokens-saved").textContent = data.model_input ? `~${data.model_input.next.estimated_tokens.toLocaleString()}` : "—";
-      el("garden-token-comparison").textContent = data.model_input?.latest?.input_tokens != null
-        ? `Latest sent: ${data.model_input.latest.input_tokens.toLocaleString()} reported input tokens · complete next-request estimate above`
-        : "Complete request estimate, including instructions, tools and the latest user message";
+      ledger(data.context, data.history);
       cursor = data.cursor;
       el("garden-replay").disabled = data.context.revision === 0;
       if (first || initial) {
@@ -401,33 +393,69 @@
     el("garden-detail").textContent =
       "Select a point to peek inside. Size reflects text length.";
     el("garden-revision").textContent = "Waiting for saved context";
-    el("garden-tokens-saved").textContent = "—";
-    ratio(null, null);
-    el("garden-token-comparison").textContent =
-      "Full conversation → working context";
+    ledger(null, null);
     el("garden-replay").textContent = "Replay recent changes";
     el("garden-replay").disabled = true;
     panel.classList.remove("garden-thinking");
   }
-  // How much of the full conversation's text the working context carries.
-  function ratio(context, history) {
-    const full = Math.ceil((history?.text_bytes || 0) / 4),
-      working = Math.ceil((context?.text_bytes || 0) / 4);
-    const number = (value) => value.toLocaleString();
-    if (!full) {
-      el("garden-ratio").textContent = "—";
-      el("garden-ratio-bar").style.width = "0%";
-      el("garden-ratio-detail").textContent = "Waiting for saved context";
+  // The ledger answers three questions with two bars on one scale:
+  // what a plain chat would resend, what Conclave sends, and the running total.
+  // Text sizes use the same calibrated tokens-per-byte as the request estimate.
+  const compact = new Intl.NumberFormat(undefined, {
+    notation: "compact",
+    maximumFractionDigits: 1,
+  });
+  const exact = (value) => Math.round(value).toLocaleString();
+  function bar(row, fixed, conversation, scale) {
+    const [first, second] = el(row).querySelectorAll(".ledger-track i");
+    first.style.width = (fixed / scale) * 100 + "%";
+    second.style.width = (conversation / scale) * 100 + "%";
+  }
+  function ledger(context, history) {
+    const next = live?.model_input?.next,
+      latest = live?.model_input?.latest,
+      totals = live?.savings;
+    if (!next || !history?.text_bytes) {
+      for (const id of ["garden-request-delta", "garden-full-tokens", "garden-tokens-sent", "garden-total-saved"])
+        el(id).textContent = "—";
+      el("garden-total-detail").textContent = "";
+      bar("garden-row-full", 0, 0, 1);
+      bar("garden-row-sent", 0, 0, 1);
       return;
     }
-    const percent = Math.round((working / full) * 100);
-    el("garden-ratio").textContent = percent + "%";
-    el("garden-ratio-bar").style.width = Math.min(100, percent) + "%";
-    el("garden-ratio-detail").textContent =
-      `Working ~${number(working)} of ~${number(full)} text tokens · ` +
-      (working <= full
-        ? `${100 - percent}% smaller than the full conversation`
-        : "larger than the saved sources (summaries and state)");
+    const perByte = next.bytes ? next.estimated_tokens / next.bytes : 1 / 3;
+    const full = history.text_bytes * perByte,
+      working = (context?.text_bytes || 0) * perByte,
+      sent = next.estimated_tokens,
+      fixed = Math.max(0, sent - working),
+      whole = fixed + full,
+      scale = Math.max(whole, sent, 1);
+    bar("garden-row-full", fixed, full, scale);
+    bar("garden-row-sent", fixed, Math.min(working, sent), scale);
+    const change = Math.round(((sent - whole) / whole) * 100);
+    el("garden-request-delta").textContent =
+      Math.abs(change) < 1 ? "same size" : (change < 0 ? "−" : "+") + Math.abs(change) + "%";
+    el("garden-request-delta").dataset.direction = change < 0 ? "down" : "up";
+    el("garden-full-tokens").textContent = "~" + compact.format(whole);
+    el("garden-tokens-sent").textContent = "~" + compact.format(sent);
+    el("garden-row-full").title =
+      `A plain chat resends everything: ~${exact(fixed)} instructions & tools + ~${exact(full)} conversation (every saved message, document and note).`;
+    el("garden-row-sent").title =
+      `Conclave's next request (estimated): ~${exact(fixed)} instructions & tools + ~${exact(working)} working context.` +
+      (latest?.input_tokens != null ? ` The last request reported ${latest.input_tokens.toLocaleString()} input tokens.` : "");
+    if (!totals?.requests) {
+      el("garden-total-saved").textContent = "—";
+      el("garden-total-detail").textContent = "";
+      return;
+    }
+    const net = totals.avoided_tokens - totals.management_tokens;
+    el("garden-total-saved").textContent =
+      (net < 0 ? "−" : "~") + compact.format(Math.abs(net)) + " tokens";
+    el("garden-total-detail").textContent =
+      `${compact.format(totals.avoided_tokens)} avoided · ${compact.format(totals.management_tokens)} upkeep · ${totals.requests} ${totals.requests === 1 ? "reply" : "replies"}`;
+    el("garden-total").title =
+      `Across ${totals.requests} model requests, the working context left out ~${exact(totals.avoided_tokens)} tokens of conversation a plain chat would have resent. ` +
+      `Managing it (Jev selection, compaction) used ${exact(totals.management_tokens)} tokens. Net: ~${exact(net)}.`;
   }
   function close() {
     panel.hidden = true;

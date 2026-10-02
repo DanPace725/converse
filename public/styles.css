@@ -1835,31 +1835,112 @@ dialog button {
   transform-origin: 200px 146px;
   animation: garden-breathe 2.3s ease-in-out infinite;
 }
-.garden-savings {
+/* Ledger: two bars on one scale, then the running total. */
+.garden-ledger {
   margin: 0 20px 12px;
-  padding: 10px 12px;
+  padding: 12px;
   border: 1px solid #83bca544;
   border-radius: 10px;
   background: #28473955;
+  display: grid;
+  gap: 7px;
 }
-.garden-savings > div {
+.ledger-head,
+.ledger-total {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  align-items: baseline;
   gap: 8px;
 }
-.garden-savings strong {
+.ledger-head span,
+.ledger-total span {
+  color: #96b8a6;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.ledger-head strong {
+  margin-left: auto;
+  font:
+    400 22px/1 Georgia,
+    serif;
+  color: #dcece3;
+}
+.ledger-head strong[data-direction="down"] {
+  color: #a5ffe5;
+}
+.ledger-row {
+  display: grid;
+  grid-template-columns: 64px 1fr 44px;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: #b6cfc3;
+}
+.ledger-track {
+  display: flex;
+  height: 10px;
+  border-radius: 999px;
+  background: #0b1a16;
+  overflow: hidden;
+}
+.ledger-track i {
+  display: block;
+  height: 100%;
+  width: 0;
+  transition: width 600ms ease;
+}
+.seg-fixed {
+  background: #5d7268;
+}
+.seg-history {
+  background: #3f8f73;
+}
+.seg-working {
+  background: #a5ffe5;
+}
+.ledger-value {
+  text-align: right;
+  color: #dcece3;
+  font-variant-numeric: tabular-nums;
+}
+.ledger-legend {
+  display: flex;
+  gap: 12px;
+  padding-left: 72px;
+  font-size: 10px;
+  color: #96b8a6;
+}
+.ledger-legend span::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 5px;
+  border-radius: 2px;
+  vertical-align: -1px;
+}
+.key-fixed::before {
+  background: #5d7268;
+}
+.key-history::before {
+  background: linear-gradient(90deg, #3f8f73 50%, #a5ffe5 50%);
+}
+.ledger-total {
+  flex-wrap: wrap;
+  padding-top: 8px;
+  border-top: 1px solid #74978829;
+}
+.ledger-total strong {
+  margin-left: auto;
   color: #bcebd1;
   font-weight: 500;
   font-size: 14px;
 }
-.garden-savings span {
-  color: #96b8a6;
+.ledger-total small {
+  flex-basis: 100%;
+  text-align: right;
+  color: #81a291;
   font-size: 10px;
-}
-#garden-token-comparison {
-  display: block;
-  margin-top: 4px;
 }
 .garden-counts {
   display: grid;
@@ -2084,6 +2165,16 @@ dialog button {
   color: var(--text);
   background: var(--surface);
 }
+.thought-said {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  color: var(--text);
+  padding: 6px 8px 0;
+  line-height: 1.55;
+}
+.thought-said:empty {
+  display: none;
+}
 .thought-text {
   white-space: pre-wrap;
   overflow-wrap: anywhere;
@@ -2107,47 +2198,6 @@ dialog button {
   pointer-events: none;
 }
 
-/* Garden: working context as a share of the full conversation. */
-.garden-ratio {
-  margin: 0 20px 12px;
-  padding: 10px 12px;
-  border: 1px solid #83bca544;
-  border-radius: 10px;
-  background: #1d3a3055;
-}
-.garden-ratio > div:first-child {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-}
-.garden-ratio span {
-  color: #96b8a6;
-  font-size: 10px;
-}
-.garden-ratio strong {
-  color: #bcebd1;
-  font-weight: 500;
-  font-size: 14px;
-}
-.garden-bar {
-  height: 6px;
-  margin: 8px 0 6px;
-  border-radius: 999px;
-  background: #0b1a16;
-  overflow: hidden;
-}
-.garden-bar i {
-  display: block;
-  height: 100%;
-  width: 0;
-  border-radius: inherit;
-  background: linear-gradient(90deg, #6fd3a8, #a5ffe5);
-  transition: width 600ms ease;
-}
-#garden-ratio-detail {
-  display: block;
-}
 @media (max-width: 600px) {
   .thoughts {
     margin-left: 0;
