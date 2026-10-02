@@ -131,6 +131,7 @@
 
   async function request(action, input) {
     const generation = sessionGeneration;
+    const streaming = input && ["ask", "agent_step"].includes(action);
     const query = input
       ? ""
       : "?action=" +
@@ -144,11 +145,70 @@
         ? {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ action, ...input }),
+            body: JSON.stringify({ action, ...input, ...(streaming ? { stream: true } : {}) }),
           }
         : { cache: "no-store" },
     );
     if (response.status === 401 && generation === sessionGeneration) unlock();
+    if (streaming && response.ok && response.headers.get("Content-Type")?.includes("application/x-ndjson")) {
+      const reader = response.body.getReader(), decoder = new TextDecoder();
+      let buffer = "", view = null, complete = false, preview = null, text = "", frame;
+      const render = () => {
+        frame = null;
+        if (preview?.isConnected && text) renderReply(preview, text);
+      };
+      const event = data => {
+        if (data.error) throw Error(data.error);
+        if (complete) return;
+        if (data.type === "start") {
+          cancelAnimationFrame(frame);
+          frame = null;
+          preview?.closest("article").remove();
+          text = "";
+          preview = add(data.provider === "anthropic" ? "Claude" : "GPT", "Thinking…", data.model);
+          preview.closest("article").dataset.provisional = "true";
+        }
+        if (typeof data.delta === "string" && preview) {
+          text += data.delta;
+          if (!frame) frame = requestAnimationFrame(render);
+        }
+        if (data.done === true) {
+          if (!data.view?.conversation_id) throw Error("Invalid saved response");
+          view = data.view;
+          complete = true;
+        }
+      };
+      try {
+        while (true) {
+          const chunk = await reader.read();
+          buffer += chunk.done ? decoder.decode() : decoder.decode(chunk.value, { stream: true });
+          let newline;
+          while ((newline = buffer.indexOf("\n")) >= 0) {
+            const line = buffer.slice(0, newline).trim();
+            buffer = buffer.slice(newline + 1);
+            if (line) event(JSON.parse(line));
+          }
+          if (chunk.done) break;
+        }
+        if (buffer.trim()) event(JSON.parse(buffer));
+        if (!complete) throw Error("Response stream ended before the saved reply arrived. Reload to check saved progress.");
+        preview?.closest("article").remove();
+        return view;
+      } catch (error) {
+        if (preview?.isConnected) {
+          render();
+          const notice = document.createElement("p");
+          notice.className = "error";
+          notice.textContent = "Unfinished preview · " + error.message;
+          preview.parentNode.append(notice);
+        }
+        throw error;
+      } finally {
+        cancelAnimationFrame(frame);
+        await reader.cancel().catch(() => {});
+        reader.releaseLock();
+      }
+    }
     const data = await response.json().catch(() => ({
       error: "Context service unavailable. Try again shortly.",
     }));
@@ -579,7 +639,6 @@
       messages.push(user);
       saveChat();
       add("You", messageText(user), '', false, user);
-      add(recipient.name, "Thinking…", model);
       $("textarea").value = "";
       attachment = null;
       $("#attachment").hidden = true;

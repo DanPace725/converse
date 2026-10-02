@@ -80,6 +80,162 @@ const final = response([
   },
 ]);
 
+for (const mode of ['context', 'agent']) for (const provider of ['openai', 'anthropic'])
+test(`${mode} ${provider} streams provisional text before saving the completed answer`, async ({ page }) => {
+  let release;
+  const gate = new Promise(resolve => release = resolve);
+  const errors = [];
+  page.on('pageerror', error => errors.push(error.message));
+  const app = await fixture(async (payload, options) => {
+    expect(typeof options.onDelta).toBe('function');
+    options.onDelta('**Live** 🌱');
+    await gate;
+    options.onDelta(' answer.');
+    return { ...response([{ type: 'message', content: [{ type: 'output_text', text: '**Live** 🌱 answer.' }] }]), model: payload.model };
+  }, { claude: true });
+  await page.route('**/api/title', route => route.fulfill({ json: { title: 'Streaming proof' } }));
+  try {
+    await page.goto(app.url);
+    await expect(page.locator('#mode-switch')).toBeVisible();
+    await page.locator(`#mode-switch label:has(input[value="${mode}"])`).click();
+    if (provider === 'anthropic') await page.locator('#recipients [data-name="Claude"]').click();
+    await page.getByRole('textbox', { name: 'Message', exact: true }).fill('Please answer.');
+    await page.locator('#send').click();
+    const live = page.locator('article[data-provisional="true"]');
+    await expect(live.locator('strong').last()).toHaveText('Live');
+    await expect(live).toContainText('🌱');
+    await expect(page.locator('#send')).toBeDisabled();
+    const id = app.service.list()[0].conversation_id;
+    expect(app.service.view(id).messages.filter(m => m.role === 'assistant')).toHaveLength(0);
+    release();
+    await expect(page.locator('#send')).toBeEnabled();
+    await expect(live).toHaveCount(0);
+    await expect(page.locator('article[data-provider] .content')).toHaveText('Live 🌱 answer.');
+    const saved = app.service.view(id).messages.at(-1);
+    expect(saved.content).toBe('**Live** 🌱 answer.');
+    expect(saved.provider).toBe(provider === 'anthropic' ? 'Claude' : 'GPT');
+    expect(saved.usage.output_tokens).toBe(10);
+    await page.reload();
+    await expect(page.locator('article[data-provider] .content')).toHaveText('Live 🌱 answer.');
+    expect(errors).toEqual([]);
+  } finally { release(); await app.close(); }
+});
+
+test('desktop panel resizing persists and Context expands without a short nested scroll area', async ({ page }, testInfo) => {
+  const app = await fixture(async () => final);
+  const id = app.service.create('Panel proof').conversation_id;
+  const longText = 'Full working context. '.repeat(80) + 'END OF SECTION';
+  app.service.harness(id).addMessage('user', longText);
+  const errors = [];
+  page.on('pageerror', error => errors.push(error.message));
+  try {
+    await page.goto(app.url);
+    if (testInfo.project.name === 'mobile') await page.locator('#menu').click();
+    await page.locator('.chat-item').filter({ hasText: 'Panel proof' }).click();
+    await expect(page.locator('#workspace-open')).toBeVisible();
+    await page.locator('#workspace-open').click();
+    await page.locator('#tab-context').click();
+    const detail = page.locator('#editor-items details').first();
+    await detail.locator('summary').click();
+    await expect(detail.locator('p')).toContainText('END OF SECTION');
+    expect(await page.locator('#editor-items').evaluate(el => getComputedStyle(el).maxHeight)).toBe('none');
+    if (testInfo.project.name === 'mobile') {
+      await expect(page.locator('#workspace-resize')).toBeHidden();
+      await expect(page.locator('#chats-resize')).toBeHidden();
+      expect(await page.locator('#workspace-editor').evaluate(el => el.getBoundingClientRect().width)).toBeLessThanOrEqual(390);
+    } else {
+      const workspace = page.locator('#workspace-editor');
+      const start = await workspace.boundingBox();
+      const edge = await page.locator('#workspace-resize').boundingBox();
+      await page.mouse.move(edge.x + 4, edge.y + 250);
+      await page.mouse.down();
+      await page.mouse.move(edge.x - 100, edge.y + 250, { steps: 5 });
+      await page.mouse.up();
+      await expect(workspace).toHaveCSS('width', `${start.width + 104}px`);
+      await page.locator('#workspace-resize').press('ArrowLeft');
+      await expect(workspace).toHaveCSS('width', `${start.width + 114}px`);
+      await page.locator('#workspace-resize').press('Shift+ArrowRight');
+      await expect(workspace).toHaveCSS('width', `${start.width + 64}px`);
+      await page.locator('#chats-resize').press('Shift+ArrowRight');
+      await expect(page.locator('#sidebar')).toHaveCSS('width', '330px');
+      await page.reload();
+      await page.locator('#workspace-open').click();
+      await expect(workspace).toBeVisible();
+      await expect(workspace).toHaveCSS('width', `${start.width + 64}px`);
+      await expect(page.locator('#sidebar')).toHaveCSS('width', '330px');
+      await page.locator('#tab-context').click();
+      await page.locator('#editor-items details').first().locator('summary').click();
+      await page.screenshot({ path: 'docs/reports/assets/issue-10-desktop.png' });
+      await page.locator('#editor-close').click();
+      await page.locator('#context-panel > summary').click();
+      const sheet = page.locator('#context-panel > .sheet');
+      const width = (await sheet.boundingBox()).width;
+      await page.locator('#settings-resize').press('Shift+ArrowRight');
+      await expect(sheet).toHaveCSS('width', `${width - 50}px`);
+      const height = (await sheet.boundingBox()).height;
+      await page.locator('#settings-height-resize').press('ArrowUp');
+      expect((await sheet.boundingBox()).height).toBeGreaterThan(height);
+      await page.locator('#settings-height-resize').press('Home');
+      expect(await sheet.evaluate(el => getComputedStyle(el).getPropertyValue('--settings-height'))).toBe('');
+      await page.locator('#sheet-close').click();
+      await page.locator('#context-watch').click();
+      const gardenWidth = (await page.locator('#context-garden').boundingBox()).width;
+      await page.locator('#garden-resize').press('ArrowLeft');
+      await expect(page.locator('#context-garden')).toHaveCSS('width', `${gardenWidth + 10}px`);
+      await page.locator('#garden-close').click();
+      await page.locator('#workspace-open').click();
+      await page.setViewportSize({ width: 1200, height: 800 });
+      await expect.poll(async () => (await page.locator('main').boundingBox()).width).toBeGreaterThanOrEqual(480);
+      await page.setViewportSize({ width: 390, height: 844 });
+      await expect(page.locator('#workspace-resize')).toBeHidden();
+      await expect(workspace).toHaveCSS('width', '390px');
+    }
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    expect(errors).toEqual([]);
+  } finally { await app.close(); }
+});
+
+for (const mode of ['context', 'agent']) test(`${mode} replaces tool previews and discards failed streaming text`, async ({ page }) => {
+  let calls = 0, fail = false, release;
+  const gate = new Promise(resolve => release = resolve);
+  const app = await fixture(async (_payload, { onDelta }) => {
+    calls++;
+    if (fail) { onDelta('Unfinished answer'); throw Error('stream ended unexpectedly'); }
+    if (calls === 1) {
+      onDelta('Tool preview');
+      return response([messageForTest('Tool preview'), call('calculate', { operation: 'add', values: [1, 2] }, 'stream')]);
+    }
+    onDelta('Final answer');
+    await gate;
+    return response([messageForTest('Final answer')]);
+  });
+  await page.route('**/api/title', route => route.fulfill({ json: { title: 'Preview proof' } }));
+  try {
+    await page.goto(app.url);
+    await expect(page.locator('#mode-switch')).toBeVisible();
+    await page.locator(`#mode-switch label:has(input[value="${mode}"])`).click();
+    await page.getByRole('textbox', { name: 'Message', exact: true }).fill('Calculate 1 + 2.');
+    await page.locator('#send').click();
+    await expect(page.locator('article[data-provisional] .content')).toHaveText('Final answer');
+    await expect(page.locator('#chat')).not.toContainText('Tool preview');
+    release();
+    await expect(page.locator('#send')).toBeEnabled();
+    const id = app.service.list()[0].conversation_id;
+    expect(app.service.view(id).messages.at(-1).content).toBe('Final answer');
+    expect(app.service.export(id).events.filter(e => e.kind === 'inference_request').every(e => e.metadata.stream)).toBe(true);
+    fail = true;
+    await page.getByRole('textbox', { name: 'Message', exact: true }).fill('Answer again.');
+    await page.locator('#send').click();
+    await expect(page.locator('#send')).toBeEnabled();
+    await expect(page.locator('article[data-provisional]')).toHaveCount(0);
+    await expect(page.locator('#chat')).not.toContainText('Unfinished answer');
+    expect(app.service.view(id).messages.filter(m => m.role === 'assistant')).toHaveLength(1);
+    await page.reload();
+    await expect(page.locator('article[data-provider] .content')).toHaveText('Final answer');
+  } finally { release(); await app.close(); }
+});
+const messageForTest = text => ({ type: 'message', content: [{ type: 'output_text', text }] });
+
 for (const mode of ['context', 'agent']) test(`${mode} saves generated names and resends edited user messages with math responses`, async ({ page }) => {
   const app = await fixture(async () => response([
     { type: 'message', content: [{ type: 'output_text', text: String.raw`The result is \(3 + 3 = 6\).` }] },

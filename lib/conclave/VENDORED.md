@@ -1,5 +1,7 @@
 # Conclave engine snapshot
 
+UI streaming (issue #10): task adapters accept `onDelta`, reconstruct complete provider responses from SSE (including Claude tool JSON, signatures and usage), and reject truncated streams. Harness streams only answer calls through a transient `onEvent` callback; selection/compaction remain buffered. Inference audit records the streaming flag, including the native Claude payload. Agent deadline wrappers forward streaming callbacks. Completed answers and checkpoints keep the same persistence rules; preview deltas are not source events. Preserve these Converse-only adaptations on refresh.
+
 Copied from the sibling `CLA/conclave/src` at commit `5fdeba2d9c1a547d21dbf7ed628ecb855789abc3`, excluding the CLI. This makes Git-based Converse deployments self-contained; local data and credentials are never copied.
 
 Hosted adaptations: `Store` can use an in-memory database without file views; `ConclaveService` skips disk backups in that mode; inference awaits an optional store flush before calls and after responses/failures; OpenAI accepts an injected fetch function for the total turn deadline. Durable events and snapshots are in Neon. The in-memory database only rebuilds the engine's existing indexes per request.

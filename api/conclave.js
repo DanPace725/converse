@@ -44,14 +44,14 @@ const handler = createContextHandler({
   download: (id) => read(id, (service) => downloadRecord(service, id)),
   activity: (id, options) =>
     read(id, (service) => service.activity(id, options)),
-  ask: (id, input) =>
-    repository().run(id, true, (service) => service.ask(id, input)),
+  ask: (id, input, options) =>
+    repository().run(id, true, (service) => service.ask(id, input, options)),
   remember: (id, input) =>
     repository().run(id, true, (service) => service.remember(id, input)),
   agentStart: (id, input) =>
     repository().run(id, true, (service) => service.agentStart(id, input)),
-  agentStep: (id, input) =>
-    repository().run(id, true, (service) => service.agentStep(id, input)),
+  agentStep: (id, input, options) =>
+    repository().run(id, true, (service) => service.agentStep(id, input, options)),
   agentStop: (id, input) =>
     repository().run(id, true, (service) => service.agentStop(id, input)),
 });

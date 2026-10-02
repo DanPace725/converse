@@ -186,8 +186,7 @@
         detail.dataset.item = item.id;
         detail.open = expanded.has(item.id);
         summary.textContent = item.title + (hasDraft ? " · draft" : "");
-        text.textContent =
-          item.content.slice(0, 160) + (item.content.length > 160 ? "…" : "");
+        text.textContent = item.content;
         button.textContent = "Open " + (tab === "state" ? "entry" : "section");
         detail.append(summary, text, button);
         container.append(detail);
@@ -264,6 +263,7 @@
     inspection++;
     saveError = "";
     tab = value;
+    panel.dataset.tab = tab;
     selected = null;
     editing = false;
     for (const button of el("editor-tabs").querySelectorAll("button")) {
