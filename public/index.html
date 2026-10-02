@@ -412,6 +412,17 @@
       </button>
     </div>
     <div id="editor-pane" role="tabpanel" aria-labelledby="tab-documents">
+      <div id="editor-upload-controls" class="editor-toolbar">
+        <button id="editor-upload" type="button">Upload document</button>
+        <input
+          id="editor-upload-file"
+          type="file"
+          accept=".md,.markdown,.txt,text/markdown,text/plain"
+          hidden
+          aria-label="Upload workspace document"
+        />
+      </div>
+      <p id="editor-upload-status" class="note" role="status" aria-live="polite"></p>
       <p id="editor-note" class="note">
         Open a saved context chat to inspect its workspace.
       </p>
@@ -433,6 +444,7 @@
             Preview
           </button>
           <button type="button" id="editor-download">Download</button>
+          <button type="button" id="editor-use">Reference in chat</button>
           <button type="button" id="editor-discard" hidden>
             Discard draft
           </button>

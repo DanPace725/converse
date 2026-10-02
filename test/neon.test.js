@@ -82,6 +82,16 @@ test(
       }
       const view = await pending;
       assert.equal(view.messages[1].content, "Saved in Neon.");
+      const uploaded = await writer.run(id, true, (service) => service.uploadDocument(id, {
+        name: "Reference notes.md", content: "# Source\nIndependent workspace upload café 🌱.",
+      }));
+      assert.equal(uploaded.context.revision, view.context.revision);
+      assert.equal(uploaded.messages.length, view.messages.length);
+      assert.equal(calls, 1);
+      const persistedUpload = await new ContextRepository(db, options).run(id, false,
+        service => service.workspaceFile(id, "Reference_notes.md"));
+      assert.equal(persistedUpload.content, "# Source\nIndependent workspace upload café 🌱.");
+      assert.equal(persistedUpload.operation, "upload");
       await reader.run(id, true, (service) => service.ask(id, input));
       assert.equal(
         calls,

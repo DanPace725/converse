@@ -452,7 +452,7 @@
     }
   }
 
-  function setBusy(value) {
+  function setBusy(value, { name = true } = {}) {
     busy = value;
     watchProgress(value);
     window.contextGarden?.setActive(value);
@@ -469,7 +469,7 @@
       field.disabled = value || !field.options.length;
     });
     controls();
-    if (!value) void autoNameConversation();
+    if (!value && name) void autoNameConversation();
   }
 
   async function driveAgent() {
@@ -782,6 +782,17 @@
     },
     editorView: () => latestView,
     refreshView: () => request('view'),
+    uploadDocument: async (input) => {
+      if (busy || agent?.status === 'running') throw Error('Wait for the reply or stop the agent before uploading.');
+      if (!enabled()) throw Error('Switch to Context or Agent mode before uploading to its workspace.');
+      setBusy(true);
+      try {
+        await ensure();
+        const view = await request('document_upload', { ...input, conversation_id: currentId() });
+        apply(view);
+        return view;
+      } finally { setBusy(false, { name: false }); }
+    },
     saveEdit: async (action, input) => {
       if (busy) throw Error('Wait for the current request before saving.');
       if (!available || !currentId()) throw Error('Reconnect to a saved context chat before saving.');

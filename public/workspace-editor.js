@@ -121,6 +121,8 @@
       field.disabled = saving;
     el("editor-state-key").disabled = saving || !selected?.newEntry;
     el("editor-save").disabled = blocked || stale();
+    el("editor-upload").disabled = busy || saving || view?.busy || view?.agent?.status === "running";
+    el("editor-use").disabled = blocked;
     el("editor-feedback").classList.toggle("error", stale() || !!saveError);
     if (editing && !saving)
       el("editor-feedback").textContent =
@@ -194,11 +196,11 @@
       }
     }
     el("editor-note").textContent = !view
-      ? "Open a saved context chat to inspect its workspace."
+      ? "Upload a Markdown or plain text document to start a saved workspace. Up to 100 KB per file."
       : tab === "documents"
         ? rows.length
           ? "Original uploads and current workspace files. Edited originals save as workspace copies."
-          : "Documents created by agents or uploaded to this chat will appear here."
+          : "Upload Markdown or plain text here without sending a message. Up to 100 KB per file."
         : tab === "context"
           ? "Working context · revision " +
             view.context.revision +
@@ -207,6 +209,8 @@
             view.state.revision +
             ". Edit an entry or add a named detail.";
     el("editor-new-state").hidden = tab !== "state" || !view;
+    el("editor-upload-controls").hidden = tab !== "documents";
+    el("editor-upload-status").hidden = tab !== "documents";
   }
   function show() {
     if (!selected) {
@@ -215,6 +219,7 @@
     }
     const d = draft();
     el("editor-document").hidden = false;
+    el("editor-use").hidden = selected.kind !== "document";
     el("editor-title").textContent = selected.title;
     el("editor-meta").textContent = selected.historical
       ? "Saved historical text · read only"
@@ -316,6 +321,7 @@
     )
       return;
     if (changed) inspection++;
+    if (changed && !saving) el("editor-upload-status").textContent = "";
     view = data;
     if (changed) {
       setTab(tab);
@@ -533,6 +539,50 @@
     el("workspace-open").focus();
   };
   el("editor-refresh").onclick = refresh;
+  el("editor-upload").onclick = () => el("editor-upload-file").click();
+  el("editor-upload-file").onchange = async () => {
+    const input = el("editor-upload-file"), file = input.files[0];
+    input.value = "";
+    if (!file || saving || busy) return;
+    const id = window.contextLayer.currentId(), generation = sessionGeneration;
+    const status = el("editor-upload-status");
+    saving = true;
+    status.classList.remove("error");
+    status.textContent = "Uploading " + file.name + "…";
+    syncControls();
+    try {
+      if (!/\.(md|markdown|txt)$/i.test(file.name) || file.size > 100000)
+        throw Error("Choose a Markdown or plain text document (.md, .markdown, .txt) up to 100 KB.");
+      const bytes = await file.arrayBuffer();
+      let content;
+      try { content = new TextDecoder("utf-8", { fatal: true, ignoreBOM: true }).decode(bytes); }
+      catch { throw Error("The document must be UTF-8 text. Export it as Markdown or plain text and try again."); }
+      if (id !== window.contextLayer.currentId() || generation !== sessionGeneration)
+        throw Error("The active chat changed. Upload again in the intended workspace.");
+      const previous = new Set((view?.workspace || []).map(f => f.source_event_id));
+      const data = await window.contextLayer.uploadDocument({ name: file.name, content });
+      view = data;
+      setTab("documents");
+      const fileItem = documents().find(item => item.kind === "document" && !previous.has(item.token));
+      if (fileItem) select(fileItem);
+      status.textContent = "Uploaded " + (fileItem?.path || file.name) + " · reference it in chat when ready.";
+    } catch (error) {
+      status.classList.add("error");
+      status.textContent = error.message;
+    } finally {
+      saving = false;
+      syncControls();
+    }
+  };
+  el("editor-use").onclick = () => {
+    if (selected?.kind !== "document" || busy || saving) return;
+    const composer = document.querySelector("#composer textarea");
+    const reference = 'Workspace document: "' + selected.path + '"';
+    composer.value = composer.value.trimEnd() + (composer.value.trim() ? "\n" : "") + reference;
+    composer.dispatchEvent(new Event("input", { bubbles: true }));
+    close();
+    composer.focus();
+  };
   el("editor-edit").onclick = beginEdit;
   el("editor-save").onclick = save;
   for (const id of [

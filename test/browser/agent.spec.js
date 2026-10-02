@@ -80,6 +80,87 @@ const final = response([
   },
 ]);
 
+for (const mode of ["Context", "Agent"]) {
+  test(`direct workspace upload in ${mode} stays out of chat until referenced and survives reload`, async ({ page }, testInfo) => {
+    let calls = 0;
+    const content = "# Uploaded research\n" + "Evidence café 🌱.\n".repeat(700) + "END OF UPLOADED DOCUMENT";
+    const app = await fixture(async payload => {
+      calls++;
+      if (calls === 1) {
+        const manifest = JSON.parse(payload.input[1].content.split("\n")[1]);
+        expect(manifest[0].path).toBe("Research_notes.md");
+        const working = JSON.parse(payload.input[0].content.split("\n")[1]);
+        expect(working.at(-1).content).toContain('Workspace document: "Research_notes.md"');
+        expect(JSON.stringify(payload.input)).not.toContain("END OF UPLOADED DOCUMENT");
+        return response([call("workspace_read", { path: "Research_notes.md", offset: 0 }, 1)]);
+      }
+      if (calls === 2) return response([call("workspace_read", { path: "Research_notes.md", offset: 8000 }, 2)]);
+      expect(payload.input.at(-1).output).toContain("END OF UPLOADED DOCUMENT");
+      return final;
+    });
+    try {
+      await page.goto(app.url);
+      await expect(page.locator("#workspace-open")).toBeVisible();
+      await page.getByRole("radio", { name: mode, exact: true }).check();
+      await page.locator("#workspace-open").click();
+      await page.locator("#editor-upload-file").setInputFiles({ name: "Research notes.md", mimeType: "text/markdown", buffer: Buffer.from(content) });
+      await expect(page.locator("#editor-upload-status")).toContainText("Uploaded Research_notes.md");
+      await expect(page.locator("#editor-preview")).toContainText("END OF UPLOADED DOCUMENT");
+      const id = app.service.list()[0].conversation_id;
+      expect(app.service.view(id).messages).toHaveLength(0);
+      expect(app.service.view(id).context.segments).toHaveLength(0);
+      expect(calls).toBe(0);
+      await page.reload();
+      await expect(page.getByRole("radio", { name: mode, exact: true })).toBeChecked();
+      await page.locator("#workspace-open").click();
+      await expect(page.locator("#editor-preview")).toContainText("END OF UPLOADED DOCUMENT");
+      const download = page.waitForEvent("download");
+      await page.locator("#editor-download").click();
+      const stream = await (await download).createReadStream();
+      const chunks = []; for await (const chunk of stream) chunks.push(chunk);
+      expect(Buffer.concat(chunks).toString()).toBe(content);
+      await page.screenshot({ path: testInfo.outputPath("workspace-upload.png") });
+      await page.locator("#editor-use").click();
+      await expect(page.getByLabel("Message", { exact: true })).toHaveValue('Workspace document: "Research_notes.md"');
+      expect(calls).toBe(0);
+      expect(app.service.view(id).messages).toHaveLength(0);
+      await page.getByLabel("Message", { exact: true }).fill('Summarize the evidence.\nWorkspace document: "Research_notes.md"');
+      await page.locator("#send").click();
+      await expect(page.locator("#send")).toBeEnabled();
+      expect(calls).toBe(3);
+      expect(app.service.view(id).messages).toHaveLength(2);
+      expect(app.service.view(id).workspace[0].content).toBe(content);
+    } finally { await app.close(); }
+  });
+}
+
+test("workspace upload validation preserves saved content and does not send rejected documents", async ({ page }) => {
+  const app = await fixture(async () => { throw Error("No model calls expected"); });
+  try {
+    await page.goto(app.url);
+    await expect(page.locator("#workspace-open")).toBeVisible();
+    await page.locator("#workspace-open").click();
+    const file = (name, buffer) => page.locator("#editor-upload-file").setInputFiles({ name, mimeType: "text/plain", buffer });
+    await file("notes.txt", Buffer.from("Keep the original"));
+    await expect(page.locator("#editor-upload-status")).toContainText("Uploaded notes.txt");
+    await file("notes.txt", Buffer.from("Overwrite"));
+    await expect(page.locator("#editor-upload-status")).toContainText("already exists");
+    await expect(page.locator("#editor-preview")).toHaveText("Keep the original");
+    for (const [name, buffer, error] of [
+      ["large.md", Buffer.alloc(100001, "x"), "100 KB"],
+      ["doc.pdf", Buffer.from("%PDF"), "Markdown or plain text"],
+      ["invalid.txt", Buffer.from([0xff]), "UTF-8"],
+    ]) {
+      await file(name, buffer);
+      await expect(page.locator("#editor-upload-status")).toContainText(error);
+    }
+    const id = app.service.list()[0].conversation_id;
+    expect(app.service.view(id).workspace).toHaveLength(1);
+    expect(app.service.view(id).messages).toHaveLength(0);
+    expect(app.service.view(id).metrics.calls).toBe(0);
+  } finally { await app.close(); }
+});
+
 test('Workspace identifies authors, labels legacy excerpts, and opens original context and state corrections', async ({ page }, testInfo) => {
   let calls = 0;
   const content = '# Full notes\n' + 'Detailed evidence. '.repeat(180) + '\nEND OF ORIGINAL';
