@@ -57,10 +57,9 @@ test("chat edits the same versioned workspace, preserves unmatched sections, and
           );
         if (calls === 3) {
           const manifest = JSON.parse(payload.input[1].content.split("\n")[1]);
-          assert.notEqual(
-            manifest[0].source_event_id,
-            original.source_event_id,
-          );
+          assert.equal(manifest[0].source_event_id, original.source_event_id, 'Manifest remains a stable snapshot');
+          const receipt = JSON.parse(payload.input.find(i => i.call_id === 'call_2' && i.type === 'function_call_output').output);
+          assert.notEqual(receipt.source_event_id, original.source_event_id, 'Receipt exposes the current version');
           return call("workspace_read", { path: "plan.md", offset: 0 }, 3);
         }
         return final;

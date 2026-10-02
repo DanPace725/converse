@@ -87,6 +87,7 @@ test("local HTTP chat and JSON download preserve source IDs, usage and all revis
       /attachment; filename="conv_.*\.json"/,
     );
     const record = download.record;
+    assert.equal(download.headers["Content-Disposition"], `attachment; filename="${id}_${record.exported_at.replace(/[:.]/g, '-')}.json"`);
     assert.equal(record.messages[1].reply_to, record.messages[0].message_id);
     assert.equal(record.messages[1].usage.input_tokens, 100);
     const sources = new Set(

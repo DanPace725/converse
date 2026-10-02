@@ -438,14 +438,12 @@ test("audit paging exposes truncation and links tool failures to the actual subm
   }
 });
 
-const latestExport = new URL('../docs/conversations/conv_b65bc693-2839-4ff5-a3ce-31d9ba602b42.json', import.meta.url);
+const exportAt = folder => new URL(`../docs/conversations/${folder}conv_b65bc693-2839-4ff5-a3ce-31d9ba602b42.json`, import.meta.url);
+const latestExport = existsSync(exportAt('')) ? exportAt('') : exportAt('Processed/');
 test("latest exported failure replays with eligible old targets and lossless source retrieval", { skip: !existsSync(latestExport) }, () => {
   const record = JSON.parse(
     readFileSync(
-      new URL(
-        "../docs/conversations/conv_b65bc693-2839-4ff5-a3ce-31d9ba602b42.json",
-        import.meta.url,
-      ),
+      latestExport,
     ),
   );
   const store = new Store(undefined, { memory: true }),

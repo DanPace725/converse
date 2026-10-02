@@ -969,7 +969,7 @@ test("browser drives real HTTP/service/storage, renders artifacts and resumes af
     calls++;
     return calls === 1
       ? response([
-          call("calculate", { operation: "multiply", values: [6, 7] }, 1),
+          call("calculate_expression", { expression: "6 * 7" }, 1),
         ])
       : calls === 2
         ? response([
@@ -1017,9 +1017,9 @@ test("browser drives real HTTP/service/storage, renders artifacts and resumes af
     const download = page.waitForEvent("download");
     await page.locator("#more-menu > summary").click();
     await page.locator("#export-json").click();
-    const record = JSON.parse(
-      await readFile(await (await download).path(), "utf8"),
-    );
+    const exported = await download;
+    const record = JSON.parse(await readFile(await exported.path(), "utf8"));
+    expect(exported.suggestedFilename()).toBe(`${record.conversation_id}_${record.exported_at.replace(/[:.]/g, '-')}.json`);
     expect(
       record.context_layer.events.some((e) => e.kind === "agent_checkpoint"),
     ).toBe(true);

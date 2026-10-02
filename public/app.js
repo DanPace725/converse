@@ -770,6 +770,7 @@ $("textarea").onkeydown = (e) => {
 };
 $("#export-json").onclick = () => {
   if (window.contextLayer?.downloadExport()) return;
+  const exportedAt = now();
   const url = URL.createObjectURL(
     new Blob(
       [
@@ -777,7 +778,7 @@ $("#export-json").onclick = () => {
           {
             ...conversation,
             messages,
-            exported_at: now(),
+            exported_at: exportedAt,
           },
           null,
           2,
@@ -788,16 +789,17 @@ $("#export-json").onclick = () => {
   );
   const a = document.createElement("a");
   a.href = url;
-  a.download = conversation.conversation_id + ".json";
+  a.download = conversation.conversation_id + '_' + exportedAt.replace(/[:.]/g, '-') + '.json';
   a.click();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 };
 $("#export").onclick = () => {
+  const exportedAt = now();
   const md =
     "# Model chat\n\nConversation: " +
     conversation.conversation_id +
     "\nExported: " +
-    now() +
+    exportedAt +
     "\n\n" +
     messages
       .map(
@@ -816,7 +818,7 @@ $("#export").onclick = () => {
   );
   const a = document.createElement("a");
   a.href = url;
-  a.download = "chat-" + new Date().toISOString().replace(/[:.]/g, "-") + ".md";
+  a.download = conversation.conversation_id + '_' + exportedAt.replace(/[:.]/g, '-') + '.md';
   a.click();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 };

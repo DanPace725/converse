@@ -296,7 +296,7 @@ test("Claude restarts after workspace changes and preserves unchanged signed pre
     fetchImpl: async (_url, options) => {
       const body = JSON.parse(options.body);
       if (previous && calls === 2) {
-        assert.equal(body.system, previous.system);
+        assert.deepEqual(body.system, previous.system);
         assert.deepEqual(body.tools, previous.tools);
         assert.deepEqual(
           body.messages.slice(0, previous.messages.length),
@@ -358,7 +358,7 @@ test("Claude restarts after workspace changes and preserves unchanged signed pre
     let view = await service().agentStart(id, {
       message_id: "objective",
       content: "Write and verify proof.",
-      settings: { provider: "anthropic", model: "claude-sonnet-5", jev: false },
+      settings: { provider: "anthropic", model: "claude-sonnet-5", jev: false, freezeProjection: false },
     });
     while (view.agent.status === "running")
       view = await service().agentStep(id, {

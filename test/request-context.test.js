@@ -20,7 +20,7 @@ test('unchanged Claude exchanges include exactly one context snapshot and preser
       pending.push({ type: 'reasoning', anthropic_content: { type: 'thinking', thinking: 'Check arithmetic', signature: 'signed-' + n } }, call(n), result('calculate', n));
       const next = h.prepareAnswer(pending);
       assert.deepEqual(next.input.slice(0, previous.input.length), previous.input);
-      assert.equal(next.input.filter(i => i.role === 'user' && i.content.startsWith('Working context revision')).length, 1);
+      assert.equal(next.input.filter(i => i.role === 'user' && i.content.startsWith('Working context:')).length, 1);
       assert.ok(budgetUnits(next) < budgetUnits(previous) + 2000);
       previous = next;
     }
@@ -93,7 +93,7 @@ for (const mode of ['chat', 'agent']) test(`Jev reviews ${mode} every 10,000 rep
     const id = service.create('Periodic review').conversation_id;
     const h = service.harness(id);
     for (let n = 0; n < 5; n++) h.addMessage('assistant', 'Earlier material '.repeat(800));
-    const input = { message_id: 'periodic', content: 'Calculate twice and finish.', settings: { provider: 'anthropic', model: 'claude-fixture', jev: true } };
+    const input = { message_id: 'periodic', content: 'Calculate twice and finish.', settings: { provider: 'anthropic', model: 'claude-fixture', jev: true, freezeProjection: false } };
     let view;
     if (mode === 'chat') view = await service.ask(id, input);
     else {

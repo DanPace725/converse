@@ -943,7 +943,8 @@ import { effortLevels } from './effort.js';
       link.href =
         "/api/conclave?action=download&conversation=" +
         encodeURIComponent(currentId());
-      link.download = currentId() + ".json";
+      // The server uses the export's own timestamp in Content-Disposition.
+      link.download = '';
       link.click();
       return true;
     },

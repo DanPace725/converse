@@ -23,7 +23,7 @@ for (const mode of ['context', 'agent']) {
         if (provider === 'anthropic') {
           // Verify the attribution survives the actual Messages API conversion.
           const native = anthropicPayload(payload);
-          assert.match(native.system, /provider=anthropic; requested model=claude-fixture/);
+          assert.match(native.system[0].text, /provider=anthropic; requested model=claude-fixture/);
           assert.match(native.messages[0].content[0].text, /gpt-fixture-snapshot/);
           assert.match(native.messages[0].content[0].text, /"provider":"openai"/);
           return reply('claude-fixture-snapshot', 'Claude reviews the GPT design.');

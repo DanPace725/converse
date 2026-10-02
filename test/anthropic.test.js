@@ -152,7 +152,7 @@ test("Claude agent resumes using native tool results, verifies workspace and exp
     fetchImpl: async (_url, options) => {
       const body = JSON.parse(options.body);
       assert.equal(body.model, model);
-      assert.ok(body.system.includes("provider=anthropic"));
+      assert.ok(body.system[0].text.includes("provider=anthropic"));
       for (const name of [
         "calculate",
         "workspace_write",
@@ -199,8 +199,8 @@ test("Claude agent resumes using native tool results, verifies workspace and exp
         ),
       );
       if (calls > 2) {
-        assert.match(JSON.stringify(blocks), /completed_tool_results/);
-        assert.doesNotMatch(JSON.stringify(blocks), /signed-thought/);
+        assert.match(JSON.stringify(blocks), /signed-thought/);
+        assert.ok(blocks.some(p => p.type === "tool_result" && p.tool_use_id === "write"));
       }
       if (calls === 2)
         return reply(

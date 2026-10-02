@@ -41,7 +41,9 @@ test('reasoning survives ordinary chat reload and exports while response Copy st
     if (!(await page.locator('#more-menu').evaluate(el => el.open))) await page.locator('#more-menu > summary').click();
     const download = page.waitForEvent('download');
     await page.locator(button).click();
-    const stream = await (await download).createReadStream();
+    const exported = await download;
+    expect(exported.suggestedFilename()).toMatch(/_\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}-\d{3}Z\.(json|md)$/);
+    const stream = await exported.createReadStream();
     const chunks = []; for await (const chunk of stream) chunks.push(chunk);
     expect(Buffer.concat(chunks).toString()).toContain(expected);
   }

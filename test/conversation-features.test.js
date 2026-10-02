@@ -45,7 +45,7 @@ for (const mode of ['context', 'agent']) test(`${mode} revisions preserve origin
     const view = service().view(id);
     assert.deepEqual(view.messages.map(m => m.content), ['Calculate 2 + 2.', 'Answer.', 'Calculate 3 + 3.', 'Answer.']);
     assert.equal(view.messages[2].revises_message_id, 'msg_original');
-    assert.match(payloads[1].input[0].content, new RegExp('"revises_event_id":"' + originalId + '"'));
+    assert.match(payloads[1].input[0].content, new RegExp('"revises_event_id":"' + store.references(id).sources.get(originalId) + '"'));
     const revision = store.context(id).revision;
     await service().name(id, { title: 'Simple Arithmetic', usage: { output_tokens: 3 } });
     assert.equal(service().view(id).title, 'Simple Arithmetic');

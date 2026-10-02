@@ -16,9 +16,11 @@ Users can **Remove** a document and **Restore** it later. Removal excludes its s
 
 Context shows the active working sections and a readable context activity report. State holds source-linked objectives, constraints, decisions, questions, and evidence for this conversation; it is not account-wide memory. Model suggestions remain unresolved until the user accepts them.
 
-Context/Agent tools retrieve history, list/read/write/patch saved text, calculate arithmetic, manage context/state, read this guide, and inspect telemetry. Files are virtual conversation documents, not paths on your computer. Existing files require current version IDs and full reads before model edits; completion requires reading back written versions. Readback proves receipt, not correctness. The app currently offers no web search, shell execution, sandbox, private model workspace, or unattended worker.
+Context/Agent tools retrieve history, list/read/write/patch saved text, calculate arithmetic (including complete formulas in one call), manage context/state, read this guide, and inspect telemetry. Files are virtual conversation documents, not paths on your computer. Existing files require current version IDs and full reads before model edits; completion requires reading back written versions. Readback proves receipt, not correctness. The app currently offers no web search, shell execution, sandbox, private model workspace, or unattended worker.
 
 ## Context management and Jev
+
+New Context turns and Agent runs keep one stable working projection during their tool loop. Saved edits and file versions are visible through tool receipts and inspection immediately. The model can use refresh_context to bring saved changes into its prompt; the next user turn refreshes automatically. Large continuations can trigger a logged refresh to stay within the request guard.
 
 Working context can change while original source history remains preserved. Offloading leaves retrieval pointers; compaction creates shorter derived text. Protected pins, exact text, structured state, recent messages, and current task constraints are preserved by the engine's rules.
 
