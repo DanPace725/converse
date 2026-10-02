@@ -424,6 +424,16 @@
         <p id="editor-token-summary" class="note"></p>
         <button id="editor-token-count" type="button">Count saved request</button>
         <p id="editor-count-status" class="note" role="status"></p>
+        <div class="editor-toolbar">
+          <label>Activity <select id="editor-audit-kind">
+            <option value="context">Context</option><option value="all">All</option>
+            <option value="workspace">Workspace</option><option value="history">Retrieval</option>
+            <option value="task">Requests and turns</option><option value="calculation">Calculations</option>
+          </select></label>
+          <button id="editor-audit-earlier" type="button">Earlier</button>
+          <button id="editor-audit-latest" type="button">Latest</button>
+        </div>
+        <p id="editor-audit-status" class="note" role="status"></p>
         <div id="editor-audit"></div>
       </section>
       <div id="editor-upload-controls" class="editor-toolbar">
@@ -448,6 +458,10 @@
       <section id="editor-document" hidden>
         <h3 id="editor-title"></h3>
         <p id="editor-meta" class="note"></p>
+        <details id="editor-identifiers" hidden>
+          <summary>References and protection</summary>
+          <p id="editor-identifiers-text" class="note plain-text"></p>
+        </details>
         <button type="button" id="editor-reference" hidden>Open original context</button>
         <details id="editor-history" hidden>
           <summary>Previous revisions</summary>

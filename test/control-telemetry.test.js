@@ -27,6 +27,10 @@ test('removal excludes all document versions, file-read copies, derived context 
     for (const event_id of [first.source_event_id, file.source_event_id, copy.id])
       assert.throws(() => h.toolResult('retrieve_event', { event_id, offset: 0 }), /removed/);
     assert.throws(() => h.toolResult('resolve_context', { bundle_id: bundle.id, offset: 0 }), /removed/);
+    const refs = store.references(id);
+    assert.throws(() => h.toolResult('retrieve_event', { event_id: refs.sources.get(first.source_event_id), offset: 0 }), /removed/);
+    assert.throws(() => h.toolResult('resolve_context', { bundle_id: refs.segments.get(bundle.id), offset: 0 }), /removed/);
+    assert.throws(() => h.toolResult('edit_context', { expected_revision: removed.context.revision, remove_ids: [], additions: [{ content: 'Revive through alias', source_event_ids: [refs.sources.get(first.source_event_id)], type: 'summary', status: 'active' }] }), /removed/);
     assert.throws(() => h.toolResult('edit_context', { expected_revision: removed.context.revision, remove_ids: [], additions: [{ content: 'Revive', source_event_ids: [first.source_event_id], type: 'summary', status: 'active' }] }), /removed/);
     assert.doesNotMatch(JSON.stringify(h.answerPayload()), /secretword/);
     assert.match(JSON.stringify(service.export(id)), /secretword/);

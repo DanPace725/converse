@@ -84,7 +84,7 @@ test('legacy source attribution survives summaries, structured state, offloading
     assert.equal(projected[1].source_attribution[0].model, 'gpt-older-snapshot');
     assert.equal(projected[2].source_attribution[0].model, null);
     assert.equal(projected[2].source_attribution[0].requested_model, null);
-    h.edit({ expected_revision: 1, remove_ids: raw.map(s => s.id), additions: [{
+    h.edit({ expected_revision: 1, remove_ids: raw.filter(s => s.type !== 'user').map(s => s.id), additions: [{
       type: 'summary', status: 'active', content: 'GPT proposed two dates; another model offered a suggestion. '.repeat(20),
       source_event_ids: [gpt.id, unknown.id],
     }] });
@@ -93,11 +93,11 @@ test('legacy source attribution survives summaries, structured state, offloading
       status: 'unresolved', supersedes: [], conflicts_with: [], supports: [], limitations: ['Assistant proposal.'],
     }] });
     projected = projection(h.answerPayload());
-    assert.deepEqual(projected[0].source_attribution.map(a => a.provider), ['openai', 'anthropic']);
-    assert.equal(projected[1].source_attribution[0].requested_model, 'gpt-older');
-    const summary = store.context(id).segments[0];
+    assert.deepEqual(projected[1].source_attribution.map(a => a.provider), ['openai', 'anthropic']);
+    assert.equal(projected[2].source_attribution[0].requested_model, 'gpt-older');
+    const summary = store.context(id).segments[1];
     h.offload([summary.id], 3);
-    assert.equal(projection(h.answerPayload())[1].source_attribution[0].provider, 'openai');
+    assert.equal(projection(h.answerPayload())[2].source_attribution[0].provider, 'openai');
     const resolved = h.toolResult('resolve_context', { bundle_id: summary.id }, []);
     assert.equal(resolved.source_attribution[0].model, 'gpt-older-snapshot');
     for (const result of [

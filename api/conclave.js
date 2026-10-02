@@ -28,6 +28,7 @@ const handler = createContextHandler({
   create: (title) => repository().create(title),
   name: (id, input) => repository().run(id, true, (service) => service.name(id, input)),
   view: (id) => read(id, (service) => service.view(id)),
+  audit: (id, options) => read(id, service => service.audit(id, options)),
   workspaceFile: (id, path) =>
     read(id, (service) => service.workspaceFile(id, path)),
   sourceEvent: (id, eventId) =>

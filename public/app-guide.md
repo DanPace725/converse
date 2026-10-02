@@ -22,7 +22,13 @@ Context/Agent tools retrieve history, list/read/write/patch saved text, calculat
 
 Working context can change while original source history remains preserved. Offloading leaves retrieval pointers; compaction creates shorter derived text. Protected pins, exact text, structured state, recent messages, and current task constraints are preserved by the engine's rules.
 
+Segments have stable conversation-local handles such as **S17**; retrievable source events have **E12** handles. Canonical IDs remain authoritative in storage and exports. New derived versions get new S handles; historical handles stay resolvable. Workspace's References and protection details show both. Tools accept S handles for segment targets and E handles for sources. State relations also accept **state:key** (or an existing plain key), resolved to its current canonical segment; entries created in the same batch cannot be relationship targets.
+
+Use **inspect_context** before a context mutation to see every blocked target and its protection reason/lifetime. Batches are atomic. Recent-window guards move as context advances; the current request guard lasts for the turn. Named state changes through update_state. Jev retain/escalate recommendations are advisory and do not become run-long locks. Unchanged reviews reuse saved decisions; explicit /compact refreshes selection. Automatic paid rewriting is bounded to one call per turn, after reduction preflight; lossless pointers preserve originals. Refresh eligibility after a rejection rather than repeating the same blocked batch.
+
 When enabled and available, Jev recommends retention actions and priorities for bounded candidates during periodic reviews or context pressure. The engine validates proposals, applies protection rules, and performs changes. The task model performs semantic compaction. A proposal is not an applied change; confidence in selection is not proof of factual truth or perfect preservation. Failures can fall back to deterministic selection. Context activity links proposals to actual revisions and source records.
+
+Context activity has filters and Earlier/Latest paging. Omitted entry counts are labelled; canonical JSON retains the full audit. Saved-context counts exclude pending continuation after a run; the next running request includes it. The latest submitted request records its own revision, full-input estimate and reported usage. A completed agent can contain tool errors; completion does not establish successful optimization.
 
 ## Tokens, reasoning, and limits
 

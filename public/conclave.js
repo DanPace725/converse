@@ -427,7 +427,7 @@ import { effortLevels } from './effort.js';
     notice.hidden = !agent || !notice.textContent || (agent.status === 'running' && !toolErrors.length);
     notice.dataset.error = String(!!agent && (agent.status !== 'running' && agent.status !== 'completed' || toolErrors.length > 0));
     $("#agent-status").textContent = agent
-      ? `${agent.status} · ${agent.steps}/${agent.limits.max_steps} steps · ${agent.input_tokens} input / ${agent.output_tokens} output tokens` +
+      ? `${agent.status}${agent.status === 'completed' && toolErrors.length ? ' with tool errors' : ''} · ${agent.steps}/${agent.limits.max_steps} steps · ${agent.input_tokens} input / ${agent.output_tokens} output tokens` +
         (agent.usage_complete === false ? " (partial usage)" : "") +
         (agent.tools.length
           ? " · " + agent.tools.map((t) => t.name).join(" → ")
@@ -884,6 +884,12 @@ import { effortLevels } from './effort.js';
       await refreshList();
     },
     editorView: () => latestView,
+    readAudit: async (kind = 'context', before = 0) => {
+      const response = await fetch('/api/conclave?action=audit&conversation=' + encodeURIComponent(currentId()) + '&kind=' + encodeURIComponent(kind) + '&before=' + before, { cache: 'no-store' });
+      const data = await response.json();
+      if (!response.ok) throw Error(data.error || 'Could not read activity');
+      return data;
+    },
     refreshView: () => request('view'),
     uploadDocument: async (input) => {
       if (busy || agent?.status === 'running') throw Error('Wait for the reply or stop the agent before uploading.');

@@ -29,7 +29,9 @@ test("direct uploads preserve full human sources without turns, inference or wor
     name: "Research notes.md",
     content,
   });
-  assert.deepEqual(view.context, before);
+  assert.deepEqual(store.context(id), before);
+  assert.equal(view.context.segments[0].id, before.segments[0].id);
+  assert.equal(view.context.segments[0].segmentRef, 'S1');
   assert.equal(view.messages.length, messagesBefore);
   assert.equal(view.attachments.length, 0);
   assert.equal(view.metrics.calls, 0);

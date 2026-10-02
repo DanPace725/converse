@@ -104,9 +104,9 @@ for (const mode of ['chat', 'agent']) test(`Jev reviews ${mode} every 10,000 rep
       }
       assert.equal(view.agent.status, 'completed', view.agent.error);
     }
-    assert.equal(reviews, 2);
+    assert.equal(reviews, 1, 'Unchanged context/task reuses the persisted selector decision');
     assert.equal(answers, 3);
-    assert.equal(view.metrics.decision_calls, 2);
+    assert.equal(view.metrics.decision_calls, 1);
     assert.equal(view.model_input.latest.input_tokens, 6000);
     assert.equal(store.events(id).filter(e => e.kind === 'context_review').length, 2);
     assert.ok(store.events(id).filter(e => e.kind === 'inference_request' && e.content === 'answer').every(e => e.metadata.estimated_input_units < 192000));

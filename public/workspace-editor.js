@@ -24,6 +24,8 @@
   const keyOf = (item) =>
     view.conversation_id + ":" + item.kind + ":" + item.id;
   const draft = () => selected && drafts[keyOf(selected)];
+  const segmentLabel = (s) =>
+    `${s.segmentRef || view?.segment_refs?.[s.id] || "Historical segment"} · ${s.state_key || s.type}`;
   const persist = () => {
     try {
       sessionStorage.setItem("converse-editor-drafts", JSON.stringify(drafts));
@@ -63,7 +65,7 @@
     return segments.map((s) => ({
       kind: tab,
       id: tab === "state" ? s.state_key : s.id,
-      title: s.state_key || s.type + " · " + s.id.slice(-8),
+      title: segmentLabel(s),
       content: s.content,
       token: s.id,
       section: s,
@@ -91,6 +93,7 @@
           ...item,
           content: s.content,
           token: s.id,
+          title: segmentLabel(s),
           section: s,
           protected: !!(
             s.pinned ||
@@ -178,8 +181,8 @@
     );
     container.replaceChildren();
     for (const item of rows) {
-      const button = document.createElement("button");
-      button.type = "button";
+      const button = document.createElement('button');
+      button.type = 'button';
       const hasDraft = !!drafts[keyOf(item)];
       button.textContent = item.title + (hasDraft ? " · draft" : "");
       button.dataset.item = item.id;
@@ -188,9 +191,7 @@
       button.onclick = () => select(item);
       if (tab === "documents" || item.detached) container.append(button);
       else {
-        const detail = document.createElement("details"),
-          summary = document.createElement("summary"),
-          text = document.createElement("p");
+        const detail = document.createElement('details'), summary = document.createElement('summary'), text = document.createElement('p');
         detail.dataset.item = item.id;
         detail.open = expanded.has(item.id);
         summary.textContent = item.title + (hasDraft ? " · draft" : "");
@@ -232,7 +233,8 @@
     el("editor-meta").textContent = selected.historical
       ? "Saved historical text · read only"
       : selected.kind === "document"
-        ? "Workspace file · version " + selected.token.slice(-8)
+        ? "Workspace file · source " +
+          (view.source_refs?.[selected.token] || "historical")
         : selected.kind === "source"
           ? "Original source · preserved in history. Edit creates a workspace copy."
           : "Source-linked " +
@@ -250,16 +252,51 @@
       if (file && selected.content === `Workspace ${file.path}; source ${file.source_event_id}.\n${file.content.slice(0, 2000)}` && file.content.length > 2000)
         el('editor-meta').textContent += ` · Partial excerpt: first 2000 characters; ${file.content.length - 2000} more characters. Open the file in Documents for full text.`;
     }
+    const section = selected.section,
+      identifiers = el("editor-identifiers");
+    identifiers.hidden = !section && selected.kind !== "source";
+    el("editor-identifiers-text").textContent = section
+      ? [
+          `${section.segmentRef || view.segment_refs?.[section.id] || "Historical segment"} · canonical: ${section.id}`,
+          "References are local to this conversation; new versions receive new segment references.",
+          ...(
+            section.sourceRefs ||
+            section.source_event_ids.map((id) => ({
+              id,
+              sourceRef: view.source_refs?.[id],
+            }))
+          ).map(
+            (s) => `Source ${s.sourceRef || "historical"} · canonical: ${s.id}`,
+          ),
+          ...(section.parentRefs || []).map(
+            (s) => `Derived from ${s.segmentRef} · canonical: ${s.id}`,
+          ),
+          ...(section.protection?.reasons || []).map(
+            (r) => `Model protection: ${r.label} (${r.lifetime})`,
+          ),
+          section.protection?.advisory
+            ? `Selector advice: ${section.protection.advisory.action}; this advice is not a run lock.`
+            : null,
+        ]
+          .filter(Boolean)
+          .join("\n")
+      : `Source ${view.source_refs?.[selected.id] || "historical"} · canonical: ${selected.id}`;
     const history = el('editor-history'), revisions = selected.section?.relations?.supersedes || [];
     history.hidden = selected.kind !== 'state' || !revisions.length;
-    el('editor-history-items').replaceChildren(...revisions.map(id => {
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.textContent = 'Open previous revision · ' + id.slice(-8);
-      button.onclick = () => inspect({ id, state_key: selected.section.state_key }, false);
-      return button;
-    }));
+    el("editor-history-items").replaceChildren(
+      ...revisions.map((id) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.textContent =
+          "Open previous revision · " +
+          (view.segment_refs?.[id] || "historical segment");
+        button.onclick = () => inspect({ id, state_key: selected.section.state_key }, false);
+        return button;
+      }),
+    );
     el('editor-reference').hidden = !selected.section?.ref_bundle_id;
+    el("editor-reference").textContent =
+      "Open original context " + (selected.section?.referenceRef || "");
     el('editor-reference').onclick = () => inspect({ id: selected.section.ref_bundle_id }, false);
     el("editor-edit").hidden =
       editing || !!selected.protected || !!selected.historical;
@@ -332,6 +369,9 @@
     if (changed && !saving) el("editor-upload-status").textContent = "";
     view = data;
     if (changed) {
+      auditPage = null;
+      auditGeneration++;
+      el("editor-audit-kind").value = "context";
       setTab(tab);
       return;
     }
@@ -367,7 +407,7 @@
     document.body.classList.add("workspace-visible");
     el("workspace-open").setAttribute("aria-expanded", "true");
     if (window.contextLayer?.editorView())
-      adopt(window.contextLayer.editorView());
+    adopt(window.contextLayer.editorView());
     refresh();
     schedule();
     el("editor-close").focus();
@@ -474,7 +514,7 @@
               kind: "context",
               id: section.id,
               token: section.id,
-              title: section.type + " · " + section.id.slice(-8),
+              title: segmentLabel(section),
               content: section.content,
               section,
             }
@@ -522,7 +562,7 @@
               kind: "source",
               id: data.id,
               token: data.id,
-              title: data.metadata?.filename || "Saved " + data.kind,
+              title: `${data.sourceRef || "Historical source"} · ${data.metadata?.filename || "Saved " + data.kind}`,
               content: data.content,
               historical: true,
             }
@@ -530,7 +570,7 @@
               kind: item.state_key ? "state" : "context",
               id: data.id,
               token: data.id,
-              title: data.state_key || data.type,
+              title: segmentLabel(data),
               content: data.content,
               historical: true,
               section: data,
@@ -592,7 +632,39 @@
     composer.focus();
   };
   el("editor-edit").onclick = beginEdit;
-  let counting = false, telemetrySignature = '', countedFingerprint = null;
+  let counting = false,
+    telemetrySignature = "",
+    countedFingerprint = null,
+    auditPage = null,
+    auditGeneration = 0;
+  async function loadAudit(before = 0) {
+    if (!view) return;
+    const id = view.conversation_id,
+      generation = ++auditGeneration,
+      kind = el("editor-audit-kind").value;
+    el("editor-audit-status").textContent = "Loading activity…";
+    try {
+      const page = await window.contextLayer.readAudit(kind, before);
+      if (id !== view?.conversation_id || generation !== auditGeneration)
+        return;
+      if (kind === 'context' && !before) {
+        auditPage = null;
+        if (page.cursor >= (view.context_audit?.cursor || 0)) view.context_audit = page;
+      } else auditPage = { ...page, historical: !!before, kind };
+      telemetrySignature = "";
+      renderTelemetry();
+    } catch (error) {
+      if (generation === auditGeneration)
+        el("editor-audit-status").textContent = error.message;
+    }
+  }
+  el("editor-audit-kind").onchange = () => loadAudit();
+  el("editor-audit-earlier").onclick = () =>
+    loadAudit((auditPage || view?.context_audit)?.before_cursor || 0);
+  el("editor-audit-latest").onclick = () => {
+    auditPage = null;
+    loadAudit();
+  };
   const countLabel = method => method === 'openai-input-token-count' ? 'OpenAI preflight count'
     : method === 'anthropic-preflight-estimate' ? 'Anthropic preflight estimate' : 'local tokenizer estimate · o200k_base';
   function renderTelemetry() {
@@ -603,32 +675,70 @@
       el('editor-count-status').textContent = 'The saved request changed. Its previous provider count no longer applies.';
       countedFingerprint = null;
     }
-    el('editor-token-summary').textContent = next
-      ? `Saved ${next.model} request · ${next.provider_count == null || next.provider === 'anthropic' ? '~' : ''}${next.estimated_tokens.toLocaleString()} input tokens (${countLabel(next.method)}). Latest sent: ${m.latest?.input_tokens?.toLocaleString() ?? 'unknown'} reported input tokens. Byte guard: ${m.byte_guard.toLocaleString()}; output reserve: ${m.output_reserve.toLocaleString()} tokens. Unsent draft excluded.`
-      : 'Input count unavailable.';
-    const signature = JSON.stringify([view.conversation_id, view.context_audit]);
+    el("editor-token-summary").textContent = next
+      ? `${next.continuation_included ? "Next running" : "Saved"} ${next.model} request · ${next.provider_count == null || next.provider === "anthropic" ? "~" : ""}${next.estimated_tokens.toLocaleString()} input tokens (${countLabel(next.method)}; ${next.continuation_included ? "pending continuation included" : "no pending tool continuation"}). Latest sent: ${m.latest?.input_tokens?.toLocaleString() ?? "unknown"} reported input tokens; ${m.latest?.tokenizer_tokens?.toLocaleString() ?? "unknown"} local estimate including continuation, revision ${m.latest?.revision ?? "?"}. Byte guard: ${m.byte_guard.toLocaleString()}; output reserve: ${m.output_reserve.toLocaleString()} tokens. Unsent draft excluded.`
+      : "Input count unavailable.";
+    const audit = auditPage || view.context_audit;
+    el("editor-audit-earlier").disabled = !audit?.has_more;
+    el("editor-audit-status").textContent = auditPage?.historical
+      ? "Earlier saved activity. Choose Latest to return to current activity."
+      : auditPage ? "Saved activity. Choose Latest to refresh this filter." : "Latest saved activity.";
+    const signature = JSON.stringify([view.conversation_id, audit]);
     if (signature === telemetrySignature) return;
     telemetrySignature = signature;
     const container = el('editor-audit');
     container.replaceChildren();
-    const records = view.context_audit?.records || [];
+    const records = audit?.records || [];
     if (!records.length) { container.textContent = 'No context-management activity recorded yet.'; return; }
     for (const record of records.slice().reverse()) {
       const detail = document.createElement('details'), summary = document.createElement('summary'), text = document.createElement('p');
       summary.textContent = `${record.outcome} · ${record.label} · ${new Date(record.timestamp).toLocaleString()}`;
       text.className = 'note';
-      text.textContent = [record.trigger, record.selection_source, record.model,
-        record.revision == null ? null : `revision ${record.previous_revision ?? '?'} → ${record.revision}`,
-        record.before_context_text_tokens == null ? null : `Context text: ${record.before_context_text_tokens} → ${record.after_context_text_tokens} o200k_base tokens (text only)`,
-        record.error].filter(Boolean).join(' · ');
+      text.textContent = [
+        record.trigger,
+        record.selection_source,
+        record.model,
+        record.reason,
+        record.selection_outcome,
+        record.cache_hit ? "saved decision reused; no selector call" : null,
+        record.request_id ? "Request " + record.request_id : null,
+        record.revision == null
+          ? null
+          : `revision ${record.previous_revision ?? "?"} → ${record.revision}`,
+        record.before_context_text_tokens == null
+          ? null
+          : `Context text: ${record.before_context_text_tokens} → ${record.after_context_text_tokens} o200k_base tokens (text only)`,
+        record.error,
+      ]
+        .filter(Boolean)
+        .join(" · ");
       detail.append(summary, text);
-      for (const entry of record.entries) {
+      for (const entry of record.entries || []) {
         const line = document.createElement('p'), button = document.createElement('button');
         line.className = 'note';
         line.textContent = `${entry.protected ? 'Protected' : entry.action} · ${entry.reason || ''}`;
-        button.type = 'button'; button.className = 'link-button'; button.textContent = 'Open context ' + entry.bundle_id.slice(-8);
+        button.type = 'button';
+        button.className = 'link-button';
+        button.textContent =
+          "Open context " +
+          (entry.segmentRef ||
+            view.segment_refs?.[entry.bundle_id] ||
+            "historical segment");
         button.onclick = () => inspect({ id: entry.bundle_id }, false);
-        line.append(' ', button); detail.append(line);
+        line.append(' ', button);
+        detail.append(line);
+      }
+      if (record.entries_omitted) {
+        const omitted = document.createElement("p");
+        omitted.className = "note";
+        omitted.textContent = `${record.entries_omitted} additional entries; canonical export contains all ${record.entry_count}.`;
+        detail.append(omitted);
+      }
+      for (const item of record.blocked || []) {
+        const blocked = document.createElement("p");
+        blocked.className = "note";
+        blocked.textContent = `${item.segmentRef || "Segment"} blocked: ${item.reasons.map((r) => r.label).join(", ")}.`;
+        detail.append(blocked);
       }
       if (record.selected_ids.length || record.offloaded_ids.length || record.retained_ids.length) {
         const actions = document.createElement('p'); actions.className = 'note';

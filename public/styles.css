@@ -178,8 +178,10 @@
 #editor-preview pre {
   white-space: pre-wrap;
 }
-#editor-preview.plain-text {
+#editor-preview.plain-text,
+#editor-identifiers-text {
   white-space: pre-wrap;
+  overflow-wrap: anywhere;
   font:
     13px/1.65 ui-monospace,
     Consolas,

@@ -70,6 +70,7 @@ test('document removal, shared help, provider counts and Claude effort are usabl
   await app.service.uploadDocument(id, { name: 'notes.md', content: '# Notes\nPreserved original.' });
   const h = app.service.harness(id);
   const old = h.addMessage('assistant', 'Historical background. '.repeat(200)).item;
+  for (let n = 0; n < 15; n++) app.service.store.append(id, 'context_skip', 'Historical check ' + n, { revision: 1 });
   app.service.store.append(id, 'decision_proposal', 'bounded attention proposal', {
     revision: app.service.store.context(id).revision, trigger: 'periodic-review', selection_source: 'bounded-model', decision_model: 'jev-fixture',
     entries: [{ bundle_id: old.id, action: 'offload', protected: false, reason: 'Routine background remains retrievable.' }], offload_bundle_ids: [old.id],
@@ -98,6 +99,23 @@ test('document removal, shared help, provider counts and Claude effort are usabl
     await page.locator('#tab-context').click();
     await expect(page.locator('#editor-audit')).toContainText('proposed; not applied');
     await expect(page.locator('#editor-audit')).toContainText('applied · offload');
+    await expect(page.locator('#editor-items')).toContainText('S2 · reference');
+    await page.locator('#editor-identifiers > summary').click();
+    await expect(page.locator('#editor-identifiers-text')).toContainText('canonical:');
+    await expect(page.locator('#editor-identifiers-text')).toContainText('Source E2');
+    await page.locator('#editor-reference').click();
+    await expect(page.locator('#editor-title')).toContainText('S1 · assistant');
+    await expect(page.locator('#editor-preview')).toContainText('Historical background.');
+    await expect(page.locator('#editor-edit')).toBeHidden();
+    await page.locator('#editor-audit-earlier').click();
+    await expect(page.locator('#editor-audit-status')).toContainText('Earlier saved activity');
+    await expect(page.locator('#editor-audit')).not.toContainText('applied · offload');
+    await page.locator('#editor-audit-latest').click();
+    await expect(page.locator('#editor-audit')).toContainText('applied · offload');
+    await page.locator('#editor-audit-kind').selectOption('workspace');
+    await expect(page.locator('#editor-audit')).toContainText('restore');
+    await page.locator('#editor-audit-kind').selectOption('context');
+    await expect(page.locator('#editor-audit')).toContainText('proposed; not applied');
     await page.locator('#editor-token-count').click();
     await expect(page.locator('#editor-count-status')).toContainText('321 input tokens');
     await expect(page.locator('#editor-token-summary')).toContainText('OpenAI preflight count');
@@ -697,7 +715,7 @@ test("Workspace panel edits documents, source copies, context and state without 
     await page.locator("#editor-state-status").selectOption("unresolved");
     await page.locator("#editor-text").fill("Which venue should we use?");
     await page.locator("#editor-save").click();
-    await expect(page.locator("#editor-title")).toHaveText("venue");
+    await expect(page.locator("#editor-title")).toHaveText(/^S\d+ · venue$/);
     expect(
       app.service.view(id).state.entries.find((s) => s.state_key === "venue")
         .status,
@@ -919,6 +937,28 @@ test('provider rejection appears once, inline in the transcript, and survives re
     await page.reload();
     await expect(page.locator('#chat .turn-error')).toContainText('unsupported reasoning fixture');
   } finally {await app.close();}
+});
+
+test('completed agents visibly retain blocked optimization errors and their request provenance', async ({ page }) => {
+  let calls = 0;
+  const app = await fixture(async () => ++calls === 1 ? response([
+    call('offload_context', { bundle_ids: ['S1'], expected_revision: 1 }, 1),
+  ]) : final);
+  try {
+    await openAgent(page, app.url);
+    await page.getByLabel('Message', { exact: true }).fill('Keep this objective.');
+    await page.locator('#send').click();
+    await expect(page.locator('#agent-status')).toContainText('completed with tool errors');
+    const id = app.service.list()[0].conversation_id;
+    const event = app.service.store.events(id).find(e => e.kind === 'tool_result');
+    expect(event.metadata.request_id).toBeTruthy();
+    expect(event.metadata.previous_revision).toBe(1); expect(event.metadata.revision).toBe(1);
+    expect(JSON.parse(event.content).inspection.blocked[0].reasons.map(r => r.code)).toContain('current_request');
+    await page.locator('#workspace-open').click();
+    await page.locator('#tab-context').click();
+    await expect(page.locator('#editor-audit')).toContainText('failed · tool result');
+    expect(calls).toBe(2);
+  } finally { await app.close(); }
 });
 
 test("browser drives real HTTP/service/storage, renders artifacts and resumes after reload", async ({

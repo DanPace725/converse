@@ -44,7 +44,7 @@
     el("garden-detail").textContent =
       (source ? `Saved ${item.kind}` : item.state_key || item.type) +
       " · " +
-      item.id.slice(-8) +
+      (source ? item.sourceRef || 'historical source' : item.segmentRef || 'historical segment') +
       "\n" +
       (item.preview || "(empty source)");
     window.workspaceEditor?.inspect(item, source);
@@ -55,6 +55,7 @@
     node.setAttribute(
       "aria-label",
       (source ? "Saved " + item.kind : item.state_key || item.type) +
+        " · " + (source ? item.sourceRef || '' : item.segmentRef || '') +
         ": " +
         item.preview,
     );
@@ -68,7 +69,7 @@
     let title = node.querySelector("title");
     if (!title) title = svg("title", {}, node);
     title.textContent =
-      (item.state_key || item.type || item.kind) + ": " + item.preview;
+      (item.sourceRef || item.segmentRef || '') + ' · ' + (item.state_key || item.type || item.kind) + ": " + item.preview;
   }
   function draw(context, history, animate = true) {
     const previous = scene?.segments || [];
