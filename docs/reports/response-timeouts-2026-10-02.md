@@ -1,0 +1,9 @@
+# Context and Agent response deadlines
+
+The GPT/Claude adapters previously aborted each response after 90 seconds, regardless of the Agent's longer overall allowance. A read-only production audit confirmed an abort at 90.355 seconds during an incomplete document-write response, after earlier tool actions succeeded. Detailed conversation evidence remains local; the interrupted write had not executed and its final usage was unavailable.
+
+Task adapters now allow 180 seconds per response. The hosted repository still imposes a 200-second request deadline and the configured platform ceiling remains 240 seconds. Context preparation and management share the hosted request's time, so an earlier enclosing deadline can still stop a response. Token and output limits are unchanged. This improves completion opportunity; it does not guarantee completion of every large document within one request.
+
+Response timeouts record `provider_response_timeout`, provider and timeout milliseconds. Hosted request timeouts record `hosted_request_timeout` separately. Partial response diagnostics retain their original usage coverage; incomplete function calls never execute and no paid request is automatically retried. HTTP error handling preserves these messages even when their cause is a numeric DOM AbortError, instead of mislabeling them as database failures. Genuine database diagnostics remain masked.
+
+Validation: 120 backend tests passed; one live Neon test skipped. Seven new checks cover deadline headroom, both provider timeout classifications, partial preservation, earlier cancellation, streamed incomplete writes and HTTP error classification. Four desktop/mobile browser checks passed for failure display after reload and Agent HTTP/storage execution. Syntax checks passed. The production conversation was inspected without writes or inference replay; completion under the longer deadline still needs a new user-run conversation.
