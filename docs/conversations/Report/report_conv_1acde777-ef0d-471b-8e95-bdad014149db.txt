@@ -1,0 +1,47 @@
+
+==================================================
+Report for Conversation: Document Reading Request
+ID: conv_1acde777-ef0d-471b-8e95-bdad014149db
+==================================================
+
+--- Tokens Used ---
+Total Tokens: 1,347,239
+  Input Tokens: 1,290,211
+  Output Tokens: 57,028
+
+--- Context Compression ---
+Full Conversation (Peak): ~33,396 tokens
+Final Context Size:       ~33,396 tokens
+Reduction:                None
+
+--- Usage by Provider ---
+Anthropic: 979,699 tokens (935,774 in / 43,925 out)
+  Models: claude-sonnet-5-5
+Openai: 367,540 tokens (354,437 in / 13,103 out)
+  Models: gpt-6.1-sol, gpt-6-luna
+
+--- Jev Usage ---
+Jev Requested (User Settings): True
+Jev Decision Calls: 0
+
+--- Tools Used ---
+  retrieve_event: 24 time(s)
+  workspace_read: 16 time(s)
+  calculate: 13 time(s)
+  update_state: 9 time(s)
+  edit_context: 5 time(s)
+  workspace_write: 4 time(s)
+  search_history: 2 time(s)
+  resolve_context: 1 time(s)
+  workspace_patch: 1 time(s)
+
+--- Context Modifications ---
+State Updates (Memory): 4
+Offloads: 0
+Retrievals: 27
+Compaction Calls: 0
+
+--- Other Metrics ---
+Total API Calls: 68
+Workspace Readbacks: 16
+==================================================

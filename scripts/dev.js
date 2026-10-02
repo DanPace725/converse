@@ -35,6 +35,7 @@ const types = {
   html: "text/html",
   js: "text/javascript",
   css: "text/css",
+  md: "text/markdown; charset=utf-8",
   png: "image/png",
   woff2: "font/woff2",
   webmanifest: "application/manifest+json",

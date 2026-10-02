@@ -300,7 +300,7 @@ test("Claude agent resumes using native tool results, verifies workspace and exp
     assert.equal(view.messages.at(-1).provider, "Claude");
     assert.equal(view.messages.at(-1).participant_id, "claude");
     assert.equal(view.settings.provider, "anthropic");
-    assert.equal(view.settings.reasoning, "none");
+    assert.equal(view.settings.reasoning, "default");
     assert.equal(view.metrics.usage_by_provider.anthropic.calls, 4);
     const events = store.events(id);
     assert.equal(

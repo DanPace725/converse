@@ -28,6 +28,7 @@
     "@neon/env": "^1.4.8",
     "@vercel/functions": "^3.9.9",
     "drizzle-orm": "^0.45.3",
+    "gpt-tokenizer": "^4.0.0",
     "pg": "^8.23.1"
   }
 }

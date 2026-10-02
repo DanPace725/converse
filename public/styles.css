@@ -2184,6 +2184,23 @@ dialog button {
   overflow: auto;
   line-height: 1.55;
 }
+#about-dialog {
+  width: min(760px, calc(100vw - 32px));
+  max-height: calc(100dvh - 48px);
+  overflow: auto;
+  color: var(--text);
+  background: var(--panel, #17191c);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+}
+#about-dialog::backdrop { background: #0009; }
+#about-dialog header { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+#editor-telemetry { padding: 0 0 12px; border-bottom: 1px solid var(--border); margin-bottom: 12px; }
+#editor-audit details { margin: 8px 0; }
+#editor-audit summary { cursor: pointer; font-size: 13px; }
+#editor-audit p { overflow-wrap: anywhere; }
+#editor-removed button { display: block; margin: 8px 0; }
 /* Streaming replies hide actions until the text settles. */
 .is-streaming .msg-actions,
 .msg[data-provisional] .msg-actions {

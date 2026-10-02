@@ -5,11 +5,11 @@ import { Store, segment } from "../../lib/conclave/store.js";
 import { ConclaveService } from "../../lib/conclave/service.js";
 import { createConclaveHandler } from "../../lib/conclave-local.js";
 
-async function fixture(respond, { jev = false, claude = false } = {}) {
+async function fixture(respond, { jev = false, claude = false, claudeModel = 'claude-fixture', countTokens } = {}) {
   const store = new Store(undefined, { memory: true });
   const service = new ConclaveService(store, {
     availability: () => ({ openai: true, anthropic: claude, jev }),
-    providerFactory: (provider = "openai") => ({ name: provider, respond }),
+    providerFactory: (provider = "openai") => ({ name: provider, respond, ...(countTokens ? { countTokens } : {}) }),
   });
   const handler = await createConclaveHandler({ service });
   const server = createServer(async (req, res) => {
@@ -22,7 +22,7 @@ async function fixture(respond, { jev = false, claude = false } = {}) {
           path === "/api/models"
             ? {
                 GPT: { models: ["fixture"] },
-                Claude: { models: claude ? ["claude-fixture"] : [] },
+                Claude: { models: claude ? [claudeModel] : [] },
                 Gemini: { models: [] },
               }
             : { authenticated: true },
@@ -61,6 +61,84 @@ async function fixture(respond, { jev = false, claude = false } = {}) {
     },
   };
 }
+test('document removal, shared help, provider counts and Claude effort are usable and persist', async ({ page }, testInfo) => {
+  const errors = []; page.on('pageerror', error => errors.push(error.message));
+  let counted = 0, chosen;
+  const app = await fixture(async payload => { chosen = payload.reasoning.effort; return { ...final, model: payload.model }; },
+    { claude: true, claudeModel: 'claude-sonnet-5-5', countTokens: async () => { counted++; return { input_tokens: 321 }; } });
+  const id = app.service.create('Control proof').conversation_id;
+  await app.service.uploadDocument(id, { name: 'notes.md', content: '# Notes\nPreserved original.' });
+  const h = app.service.harness(id);
+  const old = h.addMessage('assistant', 'Historical background. '.repeat(200)).item;
+  app.service.store.append(id, 'decision_proposal', 'bounded attention proposal', {
+    revision: app.service.store.context(id).revision, trigger: 'periodic-review', selection_source: 'bounded-model', decision_model: 'jev-fixture',
+    entries: [{ bundle_id: old.id, action: 'offload', protected: false, reason: 'Routine background remains retrievable.' }], offload_bundle_ids: [old.id],
+  });
+  h.offload([old.id]);
+  await page.route('**/api/title', route => route.fulfill({ json: { title: 'Control proof' } }));
+  try {
+    await page.goto(app.url);
+    await page.locator('#more-menu > summary').click();
+    await page.locator('#about-open').click();
+    await expect(page.locator('#about-dialog')).toBeVisible();
+    await expect(page.locator('#about-content')).toContainText('Removal is not permanent erasure');
+    await page.locator('#about-close').click();
+    if (testInfo.project.name === 'mobile') await page.locator('#menu').click();
+    await page.locator('#server-chats .chat-item').filter({ hasText: 'Control proof' }).click();
+    await page.locator('#workspace-open').click();
+    await page.locator('#editor-items button').filter({ hasText: 'notes.md' }).click();
+    await page.locator('#editor-remove').click();
+    await expect(page.locator('#editor-upload-status')).toContainText('Removed.');
+    await expect(page.locator('#editor-items')).not.toContainText('notes.md');
+    await page.reload();
+    await page.locator('#workspace-open').click();
+    await page.locator('#editor-removed summary').click();
+    await page.getByRole('button', { name: 'Restore notes.md', exact: true }).click();
+    await expect(page.locator('#editor-items')).toContainText('notes.md');
+    await page.locator('#tab-context').click();
+    await expect(page.locator('#editor-audit')).toContainText('proposed; not applied');
+    await expect(page.locator('#editor-audit')).toContainText('applied · offload');
+    await page.locator('#editor-token-count').click();
+    await expect(page.locator('#editor-count-status')).toContainText('321 input tokens');
+    await expect(page.locator('#editor-token-summary')).toContainText('OpenAI preflight count');
+    expect(counted).toBe(1);
+    await page.screenshot({ path: testInfo.outputPath('context-control.png'), fullPage: true });
+    await page.locator('#editor-close').click();
+    await page.locator('#context-panel > summary').click();
+    await page.locator('#context-provider').selectOption('anthropic');
+    await expect(page.locator('#context-reasoning')).toBeEnabled();
+    await page.locator('#context-reasoning').selectOption('high');
+    await page.locator('#context-provider').selectOption('openai');
+    await expect(page.locator('#context-reasoning')).toHaveValue('low');
+    await page.locator('#context-provider').selectOption('anthropic');
+    await expect(page.locator('#context-reasoning')).toHaveValue('high');
+    await page.locator('#sheet-close').click();
+    await page.locator('#workspace-open').click();
+    await page.locator('#tab-documents').click();
+    await page.locator('#editor-items button').filter({ hasText: 'notes.md' }).click();
+    await page.locator('#editor-remove').click();
+    await expect(page.locator('#editor-items')).not.toContainText('notes.md');
+    await page.locator('#editor-removed summary').click();
+    await page.getByRole('button', { name: 'Restore notes.md', exact: true }).click();
+    await expect(page.locator('#editor-items')).toContainText('notes.md');
+    await page.locator('#tab-context').click();
+    await page.locator('#editor-token-count').click();
+    await expect(page.locator('#editor-count-status')).toContainText('321 input tokens');
+    await page.locator('#editor-close').click();
+    await page.locator('#more-menu > summary').click();
+    await page.locator('#context-panel > summary').click();
+    await expect(page.locator('#context-provider')).toHaveValue('anthropic');
+    await expect(page.locator('#context-reasoning')).toHaveValue('high');
+    await page.locator('#sheet-close').click();
+    await page.getByRole('textbox', { name: 'Message', exact: true }).fill('Reply briefly.');
+    await page.locator('#send').click();
+    await expect(page.locator('#send')).toBeEnabled();
+    expect(chosen).toBe('high');
+    expect(app.service.view(id).settings.reasoning).toBe('high');
+    expect(errors).toEqual([]);
+  } finally { await app.close(); }
+});
+
 const call = (name, args, id) => ({
   type: "function_call",
   call_id: "call_" + id,

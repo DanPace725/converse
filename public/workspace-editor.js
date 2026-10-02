@@ -79,7 +79,7 @@
     if (item.kind === "document" || item.kind === "source")
       return (
         documents().find((i) => i.kind === item.kind && i.id === item.id) ||
-        (item.kind === "source" ? item : null)
+        (item.kind === "source" && item.historical ? item : null)
       );
     const s = (
       item.kind === "state" ? view.state.entries : view.context.segments
@@ -123,6 +123,9 @@
     el("editor-save").disabled = blocked || stale();
     el("editor-upload").disabled = busy || saving || view?.busy || view?.agent?.status === "running";
     el("editor-use").disabled = blocked;
+    el('editor-remove').disabled = blocked || editing;
+    el('editor-token-count').disabled = blocked || counting;
+    for (const button of el('editor-removed').querySelectorAll('button')) button.disabled = blocked;
     el("editor-feedback").classList.toggle("error", stale() || !!saveError);
     if (editing && !saving)
       el("editor-feedback").textContent =
@@ -144,6 +147,8 @@
     renderReply(target, text);
   }
   function renderList() {
+    renderTelemetry();
+    renderRemoved();
     const container = el("editor-items");
     const rows = items();
     for (const d of Object.values(drafts).filter(
@@ -220,6 +225,9 @@
     const d = draft();
     el("editor-document").hidden = false;
     el("editor-use").hidden = selected.kind !== "document";
+    const removable = ['document', 'source'].includes(selected.kind) && !selected.historical && !selected.detached;
+    el('editor-remove').hidden = !removable;
+    el('editor-removal-note').hidden = !removable;
     el("editor-title").textContent = selected.title;
     el("editor-meta").textContent = selected.historical
       ? "Saved historical text · read only"
@@ -327,7 +335,7 @@
       setTab(tab);
       return;
     }
-    if (selected && !draft()) selected = latest() || selected;
+    if (selected && !draft()) selected = latest() || null;
     renderList();
     show();
   }
@@ -584,6 +592,97 @@
     composer.focus();
   };
   el("editor-edit").onclick = beginEdit;
+  let counting = false, telemetrySignature = '', countedFingerprint = null;
+  const countLabel = method => method === 'openai-input-token-count' ? 'OpenAI preflight count'
+    : method === 'anthropic-preflight-estimate' ? 'Anthropic preflight estimate' : 'local tokenizer estimate · o200k_base';
+  function renderTelemetry() {
+    el('editor-telemetry').hidden = tab !== 'context' || !view;
+    if (!view) return;
+    const m = view.model_input, next = m?.next;
+    if (countedFingerprint && countedFingerprint !== next?.fingerprint) {
+      el('editor-count-status').textContent = 'The saved request changed. Its previous provider count no longer applies.';
+      countedFingerprint = null;
+    }
+    el('editor-token-summary').textContent = next
+      ? `Saved ${next.model} request · ${next.provider_count == null || next.provider === 'anthropic' ? '~' : ''}${next.estimated_tokens.toLocaleString()} input tokens (${countLabel(next.method)}). Latest sent: ${m.latest?.input_tokens?.toLocaleString() ?? 'unknown'} reported input tokens. Byte guard: ${m.byte_guard.toLocaleString()}; output reserve: ${m.output_reserve.toLocaleString()} tokens. Unsent draft excluded.`
+      : 'Input count unavailable.';
+    const signature = JSON.stringify([view.conversation_id, view.context_audit]);
+    if (signature === telemetrySignature) return;
+    telemetrySignature = signature;
+    const container = el('editor-audit');
+    container.replaceChildren();
+    const records = view.context_audit?.records || [];
+    if (!records.length) { container.textContent = 'No context-management activity recorded yet.'; return; }
+    for (const record of records.slice().reverse()) {
+      const detail = document.createElement('details'), summary = document.createElement('summary'), text = document.createElement('p');
+      summary.textContent = `${record.outcome} · ${record.label} · ${new Date(record.timestamp).toLocaleString()}`;
+      text.className = 'note';
+      text.textContent = [record.trigger, record.selection_source, record.model,
+        record.revision == null ? null : `revision ${record.previous_revision ?? '?'} → ${record.revision}`,
+        record.before_context_text_tokens == null ? null : `Context text: ${record.before_context_text_tokens} → ${record.after_context_text_tokens} o200k_base tokens (text only)`,
+        record.error].filter(Boolean).join(' · ');
+      detail.append(summary, text);
+      for (const entry of record.entries) {
+        const line = document.createElement('p'), button = document.createElement('button');
+        line.className = 'note';
+        line.textContent = `${entry.protected ? 'Protected' : entry.action} · ${entry.reason || ''}`;
+        button.type = 'button'; button.className = 'link-button'; button.textContent = 'Open context ' + entry.bundle_id.slice(-8);
+        button.onclick = () => inspect({ id: entry.bundle_id }, false);
+        line.append(' ', button); detail.append(line);
+      }
+      if (record.selected_ids.length || record.offloaded_ids.length || record.retained_ids.length) {
+        const actions = document.createElement('p'); actions.className = 'note';
+        actions.textContent = `Selected to compact: ${record.selected_ids.length}; selected to offload: ${record.offloaded_ids.length}; retained by selection: ${record.retained_ids.length}. Proposal counts describe intent; applied records establish changes.`;
+        detail.append(actions);
+      }
+      container.append(detail);
+    }
+  }
+  function renderRemoved() {
+    const container = el('editor-removed');
+    container.hidden = tab !== 'documents' || !view?.removed_documents?.length;
+    container.replaceChildren();
+    if (container.hidden) return;
+    const detail = document.createElement('details'), summary = document.createElement('summary');
+    summary.textContent = 'Removed documents · ' + view.removed_documents.length;
+    detail.append(summary);
+    for (const item of view.removed_documents) {
+      const button = document.createElement('button'); button.type = 'button';
+      button.textContent = 'Restore ' + item.name;
+      button.disabled = busy || saving || view.busy || view.agent?.status === 'running';
+      button.onclick = () => changeDocument({ operation: 'restore', path: item.path, source_event_id: item.source_event_id, expected_change_id: item.change_id });
+      detail.append(button);
+    }
+    container.append(detail);
+  }
+  async function changeDocument(input) {
+    if (saving || busy || view?.agent?.status === 'running') return;
+    saving = true; syncControls();
+    try {
+      const data = await window.contextLayer.saveEdit('document_lifecycle', input);
+      adopt(data);
+      el('editor-upload-status').textContent = input.operation === 'remove'
+        ? 'Removed. Restore it below. Historical content and previous replies remain saved.'
+        : 'Restored to Documents. Removed context sections are not automatically reinserted.';
+    } catch (error) { el('editor-upload-status').textContent = error.message; }
+    finally { saving = false; syncControls(); }
+  }
+  el('editor-remove').onclick = () => changeDocument({ operation: 'remove',
+    path: selected.kind === 'document' ? selected.path : null,
+    source_event_id: selected.kind === 'source' ? selected.id : null, expected_source_event_id: selected.token });
+  el('editor-token-count').onclick = async () => {
+    if (counting || !view) return;
+    counting = true; syncControls();
+    const id = view.conversation_id;
+    el('editor-count-status').textContent = 'Counting the saved request with its provider…';
+    try {
+      const result = await window.contextLayer.countTokens();
+      if (view?.conversation_id === id) el('editor-count-status').textContent = result.count.error ||
+        `${result.count.provider_count.toLocaleString()} input tokens · ${countLabel(result.count.method)}. Counted ${new Date(result.count.measured_at).toLocaleString()}.`;
+      if (view?.conversation_id === id) countedFingerprint = result.count.fingerprint;
+    } catch (error) { if (view?.conversation_id === id) el('editor-count-status').textContent = error.message; }
+    finally { counting = false; syncControls(); }
+  };
   el("editor-save").onclick = save;
   for (const id of [
     "editor-text",

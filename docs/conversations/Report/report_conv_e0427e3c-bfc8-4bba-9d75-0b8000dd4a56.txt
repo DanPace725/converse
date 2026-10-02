@@ -1,0 +1,42 @@
+
+==================================================
+Report for Conversation: Algorithms for Chess’s Combinatorial Complexity
+ID: conv_e0427e3c-bfc8-4bba-9d75-0b8000dd4a56
+==================================================
+
+--- Tokens Used ---
+Total Tokens: 79,308
+  Input Tokens: 72,307
+  Output Tokens: 7,001
+
+--- Context Compression ---
+Full Conversation (Peak): ~8,802 tokens
+Final Context Size:       ~6,742 tokens
+Reduction:                ~2,060 tokens (23.4%)
+
+--- Usage by Provider ---
+Openai: 71,492 tokens (65,596 in / 5,896 out)
+  Models: gpt-6-luna, gpt-6.1-sol
+Typesafe: 7,816 tokens (6,711 in / 1,105 out)
+  Models: jev-1.13.0
+
+--- Jev Usage ---
+Jev Requested (User Settings): True
+Jev Decision Calls: 3
+Jev Tokens Used: 7,816 (6,711 in / 1,105 out)
+
+--- Tools Used ---
+  update_state: 4 time(s)
+  resolve_context: 1 time(s)
+  edit_context: 1 time(s)
+
+--- Context Modifications ---
+State Updates (Memory): 2
+Offloads: 2
+Retrievals: 1
+Compaction Calls: 1
+
+--- Other Metrics ---
+Total API Calls: 17
+Workspace Readbacks: 0
+==================================================

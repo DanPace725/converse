@@ -1,0 +1,49 @@
+
+==================================================
+Report for Conversation: Testing the App and Capabilities
+ID: conv_29711123-738b-4701-b7f2-716a1d2baea4
+==================================================
+
+--- Tokens Used ---
+Total Tokens: 516,280
+  Input Tokens: 502,009
+  Output Tokens: 14,271
+
+--- Context Compression ---
+Full Conversation (Peak): ~44,040 tokens
+Final Context Size:       ~23,241 tokens
+Reduction:                ~20,799 tokens (47.2%)
+
+--- Usage by Provider ---
+Anthropic: 366,124 tokens (355,633 in / 10,491 out)
+  Models: claude-sonnet-5-5
+Openai: 145,830 tokens (142,574 in / 3,256 out)
+  Models: gpt-6-luna
+Typesafe: 4,326 tokens (3,802 in / 524 out)
+  Models: jev-1.13.0
+
+--- Jev Usage ---
+Jev Requested (User Settings): True
+Jev Decision Calls: 3
+Jev Tokens Used: 4,326 (3,802 in / 524 out)
+
+--- Tools Used ---
+  workspace_read: 14 time(s)
+  search_history: 6 time(s)
+  retrieve_event: 5 time(s)
+  workspace_write: 3 time(s)
+  calculate: 2 time(s)
+  workspace_list: 1 time(s)
+  update_state: 1 time(s)
+  retrieve_range: 1 time(s)
+
+--- Context Modifications ---
+State Updates (Memory): 1
+Offloads: 0
+Retrievals: 12
+Compaction Calls: 0
+
+--- Other Metrics ---
+Total API Calls: 27
+Workspace Readbacks: 14
+==================================================

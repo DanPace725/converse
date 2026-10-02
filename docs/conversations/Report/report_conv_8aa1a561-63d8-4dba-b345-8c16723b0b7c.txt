@@ -1,0 +1,37 @@
+
+==================================================
+Report for Conversation: Untitled
+ID: conv_8aa1a561-63d8-4dba-b345-8c16723b0b7c
+==================================================
+
+--- Tokens Used ---
+Total Tokens: 1,163
+  Input Tokens: 1,156
+  Output Tokens: 7
+
+--- Context Compression ---
+Full Conversation (Peak): ~1,769 tokens
+Final Context Size:       ~1,769 tokens
+Reduction:                None
+
+--- Usage by Provider ---
+Openai: 1,163 tokens (1,156 in / 7 out)
+  Models: gpt-6-luna
+
+--- Jev Usage ---
+Jev Requested (User Settings): True
+Jev Decision Calls: 0
+
+--- Tools Used ---
+  No tools used.
+
+--- Context Modifications ---
+State Updates (Memory): 0
+Offloads: 0
+Retrievals: 0
+Compaction Calls: 0
+
+--- Other Metrics ---
+Total API Calls: 1
+Workspace Readbacks: 0
+==================================================

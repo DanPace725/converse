@@ -1,3 +1,4 @@
+import { effortLevels } from './effort.js';
 // Optional context UI, enabled by the server's capabilities.
 (() => {
   const panel = $("#context-panel"),
@@ -7,6 +8,13 @@
   const reasoning = $("#context-reasoning"),
     provider = $("#context-provider"),
     agentMode = $("#agent-mode");
+  const efforts = { openai: localStorage.getItem('converse-effort-openai') || 'low',
+    anthropic: localStorage.getItem('converse-effort-anthropic') || 'default' };
+  let effortProvider = null;
+  reasoning.onchange = () => {
+    efforts[provider.value] = reasoning.value;
+    localStorage.setItem('converse-effort-' + provider.value, reasoning.value);
+  };
   const limitMode = $('#agent-limit-mode');
   // Kept by reference: the notice moves into the chat and re-renders detach it.
   const runNotice = $("#run-notice"),
@@ -260,10 +268,13 @@
     for (const input of panel.querySelectorAll("input, select, button"))
       input.disabled = busy;
     jev.disabled = busy || !capabilities?.credentials?.jev;
-    reasoning.disabled = busy || provider.value === "anthropic";
-    const none = reasoning.querySelector('option[value="none"]');
-    none.disabled = provider.value === 'openai' && fields.GPT.value === 'gpt-6.1-sol';
-    if (none.disabled && reasoning.value === 'none') reasoning.value = 'low';
+    const levels = effortLevels(provider.value, fields[providerName()].value);
+    if (effortProvider !== provider.value || [...reasoning.options].map(o => o.value).join() !== levels.join()) {
+      effortProvider = provider.value;
+      reasoning.replaceChildren(...levels.map(value => new Option(value[0].toUpperCase() + value.slice(1), value)));
+    }
+    reasoning.value = levels.includes(efforts[provider.value]) ? efforts[provider.value] : levels[0];
+    reasoning.disabled = busy || levels.length === 1;
     for (const id of ['agent-minutes', 'agent-steps', 'agent-tokens'])
       $('#' + id).disabled = busy || limitMode.value === 'adaptive';
     $('#agent-limit-note').textContent = limitMode.value === 'adaptive'
@@ -271,7 +282,7 @@
       : 'Fixed limits stop at the first guard reached. Max steps is a ceiling, not a target. The total allowance reserves conservative UTF-8 input units plus output tokens before each call.';
     reasoning.title =
       provider.value === "anthropic"
-        ? "Claude uses its default reasoning; this control applies to GPT."
+        ? "Anthropic effort; levels depend on the selected Claude model. Default uses the provider default."
         : "";
     $("#workspace-open").hidden = !available || !enabled();
     window.workspaceEditor?.syncControls();
@@ -335,22 +346,24 @@
     else followBottom();
   }
 
-  function apply(view) {
+  function apply(view, { preserveSettings = false } = {}) {
     if (conversation.conversation_id !== view.conversation_id) finishMessageEdit();
     latestView = view;
     window.workspaceEditor?.adopt(view);
     agent = view.agent || null;
     const legacyAgent = agent && !agent.harness_version;
-    $("#agent-budget").value = legacyAgent
-      ? capabilities?.defaults?.budget
-      : view.settings.budget;
-    $("#agent-output").value = legacyAgent
-      ? capabilities?.defaults?.output
-      : view.settings.output;
-    if (agent) {
-      $("#agent-minutes").value = agent.limits.duration_seconds / 60;
-      $("#agent-steps").value = agent.limits.max_steps;
-      $("#agent-tokens").value = agent.limits.max_total_tokens;
+    if (!preserveSettings) {
+      $("#agent-budget").value = legacyAgent
+        ? capabilities?.defaults?.budget
+        : view.settings.budget;
+      $("#agent-output").value = legacyAgent
+        ? capabilities?.defaults?.output
+        : view.settings.output;
+      if (agent) {
+        $("#agent-minutes").value = agent.limits.duration_seconds / 60;
+        $("#agent-steps").value = agent.limits.max_steps;
+        $("#agent-tokens").value = agent.limits.max_total_tokens;
+      }
     }
     // The server retains audits; localStorage only needs display records.
     conversation = {
@@ -370,18 +383,20 @@
     };
     messages.splice(0, messages.length, ...view.messages);
     toggle.checked = true;
-    provider.value = view.settings.provider || "openai";
-    reasoning.value = view.settings.reasoning;
-    // Version 1 forced Jev off in all agent runs; enable the new default when reopening those trials.
-    jev.checked =
-      (legacyAgent ? true : !!view.settings.jev) &&
-      !!capabilities?.credentials?.jev;
-    if (
-      [...fields[providerName()].options].some(
-        (option) => option.value === view.settings.model,
+    if (!preserveSettings) {
+      provider.value = view.settings.provider || "openai";
+      efforts[provider.value] = provider.value === 'anthropic' && view.settings.reasoning === 'none' ? 'default' : view.settings.reasoning;
+      // Version 1 forced Jev off in all agent runs; enable the new default when reopening those trials.
+      jev.checked =
+        (legacyAgent ? true : !!view.settings.jev) &&
+        !!capabilities?.credentials?.jev;
+      if (
+        [...fields[providerName()].options].some(
+          (option) => option.value === view.settings.model,
+        )
       )
-    )
-      fields[providerName()].value = view.settings.model;
+        fields[providerName()].value = view.settings.model;
+    }
     const metrics = view.metrics;
     $("#context-stats").textContent =
       "Revision " +
@@ -591,7 +606,7 @@
         provider: recipient.provider,
         model: recipient.model,
         reasoning:
-          recipient.provider === "anthropic" ? "none" : reasoning.value,
+          reasoning.value,
         jev: jev.checked,
         budget: Number($("#agent-budget").value),
         output: Number($("#agent-output").value),
@@ -690,7 +705,7 @@
     const settings = {
       provider: recipient.provider,
       model,
-      reasoning: recipient.provider === "anthropic" ? "none" : reasoning.value,
+      reasoning: reasoning.value,
       jev: jev.checked,
       budget: Number($("#agent-budget").value),
       output: Number($("#agent-output").value),
@@ -852,6 +867,12 @@
   };
 
   window.contextLayer = {
+    countTokens: async () => {
+      if (busy || agent?.status === 'running') throw Error('Wait for the reply or stop the agent before counting the saved request.');
+      const result = await request('token_count', { conversation_id: currentId() });
+      window.workspaceEditor?.adopt(result.view);
+      return result;
+    },
     name: async (id, result) => {
       const view = await request('conversation_name', { conversation_id: id, ...result });
       if (currentId() === id) {
@@ -871,7 +892,7 @@
       try {
         await ensure();
         const view = await request('document_upload', { ...input, conversation_id: currentId() });
-        apply(view);
+        apply(view, { preserveSettings: true });
         return view;
       } finally { setBusy(false, { name: false }); }
     },
@@ -881,7 +902,7 @@
       setBusy(true);
       try {
         const view = await request(action, { ...input, conversation_id: currentId() });
-        apply(view);
+        apply(view, { preserveSettings: true });
         return view;
       } finally { setBusy(false); }
     },

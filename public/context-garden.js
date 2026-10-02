@@ -400,7 +400,7 @@
   }
   // The ledger answers three questions with two bars on one scale:
   // what a plain chat would resend, what Conclave sends, and the running total.
-  // Text sizes use the same calibrated tokens-per-byte as the request estimate.
+  // Ledger components are proportional estimates using the full-request count.
   const compact = new Intl.NumberFormat(undefined, {
     notation: "compact",
     maximumFractionDigits: 1,
