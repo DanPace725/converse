@@ -1,5 +1,7 @@
 # Conclave engine snapshot
 
+Reasoning preservation (issue #13): shared provider capability/extraction helpers request readable summaries; answer streams emit distinct reasoning events. Immutable readable `reasoning` sources are indexed, attributed and pageable, with bounded pointers in layered input and call projections in the transcript. Original native output/signatures remain in the inference audit. Claude freezes the submitted prefix within tool turns, checkpoints it across agent instances, appends current context after new results, and rejects oversized continuations before inference rather than changing signed history. Retain these changes when refreshing the snapshot.
+
 UI streaming (issue #10): task adapters accept `onDelta`, reconstruct complete provider responses from SSE (including Claude tool JSON, signatures and usage), and reject truncated streams. Harness streams only answer calls through a transient `onEvent` callback; selection/compaction remain buffered. Inference audit records the streaming flag, including the native Claude payload. Agent deadline wrappers forward streaming callbacks. Completed answers and checkpoints keep the same persistence rules; preview deltas are not source events. Preserve these Converse-only adaptations on refresh.
 
 Copied from the sibling `CLA/conclave/src` at commit `5fdeba2d9c1a547d21dbf7ed628ecb855789abc3`, excluding the CLI. This makes Git-based Converse deployments self-contained; local data and credentials are never copied.

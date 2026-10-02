@@ -422,6 +422,11 @@
       <section id="editor-document" hidden>
         <h3 id="editor-title"></h3>
         <p id="editor-meta" class="note"></p>
+        <button type="button" id="editor-reference" hidden>Open original context</button>
+        <details id="editor-history" hidden>
+          <summary>Previous revisions</summary>
+          <div id="editor-history-items" class="editor-toolbar"></div>
+        </details>
         <div class="editor-toolbar">
           <button type="button" id="editor-edit">Edit</button>
           <button type="button" id="editor-preview-toggle" hidden>
@@ -573,6 +578,7 @@
   <script src="/vendor/purify.js"></script>
   <script src="/vendor/katex/katex.min.js"></script>
   <script src="/math.js"></script>
+  <script src="/reasoning.js" defer></script>
   <script src="/app.js" defer></script>
   <script src="/context-garden.js" defer></script>
   <script src="/conclave.js" defer></script>

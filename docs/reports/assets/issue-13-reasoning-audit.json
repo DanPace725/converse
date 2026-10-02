@@ -1,0 +1,40 @@
+{
+  "conversation_id": "conv_b53ebbe1-a7b3-403a-8dc3-f2b40cd67582",
+  "providers": {
+    "openai": {
+      "calls": 41,
+      "responses": 40,
+      "reasoning_items": 9,
+      "readable_characters": 0,
+      "opaque_items": 9
+    },
+    "anthropic": {
+      "calls": 8,
+      "responses": 8,
+      "reasoning_items": 5,
+      "readable_characters": 0,
+      "opaque_items": 5
+    }
+  },
+  "claude_continuation_prefix_checks": [
+    {
+      "previous_request_seq": 334,
+      "next_request_seq": 354,
+      "first_message_changed": true,
+      "prior_thinking_items": 1
+    },
+    {
+      "previous_request_seq": 354,
+      "next_request_seq": 367,
+      "first_message_changed": false,
+      "prior_thinking_items": 1
+    },
+    {
+      "previous_request_seq": 367,
+      "next_request_seq": 373,
+      "first_message_changed": false,
+      "prior_thinking_items": 0
+    }
+  ],
+  "interpretation": "A changed first message identifies a rewritten prefix; this is not proof that a live signature check rejected it."
+}

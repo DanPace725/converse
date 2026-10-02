@@ -1,0 +1,38 @@
+{
+  "conversation_id": "conv_b53ebbe1-a7b3-403a-8dc3-f2b40cd67582",
+  "events": 378,
+  "answer_requests": 49,
+  "mismatches": [],
+  "latest_documents": [
+    {
+      "path": "distributed-memory-notes.md",
+      "event_id": "evt_226ef612-870a-4d78-94c9-869296fb4edc",
+      "kind": "document",
+      "actor": "openai",
+      "provider": "openai",
+      "model": "gpt-6.1-sol",
+      "requested_model": "gpt-6.1-sol",
+      "reported_model": "gpt-6.1-sol"
+    },
+    {
+      "path": "conclave-function-test.md",
+      "event_id": "evt_72a8b562-d6b3-4d5f-8aa4-304c4abf610e",
+      "kind": "document",
+      "actor": "openai",
+      "provider": "openai",
+      "model": "gpt-6.1-sol",
+      "requested_model": "gpt-6.1-sol",
+      "reported_model": "gpt-6.1-sol"
+    },
+    {
+      "path": "conclave-suggestions.md",
+      "event_id": "evt_291468cf-4f58-4768-8820-5e6694595517",
+      "kind": "document",
+      "actor": "anthropic",
+      "provider": "anthropic",
+      "model": "claude-sonnet-5-5",
+      "requested_model": "claude-sonnet-5-5",
+      "reported_model": "claude-sonnet-5-5"
+    }
+  ]
+}

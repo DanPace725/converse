@@ -163,12 +163,14 @@
         if (data.type === "start") {
           cancelAnimationFrame(frame);
           frame = null;
-          preview?.closest("article").remove();
+          if (preview && !preview.closest('article').querySelector('.reasoning-summary')) preview.closest('article').remove();
           text = "";
           preview = add(data.provider === "anthropic" ? "Claude" : "GPT", "Thinking…", data.model);
           preview.closest("article").dataset.provisional = "true";
+          preview.reasoningRecord = { provider: data.provider, model: data.model, request_id: data.request_id, status: 'partial' };
         }
-        if (typeof data.delta === "string" && preview) {
+        if (data.type === 'reasoning' && preview) window.reasoningUI.delta(preview.closest('article'), preview.reasoningRecord, data);
+        if (data.type !== 'reasoning' && typeof data.delta === "string" && preview) {
           text += data.delta;
           if (!frame) frame = requestAnimationFrame(render);
         }
@@ -192,7 +194,7 @@
         }
         if (buffer.trim()) event(JSON.parse(buffer));
         if (!complete) throw Error("Response stream ended before the saved reply arrived. Reload to check saved progress.");
-        preview?.closest("article").remove();
+        document.querySelectorAll('article[data-provisional="true"]').forEach(el => el.remove());
         return view;
       } catch (error) {
         if (preview?.isConnected) {

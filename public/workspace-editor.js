@@ -41,6 +41,7 @@
         content: f.content,
         token: f.source_event_id,
         path: f.path,
+        author: f.source_attribution,
       })),
       ...(view?.attachments || []).map((f) => ({
         kind: "source",
@@ -115,7 +116,7 @@
     const blocked =
       busy || saving || !view || view.busy || view.agent?.status === "running";
     for (const field of panel.querySelectorAll(
-      "textarea, input, select, #editor-items button, #editor-tabs button, #editor-edit, #editor-discard, #editor-latest, #editor-new-state",
+      "textarea, input, select, #editor-items button, #editor-tabs button, #editor-history button, #editor-reference, #editor-edit, #editor-discard, #editor-latest, #editor-new-state",
     ))
       field.disabled = saving;
     el("editor-state-key").disabled = saving || !selected?.newEntry;
@@ -224,6 +225,29 @@
           : "Source-linked " +
             (selected.kind === "state" ? "state entry" : "context section") +
             (selected.protected ? " · protected" : "");
+    if (selected.kind === 'document' && selected.author) {
+      const author = selected.author;
+      const who = author.actor === 'human' ? 'You' :
+        (author.provider === 'anthropic' ? 'Claude' : author.provider === 'openai' ? 'GPT' : author.actor) +
+          ' · ' + (author.model || 'model unknown');
+      el('editor-meta').textContent += ' · Last edit by ' + who;
+    }
+    if (selected.section?.type === 'evidence' && selected.section.source_event_ids.length === 1) {
+      const file = view.workspace?.find(f => f.source_event_id === selected.section.source_event_ids[0]);
+      if (file && selected.content === `Workspace ${file.path}; source ${file.source_event_id}.\n${file.content.slice(0, 2000)}` && file.content.length > 2000)
+        el('editor-meta').textContent += ` · Partial excerpt: first 2000 characters; ${file.content.length - 2000} more characters. Open the file in Documents for full text.`;
+    }
+    const history = el('editor-history'), revisions = selected.section?.relations?.supersedes || [];
+    history.hidden = selected.kind !== 'state' || !revisions.length;
+    el('editor-history-items').replaceChildren(...revisions.map(id => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.textContent = 'Open previous revision · ' + id.slice(-8);
+      button.onclick = () => inspect({ id, state_key: selected.section.state_key }, false);
+      return button;
+    }));
+    el('editor-reference').hidden = !selected.section?.ref_bundle_id;
+    el('editor-reference').onclick = () => inspect({ id: selected.section.ref_bundle_id }, false);
     el("editor-edit").hidden =
       editing || !!selected.protected || !!selected.historical;
     el("editor-preview-toggle").hidden = !editing;
@@ -495,6 +519,7 @@
               title: data.state_key || data.type,
               content: data.content,
               historical: true,
+              section: data,
             },
       );
     } catch (error) {

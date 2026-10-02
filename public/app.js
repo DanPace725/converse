@@ -345,6 +345,7 @@ function add(who, text, model = "", error = false, message = null) {
     a.append(actions);
   }
   $("#chat").append(a);
+  if (message?.reasoning) window.reasoningUI.show(a, message.reasoning, message.message_id);
   a.scrollIntoView({ behavior: "smooth", block: "nearest" });
   return p;
 }
@@ -546,8 +547,18 @@ $("#composer").onsubmit = async (e) => {
         function event(line) {
           if (!line.trim()) return;
           const d = JSON.parse(line);
-          if (d.error) throw Error(d.error);
-          if (d.delta) {
+          if (d.error) {
+            Object.assign(record.invocation, d.provenance || {});
+            record.usage = d.usage || null;
+            if (d.reasoning?.text || d.reasoning?.opaque_available) record.reasoning = { ...d.reasoning, model: d.provenance?.reported_model || model, requested_model: model, request_id: record.message_id };
+            window.reasoningUI.show(p.closest('article'), record.reasoning);
+            throw Error(d.error);
+          }
+          if (d.type === 'reasoning') {
+            record.reasoning ||= { provider, model, status: 'partial', request_id: record.message_id };
+            window.reasoningUI.delta(p.closest('article'), record.reasoning, d);
+          }
+          if (d.type !== 'reasoning' && d.delta) {
             answer += d.delta;
             renderReply(p, answer);
           }
@@ -555,6 +566,8 @@ $("#composer").onsubmit = async (e) => {
             done = true;
             Object.assign(record.invocation, d.provenance || {});
             record.usage = d.usage || null;
+            record.reasoning = { ...d.reasoning, model: d.provenance?.reported_model || model, requested_model: model, request_id: record.message_id };
+            window.reasoningUI.show(p.closest('article'), record.reasoning);
           }
         }
         try {
@@ -660,6 +673,7 @@ $("#export").onclick = () => {
           (m.role === "user" ? "You" : m.provider + " — " + m.model) +
           "\n\n" +
           messageText(m) +
+          window.reasoningUI.markdown(m.reasoning) +
           (m.status === "failed" ? "\n\n[Failed response] " + m.error : ""),
       )
       .join("\n\n---\n\n") +

@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
-import { Store } from "../../lib/conclave/store.js";
+import { Store, segment } from "../../lib/conclave/store.js";
 import { ConclaveService } from "../../lib/conclave/service.js";
 import { createConclaveHandler } from "../../lib/conclave-local.js";
 
@@ -79,6 +79,136 @@ const final = response([
     content: [{ type: "output_text", text: "**Verified**: 42." }],
   },
 ]);
+
+test('Workspace identifies authors, labels legacy excerpts, and opens original context and state corrections', async ({ page }, testInfo) => {
+  let calls = 0;
+  const content = '# Full notes\n' + 'Detailed evidence. '.repeat(180) + '\nEND OF ORIGINAL';
+  const app = await fixture(async () => {
+    calls++;
+    if (calls === 1) return response([call('workspace_write', { path: 'notes.md', content, expected_source_event_id: null }, 1)]);
+    if (calls === 2) return response([call('workspace_read', { path: 'notes.md', offset: 0 }, 2)]);
+    return final;
+  });
+  const errors = [];
+  page.on('pageerror', error => errors.push(error.message));
+  try {
+    const id = app.service.create('Context audit proof').conversation_id;
+    await app.service.ask(id, { message_id: 'msg_doc', content: 'Write and verify the notes.', settings: { model: 'fixture', jev: false } });
+    const h = app.service.harness(id), store = app.service.store;
+    const file = app.service.workspaceFile(id, 'notes.md');
+    const current = store.context(id);
+    const legacy = segment(`Workspace notes.md; source ${file.source_event_id}.\n${content.slice(0, 2000)}`, [file.source_event_id], { type: 'evidence' });
+    store.commit(id, [...current.segments.filter(s => !s.source_event_ids.includes(file.source_event_id)), legacy], 'Legacy excerpt fixture', current.revision);
+    h.remember('budget', 'constraint', 'Budget: 100 dollars.');
+    h.remember('budget', 'constraint', 'Budget: 150 dollars.');
+    h.addMessage('assistant', 'Long historical observation. '.repeat(150) + 'END OF HISTORY');
+    h.offload([store.context(id).segments.at(-1).id]);
+    const revision = store.context(id).revision;
+    await page.goto(app.url);
+    if (page.viewportSize().width < 900) await page.locator('#menu').click();
+    await page.locator('#server-chats .chat-item').filter({ hasText: 'Context audit proof' }).click();
+    await page.locator('#workspace-open').click();
+    await expect(page.locator('#editor-meta')).toContainText('Last edit by GPT · fixture');
+    await expect(page.locator('#editor-preview')).toContainText('END OF ORIGINAL');
+    await page.getByRole('tab', { name: 'Context', exact: true }).click();
+    const legacyItem = page.locator('#editor-items details').filter({ hasText: 'Workspace notes.md;' });
+    await legacyItem.locator('summary').click();
+    await legacyItem.getByRole('button', { name: 'Open section' }).click();
+    await expect(page.locator('#editor-meta')).toContainText('Partial excerpt: first 2000 characters');
+    await expect(page.locator('#editor-preview')).not.toContainText('END OF ORIGINAL');
+    const reference = page.locator('#editor-items details').filter({ hasText: 'Offloaded assistant' });
+    await reference.locator('summary').click();
+    await reference.getByRole('button', { name: 'Open section' }).click();
+    await expect(page.locator('#editor-preview')).toContainText('Source excerpt (not a summary)');
+    await page.locator('#editor-reference').click();
+    await expect(page.locator('#editor-preview')).toContainText('END OF HISTORY');
+    await expect(page.locator('#editor-meta')).toContainText('read only');
+    await expect(page.locator('#editor-edit')).toBeHidden();
+    await page.getByRole('tab', { name: 'State', exact: true }).click();
+    await expect(page.locator('#editor-preview')).toHaveText('Budget: 150 dollars.');
+    await page.locator('#editor-history summary').click();
+    await page.locator('#editor-history-items button').click();
+    await expect(page.locator('#editor-preview')).toHaveText('Budget: 100 dollars.');
+    await expect(page.locator('#editor-meta')).toContainText('read only');
+    await expect(page.locator('#editor-edit')).toBeHidden();
+    expect(app.service.view(id).state.entries[0].content).toBe('Budget: 150 dollars.');
+    expect(store.context(id).revision).toBe(revision);
+    await page.screenshot({ path: testInfo.outputPath('context-audit.png') });
+    expect(errors).toEqual([]);
+  } finally { await app.close(); }
+});
+
+for (const mode of ['context', 'agent']) test(`${mode} reasoning streams before answers, retains earlier tool steps and reloads without exposing signatures`, async ({ page }, testInfo) => {
+  let release, calls = 0;
+  const gate = new Promise(resolve => release = resolve);
+  const errors = [];
+  page.on('pageerror', error => errors.push(error.message));
+  const app = await fixture(async (_payload, options) => {
+    calls++;
+    const text = calls === 1 ? 'Check <img src=x onerror=alert(1)> safely.' : 'Calculation verified.';
+    options.onReasoning({ delta: text, block: '0' });
+    if (calls === 1) await gate;
+    const reasoning = { type: 'reasoning', summary: [{ type: 'summary_text', text }], encrypted_content: 'opaque-secret' };
+    if (calls === 1) return response([reasoning, call('calculate', { operation: 'add', values: [1, 2] }, 'reasoning')]);
+    options.onDelta('Verified answer.');
+    return response([reasoning, messageForTest('Verified answer.')]);
+  });
+  await page.route('**/api/title', route => route.fulfill({ json: { title: 'Reasoning proof' } }));
+  try {
+    await page.goto(app.url);
+    await expect(page.locator('#mode-switch')).toBeVisible();
+    await page.locator(`#mode-switch label:has(input[value="${mode}"])`).click();
+    await page.getByRole('textbox', { name: 'Message', exact: true }).fill('Calculate and explain.');
+    await page.locator('#send').click();
+    const live = page.locator('article[data-provisional="true"] .reasoning-summary');
+    await expect(live).toHaveCount(1);
+    expect(await live.evaluate(el => el.open)).toBe(false);
+    await live.locator('summary').click();
+    await expect(live).toContainText('Check <img');
+    expect(await live.locator('img').count()).toBe(0);
+    release();
+    await expect(page.locator('#send')).toBeEnabled();
+    await expect(page.locator('article[data-provisional="true"]')).toHaveCount(0);
+    const saved = page.locator('.reasoning-summary');
+    await expect(saved).toHaveCount(2);
+    await expect(page.locator('article[data-provider] .content')).toHaveText('Verified answer.');
+    expect(await saved.first().evaluate(el => el.open)).toBe(true);
+    await expect(page.locator('#chat')).not.toContainText('opaque-secret');
+    const id = app.service.list()[0].conversation_id;
+    expect(app.service.view(id).messages[0].reasoning).toHaveLength(2);
+    expect(JSON.stringify(app.service.export(id))).toContain('opaque-secret');
+    await page.reload();
+    await expect(saved).toHaveCount(2);
+    await saved.last().locator('summary').click();
+    await expect(saved.last()).toContainText('Calculation verified.');
+    await page.screenshot({ path: `.agent-smoke/reasoning-${mode}-${testInfo.project.name}.png` });
+    expect(errors).toEqual([]);
+  } finally { release(); await app.close(); }
+});
+
+for (const mode of ['context', 'agent']) test(`${mode} interrupted reasoning remains partial after reload without inventing an answer`, async ({ page }) => {
+  const app = await fixture(async (_payload, options) => {
+    options.onReasoning({ delta: 'Unfinished rationale.', block: '0' });
+    throw Error('Connection ended in reasoning');
+  });
+  await page.route('**/api/title', route => route.fulfill({ json: { title: 'Interrupted reasoning' } }));
+  try {
+    await page.goto(app.url);
+    await expect(page.locator('#mode-switch')).toBeVisible();
+    await page.locator(`#mode-switch label:has(input[value="${mode}"])`).click();
+    await page.getByRole('textbox', { name: 'Message', exact: true }).fill('Think about the request.');
+    await page.locator('#send').click();
+    await expect(page.locator('#send')).toBeEnabled();
+    await expect(page.locator('.reasoning-summary')).toHaveCount(1);
+    await expect(page.locator('.reasoning-summary summary')).toContainText('partial');
+    await page.reload();
+    await expect(page.locator('.reasoning-summary')).toHaveCount(1);
+    await page.locator('.reasoning-summary summary').click();
+    await expect(page.locator('.reasoning-summary')).toContainText('Unfinished rationale.');
+    const id = app.service.list()[0].conversation_id;
+    expect(app.service.view(id).messages.filter(m => m.role === 'assistant')).toHaveLength(0);
+  } finally { await app.close(); }
+});
 
 for (const mode of ['context', 'agent']) for (const provider of ['openai', 'anthropic'])
 test(`${mode} ${provider} streams provisional text before saving the completed answer`, async ({ page }) => {

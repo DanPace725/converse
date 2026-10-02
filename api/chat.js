@@ -25,10 +25,11 @@ export default async function handler(req, res) {
       input,
       (delta) => write({ delta }),
       controller.signal,
+      { onReasoning: part => write({ type: 'reasoning', ...part }) },
     );
-    write({ done: true, usage: result.usage, provenance: result.provenance });
+    write({ done: true, usage: result.usage, provenance: result.provenance, reasoning: result.reasoning });
   } catch (e) {
-    write({ error: redact(e) });
+    write({ error: redact(e), provenance: e.provenance, reasoning: e.reasoning, usage: e.usage });
   }
   res.end();
 }

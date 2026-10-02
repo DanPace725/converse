@@ -1,5 +1,6 @@
-const CACHE = "converse-shell-v16";
+const CACHE = "converse-shell-v18";
 const SHELL = [
+  '/reasoning.js',
   "/",
   "/index.html",
   "/styles.css",

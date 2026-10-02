@@ -1,6 +1,8 @@
 import { defineConfig, devices } from "@playwright/test";
 export default defineConfig({
   testDir: "./test/browser",
+  // Keep generated test output away from user-provided conversation exports.
+  outputDir: "./.agent-smoke/playwright-results",
   fullyParallel: true,
   use: {
     baseURL: "http://127.0.0.1:3212",

@@ -14,6 +14,37 @@ test.beforeEach(async ({ page }) => {
   await page.route("**/api/models", (r) => r.fulfill({ json: catalog }));
 });
 
+test('reasoning survives ordinary chat reload and exports while response Copy stays answer-only', async ({ page }) => {
+  await page.addInitScript(() => Object.defineProperty(navigator, 'clipboard', { value: { writeText: async text => { window.copiedText = text; } } }));
+  await page.route('**/api/chat', route => route.fulfill({ contentType: 'application/x-ndjson', body: [
+    { type: 'reasoning', block: '0', delta: 'Check the arithmetic.' },
+    { delta: '**Answer**: 3.' },
+    { done: true, reasoning: { provider: 'GPT', text: 'Check the arithmetic.', status: 'completed', opaque_available: true }, provenance: { native_output: [{ type: 'reasoning', encrypted_content: 'opaque-secret' }] } },
+  ].map(e => JSON.stringify(e) + '\n').join('') }));
+  await page.goto('/');
+  await page.getByRole('textbox', { name: 'Message', exact: true }).fill('What is one plus two?');
+  await page.locator('#send').click();
+  await expect(page.locator('#send')).toBeEnabled();
+  const summary = page.locator('.reasoning-summary');
+  await expect(summary).toHaveCount(1);
+  expect(await summary.evaluate(el => el.open)).toBe(false);
+  await summary.locator('summary').click();
+  await expect(summary).toContainText('Check the arithmetic.');
+  await page.locator('.copy-response').click();
+  expect(await page.evaluate(() => window.copiedText)).toBe('**Answer**: 3.');
+  await page.reload();
+  await expect(summary).toHaveCount(1);
+  await expect(page.locator('#chat')).not.toContainText('opaque-secret');
+  for (const [button, expected] of [['#export-json', 'opaque-secret'], ['#export', 'Reasoning summary']]) {
+    if (!(await page.locator('#more-menu').evaluate(el => el.open))) await page.locator('#more-menu > summary').click();
+    const download = page.waitForEvent('download');
+    await page.locator(button).click();
+    const stream = await (await download).createReadStream();
+    const chunks = []; for await (const chunk of stream) chunks.push(chunk);
+    expect(Buffer.concat(chunks).toString()).toContain(expected);
+  }
+});
+
 test('automatic names persist and user Copy/Edit resends a linked revision with its attachment', async ({ page }, testInfo) => {
   let titles = 0;
   const calls = [];

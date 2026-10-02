@@ -256,6 +256,7 @@
       ];
     if (kind === "inference_response")
       return ["Model response received", "The model response was recorded."];
+    if (kind === 'reasoning') return ['Reasoning summary saved', 'Provider-reported rationale is retained as a searchable source.'];
     return [
       kind === "user"
         ? "A new thought arrives"

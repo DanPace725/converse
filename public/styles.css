@@ -1902,3 +1902,7 @@ dialog button {
     opacity: 0.35;
   }
 }
+/* Provider summaries stay collapsed and separate from the copied answer. */
+.reasoning-summary { margin: 0.65rem 0; border: 1px solid var(--border, #5555); border-radius: 8px; padding: 0.6rem; font-size: 0.9rem; }
+.reasoning-summary summary { cursor: pointer; }
+.reasoning-summary > div { white-space: pre-wrap; overflow-wrap: anywhere; padding-top: 0.7rem; max-height: 28rem; overflow: auto; }
