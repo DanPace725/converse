@@ -53,3 +53,5 @@ Models should inspect telemetry when a retrieval is unexpectedly partial, a revi
 Context/Agent conversations persist on the server in Neon when configured, with SQLite as the local fallback. App access currently uses an app password; separate user accounts and account-wide memory are not implemented. Keys remain server-side. Chat mode is browser-local.
 
 Export Markdown preserves readable conversation text. Canonical JSON contains the full historical audit, including original content, versions, requests, tool exchanges, context snapshots, Jev records, and usage. Historical exports may include documents removed from the active workspace.
+
+Conversation export filenames use the saved conversation title followed by a UTC timestamp, for example `Comprehensive Policy Plan_2026-10-02T22-17-39-337Z.json`. Unsafe filename characters are replaced, long titles are shortened, and untitled exports use `Conversation`. The conversation ID remains inside the export.

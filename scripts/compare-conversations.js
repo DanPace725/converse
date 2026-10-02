@@ -98,7 +98,7 @@ export async function compare({ live = false, cap = 1, diagnostic = false, prior
       const exported_at = new Date().toISOString();
       const snapshots = store.db.prepare('SELECT revision,receipt_id,segments FROM snapshots WHERE conversation_id=? ORDER BY revision').all(id).map(s => ({ ...s, segments: JSON.parse(s.segments) }));
       const record = { schema_version: 1, conversation_id: id, title: label, exported_at, comparison: { template: template.key, source_conversation_id: template.source_conversation_id, mode, jev: false }, context_layer: { conversation_id: id, events: store.events(id), context: store.context(id), snapshots, metrics: h.metrics() } };
-      run.export = exportFilename(id, exported_at);
+      run.export = exportFilename(record.title, exported_at);
       writeFileSync(join(folder, run.export), JSON.stringify(record, null, 2));
       run.cost = conversationCosts(record, prices);
       // Plain attachments live in its native prompt, so saved Harness context is

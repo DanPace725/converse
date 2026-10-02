@@ -69,6 +69,12 @@ test('automatic names persist and user Copy/Edit resends a linked revision with 
   await page.getByRole('textbox', { name: 'Message', exact: true }).fill('Help me design project memory.');
   await page.locator('#send').click();
   await expect(page.locator('#chat-title')).toHaveText('Project Memory Design');
+  for (const [button, extension] of [['#export-json', 'json'], ['#export', 'md']]) {
+    if (!(await page.locator(button).isVisible())) await page.locator('#more-menu > summary').click();
+    const download = page.waitForEvent('download');
+    await page.locator(button).click();
+    expect((await download).suggestedFilename()).toMatch(new RegExp(`^Project Memory Design_\\d{4}-\\d{2}-\\d{2}T.*Z\\.${extension}$`));
+  }
   await page.locator('.msg-user').first().getByRole('button', { name: 'Copy your message' }).click();
   expect(await page.evaluate(() => window.copiedText)).toBe('Help me design project memory.');
   await page.getByRole('textbox', { name: 'Message', exact: true }).fill('Unsent draft.');

@@ -4,6 +4,7 @@ import { readFile } from "node:fs/promises";
 import { Store, segment } from "../../lib/conclave/store.js";
 import { ConclaveService } from "../../lib/conclave/service.js";
 import { createConclaveHandler } from "../../lib/conclave-local.js";
+import { exportFilename } from '../../public/export-name.js';
 
 async function fixture(respond, { jev = false, claude = false, claudeModel = 'claude-fixture', countTokens } = {}) {
   const store = new Store(undefined, { memory: true });
@@ -1019,7 +1020,7 @@ test("browser drives real HTTP/service/storage, renders artifacts and resumes af
     await page.locator("#export-json").click();
     const exported = await download;
     const record = JSON.parse(await readFile(await exported.path(), "utf8"));
-    expect(exported.suggestedFilename()).toBe(`${record.conversation_id}_${record.exported_at.replace(/[:.]/g, '-')}.json`);
+    expect(exported.suggestedFilename()).toBe(exportFilename(record.title, record.exported_at));
     expect(
       record.context_layer.events.some((e) => e.kind === "agent_checkpoint"),
     ).toBe(true);

@@ -65,7 +65,7 @@ test("local HTTP chat and JSON download preserve source IDs, usage and all revis
     );
     const created = await invoke("POST", "/api/conclave", {
       action: "create",
-      title: "HTTP fixture",
+      title: "HTTP: café / fixture?",
     });
     assert.equal(created.status, 201);
     const id = created.record.conversation_id;
@@ -84,10 +84,11 @@ test("local HTTP chat and JSON download preserve source IDs, usage and all revis
     assert.equal(download.status, 200);
     assert.match(
       download.headers["Content-Disposition"],
-      /attachment; filename="conv_.*\.json"/,
+      /attachment; filename="HTTP- caf_ - fixture-.*\.json"/,
     );
     const record = download.record;
-    assert.equal(download.headers["Content-Disposition"], `attachment; filename="${id}_${record.exported_at.replace(/[:.]/g, '-')}.json"`);
+    const timestamp = record.exported_at.replace(/[:.]/g, '-');
+    assert.equal(download.headers["Content-Disposition"], `attachment; filename="HTTP- caf_ - fixture-_${timestamp}.json"; filename*=UTF-8''${encodeURIComponent(`HTTP- café - fixture-_${timestamp}.json`)}`);
     assert.equal(record.messages[1].reply_to, record.messages[0].message_id);
     assert.equal(record.messages[1].usage.input_tokens, 100);
     const sources = new Set(

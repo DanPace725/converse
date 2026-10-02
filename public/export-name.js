@@ -1,4 +1,7 @@
-export function exportFilename(conversation, exportedAt, extension = 'json') {
-  const id = String(conversation).replace(/[^a-zA-Z0-9_-]/g, '_');
-  return `${id}_${new Date(exportedAt).toISOString().replace(/[:.]/g, '-')}.${extension}`;
+export function exportFilename(title, exportedAt, extension = 'json') {
+  const name = String(title || 'Conversation').normalize('NFC')
+    .replace(/[<>:"/\\|?*\u0000-\u001f\u007f]/g, '-')
+    .replace(/\s+/g, ' ').replace(/^[ .]+|[ .]+$/g, '')
+    .slice(0, 100).replace(/[ .]+$/g, '') || 'Conversation';
+  return `${name}_${new Date(exportedAt).toISOString().replace(/[:.]/g, '-')}.${extension}`;
 }

@@ -31,9 +31,11 @@ function hydrate(audit, until = Infinity) {
   return store;
 }
 const review = [];
-for (const filename of readdirSync(sourceDir).filter(f => /^conv_.*\.json$/.test(f)).sort()) {
+for (const filename of readdirSync(sourceDir).filter(f => f.endsWith('.json')).sort()) {
   const bytes = readFileSync(join(sourceDir, filename));
-  const record = JSON.parse(bytes), audit = record.context_layer, events = audit.events;
+  const record = JSON.parse(bytes), audit = record.context_layer;
+  if (!Array.isArray(audit?.events)) continue;
+  const events = audit.events;
   const checkpoints = events.filter(e => e.kind === 'agent_checkpoint');
   const lastRuns = new Map(checkpoints.map(e => [e.metadata.state.run_id, e]));
   const runs = [...lastRuns.values()].map(end => {

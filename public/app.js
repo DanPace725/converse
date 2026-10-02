@@ -768,8 +768,9 @@ $("textarea").onkeydown = (e) => {
     $("#composer").requestSubmit();
   }
 };
-$("#export-json").onclick = () => {
+$("#export-json").onclick = async () => {
   if (window.contextLayer?.downloadExport()) return;
+  const { exportFilename } = await import('./export-name.js');
   const exportedAt = now();
   const url = URL.createObjectURL(
     new Blob(
@@ -789,11 +790,12 @@ $("#export-json").onclick = () => {
   );
   const a = document.createElement("a");
   a.href = url;
-  a.download = conversation.conversation_id + '_' + exportedAt.replace(/[:.]/g, '-') + '.json';
+  a.download = exportFilename(conversation.title, exportedAt);
   a.click();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 };
-$("#export").onclick = () => {
+$("#export").onclick = async () => {
+  const { exportFilename } = await import('./export-name.js');
   const exportedAt = now();
   const md =
     "# Model chat\n\nConversation: " +
@@ -818,7 +820,7 @@ $("#export").onclick = () => {
   );
   const a = document.createElement("a");
   a.href = url;
-  a.download = conversation.conversation_id + '_' + exportedAt.replace(/[:.]/g, '-') + '.md';
+  a.download = exportFilename(conversation.title, exportedAt, 'md');
   a.click();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 };
