@@ -159,11 +159,22 @@
           <button id="export" type="button" disabled>Export Markdown</button
           ><button id="export-json" type="button">Export JSON</button
           ><button type="button" id="install" hidden>Install app</button>
+          <details id="workspace-panel" hidden>
+            <summary id="workspace-label">Workspace files</summary>
+            <div id="workspace-downloads"></div>
+          </details>
         </div>
       </details>
     </header>
     <div id="chat" aria-live="polite">
       <div id="empty"></div>
+    </div>
+    <div id="run-notice" class="run-notice" hidden>
+      <p id="agent-notice" role="status" hidden></p>
+      <div class="run-paused">
+        <span>Agent run paused · progress is saved</span>
+        <button id="agent-resume" type="button" hidden>Resume run</button>
+      </div>
     </div>
     <button type="button" id="jump" hidden aria-label="Jump to latest message">
       <svg aria-hidden="true"><use href="#i-down" /></svg>Latest
@@ -195,16 +206,11 @@
           Models
         </button>
       </div>
-      <div id="agent-mode-bar" class="run-strip" hidden>
-        <span id="run-progress" role="status" aria-live="polite">Ready</span>
-        <details id="workspace-panel" hidden>
-          <summary id="workspace-label">Workspace files</summary>
-          <div id="workspace-downloads"></div>
-        </details>
-        <button id="agent-resume" type="button" hidden>Resume run</button>
-        <button id="agent-stop" type="button" hidden>Stop</button>
-        <p id="agent-notice" role="status" hidden></p>
-      </div>
+      <div id="agent-mode-bar" hidden></div>
+      <span id="run-progress" class="sr-only" role="status" aria-live="polite"
+        >Ready</span
+      >
+      <p id="status" class="composer-status" role="status">Loading models…</p>
       <input
         id="markdown-file"
         type="file"
@@ -224,12 +230,7 @@
             <svg aria-hidden="true"><use href="#i-close" /></svg>
           </button>
         </div>
-        <textarea
-          aria-label="Message"
-          placeholder="Message GPT…"
-          rows="1"
-        ></textarea>
-        <div class="composer-actions">
+        <div class="composer-row">
           <button
             id="upload"
             type="button"
@@ -356,7 +357,12 @@
               </details>
             </div>
           </details>
-          <span id="status" role="status">Loading models…</span
+          <textarea
+            aria-label="Message"
+            placeholder="Message GPT…"
+            rows="1"
+          ></textarea>
+          <button id="agent-stop" type="button" hidden>Stop</button
           ><button id="send" disabled>Send</button>
         </div>
       </div>
@@ -560,6 +566,17 @@
       <span id="garden-token-comparison"
         >Complete model input</span
       >
+    </div>
+    <div
+      class="garden-ratio"
+      title="Text-only comparison at ~4 UTF-8 bytes per token: working context text versus every saved message, document and state source. Excludes instructions, tools and metadata."
+    >
+      <div>
+        <span>Working context vs full conversation</span
+        ><strong id="garden-ratio">—</strong>
+      </div>
+      <div class="garden-bar" aria-hidden="true"><i id="garden-ratio-bar"></i></div>
+      <span id="garden-ratio-detail">Waiting for saved context</span>
     </div>
     <div class="garden-counts">
       <div>

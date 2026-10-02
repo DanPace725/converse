@@ -7,6 +7,7 @@
     contextToggle = $("#context-mode"),
     agentToggle = $("#agent-mode"),
     saved = $("#context-chat"),
+    resumeButton = $("#agent-resume"),
     wide = matchMedia("(min-width: 900px)");
   const radios = [
     ...document.querySelectorAll('#mode-switch input[name="mode"]'),
@@ -249,7 +250,7 @@
       chip.append(name, model);
       const fixed = typed.length > 0;
       chip.disabled = busy || !fields[name].options.length;
-      if (current !== "chat" && !$("#agent-resume").hidden)
+      if (current !== "chat" && !resumeButton.hidden)
         chip.disabled = true;
       if (fixed) {
         chip.setAttribute("aria-disabled", "true");
@@ -322,7 +323,7 @@
           : [window.contextLayer?.providerName?.() || "GPT"];
     box.placeholder =
       current === "agent"
-        ? "Describe an objective for the agent…"
+        ? "Describe the objective…"
         : "Message " +
           (who.length > 1
             ? who.slice(0, -1).join(", ") + " and " + who.at(-1)
@@ -339,11 +340,6 @@
     const empty = $("#empty");
     if (empty && empty.dataset.mode !== current && !messages.length)
       showEmpty();
-    const progress = $("#run-progress").textContent.trim();
-    $("#agent-mode-bar").classList.toggle(
-      "has-run",
-      !!progress && progress !== "Ready" && current !== "chat",
-    );
     if (!box.value) box.style.height = "";
     renderLists();
   }
@@ -371,6 +367,19 @@
     subtree: true,
   });
   observer.observe(saved, { childList: true });
+  // The status line only appears when it says something the reply doesn't.
+  const status = $("#status");
+  const idle =
+    /^(Ready|New chat|Opened|Loading models|Waiting for|Agent running|Agent \S+ · progress saved|.+ is answering)/;
+  const showStatus = () => {
+    status.dataset.idle = String(!status.textContent.trim() || idle.test(status.textContent.trim()));
+  };
+  new MutationObserver(showStatus).observe(status, {
+    childList: true,
+    characterData: true,
+    subtree: true,
+  });
+  showStatus();
   observer.observe(chat, { childList: true });
   for (const name of names) fields[name].addEventListener("change", schedule);
   document.addEventListener("change", schedule);

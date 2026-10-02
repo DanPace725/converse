@@ -8,6 +8,10 @@
     provider = $("#context-provider"),
     agentMode = $("#agent-mode");
   const limitMode = $('#agent-limit-mode');
+  // Kept by reference: the notice moves into the chat and re-renders detach it.
+  const runNotice = $("#run-notice"),
+    agentNotice = $("#agent-notice"),
+    resumeButton = $("#agent-resume");
   limitMode.value = localStorage.getItem('converse-agent-limit-mode') || 'adaptive';
   limitMode.onchange = () => {
     localStorage.setItem('converse-agent-limit-mode', limitMode.value);
@@ -51,8 +55,10 @@
   let progressTimer = null,
     progressGeneration = 0,
     progressStarted = 0;
-  function progressText(text) {
+  function progressText(text, activity, meta) {
     $("#run-progress").textContent = text;
+    if (live && !live.closed && !live.text && activity !== undefined)
+      window.reasoningUI.live(live.article, true, { activity, meta });
   }
   function watchProgress(value) {
     clearTimeout(progressTimer);
@@ -102,12 +108,15 @@
                   : event?.kind === "document"
                     ? "Saving workspace file"
                     : "Working";
+          const seconds = Math.floor((Date.now() - progressStarted) / 1000);
           progressText(
             (driving ? "Agent · step " + (agent.steps + 1) + " · " : "") +
               label +
               " · " +
-              Math.floor((Date.now() - progressStarted) / 1000) +
+              seconds +
               "s",
+            label,
+            seconds + "s",
           );
         } catch {
           if (generation === progressGeneration)
@@ -126,7 +135,38 @@
     latestView = null,
     driving = false,
     stopRequested = false;
+  // One stable reply element for a whole context turn or agent run, so steps
+  // stream into the same place instead of appearing and vanishing.
+  let live = null;
+  const typing =
+    '<span class="typing" role="img" aria-label="Thinking"><i></i><i></i><i></i></span>';
+  function beginLive(providerKey, model) {
+    if (live && !live.closed && live.article.isConnected) return live;
+    const name = providerKey === "anthropic" ? "Claude" : "GPT";
+    const content = add(name, "Thinking…", model || "");
+    const article = content.closest("article");
+    article.dataset.provisional = "true";
+    article.classList.add("is-streaming");
+    live = { article, content, stream: null, text: "", record: null, closed: false };
+    // Keyed like the saved trail so an expanded trail stays expanded.
+    const key = messages.findLast((m) => m.role === "user")?.message_id;
+    window.reasoningUI.live(article, true, { activity: "Working", meta: "", key });
+    updateTail();
+    return live;
+  }
+  function endLive() {
+    if (!live) return;
+    live.stream?.stop();
+    live.closed = true;
+    if (live.article.isConnected) {
+      live.article.classList.remove("is-streaming");
+      window.reasoningUI.live(live.article, false);
+    }
+    live = null;
+  }
+  const liveActive = () => !!live && !live.closed;
   const enabled = () => toggle.checked || !!conversation.context_layer;
+  let asking = false;
   const currentId = () => conversation.context_layer?.conversation_id;
 
   async function request(action, input) {
@@ -152,27 +192,28 @@
     if (response.status === 401 && generation === sessionGeneration) unlock();
     if (streaming && response.ok && response.headers.get("Content-Type")?.includes("application/x-ndjson")) {
       const reader = response.body.getReader(), decoder = new TextDecoder();
-      let buffer = "", view = null, complete = false, preview = null, text = "", frame;
-      const render = () => {
-        frame = null;
-        if (preview?.isConnected && text) renderReply(preview, text);
-      };
+      let buffer = "", view = null, complete = false;
       const event = data => {
         if (data.error) throw Error(data.error);
         if (complete) return;
         if (data.type === "start") {
-          cancelAnimationFrame(frame);
-          frame = null;
-          if (preview && !preview.closest('article').querySelector('.reasoning-summary')) preview.closest('article').remove();
-          text = "";
-          preview = add(data.provider === "anthropic" ? "Claude" : "GPT", "Thinking…", data.model);
-          preview.closest("article").dataset.provisional = "true";
-          preview.reasoningRecord = { provider: data.provider, model: data.model, request_id: data.request_id, status: 'partial' };
+          const turn = beginLive(data.provider, data.model);
+          turn.article.querySelector(".msg-head small").textContent = data.model || "";
+          // A new model step replaces any interim text from the previous one.
+          turn.stream?.stop();
+          turn.stream = null;
+          if (turn.text) turn.content.innerHTML = typing;
+          turn.text = "";
+          turn.record = { provider: data.provider, model: data.model, request_id: data.request_id, status: 'partial' };
+          window.reasoningUI.live(turn.article, true);
         }
-        if (data.type === 'reasoning' && preview) window.reasoningUI.delta(preview.closest('article'), preview.reasoningRecord, data);
-        if (data.type !== 'reasoning' && typeof data.delta === "string" && preview) {
-          text += data.delta;
-          if (!frame) frame = requestAnimationFrame(render);
+        if (data.type === 'reasoning' && liveActive() && live.record)
+          window.reasoningUI.delta(live.article, live.record, data);
+        if (data.type !== 'reasoning' && typeof data.delta === "string" && data.delta && liveActive()) {
+          if (!live.stream) window.reasoningUI.live(live.article, false);
+          live.stream ||= createStream(live.content, { onRender: updateTail });
+          live.text += data.delta;
+          live.stream.push(data.delta);
         }
         if (data.done === true) {
           if (!data.view?.conversation_id) throw Error("Invalid saved response");
@@ -194,19 +235,12 @@
         }
         if (buffer.trim()) event(JSON.parse(buffer));
         if (!complete) throw Error("Response stream ended before the saved reply arrived. Reload to check saved progress.");
-        document.querySelectorAll('article[data-provisional="true"]').forEach(el => el.remove());
+        if (liveActive()) await live.stream?.finish();
         return view;
       } catch (error) {
-        if (preview?.isConnected) {
-          render();
-          const notice = document.createElement("p");
-          notice.className = "error";
-          notice.textContent = "Unfinished preview · " + error.message;
-          preview.parentNode.append(notice);
-        }
+        endLive();
         throw error;
       } finally {
-        cancelAnimationFrame(frame);
         await reader.cancel().catch(() => {});
         reader.releaseLock();
       }
@@ -243,36 +277,58 @@
     provider.disabled = busy || running;
     agentMode.disabled = busy || running || !available;
     $("#send").textContent = agentMode.checked ? "Run agent" : "Send";
-    $("#agent-resume").hidden = !running;
-    $("#agent-resume").disabled = busy || !available;
+    resumeButton.hidden = !running || driving;
+    resumeButton.disabled = busy || !available;
     $("#agent-stop").hidden = !running;
+    placeRunNotice();
     $("#agent-stop").disabled = stopRequested || (busy && !driving);
     if (running) $("#send").disabled = true;
   }
 
+  function placeRunNotice() {
+    runNotice.hidden = agentNotice.hidden && resumeButton.hidden;
+    if (!runNotice.hidden && runNotice.nextElementSibling?.id !== "chat-tail")
+      appendToChat(runNotice);
+  }
+
   function renderMessages() {
-    $("#chat").replaceChildren();
+    const chat = $("#chat"),
+      same = chat.dataset.conversation === conversation.conversation_id,
+      top = chat.scrollTop;
+    chat.replaceChildren();
+    chat.dataset.conversation = conversation.conversation_id;
+    if (!same) anchorId = null;
+    // The live reply shows the current turn's reasoning itself.
+    const current = liveActive() ? messages.findLast((m) => m.role === "user") : null;
     for (const message of messages) {
       const element = add(
         message.role === "user" ? "You" : message.provider,
         messageText(message),
         message.model || "",
         false,
-        message,
+        message === current ? { ...message, reasoning: undefined } : message,
       );
       if (message.role === "assistant") renderReply(element, message.content);
       if (message.answer_failed) {
         const notice = document.createElement("p");
-        notice.className = "error";
+        notice.className = "error turn-error";
         notice.textContent =
           "The answer failed: " + (message.failure || "Inspect the saved audit for details.");
-        element.parentNode.append(notice);
+        appendToChat(notice);
       }
     }
+    if (current) {
+      appendToChat(live.article);
+      if (current.reasoning?.length)
+        window.reasoningUI.show(live.article, current.reasoning, current.message_id);
+    }
     if (!messages.length) showEmpty();
+    placeRunNotice();
     $("#export").disabled = !messages.length;
     $("#export-json").disabled = busy;
-    followBottom();
+    updateTail();
+    if (same) chat.scrollTop = top;
+    else followBottom();
   }
 
   function apply(view) {
@@ -341,12 +397,16 @@
     const runMetrics = agent?.metrics;
     const purposeText = Object.entries(runMetrics?.usage_by_purpose || {}).map(([purpose, usage]) =>
       `${purpose === 'attention-selection' ? 'Jev selection' : purpose === 'compaction' ? 'Context compaction' : 'Task'}: ${usage.calls} calls, ${usage.input_tokens} input / ${usage.output_tokens} output`).join(' · ');
-    const notice = $('#agent-notice');
+    const notice = agentNotice;
     const toolErrors = runMetrics?.tool_errors || [];
-    notice.hidden = !agent || (agent.status === 'running' && !toolErrors.length);
-    notice.dataset.error = String(!!agent && (agent.status !== 'running' && agent.status !== 'completed' || toolErrors.length > 0));
-    notice.textContent = [agent?.stop?.message,
+    // Failures already shown in the transcript aren't repeated in the run notice.
+    const failure = view.messages.findLast((m) => m.role === 'user')?.failure || '';
+    const stopMessage = agent?.stop?.message && !(failure && (failure.includes(agent.stop.message) || agent.stop.message.includes(failure)))
+      ? agent.stop.message : '';
+    notice.textContent = [agent?.status === 'completed' && !toolErrors.length ? '' : stopMessage,
       toolErrors.length ? `${toolErrors.length} tool errors: ` + toolErrors.slice(-3).map(e => `${e.tool}: ${e.message}`).join(' · ') : ''].filter(Boolean).join(' ');
+    notice.hidden = !agent || !notice.textContent || (agent.status === 'running' && !toolErrors.length);
+    notice.dataset.error = String(!!agent && (agent.status !== 'running' && agent.status !== 'completed' || toolErrors.length > 0));
     $("#agent-status").textContent = agent
       ? `${agent.status} · ${agent.steps}/${agent.limits.max_steps} steps · ${agent.input_tokens} input / ${agent.output_tokens} output tokens` +
         (agent.usage_complete === false ? " (partial usage)" : "") +
@@ -387,6 +447,8 @@
       $("#workspace-downloads").append(link);
     }
     if (!busy) watchProgress(false);
+    // The live reply outlives a step only while this tab drives a running agent.
+    if (liveActive() && !asking && !(driving && agent?.status === "running")) endLive();
     saved.value = view.conversation_id;
     saveChat();
     renderMessages();
@@ -478,6 +540,7 @@
     driving = true;
     stopRequested = false;
     setBusy(true);
+    beginLive(agent?.settings?.provider || provider.value, agent?.settings?.model || fields[providerName()].value);
     try {
       while (agent?.status === "running") {
         $("#status").textContent = stopRequested
@@ -501,6 +564,10 @@
     } finally {
       driving = false;
       stopRequested = false;
+      if (liveActive()) {
+        endLive();
+        renderMessages();
+      }
       setBusy(false);
     }
   }
@@ -546,6 +613,7 @@
           limits,
         }),
       );
+      anchorMessage(user.message_id);
       $("textarea").value = "";
       finishMessageEdit();
       attachment = null;
@@ -562,7 +630,7 @@
     }
     await driveAgent();
   };
-  $("#agent-resume").onclick = async () => {
+  resumeButton.onclick = async () => {
     if (busy) return;
     try {
       apply(await request("view"));
@@ -643,6 +711,9 @@
       messages.push(user);
       saveChat();
       add("You", messageText(user), '', false, user);
+      anchorMessage(user.message_id);
+      asking = true;
+      beginLive(recipient.provider, model);
       $("textarea").value = "";
       attachment = null;
       $("#attachment").hidden = true;
@@ -656,10 +727,14 @@
         attachments: documents,
         settings,
       });
+      asking = false;
+      endLive();
       apply(view);
       finishMessageEdit();
       $("#status").textContent = "Ready · context saved";
     } catch (error) {
+      asking = false;
+      endLive();
       if (currentId()) {
         try {
           apply(await request("view"));
@@ -762,7 +837,8 @@
     $("#workspace-panel").hidden = true;
     watchProgress(false);
     $("#agent-status").textContent = "No agent run yet.";
-    $('#agent-notice').hidden = true;
+    agentNotice.hidden = true;
+    runNotice.hidden = true;
     $("#agent-files").hidden = true;
     saved.value = "";
     $("#context-stats").textContent = "";

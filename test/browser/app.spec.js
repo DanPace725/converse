@@ -25,11 +25,13 @@ test('reasoning survives ordinary chat reload and exports while response Copy st
   await page.getByRole('textbox', { name: 'Message', exact: true }).fill('What is one plus two?');
   await page.locator('#send').click();
   await expect(page.locator('#send')).toBeEnabled();
-  const summary = page.locator('.reasoning-summary');
+  // Reasoning is one quiet line inside the reply until tapped.
+  const summary = page.locator('article[data-provider] .thoughts');
   await expect(summary).toHaveCount(1);
-  expect(await summary.evaluate(el => el.open)).toBe(false);
-  await summary.locator('summary').click();
-  await expect(summary).toContainText('Check the arithmetic.');
+  await expect(summary.locator('.thoughts-snippet')).toHaveText('Check the arithmetic.');
+  await expect(summary.locator('.thoughts-steps')).toBeHidden();
+  await summary.locator('.thoughts-toggle').click();
+  await expect(summary.locator('.thought-text')).toContainText('Check the arithmetic.');
   await page.locator('.copy-response').click();
   expect(await page.evaluate(() => window.copiedText)).toBe('**Answer**: 3.');
   await page.reload();
@@ -477,4 +479,30 @@ test("new chat keeps earlier device chats, recipients toggle and starters fill t
     "aria-pressed",
     "true",
   );
+});
+
+test('replies keep your place: sending lifts your message and finishing does not jump', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  const long = Array.from({ length: 60 }, (_, i) => `Paragraph ${i + 1} of a long answer.`).join('\n\n');
+  await page.route('**/api/chat', route => route.fulfill({
+    contentType: 'application/x-ndjson',
+    body: long.match(/[\s\S]{1,40}/g).map(delta => JSON.stringify({ delta }) + '\n').join('') + JSON.stringify({ done: true }) + '\n',
+  }));
+  await page.goto('/');
+  await expect(page.locator('#send')).toBeEnabled();
+  const box = page.getByLabel('Message', { exact: true });
+  await box.fill('First question');
+  await page.locator('#send').click();
+  await expect(page.locator('#send')).toBeEnabled();
+  await box.fill('Second question');
+  await page.locator('#send').click();
+  const chat = page.locator('#chat');
+  const offset = () => page.locator('.msg-user').last().evaluate(el =>
+    el.getBoundingClientRect().top - el.parentElement.getBoundingClientRect().top);
+  await expect.poll(offset).toBeLessThan(40);
+  const top = await chat.evaluate(el => el.scrollTop);
+  await expect(page.locator('#send')).toBeEnabled();
+  await expect(chat).toContainText('Paragraph 60 of a long answer.');
+  expect(await chat.evaluate(el => el.scrollTop)).toBe(top);
+  await expect(page.locator('.is-streaming')).toHaveCount(0);
 });

@@ -179,6 +179,7 @@
     el("garden-anchors").textContent =
       context.segments.filter(protectedItem).length;
     el("garden-saved").textContent = history.count;
+    ratio(context, history);
     const input = live?.model_input;
     el("garden-tokens-saved").textContent = input ? `~${input.next.estimated_tokens.toLocaleString()}` : "—";
     el("garden-token-comparison").textContent = input?.latest?.input_tokens != null
@@ -401,11 +402,32 @@
       "Select a point to peek inside. Size reflects text length.";
     el("garden-revision").textContent = "Waiting for saved context";
     el("garden-tokens-saved").textContent = "—";
+    ratio(null, null);
     el("garden-token-comparison").textContent =
       "Full conversation → working context";
     el("garden-replay").textContent = "Replay recent changes";
     el("garden-replay").disabled = true;
     panel.classList.remove("garden-thinking");
+  }
+  // How much of the full conversation's text the working context carries.
+  function ratio(context, history) {
+    const full = Math.ceil((history?.text_bytes || 0) / 4),
+      working = Math.ceil((context?.text_bytes || 0) / 4);
+    const number = (value) => value.toLocaleString();
+    if (!full) {
+      el("garden-ratio").textContent = "—";
+      el("garden-ratio-bar").style.width = "0%";
+      el("garden-ratio-detail").textContent = "Waiting for saved context";
+      return;
+    }
+    const percent = Math.round((working / full) * 100);
+    el("garden-ratio").textContent = percent + "%";
+    el("garden-ratio-bar").style.width = Math.min(100, percent) + "%";
+    el("garden-ratio-detail").textContent =
+      `Working ~${number(working)} of ~${number(full)} text tokens · ` +
+      (working <= full
+        ? `${100 - percent}% smaller than the full conversation`
+        : "larger than the saved sources (summaries and state)");
   }
   function close() {
     panel.hidden = true;

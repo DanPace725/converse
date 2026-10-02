@@ -123,6 +123,116 @@ function followBottom() {
   const c = $("#chat");
   c.scrollTop = c.scrollHeight;
 }
+// Replies never pull the view along. Sending scrolls your message to the top;
+// a trailing spacer keeps that possible while the reply is still short.
+let anchorId = null;
+function chatTail() {
+  const c = $("#chat");
+  let tail = $("#chat-tail");
+  if (!tail) {
+    tail = document.createElement("div");
+    tail.id = "chat-tail";
+    tail.setAttribute("aria-hidden", "true");
+  }
+  if (tail.parentNode !== c || tail.nextSibling) c.append(tail);
+  return tail;
+}
+function appendToChat(node) {
+  const tail = $("#chat-tail");
+  if (tail?.parentNode === $("#chat")) tail.before(node);
+  else $("#chat").append(node);
+}
+function anchored() {
+  return anchorId
+    ? $("#chat").querySelector(`article[data-message-id="${CSS.escape(anchorId)}"]`)
+    : null;
+}
+function updateTail() {
+  const c = $("#chat"),
+    tail = chatTail(),
+    anchor = anchored();
+  const space = anchor
+    ? Math.max(0, c.clientHeight - (tail.offsetTop - anchor.offsetTop) - 24)
+    : 0;
+  tail.style.height = space + "px";
+}
+function anchorMessage(id) {
+  anchorId = id;
+  updateTail();
+  const anchor = anchored();
+  if (anchor)
+    $("#chat").scrollTo({
+      top: Math.max(0, anchor.offsetTop - 12),
+      behavior: matchMedia("(prefers-reduced-motion: reduce)").matches
+        ? "auto"
+        : "smooth",
+    });
+}
+function clearAnchor() {
+  anchorId = null;
+  updateTail();
+}
+window.addEventListener("resize", () => updateTail());
+// Paces bursty network chunks into an even reveal and renders at most once
+// per frame budget, so long Markdown stays responsive on phones.
+function createStream(element, { onRender } = {}) {
+  let target = "",
+    shown = 0,
+    frame = null,
+    last = 0,
+    cost = 0,
+    finishing = false,
+    settle = null;
+  const article = element.closest("article");
+  article?.classList.add("is-streaming");
+  function tick(time) {
+    frame = null;
+    const backlog = target.length - shown;
+    if (backlog <= 0) {
+      settle?.();
+      return;
+    }
+    if (time - last >= Math.max(32, cost * 3)) {
+      const step = finishing
+        ? Math.max(40, Math.ceil(backlog / 3))
+        : Math.max(2, Math.ceil(backlog / 14));
+      shown = Math.min(target.length, shown + step);
+      // Avoid splitting a surrogate pair (emoji) mid-reveal.
+      const code = target.charCodeAt(shown - 1);
+      if (code >= 0xd800 && code <= 0xdbff) shown++;
+      const started = performance.now();
+      renderReply(element, target.slice(0, shown), { streaming: true });
+      cost = performance.now() - started;
+      last = time;
+      onRender?.();
+    }
+    frame = requestAnimationFrame(tick);
+  }
+  return {
+    get text() {
+      return target;
+    },
+    push(delta) {
+      target += delta;
+      if (!frame) frame = requestAnimationFrame(tick);
+    },
+    finish() {
+      finishing = true;
+      if (shown >= target.length) return Promise.resolve();
+      return new Promise((resolve) => {
+        settle = resolve;
+        if (!frame) frame = requestAnimationFrame(tick);
+        // Hidden tabs pause animation frames; never hold the reply hostage.
+        setTimeout(resolve, 1200);
+      });
+    },
+    stop() {
+      cancelAnimationFrame(frame);
+      frame = null;
+      article?.classList.remove("is-streaming");
+    },
+  };
+}
 
 for (const name of names) {
   const label = document.createElement("label");
@@ -184,13 +294,12 @@ async function loadModels() {
     });
 }
 loadModels();
-function renderReply(element, text) {
+function renderReply(element, text, { streaming = false } = {}) {
   element.rawMarkdown = text;
   if (!window.marked || !window.DOMPurify) {
     element.textContent = text;
     return;
   }
-  const follow = nearBottom();
   element.className = "content markdown";
   const math = window.converseMath?.parse(text);
   element.innerHTML = DOMPurify.sanitize(math?.html || marked.parse(text, { gfm: true }), {
@@ -244,11 +353,13 @@ function renderReply(element, text) {
     input.type = "checkbox";
     input.disabled = true;
   }
-  for (const pre of element.querySelectorAll("pre")) {
-    const code = pre.querySelector("code") || pre;
-    pre.append(copyButton("copy-code", "Copy code", () => code.textContent));
+  if (!streaming) {
+    element.closest("article")?.classList.remove("is-streaming");
+    for (const pre of element.querySelectorAll("pre")) {
+      const code = pre.querySelector("code") || pre;
+      pre.append(copyButton("copy-code", "Copy code", () => code.textContent));
+    }
   }
-  if (follow) followBottom();
 }
 function copyButton(className, label, text) {
   const copy = document.createElement("button");
@@ -304,6 +415,7 @@ function add(who, text, model = "", error = false, message = null) {
     p = document.createElement("div");
   a.className = user ? "msg msg-user" : "msg";
   if (!user) a.dataset.provider = who.toLowerCase();
+  if (message?.message_id) a.dataset.messageId = message.message_id;
   head.className = "msg-head";
   avatar.className = "avatar";
   avatar.setAttribute("aria-hidden", "true");
@@ -344,9 +456,15 @@ function add(who, text, model = "", error = false, message = null) {
     }
     a.append(actions);
   }
-  $("#chat").append(a);
-  if (message?.reasoning) window.reasoningUI.show(a, message.reasoning, message.message_id);
-  a.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  appendToChat(a);
+  // Server turns keep reasoning on the user message; show it inside the reply.
+  if (user && message?.reasoning) {
+    const trail = window.reasoningUI.detached(message.reasoning, message.message_id);
+    if (trail) a.after(trail);
+  } else if (message?.reasoning)
+    window.reasoningUI.show(a, message.reasoning, message.message_id);
+  const before = a.previousElementSibling;
+  if (!user && before?.classList.contains("thoughts")) head.after(before);
   return p;
 }
 const starters = {
@@ -412,7 +530,7 @@ function emptyState(mode = window.converseMode?.() || "chat") {
 }
 function showEmpty() {
   $("#empty")?.remove();
-  $("#chat").append(emptyState());
+  appendToChat(emptyState());
 }
 $("#upload").onclick = () => $("#markdown-file").click();
 $("#remove-file").onclick = () => {
@@ -492,6 +610,7 @@ $("#composer").onsubmit = async (e) => {
   messages.push(userMessage);
   saveChat();
   add("You", messageText(userMessage), '', false, userMessage);
+  anchorMessage(userMessage.message_id);
   finishMessageEdit();
   $("textarea").value = "";
   attachment = null;
@@ -505,7 +624,9 @@ $("#composer").onsubmit = async (e) => {
   const results = await Promise.all(
     targets.map(async (provider) => {
       const model = fields[provider].value.trim(),
-        p = add(provider, "Thinking…", model);
+        p = add(provider, "Thinking…", model),
+        stream = createStream(p, { onRender: updateTail });
+      updateTail();
       const record = messageRecord({
         role: "assistant",
         provider,
@@ -556,11 +677,14 @@ $("#composer").onsubmit = async (e) => {
           }
           if (d.type === 'reasoning') {
             record.reasoning ||= { provider, model, status: 'partial', request_id: record.message_id };
+            window.reasoningUI.live(p.closest('article'), true);
             window.reasoningUI.delta(p.closest('article'), record.reasoning, d);
           }
           if (d.type !== 'reasoning' && d.delta) {
+            // Reasoning is finished once the answer begins.
+            if (!answer && record.reasoning) window.reasoningUI.live(p.closest('article'), false);
             answer += d.delta;
-            renderReply(p, answer);
+            stream.push(d.delta);
           }
           if (d.done) {
             done = true;
@@ -585,7 +709,13 @@ $("#composer").onsubmit = async (e) => {
           if (buffer.trim()) event(buffer);
           if (!done)
             throw Error("Connection ended before the response completed.");
+          await stream.finish();
+          stream.stop();
+          renderReply(p, answer);
+          if (p.closest("article").querySelector(":scope > .thoughts"))
+            window.reasoningUI.live(p.closest("article"), false);
         } finally {
+          stream.stop();
           await reader.cancel().catch(() => {});
           reader.releaseLock();
         }
@@ -596,6 +726,9 @@ $("#composer").onsubmit = async (e) => {
           completed_at: now(),
         };
       } catch (e) {
+        stream.stop();
+        if (p.closest("article").querySelector(":scope > .thoughts"))
+          window.reasoningUI.live(p.closest("article"), false);
         p.className = "error";
         p.rawMarkdown = answer || e.message;
         p.textContent =
@@ -746,7 +879,9 @@ function loadRecord(saved) {
     delete conversation.archived_at;
   } else if (rows.length) conversation.created_at = null;
   messages.length = 0;
+  anchorId = null;
   $("#chat").replaceChildren();
+  $("#chat").dataset.conversation = conversation.conversation_id;
   if (Array.isArray(rows)) {
     for (let m of rows) {
       if (
@@ -771,6 +906,7 @@ function loadRecord(saved) {
     }
   }
   if (!messages.length) showEmpty();
+  updateTail();
   $("#export").disabled = !messages.length;
 }
 try {
@@ -907,8 +1043,11 @@ $("#new-chat").onclick = () => {
   attachment = null;
   $("#attachment").hidden = true;
   $("textarea").value = "";
+  anchorId = null;
   $("#chat").replaceChildren();
+  $("#chat").dataset.conversation = conversation.conversation_id;
   showEmpty();
+  updateTail();
   $("#export").disabled = true;
   $("#status").textContent = "New chat";
   window.converseSync?.();

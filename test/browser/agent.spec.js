@@ -263,27 +263,32 @@ for (const mode of ['context', 'agent']) test(`${mode} reasoning streams before 
     await page.locator(`#mode-switch label:has(input[value="${mode}"])`).click();
     await page.getByRole('textbox', { name: 'Message', exact: true }).fill('Calculate and explain.');
     await page.locator('#send').click();
-    const live = page.locator('article[data-provisional="true"] .reasoning-summary');
+    const live = page.locator('article[data-provisional="true"] .thoughts');
     await expect(live).toHaveCount(1);
-    expect(await live.evaluate(el => el.open)).toBe(false);
-    await live.locator('summary').click();
+    await expect(live).toHaveAttribute('data-state', 'live');
+    await expect(live.locator('.thoughts-steps')).toBeHidden();
+    await live.locator('.thoughts-toggle').click();
     await expect(live).toContainText('Check <img');
     expect(await live.locator('img').count()).toBe(0);
     release();
     await expect(page.locator('#send')).toBeEnabled();
     await expect(page.locator('article[data-provisional="true"]')).toHaveCount(0);
-    const saved = page.locator('.reasoning-summary');
-    await expect(saved).toHaveCount(2);
+    // One trail inside the saved reply holds both model steps.
+    const saved = page.locator('article[data-provider] .thoughts');
+    await expect(saved).toHaveCount(1);
+    await expect(saved.locator('.thoughts-steps details')).toHaveCount(2);
+    await expect(saved.locator('.thoughts-label')).toHaveText('Thought · 2 steps');
     await expect(page.locator('article[data-provider] .content')).toHaveText('Verified answer.');
-    expect(await saved.first().evaluate(el => el.open)).toBe(true);
+    await expect(saved.locator('.thoughts-steps')).toBeVisible();
     await expect(page.locator('#chat')).not.toContainText('opaque-secret');
     const id = app.service.list()[0].conversation_id;
     expect(app.service.view(id).messages[0].reasoning).toHaveLength(2);
     expect(JSON.stringify(app.service.export(id))).toContain('opaque-secret');
     await page.reload();
-    await expect(saved).toHaveCount(2);
-    await saved.last().locator('summary').click();
-    await expect(saved.last()).toContainText('Calculation verified.');
+    await expect(saved).toHaveCount(1);
+    if (await saved.locator('.thoughts-steps').isHidden()) await saved.locator('.thoughts-toggle').click();
+    await saved.locator('.thoughts-steps details').last().locator('summary').click();
+    await expect(saved.locator('.thoughts-steps details').last()).toContainText('Calculation verified.');
     await page.screenshot({ path: `.agent-smoke/reasoning-${mode}-${testInfo.project.name}.png` });
     expect(errors).toEqual([]);
   } finally { release(); await app.close(); }
@@ -302,12 +307,12 @@ for (const mode of ['context', 'agent']) test(`${mode} interrupted reasoning rem
     await page.getByRole('textbox', { name: 'Message', exact: true }).fill('Think about the request.');
     await page.locator('#send').click();
     await expect(page.locator('#send')).toBeEnabled();
-    await expect(page.locator('.reasoning-summary')).toHaveCount(1);
-    await expect(page.locator('.reasoning-summary summary')).toContainText('partial');
+    await expect(page.locator('.thoughts')).toHaveCount(1);
+    await expect(page.locator('.thoughts-label')).toContainText('partial');
     await page.reload();
-    await expect(page.locator('.reasoning-summary')).toHaveCount(1);
-    await page.locator('.reasoning-summary summary').click();
-    await expect(page.locator('.reasoning-summary')).toContainText('Unfinished rationale.');
+    await expect(page.locator('.thoughts')).toHaveCount(1);
+    await page.locator('.thoughts-toggle').click();
+    await expect(page.locator('.thoughts')).toContainText('Unfinished rationale.');
     const id = app.service.list()[0].conversation_id;
     expect(app.service.view(id).messages.filter(m => m.role === 'assistant')).toHaveLength(0);
   } finally { await app.close(); }
@@ -819,17 +824,17 @@ test('fixed token guard explains its reserve beside the composer and automatic t
   } finally {await app.close();}
 });
 
-test('provider rejection remains visible in the transcript and beside run controls after reload', async ({page}) => {
+test('provider rejection appears once, inline in the transcript, and survives reload', async ({page}) => {
   const app = await fixture(async () => {throw Error('OpenAI 400: unsupported reasoning fixture');});
   try {
     await openAgent(page, app.url);
     await page.getByLabel('Message', {exact: true}).fill('Write a report.');
     await page.locator('#send').click();
-    await expect(page.locator('#agent-notice')).toContainText('OpenAI 400: unsupported reasoning fixture');
-    await expect(page.locator('#chat .error')).toContainText('unsupported reasoning fixture');
+    await expect(page.locator('#chat .turn-error')).toContainText('OpenAI 400: unsupported reasoning fixture');
+    // The run notice doesn't repeat a failure the transcript already shows.
+    await expect(page.locator('#chat')).not.toContainText(/unsupported reasoning fixture[\s\S]*unsupported reasoning fixture/);
     await page.reload();
-    await expect(page.locator('#agent-notice')).toBeVisible();
-    await expect(page.locator('#chat .error')).toContainText('unsupported reasoning fixture');
+    await expect(page.locator('#chat .turn-error')).toContainText('unsupported reasoning fixture');
   } finally {await app.close();}
 });
 
@@ -874,6 +879,7 @@ test("browser drives real HTTP/service/storage, renders artifacts and resumes af
     await expect(page.locator(".markdown strong")).toHaveText("Verified");
     expect(await page.evaluate(() => window.injected)).toBeUndefined();
     expect(calls).toBe(4);
+    await page.locator("#more-menu > summary").click();
     await page.locator("#workspace-panel > summary").click();
     const fileDownload = page.waitForEvent("download");
     await page.getByRole("link", { name: "Download result.md" }).click();
@@ -1023,6 +1029,7 @@ test("Agent Mode and normal Send share files, Jev defaults and budgets", async (
     );
     await page.reload();
     await expect(page.locator("#agent-mode")).not.toBeChecked();
+    await page.locator("#more-menu > summary").click();
     await expect(page.locator("#workspace-panel")).toBeVisible();
   } finally {
     await app.close();
