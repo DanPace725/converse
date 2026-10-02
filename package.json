@@ -18,6 +18,7 @@
     "format": "prettier --write api lib public/app.js public/ui.js public/index.html public/styles.css public/sw.js scripts test playwright.config.js README.md package.json vercel.json"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.8",
     "@playwright/test": "^1.63.0",
     "drizzle-kit": "^0.31.11",
     "prettier": "^3.9.6"
