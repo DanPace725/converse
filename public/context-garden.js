@@ -179,19 +179,11 @@
     el("garden-anchors").textContent =
       context.segments.filter(protectedItem).length;
     el("garden-saved").textContent = history.count;
-    // A text-size comparison, not the byte budget or reported provider usage.
-    const fullTokens = Math.ceil(history.text_bytes / 4),
-      workingTokens = Math.ceil(context.text_bytes / 4),
-      savedTokens = fullTokens - workingTokens;
-    const number = (value) => value.toLocaleString();
-    el("garden-tokens-saved").textContent =
-      fullTokens === 0
-        ? "—"
-        : savedTokens >= 0
-          ? `~${number(savedTokens)} · ${Math.round((savedTokens / fullTokens) * 100)}%`
-          : `~${number(-savedTokens)} more`;
-    el("garden-token-comparison").textContent =
-      `Full ~${number(fullTokens)} → working ~${number(workingTokens)} · text only`;
+    const input = live?.model_input;
+    el("garden-tokens-saved").textContent = input ? `~${input.next.estimated_tokens.toLocaleString()}` : "—";
+    el("garden-token-comparison").textContent = input?.latest?.input_tokens != null
+      ? `Latest sent: ${input.latest.input_tokens.toLocaleString()} reported input tokens · next estimate includes instructions, tools and history`
+      : "Complete request estimate, including instructions, tools and the latest user message";
     el("garden-revision").textContent =
       `REVISION ${context.revision}` +
       (context.segments.length > 64 || history.count > 96
@@ -357,6 +349,10 @@
       if (token !== generation || panel.hidden || replaying) return;
       const first = !live;
       live = data;
+      el("garden-tokens-saved").textContent = data.model_input ? `~${data.model_input.next.estimated_tokens.toLocaleString()}` : "—";
+      el("garden-token-comparison").textContent = data.model_input?.latest?.input_tokens != null
+        ? `Latest sent: ${data.model_input.latest.input_tokens.toLocaleString()} reported input tokens · complete next-request estimate above`
+        : "Complete request estimate, including instructions, tools and the latest user message";
       cursor = data.cursor;
       el("garden-replay").disabled = data.context.revision === 0;
       if (first || initial) {

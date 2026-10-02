@@ -80,6 +80,28 @@ const final = response([
   },
 ]);
 
+test('context garden shows complete input tokens and distinguishes cumulative usage', async ({ page }, testInfo) => {
+  const errors = [];
+  page.on('pageerror', error => errors.push(error.message));
+  const app = await fixture(async () => ({ ...final, usage: { input_tokens: 34587, output_tokens: 100 } }));
+  try {
+    await page.goto(app.url);
+    await page.getByRole('radio', { name: 'Context', exact: true }).check();
+    await page.getByLabel('Message', { exact: true }).fill('Show a response with complete input accounting.');
+    await page.locator('#send').click();
+    await expect(page.locator('#send')).toBeEnabled();
+    await expect(page.locator('#context-stats')).toContainText('cumulative, all calls');
+    await expect(page.locator('#context-stats')).toContainText('Latest sent 34,587 input tokens');
+    await page.locator('#context-watch').click();
+    await expect(page.locator('#garden-token-comparison')).toContainText('34,587');
+    await expect(page.locator('#garden-tokens-saved')).toHaveText(/^~[\d,]+$/);
+    await expect(page.locator('.garden-savings')).toContainText('Context · next input tokens (est.)');
+    await expect(page.locator('.garden-savings')).not.toContainText('tokens saved');
+    await page.screenshot({ path: testInfo.outputPath('complete-input-context.png') });
+    expect(errors).toEqual([]);
+  } finally { await app.close(); }
+});
+
 for (const mode of ["Context", "Agent"]) {
   test(`direct workspace upload in ${mode} stays out of chat until referenced and survives reload`, async ({ page }, testInfo) => {
     let calls = 0;

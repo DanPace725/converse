@@ -286,7 +286,7 @@ test("OpenAI and Claude emit readable summaries before answer text, retaining na
   }
 });
 
-test("Claude agent freezes signed prefixes through workspace changes and fresh service instances; summaries remain pageable and attributed", async () => {
+test("Claude restarts after workspace changes and preserves unchanged signed prefixes across service instances", async () => {
   const store = new Store(undefined, { memory: true });
   let calls = 0,
     previous;
@@ -295,7 +295,7 @@ test("Claude agent freezes signed prefixes through workspace changes and fresh s
     apiKey: "fixture",
     fetchImpl: async (_url, options) => {
       const body = JSON.parse(options.body);
-      if (previous) {
+      if (previous && calls === 2) {
         assert.equal(body.system, previous.system);
         assert.deepEqual(body.tools, previous.tools);
         assert.deepEqual(
@@ -303,6 +303,11 @@ test("Claude agent freezes signed prefixes through workspace changes and fresh s
           previous.messages,
           "Every previously submitted message must be unchanged",
         );
+      }
+      if (previous && calls === 1) {
+        assert.equal(body.messages.length, 1, 'Changed workspace starts a fresh chain');
+        assert.match(JSON.stringify(body.messages), /completed_tool_results/);
+        assert.doesNotMatch(JSON.stringify(body.messages), /signed-1/);
       }
       previous = structuredClone(body);
       calls++;
@@ -630,7 +635,7 @@ test("a signed continuation stops at budget without changing earlier inputs or t
           ],
           [],
         ),
-      /Signed Claude continuation/,
+      /Request byte guard exceeded/,
     );
     assert.deepEqual(h.continuation, frozen);
   } finally {

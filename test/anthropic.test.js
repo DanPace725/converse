@@ -182,7 +182,7 @@ test("Claude agent resumes using native tool results, verifies workspace and exp
           ),
         );
       const blocks = body.messages.flatMap((m) => m.content);
-      assert.ok(
+      if (calls === 2) assert.ok(
         blocks.some(
           (p) =>
             p.type === "thinking" &&
@@ -190,7 +190,7 @@ test("Claude agent resumes using native tool results, verifies workspace and exp
             p.thinking === "",
         ),
       );
-      assert.ok(
+      if (calls === 2) assert.ok(
         blocks.some(
           (p) =>
             p.type === "tool_result" &&
@@ -198,6 +198,10 @@ test("Claude agent resumes using native tool results, verifies workspace and exp
             p.content === '{"result":42}',
         ),
       );
+      if (calls > 2) {
+        assert.match(JSON.stringify(blocks), /completed_tool_results/);
+        assert.doesNotMatch(JSON.stringify(blocks), /signed-thought/);
+      }
       if (calls === 2)
         return reply(
           native(

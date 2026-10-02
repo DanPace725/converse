@@ -323,7 +323,7 @@
                       value="40"
                   /></label>
                   <label
-                    >Context budget (est. units)<input
+                    >Request byte guard + output reserve<input
                       id="agent-budget"
                       type="number"
                       min="64000"
@@ -551,14 +551,14 @@
     </svg>
     <div
       class="garden-savings"
-      title="Approximate context-text tokens at 4 UTF-8 bytes per token. Full history includes messages, documents and manual state sources. Excludes instructions, metadata, tools and selection/compaction costs; this is not billed usage or net cost savings."
+      title="Context is the complete model input: instructions, tools, working memory, latest user message and tool history. Next-request tokens are estimated and calibrated to provider usage when available. Latest sent tokens are provider-reported."
     >
       <div>
-        <span>Est. tokens saved</span
+        <span>Context · next input tokens (est.)</span
         ><strong id="garden-tokens-saved">—</strong>
       </div>
       <span id="garden-token-comparison"
-        >Full conversation → working context</span
+        >Complete model input</span
       >
     </div>
     <div class="garden-counts">

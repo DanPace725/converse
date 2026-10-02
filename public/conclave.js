@@ -332,7 +332,9 @@
       (metrics.input_tokens ?? "unknown") +
       " input / " +
       (metrics.output_tokens ?? "unknown") +
-      " output tokens (all calls)";
+      " output tokens (cumulative, all calls)" +
+      (view.model_input ? ` · Next context ~${view.model_input.next.estimated_tokens.toLocaleString()} input tokens` : "") +
+      (view.model_input?.latest?.input_tokens != null ? ` · Latest sent ${view.model_input.latest.input_tokens.toLocaleString()} input tokens` : "");
     $("#context-note").textContent =
       view.backup_warning ||
       "GPT and Claude replies use saved context. JSON export includes original sources, revisions, Jev decisions and usage.";
