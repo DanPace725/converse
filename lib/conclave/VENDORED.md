@@ -10,6 +10,8 @@ Hosted adaptations: `Store` can use an in-memory database without file views; `C
 
 Keep these adaptations when refreshing the snapshot. The separate CLI checkout remains unchanged.
 
+Receipt storage (2026-10-02, also applied to the CLI source): `context_transform` receipts no longer embed the committed segments. The snapshot row is the single copy and the receipt's `after_hash` binds the two. Bundle indexing and garden activity read the snapshot by receipt, and still accept older receipts that embed segments.
+
 Model identity: Conclave is a context-management method, not an assistant persona. The shared chat/agent prompt identifies the current runtime provider/model, and request-time source attribution labels original authors in working bundles, compaction input and history retrieval. Assistant events now retain requested and reported models directly; older completed turns recover them from saved inference records. Unknown models stay unknown. Preserve this Converse-only adaptation on refresh.
 
 Conversation features: generated titles are append-only metadata events, reflected in list/view/export and the hosted conversation row. Revised user messages are new source events linked to the originals; Context and Agent validate the original within the conversation and include the revision link in model inputs. These additions do not rewrite snapshots or change the database schema.
