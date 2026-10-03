@@ -1,0 +1,120 @@
+{
+  "date": "2026-10-03T04:00:57.754Z",
+  "basis": "Offline replay of saved real Jev responses; no new inference; two hand-authored cases",
+  "cases": [
+    {
+      "name": "recover-original-code",
+      "deterministic_target_in_top_four": false,
+      "prior_gate_target_in_top_four": true,
+      "replay_target_in_top_four": true,
+      "replay_target_first": true,
+      "result": {
+        "decisions": [
+          {
+            "id": "evt_c0b082e5-3155-4547-9f42-23310b2fde7b",
+            "category": "irrelevant",
+            "confidence": 0.67,
+            "uncertain": false
+          },
+          {
+            "id": "evt_aad9bd89-b0a4-417f-af2e-3b7c6b9d91d5",
+            "category": "irrelevant",
+            "confidence": 0.69,
+            "uncertain": false
+          },
+          {
+            "id": "evt_cae2394d-beb1-4963-81b9-414df0d76382",
+            "category": "irrelevant",
+            "confidence": 0.68,
+            "uncertain": false
+          },
+          {
+            "id": "evt_a79afb85-1be0-4eef-a2eb-e3d0abfc9271",
+            "category": "irrelevant",
+            "confidence": 0.7,
+            "uncertain": false
+          },
+          {
+            "id": "evt_6af32b9d-4e59-4adc-8d70-8e9b55bf9dbf",
+            "category": "irrelevant",
+            "confidence": 0.68,
+            "uncertain": false
+          },
+          {
+            "id": "evt_88d73293-8ebf-48d1-8891-c2076e482cff",
+            "category": "direct",
+            "confidence": 0.89,
+            "uncertain": false
+          }
+        ],
+        "model": "jev-1.13.0",
+        "ids": [
+          "evt_88d73293-8ebf-48d1-8891-c2076e482cff",
+          "evt_c0b082e5-3155-4547-9f42-23310b2fde7b",
+          "evt_aad9bd89-b0a4-417f-af2e-3b7c6b9d91d5",
+          "evt_cae2394d-beb1-4963-81b9-414df0d76382",
+          "evt_a79afb85-1be0-4eef-a2eb-e3d0abfc9271",
+          "evt_6af32b9d-4e59-4adc-8d70-8e9b55bf9dbf"
+        ],
+        "fallback": false
+      }
+    },
+    {
+      "name": "recover-corrected-capacity",
+      "deterministic_target_in_top_four": false,
+      "prior_gate_target_in_top_four": false,
+      "replay_target_in_top_four": true,
+      "replay_target_first": true,
+      "result": {
+        "decisions": [
+          {
+            "id": "evt_d6f48345-99f2-4538-a1d7-32f3e651304d",
+            "category": "irrelevant",
+            "confidence": 0.35,
+            "uncertain": true
+          },
+          {
+            "id": "evt_dc8a7955-e845-4695-9cfb-7477d3ce8d8b",
+            "category": "irrelevant",
+            "confidence": 0.4,
+            "uncertain": true
+          },
+          {
+            "id": "evt_e5546d09-963a-4805-b29d-2ed4fd022433",
+            "category": "irrelevant",
+            "confidence": 0.38,
+            "uncertain": true
+          },
+          {
+            "id": "evt_f16735ce-edc6-4c10-8277-745be6defa76",
+            "category": "irrelevant",
+            "confidence": 0.36,
+            "uncertain": true
+          },
+          {
+            "id": "evt_41d7cf8d-6bcc-417f-aa4f-43924422d3b9",
+            "category": "irrelevant",
+            "confidence": 0.34,
+            "uncertain": true
+          },
+          {
+            "id": "evt_31459e22-1beb-4e75-a58c-02dc8685ec44",
+            "category": "direct",
+            "confidence": 0.87,
+            "uncertain": false
+          }
+        ],
+        "model": "jev-1.13.0",
+        "ids": [
+          "evt_31459e22-1beb-4e75-a58c-02dc8685ec44",
+          "evt_d6f48345-99f2-4538-a1d7-32f3e651304d",
+          "evt_dc8a7955-e845-4695-9cfb-7477d3ce8d8b",
+          "evt_e5546d09-963a-4805-b29d-2ed4fd022433",
+          "evt_f16735ce-edc6-4c10-8277-745be6defa76",
+          "evt_41d7cf8d-6bcc-417f-aa4f-43924422d3b9"
+        ],
+        "fallback": false
+      }
+    }
+  ]
+}

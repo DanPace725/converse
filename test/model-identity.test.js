@@ -9,7 +9,9 @@ const reply = (model, text) => ({
   status: 'completed', model, usage: { input_tokens: 10, output_tokens: 10 },
   output: [{ type: 'message', role: 'assistant', content: [{ type: 'output_text', text }] }],
 });
-const projection = payload => JSON.parse(payload.input[0].content.split('\n')[1]);
+const projection = payload => payload.input.filter(i => typeof i.content === 'string'
+  && /^(Working context:|Recent context tail:)/.test(i.content))
+  .flatMap(i => JSON.parse(i.content.split('\n')[1]));
 const settings = (provider, model) => ({ provider, model, jev: false });
 
 for (const mode of ['context', 'agent']) {
@@ -93,11 +95,11 @@ test('legacy source attribution survives summaries, structured state, offloading
       status: 'unresolved', supersedes: [], conflicts_with: [], supports: [], limitations: ['Assistant proposal.'],
     }] });
     projected = projection(h.answerPayload());
-    assert.deepEqual(projected[1].source_attribution.map(a => a.provider), ['openai', 'anthropic']);
-    assert.equal(projected[2].source_attribution[0].requested_model, 'gpt-older');
+    assert.deepEqual(projected.find(s => s.type === 'summary').source_attribution.map(a => a.provider), ['openai', 'anthropic']);
+    assert.equal(projected.find(s => s.state_key === 'proposal').source_attribution[0].requested_model, 'gpt-older');
     const summary = store.context(id).segments[1];
     h.offload([summary.id], 3);
-    assert.equal(projection(h.answerPayload())[2].source_attribution[0].provider, 'openai');
+    assert.equal(projection(h.answerPayload()).find(s => s.state_key === 'proposal').source_attribution[0].provider, 'openai');
     const resolved = h.toolResult('resolve_context', { bundle_id: summary.id }, []);
     assert.equal(resolved.source_attribution[0].model, 'gpt-older-snapshot');
     for (const result of [
