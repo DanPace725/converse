@@ -177,25 +177,39 @@ const final = response([
   },
 ]);
 
-test('context garden shows complete input tokens and distinguishes cumulative usage', async ({ page }, testInfo) => {
+test('context garden compares the actual request with full history without cumulative savings clutter', async ({ page }, testInfo) => {
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));
   const app = await fixture(async () => ({ ...final, usage: { input_tokens: 34587, output_tokens: 100 } }));
+  const id=app.service.create('Garden comparison').conversation_id;
+  const history=app.service.harness(id).addMessage('user','Historical project requirements and decisions. '.repeat(18000));
+  const context=app.service.store.context(id);
+  app.service.store.commit(id,[segment('Earlier project requirements remain retrievable.',[history.event.id],{type:'summary'})],'compact fixture history',context.revision);
   try {
     await page.goto(app.url);
-    await page.getByRole('radio', { name: 'Context', exact: true }).check();
+    if (testInfo.project.name === 'mobile') await page.locator('#menu').click();
+    await page.locator('#server-chats .chat-item').filter({hasText:'Garden comparison'}).click();
     await page.getByLabel('Message', { exact: true }).fill('Show a response with complete input accounting.');
     await page.locator('#send').click();
     await expect(page.locator('#send')).toBeEnabled();
     await expect(page.locator('#context-stats')).toContainText('cumulative, all calls');
     await expect(page.locator('#context-stats')).toContainText('Latest sent 34,587 input tokens');
     await page.locator('#context-watch').click();
-    // Two bars on one scale: a plain chat's resend vs Conclave's next request.
-    await expect(page.locator('#garden-tokens-sent')).toHaveText(/^~[\d.,]+K?$/);
+    // Two bars on one scale: estimated full history vs the actual last request.
+    await expect(page.locator('#garden-request-phase')).toHaveText('Last request');
+    await expect(page.locator('#garden-tokens-sent')).toHaveText('34.6K');
     await expect(page.locator('#garden-full-tokens')).toHaveText(/^~[\d.,]+K?$/);
     await expect(page.locator('#garden-row-sent')).toHaveAttribute('title', /34,587/);
-    await expect(page.locator('#garden-total-saved')).toHaveText(/tokens$/);
-    await expect(page.locator('#garden-total-detail')).toContainText('1 reply');
+    await expect(page.locator('#garden-comparison-note')).toContainText('Conclave reported, full history estimated');
+    await expect(page.locator('#garden-row-full')).toHaveAttribute('title', /Private reasoning and Conclave management records are excluded/);
+    await expect(page.locator('#garden-total')).toHaveCount(0);
+    await expect(page.locator('#garden-request-delta')).toHaveAttribute('data-direction','down');
+    if (testInfo.project.name === 'mobile') {
+      const width = await page.locator('.garden-ledger').evaluate(e => ({ actual: e.scrollWidth, available: e.clientWidth }));
+      expect(width.actual).toBeLessThanOrEqual(width.available);
+    }
+    await expect.poll(async()=>page.locator('#garden-row-full .ledger-track').evaluate(e=>
+      [...e.children].reduce((n,c)=>n+c.getBoundingClientRect().width,0)/e.getBoundingClientRect().width)).toBeGreaterThan(0.99);
     await page.screenshot({ path: testInfo.outputPath('complete-input-context.png') });
     expect(errors).toEqual([]);
   } finally { await app.close(); }

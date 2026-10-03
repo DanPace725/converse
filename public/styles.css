@@ -1847,14 +1847,12 @@ dialog button {
   display: grid;
   gap: 7px;
 }
-.ledger-head,
-.ledger-total {
+.ledger-head {
   display: flex;
   align-items: baseline;
   gap: 8px;
 }
-.ledger-head span,
-.ledger-total span {
+.ledger-head span {
   color: #96b8a6;
   font-size: 10px;
   letter-spacing: 0.06em;
@@ -1927,20 +1925,7 @@ dialog button {
 .key-history::before {
   background: linear-gradient(90deg, #3f8f73 50%, #a5ffe5 50%);
 }
-.ledger-total {
-  flex-wrap: wrap;
-  padding-top: 8px;
-  border-top: 1px solid #74978829;
-}
-.ledger-total strong {
-  margin-left: auto;
-  color: #bcebd1;
-  font-weight: 500;
-  font-size: 14px;
-}
-.ledger-total small {
-  flex-basis: 100%;
-  text-align: right;
+.ledger-note {
   color: #81a291;
   font-size: 10px;
 }

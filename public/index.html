@@ -580,13 +580,13 @@
         Waiting for saved context
       </text>
     </svg>
-    <section class="garden-ledger" aria-label="What the working context saves">
+    <section class="garden-ledger" aria-label="Context size comparison">
       <div class="ledger-head">
-        <span>Next request</span>
+        <span id="garden-request-phase">Next request</span>
         <strong id="garden-request-delta">—</strong>
       </div>
       <div class="ledger-row" id="garden-row-full">
-        <span class="ledger-name">Whole chat</span>
+        <span class="ledger-name">Full history</span>
         <span class="ledger-track"><i class="seg-fixed"></i><i class="seg-history"></i></span>
         <span class="ledger-value" id="garden-full-tokens">—</span>
       </div>
@@ -599,10 +599,7 @@
         <span class="key-fixed">Instructions &amp; tools</span
         ><span class="key-history">Conversation</span>
       </div>
-      <div class="ledger-total" id="garden-total">
-        <span>Saved so far</span><strong id="garden-total-saved">—</strong>
-        <small id="garden-total-detail"></small>
-      </div>
+      <div class="ledger-note" id="garden-comparison-note">Estimated input tokens</div>
     </section>
     <div class="garden-counts">
       <div>
