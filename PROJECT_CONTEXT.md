@@ -4,6 +4,8 @@ Updated 2026-10-03. Mutable project state. [Usage](public/app-guide.md) · [Deve
 
 ## Current capabilities
 
+- Opt-in CLP evidence broker: versioned frame validation, immutable source-origin/lineage declarations and records, support/refute/supersede links, conservative independent-source floors, scoped/paged queries and per-result explanations. Thin/refuted/unmeasured claims remain unresolved. Library/API and read-only model tool; SQLite/Neon use existing events. [Usage and limits](docs/CLP_BROKER.md)
+
 - Conclave engine authority is the Conclave repository. Providers, agents, workspaces, web tools, context controls, persistence, and shared resources migrate here with a source-commit/hash manifest; parity checks reject downstream drift. Application UI/deployment remain here. [Engine boundary](lib/conclave/VENDORED.md)
 
 - Installable browser app with responsive UI, offline shell, sanitized Markdown and LaTeX, raw Markdown copy, saved chats, automatic titles, and linked user-message revisions.
@@ -24,6 +26,7 @@ Updated 2026-10-03. Mutable project state. [Usage](public/app-guide.md) · [Deve
 
 | Result | Evidence |
 |---|---|
+| CLP broker: 62 managed files match the committed Conclave engine. All six CLP acceptance checks passed; 152 Conclave and 157 Converse backend tests passed, each with one optional check skipped. Full model-tool turn, oversized receipts, CLI restart and local/hosted API persistence covered. | [CLP integration](docs/archive/2026-10-03/clp-broker.md) |
 | Engine parity: 61 managed files match Conclave; 138 standalone and 155 Converse backend checks passed, each with one optional check skipped. All 56 desktop/mobile Agent browser checks passed. | [Migration and validation](docs/archive/2026-10-03/engine-parity.md) |
 | Native search: live GPT-6 Luna and Claude Sonnet 5.5 lookups passed using existing keys; findings and citations saved with usage. Fixture checks cover Context/Agent, source recovery, quotas, native-block preservation and Agent token guards. | [Native integration](docs/archive/2026-10-03/native-web-search.md), [live evidence](docs/archive/2026-10-03/native-search-live.json) |
 | Direct page retrieval: 48 focused checks passed, including complete text delivered to GPT/Claude Context/Agent fixtures, post-observation receipt projection, exact recovery/removal, quotas, public-address/redirect checks and deadlines. Live Node.js page response/extraction retained the footer. | [Page retrieval](docs/archive/2026-10-03/web-page-retrieval.md), [live evidence](docs/archive/2026-10-03/web-page-live.json) |
@@ -38,6 +41,8 @@ Updated 2026-10-03. Mutable project state. [Usage](public/app-guide.md) · [Deve
 USD figures are public-rate valuations. Trials demonstrate these workloads; broader cost and quality performance remains unmeasured. Test counts above are recorded runs.
 
 ## Work not yet applied
+
+- CLP: portable sidecars/import, signatures and trust/resolver registries, frame policy membranes/redaction/review UI, vector/graph brokerage, exploration and measured confidence/separation/coherence. Current broker registration and evidence declarations are manual API/CLI operations.
 
 - Calibrate economic horizons, observed cache boundaries and delegation gates on matched long tasks. Current estimates and two synthetic retrieval/two ingress cases do not establish general savings or quality gains. Expand document classification beyond the first excerpt and add it to agent attachment ingress within run limits if useful.
 - Run fresh matched long-task trials; score source recovery, corrected decisions, numerical intermediates, current-version precedence, completion, output exhaustion, and total cost.

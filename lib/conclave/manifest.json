@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
   "source_repository": "https://github.com/DanPace725/conclave",
-  "source_commit": "7885ae6826908bd5f00a569b0bbbcb9b809f2d0e",
+  "source_commit": "2020ecda8176a07bedde58d229f96afe8f8f1474",
   "source_worktree_dirty": false,
-  "migrated_at": "2026-10-03T17:41:48.746Z",
+  "migrated_at": "2026-10-03T18:16:58.720Z",
   "dependencies": {
     "gpt-tokenizer": "^4.0.0",
     "htmlparser2": "^12.0.0",
@@ -41,6 +41,11 @@
       "source": "src/attention.js",
       "target": "lib/conclave/attention.js",
       "sha256": "69d430ef77ff7afe9297744cc74bde35092fce16baec4b28933051fb112a37bb"
+    },
+    {
+      "source": "src/clp.js",
+      "target": "lib/conclave/clp.js",
+      "sha256": "5245a4bb51f6f56b8d0024fa16f995c8c20e8ec56b8119f9c3582ab538ddbecf"
     },
     {
       "source": "src/context-repository.js",
@@ -95,17 +100,17 @@
     {
       "source": "src/harness.js",
       "target": "lib/conclave/harness.js",
-      "sha256": "f18fc1c6cf80642b1098be69891d76cec216de93969d9bbf85fdb05cc7a334b3"
+      "sha256": "43bc0747df525de7963160309a11748affa51f7515397bdc2293c5696326ff83"
     },
     {
       "source": "src/hosted.js",
       "target": "lib/conclave/hosted.js",
-      "sha256": "572dd32d5b23419f7dd329f3c2c58d06b2bd46c710f010e36af6d2fd6412547a"
+      "sha256": "9eb6c7756c80168f6eb941218c11187a2a7884c20ba1868949936125ea0d2567"
     },
     {
       "source": "src/http.js",
       "target": "lib/conclave/http.js",
-      "sha256": "9aca3dd8aad204ae4a5c62e7c8ce91be20659e57a2a34ef4df5310badd04f92d"
+      "sha256": "42ab7369dd008e1d7633bb4f7448343b6c395fffdfded3fc25e8055387e4341f"
     },
     {
       "source": "src/identity.js",
@@ -115,12 +120,12 @@
     {
       "source": "src/index.js",
       "target": "lib/conclave/index.js",
-      "sha256": "315f729cd76bf66ea633c66b260a51269b153328d55cfd43bb7afbf30b936a75"
+      "sha256": "5366c02db5562a75fe22fa10d5cb7fe7b727e213a6c9dd07f789e55667646596"
     },
     {
       "source": "src/ingress.js",
       "target": "lib/conclave/ingress.js",
-      "sha256": "e39e3394dffeaf30a973a58739265b5911434f732783a544e8443339c7813e60"
+      "sha256": "5e03b413ac21e1789074a95efbbd6db11d548ab3cbea8ebdb68dd7693061a78d"
     },
     {
       "source": "src/input-size.js",
@@ -185,7 +190,7 @@
     {
       "source": "src/service.js",
       "target": "lib/conclave/service.js",
-      "sha256": "4a4f5ae94ddc05eba0c72d24f47c23f15e1ac73f6839c45b5cb7de47410a2301"
+      "sha256": "7b7173f2e4396a4f5f23228d6da6123b44de0ca9b24cb19232b48e484481355c"
     },
     {
       "source": "src/state.js",
