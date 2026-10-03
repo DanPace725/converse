@@ -1,0 +1,13 @@
+{
+  "checked_at": "2026-10-03T16:38:11.280Z",
+  "source_url": "https://nodejs.org/en/about",
+  "title": "Node.js — About Node.js®",
+  "response_bytes": 317718,
+  "extracted_characters": 9006,
+  "response_hash": "4d2822b2fc27b286413d4faaf831d8dbc54bdbdd7317d906ab3c9ba647e97613",
+  "text_hash": "f744db38d6a3a60c0c8f4717223c31171773b63083adf70ad9835ce435066bad",
+  "beginning": "Skip to content <https://nodejs.org/en/about#main>\n\n<https://nodejs.org/en>\n\nLearn <https://nodejs.org/learn>About <https://nodejs.org/en/about>Download <https://nodejs.org/en/download>Blog <https://nodejs.org/en/blog>Docs <https://nodejs.org/docs/latest/api/>Beta Docs <https://beta.docs.nodejs.org/",
+  "ending": "y Policy <https://privacy-policy.openjsf.org/>Security Policy <https://github.com/nodejs/node/security/policy>Terms of Use <https://terms-of-use.openjsf.org/>Trademark List <https://trademark-list.openjsf.org/>Trademark Policy <https://trademark-policy.openjsf.org/>\n\n<https://social.lfx.dev/@nodejs>",
+  "limitations": "Direct HTTP response text, not a model summary. HTML scripts/styles are omitted; navigation is retained. No JavaScript rendering, PDF extraction, login or paywall bypass.",
+  "scope": "Live public HTTP retrieval and extraction only; model continuation is fixture tested."
+}
