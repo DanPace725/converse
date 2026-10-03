@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
   "source_repository": "https://github.com/DanPace725/conclave",
-  "source_commit": "2020ecda8176a07bedde58d229f96afe8f8f1474",
+  "source_commit": "1f7a6ac41316165c7c62c1a8b389e1760a03a122",
   "source_worktree_dirty": false,
-  "migrated_at": "2026-10-03T18:16:58.720Z",
+  "migrated_at": "2026-10-03T18:28:05.302Z",
   "dependencies": {
     "gpt-tokenizer": "^4.0.0",
     "htmlparser2": "^12.0.0",
@@ -100,7 +100,7 @@
     {
       "source": "src/harness.js",
       "target": "lib/conclave/harness.js",
-      "sha256": "43bc0747df525de7963160309a11748affa51f7515397bdc2293c5696326ff83"
+      "sha256": "b4961654ec172428928364f44e5b08828d3c2954abfce38ca3e234a2d6ab2356"
     },
     {
       "source": "src/hosted.js",
