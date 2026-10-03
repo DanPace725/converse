@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
   "source_repository": "https://github.com/DanPace725/conclave",
-  "source_commit": "3c8a1afd582231f5c6f2b80ad986d9e2f26f9311",
+  "source_commit": "76bb759943f83104c40b3fd7d2ba4725845fe56a",
   "source_worktree_dirty": false,
-  "migrated_at": "2026-10-03T20:14:28.441Z",
+  "migrated_at": "2026-10-03T20:54:07.358Z",
   "dependencies": {
     "gpt-tokenizer": "^4.0.0",
     "htmlparser2": "^12.0.0",
@@ -43,6 +43,11 @@
       "sha256": "69d430ef77ff7afe9297744cc74bde35092fce16baec4b28933051fb112a37bb"
     },
     {
+      "source": "src/cache-trace.js",
+      "target": "lib/conclave/cache-trace.js",
+      "sha256": "c32ce05d55924ff1e3b8d0ebdb688cea44f916e0907740abccb257f219e9ed20"
+    },
+    {
       "source": "src/clp.js",
       "target": "lib/conclave/clp.js",
       "sha256": "5245a4bb51f6f56b8d0024fa16f995c8c20e8ec56b8119f9c3582ab538ddbecf"
@@ -80,7 +85,7 @@
     {
       "source": "src/economics.js",
       "target": "lib/conclave/economics.js",
-      "sha256": "9532285b12caec87059d6a13e83d237b1844d1a6f479a4b18b7d19b3973c0e11"
+      "sha256": "1de20e4998323b4f4bad1ad00816510f438f7a867fa6d3f413856888dd490a75"
     },
     {
       "source": "src/effort.js",
@@ -100,7 +105,7 @@
     {
       "source": "src/harness.js",
       "target": "lib/conclave/harness.js",
-      "sha256": "b41aa2576ff393c02555802d6d4122128cab0377c5e8c28c122ec8c64804d4ff"
+      "sha256": "50fece8803f726d1d9485a1c63c913d4f649dbc40b062ecda9311b36741d7c8e"
     },
     {
       "source": "src/hosted.js",
