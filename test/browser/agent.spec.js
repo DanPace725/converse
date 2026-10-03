@@ -6,6 +6,55 @@ import { ConclaveService } from "../../lib/conclave/service.js";
 import { createConclaveHandler } from "../../lib/conclave-local.js";
 import { exportFilename } from '../../public/export-name.js';
 
+test('automatic memory sources, corrections, suppression and restoration are usable after reload', async ({ page }, testInfo) => {
+  const errors = []; page.on('pageerror', error => errors.push(error.message));
+  const app = await fixture(async () => final);
+  const id = app.service.create('Automatic memory proof').conversation_id;
+  await app.service.ask(id, { message_id: 'memory_browser', content: 'Keep it below $500. Only use staff with clearance if children attend.', settings: { model: 'fixture', jev: false } });
+  await app.service.ask(id, { message_id: 'memory_browser_correction', content: 'Correction: keep it below $700.', settings: { model: 'fixture', jev: false } });
+  try {
+    await page.route('**/api/title', route => route.fulfill({ json: { title: 'Automatic memory proof' } }));
+    await page.goto(app.url);
+    if (testInfo.project.name === 'mobile') await page.locator('#menu').click();
+    await page.locator('#server-chats .chat-item').filter({ hasText: 'Automatic memory proof' }).click();
+    await page.locator('#workspace-open').click();
+    await page.locator('#tab-state').click();
+    await expect(page.locator('#editor-items')).toContainText('clearance if children');
+    await page.locator('#editor-items button').filter({ hasText: '$700' }).click();
+    await expect(page.locator('#editor-meta')).toContainText('Your instruction');
+    await expect(page.locator('#editor-meta')).toContainText('this conversation');
+    await page.locator('#editor-history > summary').click();
+    await page.locator('#editor-history-items button').click();
+    await expect(page.locator('#editor-preview')).toContainText('$500');
+    await expect(page.locator('#editor-edit')).toBeHidden();
+    await page.locator('#editor-back').click();
+    await page.locator('#editor-items button').filter({ hasText: '$700' }).click();
+    await page.locator('#editor-edit').click();
+    await page.locator('#editor-text').fill('Keep it below $800.');
+    await page.locator('#editor-save').click();
+    await expect(page.locator('#editor-feedback')).toContainText('Saved');
+    await expect(page.locator('#editor-preview')).toContainText('$800');
+    await page.locator('#editor-memory-suppress').click();
+    await expect(page.locator('#editor-meta')).toContainText('suppressed');
+    await page.reload();
+    await page.locator('#workspace-open').click();
+    await page.locator('#tab-state').click();
+    await page.locator('#editor-items button').filter({ hasText: '$800' }).click();
+    await expect(page.locator('#editor-memory-suppress')).toHaveText('Use this again');
+    await page.locator('#editor-memory-suppress').click();
+    await expect(page.locator('#editor-meta')).toContainText('retained');
+    await page.screenshot({ path: testInfo.outputPath('automatic-memory.png'), fullPage: true });
+    await page.locator('#editor-memory-sources button').click();
+    await expect(page.locator('#editor-preview')).toContainText('$800');
+    await expect(page.locator('#editor-meta')).toContainText('Saved historical text');
+    const view = app.service.view(id);
+    expect(view.memory.records.filter(r => r.binding && r.lifecycle === 'retained').length).toBe(2);
+    expect(view.metrics.calls).toBe(2); // Manual correction/suppression use no model.
+    expect(view.memory.records.find(r => r.content.includes('$500')).lifecycle).toBe('superseded');
+    expect(errors).toEqual([]);
+  } finally { await app.close(); }
+});
+
 async function fixture(respond, { jev = false, claude = false, claudeModel = 'claude-fixture', countTokens } = {}) {
   const store = new Store(undefined, { memory: true });
   const service = new ConclaveService(store, {
@@ -535,7 +584,7 @@ test('desktop panel resizing persists and Context expands without a short nested
       await expect(page.locator('#sidebar')).toHaveCSS('width', '330px');
       await page.locator('#tab-context').click();
       await page.locator('#editor-items button').first().click();
-      await page.screenshot({ path: 'docs/reports/assets/issue-10-desktop.png' });
+      await page.screenshot({ path: testInfo.outputPath('issue-10-desktop.png') });
       await page.locator('#editor-close').click();
       await page.locator('#context-panel > summary').click();
       const sheet = page.locator('#context-panel > .sheet');

@@ -403,7 +403,7 @@
   const PARTS = {
     instructions: ["Instructions", "System instructions and runtime rules, sent with every request."],
     tools: ["Tool definitions", "Schemas for the tools the model may call, sent with every request."],
-    memory: ["Memory", "Named entries from the Memory tab."],
+    memory: ["Memory", "Selected automatic memories and named entries from the Memory tab."],
     context: ["Working context", "Messages, summaries and references currently in the working context."],
     files: ["Files", "The workspace file list and file excerpts."],
     turn: ["Tool calls this turn", "This turn's tool calls and their results, carried until the reply is finished."],
@@ -496,6 +496,7 @@
         if (item.ref) {
           line.type = "button";
           line.onclick = () =>
+            item.kind === 'memory' ? window.workspaceEditor?.openMemory(item.ref) :
             window.workspaceEditor?.inspect(
               { ref: item.ref, state_key: item.kind === "state" ? item.label : null },
               false,

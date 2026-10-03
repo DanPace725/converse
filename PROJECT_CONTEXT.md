@@ -4,6 +4,8 @@ Updated 2026-10-03. Mutable project state. [Usage](public/app-guide.md) · [Deve
 
 ## Current capabilities
 
+- Automatic conversation-local memory in Context/Agent: exact explicit user commitments/corrections, bounded unresolved candidate extraction, event-backed correction/suppression history, source/dependency invalidation, scope-aware frozen activation and model-state authority gates. The existing Memory tab shows sources, authority, status, scope and previous versions; Edit and Don't use this/Use this again make no model calls. Binding overflow is explicit. [Implementation and validation](docs/archive/2026-10-03/automatic-memory.md)
+
 - Opt-in CLP evidence broker: versioned frame validation, immutable source-origin/lineage declarations and records, support/refute/supersede links, conservative independent-source floors, scoped/paged queries and per-result explanations. Thin/refuted/unmeasured claims remain unresolved. Library/API and read-only model tool; SQLite/Neon use existing events. [Usage and limits](docs/CLP_BROKER.md)
 
 - Conclave engine authority is the Conclave repository. Providers, agents, workspaces, web tools, context controls, persistence, and shared resources migrate here with a source-commit/hash manifest; parity checks reject downstream drift. Application UI/deployment remain here. [Engine boundary](lib/conclave/VENDORED.md)
@@ -28,6 +30,7 @@ Updated 2026-10-03. Mutable project state. [Usage](public/app-guide.md) · [Deve
 
 | Result | Evidence |
 |---|---|
+| Automatic memory: 66 managed files match Conclave `41dfe2d`; 200 source passes and 186 Converse backend passes, each with one optional check skipped; syntax/parity and all 60 desktop/mobile browser checks passed. Thirteen source fixtures cover authority, conditions, duplicate/correction heads, dependency closure/invalidation, restart, bounded extraction/retry, Stop and PostgreSQL. Live quality/cost benefit is unmeasured. | [Implementation and validation](docs/archive/2026-10-03/automatic-memory.md) |
 | Controller reconciliation: source suite 187 passes, one optional replay skipped; Converse 186 passes, one live Neon check skipped; syntax and 63 managed files matched. Bounded live comparisons used 54 dispatches ($0.358127–$0.367209 public-rate valuation). Twelve non-recovery arms and four revised recovery arms preserved fixed fields; original grader/call-limit failures retained. No general savings claim. | [Reconciliation and trials](docs/archive/2026-10-03/context-cost-controller-v3.md) |
 | Context cost controller: 171 Conclave and 176 Converse checks passed, each with one optional check skipped; syntax and 62-file engine parity passed. Eleven action-pricing cases and chat/Agent fixtures cover first-use costs, cache/tier/recovery uncertainty, free periodic timing checks and routine pressure offloads before Jev. Cost-triggered actions remain in shadow mode; savings are unmeasured. | [Implementation and validation](docs/archive/2026-10-03/context-cost-controller.md) |
 | Merged Workspace panel and request breakdown: a fixture turn reporting 13,287 input tokens against a small conversation is attributed to tool definitions, the turn's guide read and an explicit unexplained remainder instead of "conversation"; the full-history baseline now carries the same web, guide and file results. 162 Conclave and 167 Converse backend checks passed, each with one optional check skipped; all 58 desktop/mobile Agent browser checks passed. Real-conversation accuracy of the local per-part counts for Claude remains unmeasured. | [Breakdown checks](test/request-comparison.test.js), [browser checks](test/browser/agent.spec.js) |
@@ -56,6 +59,7 @@ USD figures are public-rate valuations. Trials demonstrate these workloads; broa
 - Retrieval: exact phrases, author/source/sequence filters, explicit missing ranges, source-first ranking, active-context indicators, heading/TOC lookup, and search within files.
 - Import: split transcript uploads into attributed sections; add JSON import and portable database restore.
 - State: resolved/archive lifecycle, last-confirmed/proposal status, revision-conflict diffs, and model/user pin controls.
+- Memory: semantic correction targeting, episode consolidation, learned controller/utility policies, resumption packets and broader tool/document capture remain unapplied. Context topic/objective boundaries are not inferred; cross-chat memory still needs individual ownership/access.
 - Workspace: rename, version diffs, model scratch-file lifecycle, and private model workspaces with explicit artifact handoffs.
 - Evaluate longer search/page tasks and live model source fidelity after compaction; hosted verification, JavaScript rendering and PDF extraction remain open. Explicit cross-conversation memory with ownership and corrections; embeddings tied to source versions.
 - Agent status messages that continue a run, completion checklists, isolated execution, and durable unattended workers.

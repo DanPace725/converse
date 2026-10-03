@@ -61,7 +61,7 @@
       kind === "state"
         ? view.state.entries
         : view.context.segments.filter((s) => !s.state_key);
-    return list.map((s) => ({
+    const result = list.map((s) => ({
       kind,
       id: kind === "state" ? s.state_key : s.id,
       title: segmentLabel(s),
@@ -74,6 +74,14 @@
         (kind === "context" && s.type === "reference")
       ),
     }));
+    return kind === 'state' ? result.concat((view.memory?.entries || []).map(r => memoryItem(r))) : result;
+  }
+  function memoryItem(r, historical = false) {
+    return { kind: 'memory', id: r.memory_id, token: r.memory_id,
+      title: `Automatic · ${r.kind} · ${r.content.slice(0, 55)}`,
+      content: r.content, historical, protected: ['suppressed', 'invalidated', 'superseded'].includes(r.lifecycle),
+      section: { ...r, id: r.memory_id, type: r.kind, source_event_ids: r.source_refs.map(s => s.event_id), parent_bundle_ids: [],
+        relations: { supersedes: r.supersedes || [] } } };
   }
   function items() {
     if (!view) return [];
@@ -83,6 +91,10 @@
     if (!item || !view) return null;
     // Saved historical text has no newer version to follow.
     if (item.historical) return item;
+    if (item.kind === 'memory') {
+      const r = view.memory?.records.find(r => r.memory_id === item.id);
+      return r ? memoryItem(r) : null;
+    }
     if (item.kind === "document" || item.kind === "source")
       return (
         documents().find((i) => i.kind === item.kind && i.id === item.id) || null
@@ -110,6 +122,7 @@
   function stale() {
     const d = draft();
     if (!d) return false;
+    if (selected.kind === 'memory') return view.memory?.revision !== d.memoryRevision || !latest();
     if (selected.newEntry) return view.context.revision !== d.revision;
     const current = latest();
     return (
@@ -128,6 +141,7 @@
       field.disabled = saving;
     el("editor-state-key").disabled = saving || !selected?.newEntry;
     el("editor-save").disabled = blocked || stale();
+    el('editor-memory-suppress').disabled = blocked || editing;
     el("editor-upload").disabled = busy || saving || view?.busy || view?.agent?.status === "running";
     el("editor-use").disabled = blocked;
     el('editor-remove').disabled = blocked || editing;
@@ -146,7 +160,7 @@
   }
   function renderPreview(text) {
     const target = el("editor-preview");
-    if (selected?.kind === "context" || selected?.kind === "state") {
+    if (['context', 'state', 'memory'].includes(selected?.kind)) {
       target.className = "plain-text";
       target.textContent = text;
       return;
@@ -196,6 +210,7 @@
       view?.conversation_id,
       tab,
       view?.context.revision,
+      view?.memory?.revision,
       selected?.kind,
       selected?.id,
       rows.map((i) => [i.kind, i.id, i.token, !!drafts[keyOf(i)]]),
@@ -235,7 +250,8 @@
             ". References and pinned text are protected."
           : "Memory · revision " +
             view.state.revision +
-            ". Edit an entry or add a named detail.";
+            ". Automatic entries keep their sources and correction history. Edit an entry or add a named detail." +
+            (view.memory?.capture?.status === 'failed' ? ' Capture failed: ' + view.memory.capture.error : '');
   }
   function show() {
     if (!selected) {
@@ -248,6 +264,16 @@
     const removable = ['document', 'source'].includes(selected.kind) && !selected.historical && !selected.detached;
     el('editor-remove').hidden = !removable;
     el('editor-removal-note').hidden = !removable;
+    const automatic = selected.kind === 'memory';
+    el('editor-memory-suppress').hidden = !automatic || selected.historical || ['invalidated', 'superseded'].includes(selected.section?.lifecycle);
+    el('editor-memory-suppress').textContent = selected.section?.lifecycle === 'suppressed' ? 'Use this again' : "Don't use this";
+    el('editor-memory-note').hidden = !automatic;
+    el('editor-memory-sources').hidden = !automatic;
+    el('editor-memory-sources').replaceChildren(...(automatic ? selected.section.source_refs.map(ref => {
+      const button = document.createElement('button'); button.type = 'button';
+      button.textContent = 'Open source ' + (view.source_refs?.[ref.event_id] || ref.event_id);
+      button.onclick = () => inspect({ id: ref.event_id }, true, true); return button;
+    }) : []));
     el("editor-title").textContent = selected.title;
     el("editor-meta").textContent = selected.historical
       ? "Saved historical text · read only"
@@ -300,8 +326,12 @@
           .filter(Boolean)
           .join("\n")
       : `Source ${view.source_refs?.[selected.id] || "historical"} · canonical: ${selected.id}`;
+    if (automatic) {
+      const authority = { user_committed: 'Your instruction', user_reported: 'Your report', model_proposed: 'Model proposal', externally_reported: 'External report' }[section.authority] || section.authority;
+      el('editor-meta').textContent = `${authority} · ${section.resolution} · ${section.lifecycle} · ${section.active ? 'active in last selection' : 'outside last selection'} · scope: ${section.scope.objective_id ? 'Agent objective' : 'this conversation'} · confidence unknown`;
+    }
     const history = el('editor-history'), revisions = selected.section?.relations?.supersedes || [];
-    history.hidden = selected.kind !== 'state' || !revisions.length;
+    history.hidden = !['state', 'memory'].includes(selected.kind) || !revisions.length;
     el("editor-history-items").replaceChildren(
       ...revisions.map((id) => {
         const button = document.createElement('button');
@@ -309,7 +339,12 @@
         button.textContent =
           "Open previous revision · " +
           (view.segment_refs?.[id] || "historical segment");
-        button.onclick = () => inspect({ id, state_key: selected.section.state_key }, false, true);
+        button.onclick = () => {
+          if (automatic) {
+            const old = view.memory.records.find(r => r.memory_id === id);
+            if (old) select(memoryItem(old, true));
+          } else inspect({ id, state_key: selected.section.state_key }, false, true);
+        };
         return button;
       }),
     );
@@ -327,6 +362,7 @@
       selected.kind === "source" ? "Save workspace copy" : "Save";
     el("editor-path-row").hidden = !editing || selected.kind !== "source";
     el("editor-state-fields").hidden = !editing || selected.kind !== "state";
+    el('editor-memory-kind-row').hidden = !editing || !automatic;
     el("editor-text").hidden = !editing || preview;
     el("editor-preview").hidden = editing && !preview;
     if (d) {
@@ -336,6 +372,7 @@
       el("editor-state-key").disabled = !selected.newEntry;
       el("editor-state-type").value = d.type || "constraint";
       el("editor-state-status").value = d.status || "active";
+      el('editor-memory-kind').value = d.memoryKind || 'claim';
     }
     renderPreview(d?.text ?? selected.content);
     el("editor-feedback").textContent = selected.protected
@@ -455,6 +492,8 @@
       text: selected.content,
       token: selected.token,
       revision: view.context.revision,
+      memoryRevision: view.memory?.revision,
+      memoryKind: selected.section?.kind,
       path: selected.kind === "document" ? selected.path : path,
       stateKey: selected.section?.state_key || "",
       type: selected.section?.type || "constraint",
@@ -477,6 +516,7 @@
       stateKey: el("editor-state-key").value,
       type: el("editor-state-type").value,
       status: el("editor-state-status").value,
+      memoryKind: el('editor-memory-kind').value,
     });
     persist();
     syncControls();
@@ -501,6 +541,8 @@
                 ? { copied_from_source_event_id: selected.token }
                 : {}),
             }
+          : selected.kind === 'memory'
+            ? { memory_id: selected.id, content: d.text, kind: d.memoryKind, expected_memory_revision: d.memoryRevision }
           : selected.kind === "context"
             ? {
                 bundle_id: selected.id,
@@ -517,6 +559,7 @@
               };
       const action = ["document", "source"].includes(selected.kind)
         ? "document_save"
+        : selected.kind === 'memory' ? 'memory_save'
         : selected.kind === "context"
           ? "context_save"
           : "state_save";
@@ -524,6 +567,10 @@
       delete drafts[originalKey];
       persist();
       view = data;
+      if (original.kind === 'memory') {
+        const replacement = data.memory.records.find(r => r.supersedes.includes(original.id));
+        selected = replacement ? memoryItem(replacement) : null;
+      }
       if (original.kind === "source") {
         tab = "documents";
         selected = documents().find(
@@ -859,6 +906,7 @@
     "editor-state-key",
     "editor-state-type",
     "editor-state-status",
+    "editor-memory-kind",
   ])
     el(id).addEventListener("input", capture);
   el("editor-preview-toggle").onclick = () => {
@@ -943,7 +991,24 @@
     }
   });
   document.addEventListener("visibilitychange", schedule);
-  window.workspaceEditor = { adopt, syncControls, inspect, close, open };
+  el('editor-memory-suppress').onclick = async () => {
+    if (saving || busy || !selected || selected.kind !== 'memory') return;
+    saving = true; syncControls();
+    try {
+      const original = selected.id;
+      const data = await window.contextLayer.saveEdit('memory_lifecycle', {
+        memory_id: original, operation: selected.section.lifecycle === 'suppressed' ? 'restore' : 'suppress', expected_memory_revision: view.memory.revision });
+      view = data; selected = memoryItem(data.memory.records.find(r => r.memory_id === original));
+      renderList(); show();
+    } catch (error) { el('editor-feedback').textContent = error.message; }
+    finally { saving = false; syncControls(); }
+  };
+  function openMemory(id) {
+    const r = view?.memory?.records.find(r => r.memory_id === id);
+    if (!r) return;
+    open('state'); select(memoryItem(r));
+  }
+  window.workspaceEditor = { adopt, syncControls, inspect, close, open, openMemory };
   if (window.contextLayer?.editorView())
     adopt(window.contextLayer.editorView());
 })();
