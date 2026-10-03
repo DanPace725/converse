@@ -1,0 +1,77 @@
+{
+  "created_at": "2026-10-02T19:58:20.256Z",
+  "note": "Derived replay; originals unchanged. New answers/tool trajectories are not an exact historical replay.",
+  "templates": [
+    {
+      "key": "ordinary-memory",
+      "source_conversation_id": "conv_b53ebbe1-a7b3-403a-8dc3-f2b40cd67582",
+      "prompts": [
+        {
+          "content": "Where are memories stored in the brain?",
+          "source_event_id": "evt_191c923d-44f4-4867-a382-30fa9f793834",
+          "adaptation": "verbatim"
+        },
+        {
+          "content": "Could distributed memory be emulated for AI systems?",
+          "source_event_id": "evt_2d5ed6df-51d0-4dd3-a6d5-0c8c180caad6",
+          "adaptation": "verbatim"
+        },
+        {
+          "content": "Summarize the distributed-memory design and distinguish biological analogy from demonstrated AI behavior. Keep uncertainty explicit.",
+          "source_event_id": "evt_4825a6e7-b2aa-4872-a6c1-c2c3deb971aa",
+          "adaptation": "bounded summary variant; no file/memory action in ordinary task"
+        }
+      ],
+      "documents": [],
+      "quality": [
+        "Distinguishes distributed biological memory from an AI design analogy",
+        "Keeps uncertain mechanisms and proposed designs tentative",
+        "Answers all three prompts"
+      ]
+    },
+    {
+      "key": "document-fuel",
+      "source_conversation_id": "conv_b65bc693-2839-4ff5-a3ce-31d9ba602b42",
+      "documents": [
+        {
+          "path": "theoretical-space-travel.md",
+          "content": "# Theoretical Space Travel: Concepts and Mission Architecture\n\n## Scope\n\nThis is a conceptual overview, not an engineering design or flight-ready plan. Spaceflight is governed by known physics, while propulsion systems such as fusion rockets, antimatter drives, and laser sails remain speculative or face major practical barriers.\n\n## A useful way to think about a mission\n\nA mission is a sequence of trajectory changes, or **delta-v** (change in velocity), rather than simply a distance to cover. A spacecraft may need velocity changes to leave a planet, enter orbit, transfer between worlds, rendezvous, land, and return. Gravity assists can trade trajectory energy with a planet, reducing propellant needs at the cost of time and tighter navigation constraints.\n\n## Propulsion options\n\n- **Chemical rockets:** High thrust and mature technology. They are well suited to launch and fast maneuvers, but carry oxidizer and fuel and have limited exhaust velocity.\n- **Electric propulsion:** Ion or Hall thrusters eject propellant at high exhaust velocity, often using solar or nuclear electricity. They are efficient in propellant use but provide low thrust and need long acceleration periods.\n- **Nuclear thermal propulsion:** A reactor heats propellant, potentially offering higher performance than chemical rockets with useful thrust. It remains a challenging development and safety undertaking.\n- **Fusion, antimatter, and beamed sails:** Potentially transformative concepts, but not currently practical transportation systems. They require breakthroughs in energy production, materials, power transfer, or particle handling.\n\n## Mission design trade-offs\n\nHigher exhaust velocity can reduce propellant for a specified ideal velocity change, but it does not by itself guarantee a shorter or easier mission. Thrust, power, vehicle structure, heat rejection, radiation, crew life support, reliability, and launch constraints all matter. For crewed missions, shielding, redundancy, medical capability, and abort options add mass.\n\n## Limits of the accompanying fuel estimate\n\nThe companion calculation applies the ideal rocket equation to a deliberately simplified chemical-rocket example. It does not simulate a real launch or complete planetary mission. Actual requirements depend on trajectory, staging, engine performance throughout flight, gravity and aerodynamic losses, tanks and engines, reserves, and operational constraints. The calculation is a transparent illustration of the exponential relationship between delta-v and mass ratio—not a vehicle sizing recommendation.\n\n## Further questions for a more realistic study\n\n1. What destination and trajectory are intended (for example, low Earth orbit, lunar orbit, or Mars)?\n2. Is the vehicle crewed or robotic, and what payload and return capability are required?\n3. Which propulsion and staging architecture is assumed?\n4. What reserves, reliability margins, and launch-site constraints should be included?\n",
+          "source_event_id": "evt_28641cc7-dbe8-43b1-8cf7-cfd7673fceaa",
+          "original_actor": "openai",
+          "original_model": "gpt-6-luna"
+        },
+        {
+          "path": "fuel-requirements-illustration.md",
+          "content": "# Illustrative Rocket-Propellant Estimate\n\n## Purpose and assumptions\n\nThis is a deliberately idealized calculation, not a launch vehicle design. It uses the Tsiolkovsky ideal rocket equation for one burn:\n\n**mass ratio = exp(Δv / (Isp × g₀))**\n\nwhere Δv is the velocity change, Isp is specific impulse, and g₀ = 9.80665 m/s². Propellant mass is **(mass ratio − 1) × final mass**. Here, “final mass” means payload plus all dry vehicle mass remaining after propellant is used.\n\nAssumptions: a hypothetical chemical engine with Isp = 450 s; final mass = 10 metric tonnes (for example, payload plus dry spacecraft); no staging; and no allowance for reserves, unusable propellant, or additional burns. The chosen Δv values are illustrative budgets, not claims that either describes a complete real mission.\n\n## Case A: 9.4 km/s idealized velocity change\n\n1. Effective exhaust velocity: 450 s × 9.80665 m/s² = **4,412.99 m/s**.\n2. Δv / exhaust velocity: 9,400 / 4,412.99 = **2.1301**.\n3. Ideal mass ratio: exp(2.1301) ≈ **8.4155**.\n4. Initial mass: 10 t × 8.4155 ≈ **84.15 t**.\n5. Propellant: 84.15 t − 10 t ≈ **74.15 metric tonnes**.\n\nThus, in this ideal single-stage model, about 74.15 t of propellant is needed to accelerate a 10 t final mass by 9.4 km/s. The initial mass is about 84.15 t, excluding any items not already counted in the 10 t dry-plus-payload mass.\n\n## Case B: 3.2 km/s idealized velocity change\n\n1. Δv / exhaust velocity: 3,200 / 4,412.99 = **0.7251**.\n2. Ideal mass ratio: exp(0.7251) ≈ **2.0650**.\n3. Initial mass: 10 t × 2.0650 ≈ **20.65 t**.\n4. Propellant: 20.65 t − 10 t ≈ **10.65 metric tonnes**.\n\nThe lower Δv still requires substantial propellant: about 10.65 t for the same 10 t final mass under these assumptions.\n\n## Interpretation and caveats\n\nThese values follow from the ideal rocket equation and rounded intermediate results. Real missions require additional propellant or different architecture because of gravity and atmospheric drag losses, multiple maneuvers, reserves, engine/tank mass, structural limits, and operational margins. Staging can improve performance by discarding empty hardware, but requires a staged mass model. A different engine Isp changes the result; an electric engine, for example, may offer higher Isp but generally cannot provide the high thrust needed for launch. The Δv values must not be added or treated as a mission total without specifying the trajectory and which burns they represent.\n\n**Bottom line:** fuel demand rises exponentially with Δv for a fixed engine and final mass. These examples are arithmetic demonstrations only, not estimates for a particular spacecraft or destination.\n\n## Calculation trace\n\n- 450 × 9.80665 = 4,412.9925 m/s\n- exp(9,400 / 4,412.9925) ≈ 8.41549; 10 × (8.41549 − 1) ≈ 74.15 t\n- exp(3,200 / 4,412.9925) ≈ 2.06500; 10 × (2.06500 − 1) ≈ 10.65 t\n\nThe exponential values were evaluated using e^(x); displayed figures are rounded. No independent trajectory or engineering validation is implied.\n",
+          "source_event_id": "evt_a10512c0-12dd-4f1c-8783-6ebe543df9ca",
+          "original_actor": "openai",
+          "original_model": "gpt-6-luna"
+        }
+      ],
+      "prompts": [
+        {
+          "content": "Read the two saved drafts, theoretical-space-travel.md and fuel-requirements-illustration.md. Check their math and assumptions. Give a concise report. Treat the drafts as earlier model claims, not confirmed engineering facts.",
+          "source_event_id": "evt_8f400b96-af67-4633-9285-92cb2395d60a",
+          "adaptation": "review existing drafts rather than a named prior model continuation"
+        },
+        {
+          "content": "For the same idealized single burn, change final mass to 12 metric tonnes and delta-v to 3.2 km/s, keeping Isp=450 s and g0=9.80665 m/s^2. Calculate propellant and initial mass. Preserve the single-burn, no-staging, no-reserves caveats.",
+          "source_event_id": "evt_98d9bf91-c6b9-4bc2-b216-765b7e566740",
+          "adaptation": "new numerical correction variant from the fuel-calculation request"
+        },
+        {
+          "content": "Write a concise comparison report named fuel-review.md with original assumptions and the corrected 12-tonne case. Keep theory separate from engineering recommendations. Read it back to verify if workspace tools are available; otherwise provide the report as Markdown.",
+          "source_event_id": "evt_ee29757e-1d32-4255-860b-d744aba3885f",
+          "adaptation": "bounded document variant from the write-up request"
+        }
+      ],
+      "quality": [
+        "Retrieves both original drafts",
+        "Uses corrected 12 tonnes, 3200 m/s, 450 s, g0=9.80665",
+        "Propellant about 12.78 t and initial mass about 24.78 t",
+        "Preserves no staging/reserves and ideal single burn",
+        "Produces a readable report; verifies saved workspace file in tool-enabled modes"
+      ]
+    }
+  ]
+}

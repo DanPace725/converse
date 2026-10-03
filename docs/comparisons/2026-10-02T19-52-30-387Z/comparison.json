@@ -1,0 +1,3456 @@
+{
+  "created_at": "2026-10-02T19:52:30.387Z",
+  "cap_usd": 1,
+  "conservative_debited_usd": 0.969406,
+  "calls": [
+    {
+      "run": "openai-gpt-6-luna-ordinary-memory-plain",
+      "input_ceiling_estimate": 2208,
+      "reserve_usd": 0.002088,
+      "requested_model": "gpt-6-luna",
+      "payload_fingerprint": "016a5038bcc76ba3d69df2c7874addb5f8ee78bc13acbdab187d307df71639b7",
+      "reported_model": "gpt-6-luna",
+      "usage": {
+        "input_tokens": 59,
+        "input_tokens_details": {
+          "cache_write_tokens": 0,
+          "cached_tokens": 0
+        },
+        "output_tokens": 92,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 151
+      },
+      "status": "completed",
+      "cost": {
+        "counts": {
+          "input": 59,
+          "output": 92,
+          "read": 0,
+          "write": 0,
+          "write_5m": null,
+          "write_1h": null
+        },
+        "provider": "openai",
+        "model": "gpt-6-luna",
+        "usd_min": 0.0000519,
+        "usd_max": 0.0000808,
+        "reasons": [
+          "Short/long tier boundary unverified; range covers both"
+        ]
+      }
+    },
+    {
+      "run": "openai-gpt-6-luna-ordinary-memory-plain",
+      "input_ceiling_estimate": 2436,
+      "reserve_usd": 0.002145,
+      "requested_model": "gpt-6-luna",
+      "payload_fingerprint": "ea0f626e3cbc0592801255c726529fef69a29002fa7ff2257bb9e929848a4d35",
+      "reported_model": "gpt-6-luna",
+      "usage": {
+        "input_tokens": 167,
+        "input_tokens_details": {
+          "cache_write_tokens": 0,
+          "cached_tokens": 0
+        },
+        "output_tokens": 157,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 324
+      },
+      "status": "completed",
+      "cost": {
+        "counts": {
+          "input": 167,
+          "output": 157,
+          "read": 0,
+          "write": 0,
+          "write_5m": null,
+          "write_1h": null
+        },
+        "provider": "openai",
+        "model": "gpt-6-luna",
+        "usd_min": 0.0000952,
+        "usd_max": 0.00015115000000000001,
+        "reasons": [
+          "Short/long tier boundary unverified; range covers both"
+        ]
+      }
+    },
+    {
+      "run": "openai-gpt-6-luna-ordinary-memory-plain",
+      "input_ceiling_estimate": 2826,
+      "reserve_usd": 0.0022425,
+      "requested_model": "gpt-6-luna",
+      "payload_fingerprint": "85a56fe64cd304ec5a41bd00734f4adb0d8660fe6b93d745af2dc01fbac07581",
+      "reported_model": "gpt-6-luna",
+      "usage": {
+        "input_tokens": 350,
+        "input_tokens_details": {
+          "cache_write_tokens": 0,
+          "cached_tokens": 0
+        },
+        "output_tokens": 197,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 547
+      },
+      "status": "completed",
+      "cost": {
+        "counts": {
+          "input": 350,
+          "output": 197,
+          "read": 0,
+          "write": 0,
+          "write_5m": null,
+          "write_1h": null
+        },
+        "provider": "openai",
+        "model": "gpt-6-luna",
+        "usd_min": 0.0001335,
+        "usd_max": 0.00021775,
+        "reasons": [
+          "Short/long tier boundary unverified; range covers both"
+        ]
+      }
+    },
+    {
+      "run": "openai-gpt-6-luna-ordinary-memory-append",
+      "input_ceiling_estimate": 6604,
+      "reserve_usd": 0.003187,
+      "requested_model": "gpt-6-luna",
+      "payload_fingerprint": "38fe43f9c2740e51bbe99b089a529d4d7e67f45b9471e15566a63d216a58517a",
+      "reported_model": "gpt-6-luna",
+      "usage": {
+        "input_tokens": 1930,
+        "input_tokens_details": {
+          "cache_write_tokens": 1927,
+          "cached_tokens": 0
+        },
+        "output_tokens": 157,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 2087
+      },
+      "status": "completed",
+      "cost": {
+        "counts": {
+          "input": 1930,
+          "output": 157,
+          "read": 0,
+          "write": 1927,
+          "write_5m": null,
+          "write_1h": null
+        },
+        "provider": "openai",
+        "model": "gpt-6-luna",
+        "usd_min": 0.000319675,
+        "usd_max": 0.0006001,
+        "reasons": [
+          "Short/long tier boundary unverified; range covers both"
+        ]
+      }
+    },
+    {
+      "run": "openai-gpt-6-luna-ordinary-memory-append",
+      "input_ceiling_estimate": 7338,
+      "reserve_usd": 0.0033705,
+      "requested_model": "gpt-6-luna",
+      "payload_fingerprint": "58793f794c31a6c9277da0b888aecd36a2903e2735161b5be87da4bdc31d6537",
+      "reported_model": "gpt-6-luna",
+      "usage": {
+        "input_tokens": 2280,
+        "input_tokens_details": {
+          "cache_write_tokens": 456,
+          "cached_tokens": 1821
+        },
+        "output_tokens": 164,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 2444
+      },
+      "status": "completed",
+      "cost": {
+        "counts": {
+          "input": 2280,
+          "output": 164,
+          "read": 1821,
+          "write": 456,
+          "write_5m": null,
+          "write_1h": null
+        },
+        "provider": "openai",
+        "model": "gpt-6-luna",
+        "usd_min": 0.00015751000000000003,
+        "usd_max": 0.00027402000000000004,
+        "reasons": [
+          "Short/long tier boundary unverified; range covers both"
+        ]
+      }
+    },
+    {
+      "run": "openai-gpt-6-luna-ordinary-memory-append",
+      "input_ceiling_estimate": 8118,
+      "reserve_usd": 0.0035655,
+      "requested_model": "gpt-6-luna",
+      "payload_fingerprint": "ff4c6cee0748d1d2169a37653556cb2224f4121735c32289c6737f6b72ad6ac4",
+      "reported_model": "gpt-6-luna",
+      "usage": {
+        "input_tokens": 2653,
+        "input_tokens_details": {
+          "cache_write_tokens": 829,
+          "cached_tokens": 1821
+        },
+        "output_tokens": 318,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 2971
+      },
+      "status": "completed",
+      "cost": {
+        "counts": {
+          "input": 2653,
+          "output": 318,
+          "read": 1821,
+          "write": 829,
+          "write_5m": null,
+          "write_1h": null
+        },
+        "provider": "openai",
+        "model": "gpt-6-luna",
+        "usd_min": 0.00028113500000000007,
+        "usd_max": 0.00048277000000000004,
+        "reasons": [
+          "Short/long tier boundary unverified; range covers both"
+        ]
+      }
+    },
+    {
+      "run": "openai-gpt-6-luna-ordinary-memory-layered",
+      "input_ceiling_estimate": 8012,
+      "reserve_usd": 0.003539,
+      "requested_model": "gpt-6-luna",
+      "payload_fingerprint": "3cbbc7a54ec843ceb2882b98f083ee5b49e5a0fa4ce638fd40ce54012fa90219",
+      "reported_model": "gpt-6-luna",
+      "usage": {
+        "input_tokens": 2384,
+        "input_tokens_details": {
+          "cache_write_tokens": 2381,
+          "cached_tokens": 0
+        },
+        "output_tokens": 166,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 2550
+      },
+      "status": "completed",
+      "cost": {
+        "counts": {
+          "input": 2384,
+          "output": 166,
+          "read": 0,
+          "write": 2381,
+          "write_5m": null,
+          "write_1h": null
+        },
+        "provider": "openai",
+        "model": "gpt-6-luna",
+        "usd_min": 0.000380925,
+        "usd_max": 0.00072035,
+        "reasons": [
+          "Short/long tier boundary unverified; range covers both"
+        ]
+      }
+    },
+    {
+      "run": "openai-gpt-6-luna-ordinary-memory-layered",
+      "input_ceiling_estimate": 8780,
+      "reserve_usd": 0.003731,
+      "requested_model": "gpt-6-luna",
+      "payload_fingerprint": "bc0cbf5028ec018bb1fc74cf4c75423a4d0d6cc941b55e911644f7c845b80faa",
+      "reported_model": "gpt-6-luna",
+      "usage": {
+        "input_tokens": 2745,
+        "input_tokens_details": {
+          "cache_write_tokens": 519,
+          "cached_tokens": 2223
+        },
+        "output_tokens": 175,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 2920
+      },
+      "status": "completed",
+      "cost": {
+        "counts": {
+          "input": 2745,
+          "output": 175,
+          "read": 2223,
+          "write": 519,
+          "write_5m": null,
+          "write_1h": null
+        },
+        "provider": "openai",
+        "model": "gpt-6-luna",
+        "usd_min": 0.00017490500000000002,
+        "usd_max": 0.00030606000000000003,
+        "reasons": [
+          "Short/long tier boundary unverified; range covers both"
+        ]
+      }
+    },
+    {
+      "run": "openai-gpt-6-luna-ordinary-memory-layered",
+      "input_ceiling_estimate": 9524,
+      "reserve_usd": 0.003917,
+      "requested_model": "gpt-6-luna",
+      "payload_fingerprint": "b136a9e014598c6407bc0a33911b58222fae966d305e8b4382b2f184db34b178",
+      "reported_model": "gpt-6-luna",
+      "usage": {
+        "input_tokens": 3095,
+        "input_tokens_details": {
+          "cache_write_tokens": 869,
+          "cached_tokens": 2223
+        },
+        "output_tokens": 179,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 3274
+      },
+      "status": "completed",
+      "cost": {
+        "counts": {
+          "input": 3095,
+          "output": 179,
+          "read": 2223,
+          "write": 869,
+          "write_5m": null,
+          "write_1h": null
+        },
+        "provider": "openai",
+        "model": "gpt-6-luna",
+        "usd_min": 0.00022065500000000002,
+        "usd_max": 0.00039656000000000007,
+        "reasons": [
+          "Short/long tier boundary unverified; range covers both"
+        ]
+      }
+    },
+    {
+      "run": "openai-gpt-6-luna-document-fuel-plain",
+      "input_ceiling_estimate": 5352,
+      "reserve_usd": 0.002874,
+      "requested_model": "gpt-6-luna",
+      "payload_fingerprint": "0f554712eeb21fec22a253aadec0901f08176f4f2ba30120a27df9f46966b692",
+      "reported_model": "gpt-6-luna",
+      "usage": {
+        "input_tokens": 1560,
+        "input_tokens_details": {
+          "cache_write_tokens": 1557,
+          "cached_tokens": 0
+        },
+        "output_tokens": 406,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 1966
+      },
+      "status": "completed",
+      "cost": {
+        "counts": {
+          "input": 1560,
+          "output": 406,
+          "read": 0,
+          "write": 1557,
+          "write_5m": null,
+          "write_1h": null
+        },
+        "provider": "openai",
+        "model": "gpt-6-luna",
+        "usd_min": 0.00039792500000000004,
+        "usd_max": 0.00069435,
+        "reasons": [
+          "Short/long tier boundary unverified; range covers both"
+        ]
+      }
+    },
+    {
+      "run": "openai-gpt-6-luna-document-fuel-plain",
+      "input_ceiling_estimate": 6366,
+      "reserve_usd": 0.0031275,
+      "requested_model": "gpt-6-luna",
+      "payload_fingerprint": "5f340fa82cb567994bf52107c837794d6da7d3c60da073247567f159851265a7",
+      "reported_model": "gpt-6-luna",
+      "usage": {
+        "input_tokens": 2041,
+        "input_tokens_details": {
+          "cache_write_tokens": 481,
+          "cached_tokens": 1557
+        },
+        "output_tokens": 148,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 2189
+      },
+      "status": "completed",
+      "cost": {
+        "counts": {
+          "input": 2041,
+          "output": 148,
+          "read": 1557,
+          "write": 481,
+          "write_5m": null,
+          "write_1h": null
+        },
+        "provider": "openai",
+        "model": "gpt-6-luna",
+        "usd_min": 0.00014999500000000002,
+        "usd_max": 0.00026299,
+        "reasons": [
+          "Short/long tier boundary unverified; range covers both"
+        ]
+      }
+    },
+    {
+      "run": "openai-gpt-6-luna-document-fuel-plain",
+      "input_ceiling_estimate": 6792,
+      "reserve_usd": 0.003234,
+      "requested_model": "gpt-6-luna",
+      "payload_fingerprint": "35ee81cd1791530e7dd0429592acc79b8b40a3f5af491fe9c438d948862c25ec",
+      "reported_model": "gpt-6-luna",
+      "usage": {
+        "input_tokens": 2241,
+        "input_tokens_details": {
+          "cache_write_tokens": 200,
+          "cached_tokens": 2038
+        },
+        "output_tokens": 389,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 2630
+      },
+      "status": "completed",
+      "cost": {
+        "counts": {
+          "input": 2241,
+          "output": 389,
+          "read": 2038,
+          "write": 200,
+          "write_5m": null,
+          "write_1h": null
+        },
+        "provider": "openai",
+        "model": "gpt-6-luna",
+        "usd_min": 0.00024018,
+        "usd_max": 0.00038311000000000004,
+        "reasons": [
+          "Short/long tier boundary unverified; range covers both"
+        ]
+      }
+    },
+    {
+      "run": "openai-gpt-6-luna-document-fuel-append",
+      "input_ceiling_estimate": 10550,
+      "reserve_usd": 0.0041735,
+      "requested_model": "gpt-6-luna",
+      "payload_fingerprint": "be945e1447bf99b2eadb3eb06ba67a0fcb9d9d95479fb653a79efe01430d42a3",
+      "reported_model": "gpt-6-luna",
+      "usage": {
+        "input_tokens": 3823,
+        "input_tokens_details": {
+          "cache_write_tokens": 1999,
+          "cached_tokens": 1821
+        },
+        "output_tokens": 27,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 3850
+      },
+      "status": "completed",
+      "cost": {
+        "counts": {
+          "input": 3823,
+          "output": 27,
+          "read": 1821,
+          "write": 1999,
+          "write_5m": null,
+          "write_1h": null
+        },
+        "provider": "openai",
+        "model": "gpt-6-luna",
+        "usd_min": 0.000281885,
+        "usd_max": 0.00055702,
+        "reasons": [
+          "Short/long tier boundary unverified; range covers both"
+        ]
+      }
+    },
+    {
+      "run": "openai-gpt-6-luna-document-fuel-append",
+      "input_ceiling_estimate": 12362,
+      "reserve_usd": 0.0046265,
+      "requested_model": "gpt-6-luna",
+      "payload_fingerprint": "d71d1103e2772d9e3c936cb6e3f93d00a2696ef1e70938a17ba3d6ad334a945a",
+      "reported_model": "gpt-6-luna",
+      "usage": {
+        "input_tokens": 4620,
+        "input_tokens_details": {
+          "cache_write_tokens": 797,
+          "cached_tokens": 3820
+        },
+        "output_tokens": 29,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 4649
+      },
+      "status": "completed",
+      "cost": {
+        "counts": {
+          "input": 4620,
+          "output": 29,
+          "read": 3820,
+          "write": 797,
+          "write_5m": null,
+          "write_1h": null
+        },
+        "provider": "openai",
+        "model": "gpt-6-luna",
+        "usd_min": 0.000152625,
+        "usd_max": 0.000298,
+        "reasons": [
+          "Short/long tier boundary unverified; range covers both"
+        ]
+      }
+    },
+    {
+      "run": "openai-gpt-6-luna-document-fuel-append",
+      "input_ceiling_estimate": 14830,
+      "reserve_usd": 0.0052435,
+      "requested_model": "gpt-6-luna",
+      "payload_fingerprint": "81ddd4d1e26c2345663700840d1a4b25ad4d6ef48cd075f645f1e42a7600e7df",
+      "reported_model": "gpt-6-luna",
+      "usage": {
+        "input_tokens": 5723,
+        "input_tokens_details": {
+          "cache_write_tokens": 1103,
+          "cached_tokens": 4617
+        },
+        "output_tokens": 26,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 5749
+      },
+      "status": "completed",
+      "cost": {
+        "counts": {
+          "input": 5723,
+          "output": 26,
+          "read": 4617,
+          "write": 1103,
+          "write_5m": null,
+          "write_1h": null
+        },
+        "provider": "openai",
+        "model": "gpt-6-luna",
+        "usd_min": 0.00019734500000000003,
+        "usd_max": 0.00038819000000000006,
+        "reasons": [
+          "Short/long tier boundary unverified; range covers both"
+        ]
+      }
+    },
+    {
+      "run": "openai-gpt-6-luna-document-fuel-append",
+      "input_ceiling_estimate": 15084,
+      "reserve_usd": 0.005307,
+      "requested_model": "gpt-6-luna",
+      "payload_fingerprint": "62023439cb77672584d554ed8f09e5d2a99aa565cfe63f1d50f66254f1b42eb0",
+      "reported_model": "gpt-6-luna",
+      "usage": {
+        "input_tokens": 5770,
+        "input_tokens_details": {
+          "cache_write_tokens": 47,
+          "cached_tokens": 5720
+        },
+        "output_tokens": 28,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 5798
+      },
+      "status": "completed",
+      "cost": {
+        "counts": {
+          "input": 5770,
+          "output": 28,
+          "read": 5720,
+          "write": 47,
+          "write_5m": null,
+          "write_1h": null
+        },
+        "provider": "openai",
+        "model": "gpt-6-luna",
+        "usd_min": 0.000077375,
+        "usd_max": 0.00014775,
+        "reasons": [
+          "Short/long tier boundary unverified; range covers both"
+        ]
+      }
+    },
+    {
+      "run": "openai-gpt-6-luna-document-fuel-append",
+      "input_ceiling_estimate": 15352,
+      "reserve_usd": 0.005374,
+      "requested_model": "gpt-6-luna",
+      "payload_fingerprint": "2c2086b7602508a2a88764b5e8c544d9fe9dc95f2f0fe8932a067bf72ad7893e",
+      "reported_model": "gpt-6-luna",
+      "usage": {
+        "input_tokens": 5819,
+        "input_tokens_details": {
+          "cache_write_tokens": 49,
+          "cached_tokens": 5767
+        },
+        "output_tokens": 35,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 5854
+      },
+      "status": "completed",
+      "cost": {
+        "counts": {
+          "input": 5819,
+          "output": 35,
+          "read": 5767,
+          "write": 49,
+          "write_5m": null,
+          "write_1h": null
+        },
+        "provider": "openai",
+        "model": "gpt-6-luna",
+        "usd_min": 0.000081595,
+        "usd_max": 0.00015444,
+        "reasons": [
+          "Short/long tier boundary unverified; range covers both"
+        ]
+      }
+    },
+    {
+      "run": "openai-gpt-6-luna-document-fuel-append",
+      "input_ceiling_estimate": 15628,
+      "reserve_usd": 0.005443,
+      "requested_model": "gpt-6-luna",
+      "payload_fingerprint": "146cbe1dd1948266039c58c3774d575db9cc64cbfc762b75461ffabbda4d905d",
+      "reported_model": "gpt-6-luna",
+      "usage": {
+        "input_tokens": 5875,
+        "input_tokens_details": {
+          "cache_write_tokens": 56,
+          "cached_tokens": 5816
+        },
+        "output_tokens": 29,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 5904
+      },
+      "status": "completed",
+      "cost": {
+        "counts": {
+          "input": 5875,
+          "output": 29,
+          "read": 5816,
+          "write": 56,
+          "write_5m": null,
+          "write_1h": null
+        },
+        "provider": "openai",
+        "model": "gpt-6-luna",
+        "usd_min": 0.00007996,
+        "usd_max": 0.00015267,
+        "reasons": [
+          "Short/long tier boundary unverified; range covers both"
+        ]
+      }
+    },
+    {
+      "run": "openai-gpt-6-luna-document-fuel-append",
+      "input_ceiling_estimate": 15884,
+      "reserve_usd": 0.005507,
+      "requested_model": "gpt-6-luna",
+      "payload_fingerprint": "6862a837b6c54155f805027f18fe8c66fe14e852503170a24a138153df3b49ae",
+      "reported_model": "gpt-6-luna",
+      "usage": {
+        "input_tokens": 5925,
+        "input_tokens_details": {
+          "cache_write_tokens": 50,
+          "cached_tokens": 5872
+        },
+        "output_tokens": 29,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 5954
+      },
+      "status": "completed",
+      "cost": {
+        "counts": {
+          "input": 5925,
+          "output": 29,
+          "read": 5872,
+          "write": 50,
+          "write_5m": null,
+          "write_1h": null
+        },
+        "provider": "openai",
+        "model": "gpt-6-luna",
+        "usd_min": 0.00007976999999999999,
+        "usd_max": 0.00015229,
+        "reasons": [
+          "Short/long tier boundary unverified; range covers both"
+        ]
+      }
+    },
+    {
+      "run": "openai-gpt-6-luna-document-fuel-append",
+      "input_ceiling_estimate": 16154,
+      "reserve_usd": 0.0055745,
+      "requested_model": "gpt-6-luna",
+      "payload_fingerprint": "acdbb67f33137139a5abb7dc6c303d42e35a7d7369f3ebcf86002d797eeb5b63",
+      "reported_model": "gpt-6-luna",
+      "usage": {
+        "input_tokens": 5975,
+        "input_tokens_details": {
+          "cache_write_tokens": 50,
+          "cached_tokens": 5922
+        },
+        "output_tokens": 28,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 6003
+      },
+      "status": "completed",
+      "cost": {
+        "counts": {
+          "input": 5975,
+          "output": 28,
+          "read": 5922,
+          "write": 50,
+          "write_5m": null,
+          "write_1h": null
+        },
+        "provider": "openai",
+        "model": "gpt-6-luna",
+        "usd_min": 0.00007976999999999999,
+        "usd_max": 0.00015254,
+        "reasons": [
+          "Short/long tier boundary unverified; range covers both"
+        ]
+      }
+    },
+    {
+      "run": "openai-gpt-6-luna-document-fuel-layered",
+      "input_ceiling_estimate": 8556,
+      "reserve_usd": 0.003675,
+      "requested_model": "gpt-6-luna",
+      "payload_fingerprint": "f1e41d50a746eae2925389483c38a405fb21a272df3f441861734d0a20e375f7",
+      "reported_model": "gpt-6-luna",
+      "usage": {
+        "input_tokens": 2651,
+        "input_tokens_details": {
+          "cache_write_tokens": 425,
+          "cached_tokens": 2223
+        },
+        "output_tokens": 27,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 2678
+      },
+      "status": "completed",
+      "cost": {
+        "counts": {
+          "input": 2651,
+          "output": 27,
+          "read": 2223,
+          "write": 425,
+          "write_5m": null,
+          "write_1h": null
+        },
+        "provider": "openai",
+        "model": "gpt-6-luna",
+        "usd_min": 0.000089155,
+        "usd_max": 0.00017156,
+        "reasons": [
+          "Short/long tier boundary unverified; range covers both"
+        ]
+      }
+    },
+    {
+      "run": "openai-gpt-6-luna-document-fuel-layered",
+      "input_ceiling_estimate": 10368,
+      "reserve_usd": 0.004128,
+      "requested_model": "gpt-6-luna",
+      "payload_fingerprint": "d1067d1b6e7bc7daf0a3ea99a10a2b6043355080f8c6330c291286853e05621e",
+      "reported_model": "gpt-6-luna",
+      "usage": {
+        "input_tokens": 3440,
+        "input_tokens_details": {
+          "cache_write_tokens": 789,
+          "cached_tokens": 2648
+        },
+        "output_tokens": 29,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 3469
+      },
+      "status": "completed",
+      "cost": {
+        "counts": {
+          "input": 3440,
+          "output": 29,
+          "read": 2648,
+          "write": 789,
+          "write_5m": null,
+          "write_1h": null
+        },
+        "provider": "openai",
+        "model": "gpt-6-luna",
+        "usd_min": 0.00013990500000000004,
+        "usd_max": 0.00027256000000000003,
+        "reasons": [
+          "Short/long tier boundary unverified; range covers both"
+        ]
+      }
+    },
+    {
+      "run": "openai-gpt-6-luna-document-fuel-layered",
+      "input_ceiling_estimate": 12838,
+      "reserve_usd": 0.0047455,
+      "requested_model": "gpt-6-luna",
+      "payload_fingerprint": "e8a87a14b121d344e22e5b0fa32b42f105551c84ca546a7c96047326609c1029",
+      "reported_model": "gpt-6-luna",
+      "usage": {
+        "input_tokens": 4551,
+        "input_tokens_details": {
+          "cache_write_tokens": 1111,
+          "cached_tokens": 3437
+        },
+        "output_tokens": 26,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 4577
+      },
+      "status": "completed",
+      "cost": {
+        "counts": {
+          "input": 4551,
+          "output": 26,
+          "read": 3437,
+          "write": 1111,
+          "write_5m": null,
+          "write_1h": null
+        },
+        "provider": "openai",
+        "model": "gpt-6-luna",
+        "usd_min": 0.000186545,
+        "usd_max": 0.00036659,
+        "reasons": [
+          "Short/long tier boundary unverified; range covers both"
+        ]
+      }
+    },
+    {
+      "run": "openai-gpt-6-luna-document-fuel-layered",
+      "input_ceiling_estimate": 13084,
+      "reserve_usd": 0.004807,
+      "requested_model": "gpt-6-luna",
+      "payload_fingerprint": "42772ab311be109fb7c23c8681ea7257a4881d66651fcb8808922f2c12507d73",
+      "reported_model": "gpt-6-luna",
+      "usage": {
+        "input_tokens": 4598,
+        "input_tokens_details": {
+          "cache_write_tokens": 47,
+          "cached_tokens": 4548
+        },
+        "output_tokens": 28,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 4626
+      },
+      "status": "completed",
+      "cost": {
+        "counts": {
+          "input": 4598,
+          "output": 28,
+          "read": 4548,
+          "write": 47,
+          "write_5m": null,
+          "write_1h": null
+        },
+        "provider": "openai",
+        "model": "gpt-6-luna",
+        "usd_min": 0.00006565500000000001,
+        "usd_max": 0.00012431,
+        "reasons": [
+          "Short/long tier boundary unverified; range covers both"
+        ]
+      }
+    },
+    {
+      "run": "openai-gpt-6-luna-document-fuel-layered",
+      "input_ceiling_estimate": 13344,
+      "reserve_usd": 0.004872,
+      "requested_model": "gpt-6-luna",
+      "payload_fingerprint": "ea0eb4549d9a7e2f7a0711a5f6e535aa8e9c904aef186859121b28d0ffc081f0",
+      "reported_model": "gpt-6-luna",
+      "usage": {
+        "input_tokens": 4647,
+        "input_tokens_details": {
+          "cache_write_tokens": 49,
+          "cached_tokens": 4595
+        },
+        "output_tokens": 28,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 4675
+      },
+      "status": "completed",
+      "cost": {
+        "counts": {
+          "input": 4647,
+          "output": 28,
+          "read": 4595,
+          "write": 49,
+          "write_5m": null,
+          "write_1h": null
+        },
+        "provider": "openai",
+        "model": "gpt-6-luna",
+        "usd_min": 0.000066375,
+        "usd_max": 0.00012575,
+        "reasons": [
+          "Short/long tier boundary unverified; range covers both"
+        ]
+      }
+    },
+    {
+      "run": "openai-gpt-6-luna-document-fuel-layered",
+      "input_ceiling_estimate": 13610,
+      "reserve_usd": 0.0049385,
+      "requested_model": "gpt-6-luna",
+      "payload_fingerprint": "dc5b8d0576291aa15ebc53f3ae6739e4b964eb21625a49ddc3ec0ef6d13b77dd",
+      "reported_model": "gpt-6-luna",
+      "usage": {
+        "input_tokens": 4697,
+        "input_tokens_details": {
+          "cache_write_tokens": 50,
+          "cached_tokens": 4644
+        },
+        "output_tokens": 35,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 4732
+      },
+      "status": "completed",
+      "cost": {
+        "counts": {
+          "input": 4697,
+          "output": 35,
+          "read": 4644,
+          "write": 50,
+          "write_5m": null,
+          "write_1h": null
+        },
+        "provider": "openai",
+        "model": "gpt-6-luna",
+        "usd_min": 0.00007049,
+        "usd_max": 0.00013223,
+        "reasons": [
+          "Short/long tier boundary unverified; range covers both"
+        ]
+      }
+    },
+    {
+      "run": "openai-gpt-6-luna-document-fuel-layered",
+      "input_ceiling_estimate": 13884,
+      "reserve_usd": 0.005007,
+      "requested_model": "gpt-6-luna",
+      "payload_fingerprint": "a75b1c0a86a999930c3020a6e031081c65312f45cf8e9ed8974e591c02534665",
+      "reported_model": "gpt-6-luna",
+      "usage": {
+        "input_tokens": 4753,
+        "input_tokens_details": {
+          "cache_write_tokens": 56,
+          "cached_tokens": 4694
+        },
+        "output_tokens": 36,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 4789
+      },
+      "status": "completed",
+      "cost": {
+        "counts": {
+          "input": 4753,
+          "output": 36,
+          "read": 4694,
+          "write": 56,
+          "write_5m": null,
+          "write_1h": null
+        },
+        "provider": "openai",
+        "model": "gpt-6-luna",
+        "usd_min": 0.00007224,
+        "usd_max": 0.00013548,
+        "reasons": [
+          "Short/long tier boundary unverified; range covers both"
+        ]
+      }
+    },
+    {
+      "run": "openai-gpt-6-luna-document-fuel-layered",
+      "input_ceiling_estimate": 14148,
+      "reserve_usd": 0.005073,
+      "requested_model": "gpt-6-luna",
+      "payload_fingerprint": "fa8216a9bc8a47ab0693914bdb042a9c9c49f6bc8e2f83e64e190c8763e47360",
+      "reported_model": "gpt-6-luna",
+      "usage": {
+        "input_tokens": 4810,
+        "input_tokens_details": {
+          "cache_write_tokens": 57,
+          "cached_tokens": 4750
+        },
+        "output_tokens": 29,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 4839
+      },
+      "status": "completed",
+      "cost": {
+        "counts": {
+          "input": 4810,
+          "output": 29,
+          "read": 4750,
+          "write": 57,
+          "write_5m": null,
+          "write_1h": null
+        },
+        "provider": "openai",
+        "model": "gpt-6-luna",
+        "usd_min": 0.000069425,
+        "usd_max": 0.0001316,
+        "reasons": [
+          "Short/long tier boundary unverified; range covers both"
+        ]
+      }
+    },
+    {
+      "run": "anthropic-claude-sonnet-5-5-ordinary-memory-plain",
+      "input_ceiling_estimate": 2264,
+      "reserve_usd": 0.02614,
+      "requested_model": "claude-sonnet-5-5",
+      "payload_fingerprint": "3e5d9f0594bdb637191c245329bdf07662df0d82e9a0db4c79266918eab25315",
+      "reported_model": "claude-sonnet-5-5",
+      "usage": {
+        "input_tokens": 95,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 490,
+        "output_tokens_details": {
+          "thinking_tokens": 58
+        },
+        "service_tier": "standard",
+        "inference_geo": "global"
+      },
+      "status": "completed",
+      "cost": {
+        "counts": {
+          "input": 95,
+          "output": 490,
+          "read": 0,
+          "write": 0,
+          "write_5m": 0,
+          "write_1h": 0
+        },
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "usd_min": 0.00509,
+        "usd_max": 0.00509,
+        "reasons": []
+      }
+    },
+    {
+      "run": "anthropic-claude-sonnet-5-5-ordinary-memory-plain",
+      "input_ceiling_estimate": 2932,
+      "reserve_usd": 0.02781,
+      "requested_model": "claude-sonnet-5-5",
+      "payload_fingerprint": "f24bb77874d1e8ae84eef93b8f35a9ffbfce3e8dedd213374fdef15c9686b968",
+      "reported_model": "claude-sonnet-5-5",
+      "usage": {
+        "input_tokens": 546,
+        "cache_creation_input_tokens": 542,
+        "cache_read_input_tokens": 0,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 542,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 882,
+        "output_tokens_details": {
+          "thinking_tokens": 245
+        },
+        "service_tier": "standard",
+        "inference_geo": "global"
+      },
+      "status": "completed",
+      "cost": {
+        "counts": {
+          "input": 546,
+          "output": 882,
+          "read": 0,
+          "write": 542,
+          "write_5m": 542,
+          "write_1h": 0
+        },
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "usd_min": 0.010183,
+        "usd_max": 0.010183,
+        "reasons": []
+      }
+    },
+    {
+      "run": "anthropic-claude-sonnet-5-5-ordinary-memory-plain",
+      "input_ceiling_estimate": 3838,
+      "reserve_usd": 0.030075,
+      "requested_model": "claude-sonnet-5-5",
+      "payload_fingerprint": "e4d50ae6090fc9d8f469b993d77d394835b8c7079fc6e4ebd6b09c2b1525f341",
+      "reported_model": "claude-sonnet-5-5",
+      "usage": {
+        "input_tokens": 1231,
+        "cache_creation_input_tokens": 685,
+        "cache_read_input_tokens": 542,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 685,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 1085,
+        "output_tokens_details": {
+          "thinking_tokens": 332
+        },
+        "service_tier": "standard",
+        "inference_geo": "global"
+      },
+      "status": "completed",
+      "cost": {
+        "counts": {
+          "input": 1231,
+          "output": 1085,
+          "read": 542,
+          "write": 685,
+          "write_5m": 685,
+          "write_1h": 0
+        },
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "usd_min": 0.0126789,
+        "usd_max": 0.0126789,
+        "reasons": []
+      }
+    },
+    {
+      "run": "anthropic-claude-sonnet-5-5-ordinary-memory-append",
+      "input_ceiling_estimate": 6506,
+      "reserve_usd": 0.036745,
+      "requested_model": "claude-sonnet-5-5",
+      "payload_fingerprint": "63b913ccc2bc575956f6d6103f88fa99345c44676dad46fbf126b26429913952",
+      "reported_model": "claude-sonnet-5-5",
+      "usage": {
+        "input_tokens": 4079,
+        "cache_creation_input_tokens": 4075,
+        "cache_read_input_tokens": 0,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 4075,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 771,
+        "output_tokens_details": {
+          "thinking_tokens": 0
+        },
+        "service_tier": "standard",
+        "inference_geo": "global"
+      },
+      "status": "completed",
+      "cost": {
+        "counts": {
+          "input": 4079,
+          "output": 771,
+          "read": 0,
+          "write": 4075,
+          "write_5m": 4075,
+          "write_1h": 0
+        },
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "usd_min": 0.0179055,
+        "usd_max": 0.0179055,
+        "reasons": []
+      }
+    },
+    {
+      "run": "anthropic-claude-sonnet-5-5-ordinary-memory-append",
+      "input_ceiling_estimate": 8050,
+      "reserve_usd": 0.040605,
+      "requested_model": "claude-sonnet-5-5",
+      "payload_fingerprint": "7009a03351c123d3b2aaaa168e8173ba262a986706f1f84ebbd1f2ae8b99c7f5",
+      "reported_model": "claude-sonnet-5-5",
+      "usage": {
+        "input_tokens": 5136,
+        "cache_creation_input_tokens": 1268,
+        "cache_read_input_tokens": 3864,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 1268,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 1100,
+        "output_tokens_details": {
+          "thinking_tokens": 0
+        },
+        "service_tier": "standard",
+        "inference_geo": "global"
+      },
+      "status": "completed",
+      "cost": {
+        "counts": {
+          "input": 5136,
+          "output": 1100,
+          "read": 3864,
+          "write": 1268,
+          "write_5m": 1268,
+          "write_1h": 0
+        },
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "usd_min": 0.014950799999999998,
+        "usd_max": 0.014950799999999998,
+        "reasons": []
+      }
+    },
+    {
+      "run": "anthropic-claude-sonnet-5-5-ordinary-memory-append",
+      "input_ceiling_estimate": 9970,
+      "reserve_usd": 0.045405,
+      "requested_model": "claude-sonnet-5-5",
+      "payload_fingerprint": "d4ba02f4d74c6ed30d9f258feb5566a0b0451ff18a8b5a302f177fdb04c20d6e",
+      "reported_model": "claude-sonnet-5-5",
+      "usage": {
+        "input_tokens": 6543,
+        "cache_creation_input_tokens": 2675,
+        "cache_read_input_tokens": 3864,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 2675,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 2048,
+        "output_tokens_details": {
+          "thinking_tokens": 796
+        },
+        "service_tier": "standard",
+        "inference_geo": "global"
+      },
+      "status": "incomplete",
+      "cost": {
+        "counts": {
+          "input": 6543,
+          "output": 2048,
+          "read": 3864,
+          "write": 2675,
+          "write_5m": 2675,
+          "write_1h": 0
+        },
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "usd_min": 0.0279483,
+        "usd_max": 0.0279483,
+        "reasons": []
+      }
+    },
+    {
+      "run": "anthropic-claude-sonnet-5-5-ordinary-memory-layered",
+      "input_ceiling_estimate": 7868,
+      "reserve_usd": 0.04015,
+      "requested_model": "claude-sonnet-5-5",
+      "payload_fingerprint": "5307c1512c7f962358031ea6c4611306a01650b7e2daa79a2e0cbabb15b90339",
+      "reported_model": "claude-sonnet-5-5",
+      "usage": {
+        "input_tokens": 5338,
+        "cache_creation_input_tokens": 5334,
+        "cache_read_input_tokens": 0,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 5334,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 825,
+        "output_tokens_details": {
+          "thinking_tokens": 0
+        },
+        "service_tier": "standard",
+        "inference_geo": "global"
+      },
+      "status": "completed",
+      "cost": {
+        "counts": {
+          "input": 5338,
+          "output": 825,
+          "read": 0,
+          "write": 5334,
+          "write_5m": 5334,
+          "write_1h": 0
+        },
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "usd_min": 0.021593,
+        "usd_max": 0.021593,
+        "reasons": []
+      }
+    },
+    {
+      "run": "anthropic-claude-sonnet-5-5-ordinary-memory-layered",
+      "input_ceiling_estimate": 9440,
+      "reserve_usd": 0.04408,
+      "requested_model": "claude-sonnet-5-5",
+      "payload_fingerprint": "28eb61a658b7ae46363fc125ac7fa2bc0105c94947b21bcb6ea87a6d1071dd6a",
+      "reported_model": "claude-sonnet-5-5",
+      "usage": {
+        "input_tokens": 6506,
+        "cache_creation_input_tokens": 1481,
+        "cache_read_input_tokens": 5021,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 1481,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 1512,
+        "output_tokens_details": {
+          "thinking_tokens": 0
+        },
+        "service_tier": "standard",
+        "inference_geo": "global"
+      },
+      "status": "completed",
+      "cost": {
+        "counts": {
+          "input": 6506,
+          "output": 1512,
+          "read": 5021,
+          "write": 1481,
+          "write_5m": 1481,
+          "write_1h": 0
+        },
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "usd_min": 0.0198347,
+        "usd_max": 0.0198347,
+        "reasons": []
+      }
+    },
+    {
+      "run": "anthropic-claude-sonnet-5-5-ordinary-memory-layered",
+      "input_ceiling_estimate": 11758,
+      "reserve_usd": 0.049875,
+      "requested_model": "claude-sonnet-5-5",
+      "payload_fingerprint": "50abb2d55abbcabf51cc85f2d16e9f0c6ca8d3a0b6f1c412c199a0b8124ede44",
+      "reported_model": "claude-sonnet-5-5",
+      "usage": {
+        "input_tokens": 8366,
+        "cache_creation_input_tokens": 3341,
+        "cache_read_input_tokens": 5021,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 3341,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 2048,
+        "output_tokens_details": {
+          "thinking_tokens": 347
+        },
+        "service_tier": "standard",
+        "inference_geo": "global"
+      },
+      "status": "incomplete",
+      "cost": {
+        "counts": {
+          "input": 8366,
+          "output": 2048,
+          "read": 5021,
+          "write": 3341,
+          "write_5m": 3341,
+          "write_1h": 0
+        },
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "usd_min": 0.029844700000000002,
+        "usd_max": 0.029844700000000002,
+        "reasons": []
+      }
+    },
+    {
+      "run": "anthropic-claude-sonnet-5-5-document-fuel-plain",
+      "input_ceiling_estimate": 5408,
+      "reserve_usd": 0.034,
+      "requested_model": "claude-sonnet-5-5",
+      "payload_fingerprint": "2dfdbc29d47aa36892dd3cfdbcd5e56a749cedaa8e8c44fd1c72f99ba38df7da",
+      "reported_model": "claude-sonnet-5-5",
+      "usage": {
+        "input_tokens": 2522,
+        "cache_creation_input_tokens": 2518,
+        "cache_read_input_tokens": 0,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 2518,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 2048,
+        "output_tokens_details": {
+          "thinking_tokens": 1798
+        },
+        "service_tier": "standard",
+        "inference_geo": "global"
+      },
+      "status": "incomplete",
+      "cost": {
+        "counts": {
+          "input": 2522,
+          "output": 2048,
+          "read": 0,
+          "write": 2518,
+          "write_5m": 2518,
+          "write_1h": 0
+        },
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "usd_min": 0.026783,
+        "usd_max": 0.026783,
+        "reasons": []
+      }
+    },
+    {
+      "run": "anthropic-claude-sonnet-5-5-document-fuel-append",
+      "input_ceiling_estimate": 10496,
+      "reserve_usd": 0.04672,
+      "requested_model": "claude-sonnet-5-5",
+      "payload_fingerprint": "da7c7af55848d5c16be15040f39e857e0c9929d2e2f5b13a7a743e39198efe57",
+      "reported_model": "claude-sonnet-5-5",
+      "usage": {
+        "input_tokens": 7058,
+        "cache_creation_input_tokens": 3190,
+        "cache_read_input_tokens": 3864,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 3190,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 552,
+        "output_tokens_details": {
+          "thinking_tokens": 160
+        },
+        "service_tier": "standard",
+        "inference_geo": "global"
+      },
+      "status": "completed",
+      "cost": {
+        "counts": {
+          "input": 7058,
+          "output": 552,
+          "read": 3864,
+          "write": 3190,
+          "write_5m": 3190,
+          "write_1h": 0
+        },
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "usd_min": 0.0142758,
+        "usd_max": 0.0142758,
+        "reasons": []
+      }
+    },
+    {
+      "run": "anthropic-claude-sonnet-5-5-document-fuel-append",
+      "input_ceiling_estimate": 17350,
+      "reserve_usd": 0.063855,
+      "requested_model": "claude-sonnet-5-5",
+      "payload_fingerprint": "51d74fdce2558eb0e282e221a0061241816d97e9f1b97e0f8852cc90c0a7bdc1",
+      "reported_model": "claude-sonnet-5-5",
+      "usage": {
+        "input_tokens": 10679,
+        "cache_creation_input_tokens": 3623,
+        "cache_read_input_tokens": 7054,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 3623,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 170,
+        "output_tokens_details": {
+          "thinking_tokens": 0
+        },
+        "service_tier": "standard",
+        "inference_geo": "global"
+      },
+      "status": "completed",
+      "cost": {
+        "counts": {
+          "input": 10679,
+          "output": 170,
+          "read": 7054,
+          "write": 3623,
+          "write_5m": 3623,
+          "write_1h": 0
+        },
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "usd_min": 0.012172299999999999,
+        "usd_max": 0.012172299999999999,
+        "reasons": []
+      }
+    },
+    {
+      "run": "anthropic-claude-sonnet-5-5-document-fuel-append",
+      "input_ceiling_estimate": 17814,
+      "reserve_usd": 0.065015,
+      "requested_model": "claude-sonnet-5-5",
+      "payload_fingerprint": "2b43d14c7d027bae71f09ae325498c4c6368afa296f5990b02744d4303379180",
+      "reported_model": "claude-sonnet-5-5",
+      "usage": {
+        "input_tokens": 10929,
+        "cache_creation_input_tokens": 250,
+        "cache_read_input_tokens": 10677,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 250,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 1825,
+        "output_tokens_details": {
+          "thinking_tokens": 560
+        },
+        "service_tier": "standard",
+        "inference_geo": "global"
+      },
+      "status": "completed",
+      "cost": {
+        "counts": {
+          "input": 10929,
+          "output": 1825,
+          "read": 10677,
+          "write": 250,
+          "write_5m": 250,
+          "write_1h": 0
+        },
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "usd_min": 0.021014400000000003,
+        "usd_max": 0.021014400000000003,
+        "reasons": []
+      }
+    },
+    {
+      "run": "anthropic-claude-sonnet-5-5-document-fuel-append",
+      "input_ceiling_estimate": 14056,
+      "reserve_usd": 0.05562,
+      "requested_model": "claude-sonnet-5-5",
+      "payload_fingerprint": "ef04ed8451bfad5572ef4856caf169d4c10eb2093ab577f034128b1c2c2ad103",
+      "reported_model": "claude-sonnet-5-5",
+      "usage": {
+        "input_tokens": 9580,
+        "cache_creation_input_tokens": 5712,
+        "cache_read_input_tokens": 3864,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 5712,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 319,
+        "output_tokens_details": {
+          "thinking_tokens": 162
+        },
+        "service_tier": "standard",
+        "inference_geo": "global"
+      },
+      "status": "completed",
+      "cost": {
+        "counts": {
+          "input": 9580,
+          "output": 319,
+          "read": 3864,
+          "write": 5712,
+          "write_5m": 5712,
+          "write_1h": 0
+        },
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "usd_min": 0.018250799999999998,
+        "usd_max": 0.018250799999999998,
+        "reasons": []
+      }
+    },
+    {
+      "run": "anthropic-claude-sonnet-5-5-document-fuel-append",
+      "input_ceiling_estimate": 16432,
+      "reserve_usd": 0.06156,
+      "requested_model": "claude-sonnet-5-5",
+      "payload_fingerprint": "b9cc86471c8b415fcc21a6bdd1c8c5ca1313004438d5b88aa3f89f350733be25",
+      "reported_model": "claude-sonnet-5-5",
+      "usage": {
+        "input_tokens": 9980,
+        "cache_creation_input_tokens": 402,
+        "cache_read_input_tokens": 9576,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 402,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 87,
+        "output_tokens_details": {
+          "thinking_tokens": 0
+        },
+        "service_tier": "standard",
+        "inference_geo": "global"
+      },
+      "status": "completed",
+      "cost": {
+        "counts": {
+          "input": 9980,
+          "output": 87,
+          "read": 9576,
+          "write": 402,
+          "write_5m": 402,
+          "write_1h": 0
+        },
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "usd_min": 0.0037941999999999997,
+        "usd_max": 0.0037941999999999997,
+        "reasons": []
+      }
+    },
+    {
+      "run": "anthropic-claude-sonnet-5-5-document-fuel-append",
+      "input_ceiling_estimate": 16684,
+      "reserve_usd": 0.06219,
+      "requested_model": "claude-sonnet-5-5",
+      "payload_fingerprint": "d83f31857e9700e8b37cbd3d74246dc9cb68581bdea21b1bf9dfd911c9aacbbf",
+      "reported_model": "claude-sonnet-5-5",
+      "usage": {
+        "input_tokens": 10084,
+        "cache_creation_input_tokens": 104,
+        "cache_read_input_tokens": 9978,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 104,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 161,
+        "output_tokens_details": {
+          "thinking_tokens": 0
+        },
+        "service_tier": "standard",
+        "inference_geo": "global"
+      },
+      "status": "completed",
+      "cost": {
+        "counts": {
+          "input": 10084,
+          "output": 161,
+          "read": 9978,
+          "write": 104,
+          "write_5m": 104,
+          "write_1h": 0
+        },
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "usd_min": 0.0038696000000000004,
+        "usd_max": 0.0038696000000000004,
+        "reasons": []
+      }
+    },
+    {
+      "run": "anthropic-claude-sonnet-5-5-document-fuel-append",
+      "input_ceiling_estimate": 17130,
+      "reserve_usd": 0.063305,
+      "requested_model": "claude-sonnet-5-5",
+      "payload_fingerprint": "9dac5675cbe13daffbd6f756f64f184bc1b4be2ae90966cad877522d6789691e",
+      "reported_model": "claude-sonnet-5-5",
+      "usage": {
+        "input_tokens": 10325,
+        "cache_creation_input_tokens": 241,
+        "cache_read_input_tokens": 10082,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 241,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 674,
+        "output_tokens_details": {
+          "thinking_tokens": 0
+        },
+        "service_tier": "standard",
+        "inference_geo": "global"
+      },
+      "status": "completed",
+      "cost": {
+        "counts": {
+          "input": 10325,
+          "output": 674,
+          "read": 10082,
+          "write": 241,
+          "write_5m": 241,
+          "write_1h": 0
+        },
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "usd_min": 0.0093629,
+        "usd_max": 0.0093629,
+        "reasons": []
+      }
+    },
+    {
+      "run": "anthropic-claude-sonnet-5-5-document-fuel-append",
+      "input_ceiling_estimate": 16104,
+      "reserve_usd": 0.06074,
+      "requested_model": "claude-sonnet-5-5",
+      "payload_fingerprint": "cac32be455e63818fac0072326d9b98c54d037515f4e41c1901bc36c87fb43b3",
+      "reported_model": "claude-sonnet-5-5",
+      "usage": {
+        "input_tokens": 10928,
+        "cache_creation_input_tokens": 7060,
+        "cache_read_input_tokens": 3864,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 7060,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 2048,
+        "output_tokens_details": {
+          "thinking_tokens": 420
+        },
+        "service_tier": "standard",
+        "inference_geo": "global"
+      },
+      "status": "incomplete",
+      "cost": {
+        "counts": {
+          "input": 10928,
+          "output": 2048,
+          "read": 3864,
+          "write": 7060,
+          "write_5m": 7060,
+          "write_1h": 0
+        },
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "usd_min": 0.0389108,
+        "usd_max": 0.0389108,
+        "reasons": []
+      }
+    }
+  ],
+  "runs": [
+    {
+      "label": "openai-gpt-6-luna-ordinary-memory-plain",
+      "provider": "openai",
+      "model": "gpt-6-luna",
+      "template": "ordinary-memory",
+      "mode": "plain",
+      "jev": false,
+      "freeze_projection": false,
+      "status": "completed",
+      "turns": [
+        {
+          "prompt": "Where are memories stored in the brain?",
+          "answer": "Memories aren’t stored in one single spot. They’re represented by changes in connections across networks of brain cells.\n\nThe hippocampus helps form and organize many new memories, especially memories of events. Over time, many memories become more widely distributed across the cerebral cortex. Other brain areas contribute depending on the memory: the amygdala is involved in emotional memories, and the basal ganglia and cerebellum help with habits and learned skills."
+        },
+        {
+          "prompt": "Could distributed memory be emulated for AI systems?",
+          "answer": "Yes. AI systems can emulate some aspects of distributed memory by storing information across multiple components rather than in one central record.\n\nFor example, a system might combine:\n- **Model weights**, which encode learned patterns throughout the network.\n- **External memory**, such as documents, databases, or vector indexes that it can retrieve from.\n- **Specialized modules**, each handling different kinds of information or tasks.\n- **Redundant or overlapping representations**, so information is not dependent on a single storage location.\n\nThis is only an analogy: brain memories arise from living, continually changing neural circuits, while AI memory is engineered storage and computation. Distributed designs can improve scale and resilience, but they also raise practical issues such as updating information, resolving contradictions, and deciding what to retain."
+        },
+        {
+          "prompt": "Summarize the distributed-memory design and distinguish biological analogy from demonstrated AI behavior. Keep uncertainty explicit.",
+          "answer": "A distributed-memory AI design spreads information across several components rather than keeping it in one central store:\n\n- **Model weights** encode learned patterns across many parameters.\n- **External stores**—such as databases or document indexes—hold information the system can retrieve.\n- **Specialized modules** handle different kinds of information or tasks.\n- **Overlapping or redundant representations** may make the design less dependent on any one component.\n\nThe biological analogy is that human memories also rely on changes across networks of brain cells, with different brain regions contributing to different memory functions. But the analogy has limits: biological memory is part of a living, adaptive nervous system; AI components are engineered mechanisms and do not necessarily work like neural memory.\n\nIt is demonstrated that AI systems can use distributed parameters and external retrieval stores. Whether a particular design provides brain-like memory, better resilience, or reliable long-term learning depends on its implementation and evaluation; those properties should not be assumed from the analogy alone."
+        }
+      ],
+      "quality_checklist": [
+        "Distinguishes distributed biological memory from an AI design analogy",
+        "Keeps uncertain mechanisms and proposed designs tentative",
+        "Answers all three prompts"
+      ],
+      "export": "conv_80679446-fa40-4a7c-85cf-bdde331f4e85_2026-10-02T19-52-39-069Z.json",
+      "cost": {
+        "id": "conv_80679446-fa40-4a7c-85cf-bdde331f4e85",
+        "exported_at": "2026-10-02T19:52:39.069Z",
+        "price_date": "2026-10-02",
+        "basis": "public direct API list rates; standard paid tier; not an invoice or historical effective-rate record",
+        "calls": [
+          {
+            "request_id": "evt_df3c91fa-5984-4721-957b-b54df560bdd2",
+            "seq": 4,
+            "purpose": "answer",
+            "requested_model": "gpt-6-luna",
+            "reported_model": "gpt-6-luna",
+            "status": "completed",
+            "counts": {
+              "input": 59,
+              "output": 92,
+              "read": 0,
+              "write": 0,
+              "write_5m": null,
+              "write_1h": null
+            },
+            "provider": "openai",
+            "model": "gpt-6-luna",
+            "usd_min": 0.0000519,
+            "usd_max": 0.0000808,
+            "reasons": [
+              "Short/long tier boundary unverified; range covers both"
+            ]
+          },
+          {
+            "request_id": "evt_1528522b-7e3d-46ec-9e20-82f38dba3e37",
+            "seq": 11,
+            "purpose": "answer",
+            "requested_model": "gpt-6-luna",
+            "reported_model": "gpt-6-luna",
+            "status": "completed",
+            "counts": {
+              "input": 167,
+              "output": 157,
+              "read": 0,
+              "write": 0,
+              "write_5m": null,
+              "write_1h": null
+            },
+            "provider": "openai",
+            "model": "gpt-6-luna",
+            "usd_min": 0.0000952,
+            "usd_max": 0.00015115000000000001,
+            "reasons": [
+              "Short/long tier boundary unverified; range covers both"
+            ]
+          },
+          {
+            "request_id": "evt_2c391f6b-2d3d-4cef-97c5-8c535eae0d9b",
+            "seq": 18,
+            "purpose": "answer",
+            "requested_model": "gpt-6-luna",
+            "reported_model": "gpt-6-luna",
+            "status": "completed",
+            "counts": {
+              "input": 350,
+              "output": 197,
+              "read": 0,
+              "write": 0,
+              "write_5m": null,
+              "write_1h": null
+            },
+            "provider": "openai",
+            "model": "gpt-6-luna",
+            "usd_min": 0.0001335,
+            "usd_max": 0.00021775,
+            "reasons": [
+              "Short/long tier boundary unverified; range covers both"
+            ]
+          }
+        ],
+        "priced_calls": 3,
+        "unpriced_calls": 0,
+        "known_usd_min": 0.0002806,
+        "known_usd_max": 0.00044970000000000003,
+        "purpose": {
+          "answer": {
+            "calls": 3,
+            "priced_calls": 3,
+            "unpriced_calls": 0,
+            "known_usd_min": 0.0002806,
+            "known_usd_max": 0.00044970000000000003
+          }
+        },
+        "context": {
+          "history_characters": 2709,
+          "working_characters": 2709,
+          "reduction_fraction": 0,
+          "measurement_note": "Plain-chat attachments are in request payloads; saved Harness projection is not its transmitted context"
+        },
+        "complete": false
+      }
+    },
+    {
+      "label": "openai-gpt-6-luna-ordinary-memory-append",
+      "provider": "openai",
+      "model": "gpt-6-luna",
+      "template": "ordinary-memory",
+      "mode": "append",
+      "jev": false,
+      "freeze_projection": false,
+      "status": "completed",
+      "turns": [
+        {
+          "prompt": "Where are memories stored in the brain?",
+          "answer": "Memories aren’t stored in one single place. They rely on networks of brain regions:\n\n- **Hippocampus and nearby medial temporal lobe** help form and retrieve many new memories, especially memories of events and facts.\n- **Cerebral cortex** holds much of the long-term information, distributed across areas involved in seeing, hearing, language, and other functions. Over time, some memories become less dependent on the hippocampus.\n- **Amygdala** helps give emotional memories their significance.\n- **Basal ganglia and cerebellum** contribute to habits, skills, and other forms of learned movement.\n\nSo a memory is generally better understood as a pattern of activity and connections across brain circuits, rather than a file kept in one location."
+        },
+        {
+          "prompt": "Could distributed memory be emulated for AI systems?",
+          "answer": "Yes. AI systems can emulate some aspects of distributed memory by storing information across multiple components rather than in one central store—for example:\n\n- **Vector databases** hold information as embeddings that can be retrieved by similarity.\n- **Knowledge graphs** represent facts and relationships across linked records.\n- **Specialized stores** can separately keep episodic notes, learned skills, user preferences, or general knowledge.\n- **Retrieval and routing systems** decide which stores to query for a given task, then combine relevant results.\n\nThis is an engineering analogy, not a close copy of the brain. AI memories are usually explicit data structures or model parameters; human memories arise from biological circuits that change through experience. Systems also need policies for what to retain, how to update or forget it, and how to resolve conflicting records."
+        },
+        {
+          "prompt": "Summarize the distributed-memory design and distinguish biological analogy from demonstrated AI behavior. Keep uncertainty explicit.",
+          "answer": "### Distributed-memory design for AI\n\nA system can spread memory across complementary stores rather than rely on one database:\n\n- **Episodic store:** records of past interactions or events.\n- **Semantic store:** facts and concepts, perhaps represented in documents or a knowledge graph.\n- **Embedding index:** supports similarity-based retrieval of relevant passages.\n- **Skill or procedure store:** reusable methods, instructions, or learned action patterns.\n- **Routing and retrieval layer:** selects which stores to query and combines results for the current task.\n- **Memory-management layer:** decides what to retain, update, reconcile, or forget.\n\nThese are possible architectural components, not a requirement that every AI system has them. Some systems may instead keep information in a single store, in model parameters, or in temporary context.\n\n### Biological analogy vs. demonstrated AI behavior\n\nThe analogy is that both brains and AI designs can distribute information across different structures and bring relevant pieces together when needed. That is a broad comparison—not evidence that an AI memory works like a brain’s.\n\nIn demonstrated AI systems, memory may be implemented as explicit records, embeddings, graphs, parameters, or context supplied at runtime. Such systems can retrieve stored information and use it in responses, but retrieval can fail, return irrelevant or conflicting items, or reflect stale data. A successful retrieval does not by itself show human-like remembering, understanding, or a unified autobiographical memory.\n\nThe exact design and capabilities vary by system. Without details about a particular implementation, it isn’t possible to say which stores it uses or how reliably it remembers."
+        }
+      ],
+      "quality_checklist": [
+        "Distinguishes distributed biological memory from an AI design analogy",
+        "Keeps uncertain mechanisms and proposed designs tentative",
+        "Answers all three prompts"
+      ],
+      "export": "conv_524b7360-55b3-4ccd-86b8-547052e456e9_2026-10-02T19-52-49-406Z.json",
+      "cost": {
+        "id": "conv_524b7360-55b3-4ccd-86b8-547052e456e9",
+        "exported_at": "2026-10-02T19:52:49.406Z",
+        "price_date": "2026-10-02",
+        "basis": "public direct API list rates; standard paid tier; not an invoice or historical effective-rate record",
+        "calls": [
+          {
+            "request_id": "evt_47aac1d2-d45a-4a45-be33-038fe5eb562c",
+            "seq": 4,
+            "purpose": "answer",
+            "requested_model": "gpt-6-luna",
+            "reported_model": "gpt-6-luna",
+            "status": "completed",
+            "counts": {
+              "input": 1930,
+              "output": 157,
+              "read": 0,
+              "write": 1927,
+              "write_5m": null,
+              "write_1h": null
+            },
+            "provider": "openai",
+            "model": "gpt-6-luna",
+            "usd_min": 0.000319675,
+            "usd_max": 0.0006001,
+            "reasons": [
+              "Short/long tier boundary unverified; range covers both"
+            ]
+          },
+          {
+            "request_id": "evt_9e6dbed2-0b9b-45c7-8bcc-e5c4280cdd09",
+            "seq": 11,
+            "purpose": "answer",
+            "requested_model": "gpt-6-luna",
+            "reported_model": "gpt-6-luna",
+            "status": "completed",
+            "counts": {
+              "input": 2280,
+              "output": 164,
+              "read": 1821,
+              "write": 456,
+              "write_5m": null,
+              "write_1h": null
+            },
+            "provider": "openai",
+            "model": "gpt-6-luna",
+            "usd_min": 0.00015751000000000003,
+            "usd_max": 0.00027402000000000004,
+            "reasons": [
+              "Short/long tier boundary unverified; range covers both"
+            ]
+          },
+          {
+            "request_id": "evt_eaf3a127-a7b7-4598-abde-001dabc0e773",
+            "seq": 18,
+            "purpose": "answer",
+            "requested_model": "gpt-6-luna",
+            "reported_model": "gpt-6-luna",
+            "status": "completed",
+            "counts": {
+              "input": 2653,
+              "output": 318,
+              "read": 1821,
+              "write": 829,
+              "write_5m": null,
+              "write_1h": null
+            },
+            "provider": "openai",
+            "model": "gpt-6-luna",
+            "usd_min": 0.00028113500000000007,
+            "usd_max": 0.00048277000000000004,
+            "reasons": [
+              "Short/long tier boundary unverified; range covers both"
+            ]
+          }
+        ],
+        "priced_calls": 3,
+        "unpriced_calls": 0,
+        "known_usd_min": 0.00075832,
+        "known_usd_max": 0.0013568900000000001,
+        "purpose": {
+          "answer": {
+            "calls": 3,
+            "priced_calls": 3,
+            "unpriced_calls": 0,
+            "known_usd_min": 0.00075832,
+            "known_usd_max": 0.0013568900000000001
+          }
+        },
+        "context": {
+          "history_characters": 3596,
+          "working_characters": 3596,
+          "reduction_fraction": 0
+        },
+        "complete": false
+      }
+    },
+    {
+      "label": "openai-gpt-6-luna-ordinary-memory-layered",
+      "provider": "openai",
+      "model": "gpt-6-luna",
+      "template": "ordinary-memory",
+      "mode": "layered",
+      "jev": false,
+      "freeze_projection": false,
+      "status": "completed",
+      "turns": [
+        {
+          "prompt": "Where are memories stored in the brain?",
+          "answer": "Memories aren’t stored in one single place. They’re represented by patterns of activity and changes in connections across networks of brain regions.\n\n- **Hippocampus and nearby medial temporal lobe:** important for forming and initially organizing many new memories, especially memories of events and facts.\n- **Cortex:** stores or represents much of the longer-term information, distributed across regions involved in seeing, hearing, language, movement, and other aspects of the experience.\n- **Amygdala:** helps give emotional experiences lasting significance.\n- **Cerebellum and basal ganglia:** contribute to learned skills, habits, and other forms of memory.\n\nThe hippocampus is therefore more like a coordinator for many kinds of memories than a single “memory storage box.” Different kinds of memory rely on partly different brain systems."
+        },
+        {
+          "prompt": "Could distributed memory be emulated for AI systems?",
+          "answer": "Yes. An AI system could emulate **distributed memory** by storing different aspects of information across multiple components rather than keeping everything in one memory store. For example, it might use:\n\n- **Specialized stores** for facts, episodes, skills, and preferences.\n- **Links and shared representations** that let information in one store cue related information elsewhere.\n- **A retrieval or coordination mechanism** that assembles relevant pieces for a particular task.\n- **Updating and consolidation**, so frequently useful information becomes easier to retrieve while outdated or unreliable items can be revised.\n\nThis would be an analogy, not a literal copy of the brain. AI memories are usually explicit data structures, model parameters, or retrieval indexes; biological memories arise from living neural tissue. Also, a system that distributes memory still needs ways to track provenance, resolve contradictions, and avoid retrieving irrelevant details."
+        },
+        {
+          "prompt": "Summarize the distributed-memory design and distinguish biological analogy from demonstrated AI behavior. Keep uncertainty explicit.",
+          "answer": "Distributed-memory systems for AI could keep different kinds of information in specialized stores—for example, facts, past interactions, skills, and preferences—and use links or a retrieval mechanism to assemble relevant pieces for a task. They could also update or consolidate stored information, while tracking where it came from and handling contradictions or outdated entries.\n\nThis is a **biological analogy**, not a literal model of the brain. In people, memory involves changing patterns and connections across living neural networks; in AI, “memory” may mean explicit records, indexes, or learned model parameters. AI systems can be built with distributed storage and retrieval, but how well they preserve, update, and combine information depends on the system’s design and evaluation. The analogy alone does not show that an AI system remembers as a person does, and there’s no basis here to claim a particular implementation reliably reproduces biological memory."
+        }
+      ],
+      "quality_checklist": [
+        "Distinguishes distributed biological memory from an AI design analogy",
+        "Keeps uncertain mechanisms and proposed designs tentative",
+        "Answers all three prompts"
+      ],
+      "export": "conv_eec7d173-bf4a-41c4-8d01-a8e6d2a1fa21_2026-10-02T19-52-59-790Z.json",
+      "cost": {
+        "id": "conv_eec7d173-bf4a-41c4-8d01-a8e6d2a1fa21",
+        "exported_at": "2026-10-02T19:52:59.790Z",
+        "price_date": "2026-10-02",
+        "basis": "public direct API list rates; standard paid tier; not an invoice or historical effective-rate record",
+        "calls": [
+          {
+            "request_id": "evt_8a0b81ba-c872-4f5a-ae7d-fb7a2b52e882",
+            "seq": 4,
+            "purpose": "answer",
+            "requested_model": "gpt-6-luna",
+            "reported_model": "gpt-6-luna",
+            "status": "completed",
+            "counts": {
+              "input": 2384,
+              "output": 166,
+              "read": 0,
+              "write": 2381,
+              "write_5m": null,
+              "write_1h": null
+            },
+            "provider": "openai",
+            "model": "gpt-6-luna",
+            "usd_min": 0.000380925,
+            "usd_max": 0.00072035,
+            "reasons": [
+              "Short/long tier boundary unverified; range covers both"
+            ]
+          },
+          {
+            "request_id": "evt_525b3cdf-ef30-478c-a838-174ceaf076e9",
+            "seq": 11,
+            "purpose": "answer",
+            "requested_model": "gpt-6-luna",
+            "reported_model": "gpt-6-luna",
+            "status": "completed",
+            "counts": {
+              "input": 2745,
+              "output": 175,
+              "read": 2223,
+              "write": 519,
+              "write_5m": null,
+              "write_1h": null
+            },
+            "provider": "openai",
+            "model": "gpt-6-luna",
+            "usd_min": 0.00017490500000000002,
+            "usd_max": 0.00030606000000000003,
+            "reasons": [
+              "Short/long tier boundary unverified; range covers both"
+            ]
+          },
+          {
+            "request_id": "evt_e5a6603d-0479-45a2-b026-74d7cd74d236",
+            "seq": 18,
+            "purpose": "answer",
+            "requested_model": "gpt-6-luna",
+            "reported_model": "gpt-6-luna",
+            "status": "completed",
+            "counts": {
+              "input": 3095,
+              "output": 179,
+              "read": 2223,
+              "write": 869,
+              "write_5m": null,
+              "write_1h": null
+            },
+            "provider": "openai",
+            "model": "gpt-6-luna",
+            "usd_min": 0.00022065500000000002,
+            "usd_max": 0.00039656000000000007,
+            "reasons": [
+              "Short/long tier boundary unverified; range covers both"
+            ]
+          }
+        ],
+        "priced_calls": 3,
+        "unpriced_calls": 0,
+        "known_usd_min": 0.000776485,
+        "known_usd_max": 0.0014229700000000002,
+        "purpose": {
+          "answer": {
+            "calls": 3,
+            "priced_calls": 3,
+            "unpriced_calls": 0,
+            "known_usd_min": 0.000776485,
+            "known_usd_max": 0.0014229700000000002
+          }
+        },
+        "context": {
+          "history_characters": 3015,
+          "working_characters": 3015,
+          "reduction_fraction": 0
+        },
+        "complete": false
+      }
+    },
+    {
+      "label": "openai-gpt-6-luna-document-fuel-plain",
+      "provider": "openai",
+      "model": "gpt-6-luna",
+      "template": "document-fuel",
+      "mode": "plain",
+      "jev": false,
+      "freeze_projection": false,
+      "status": "completed",
+      "turns": [
+        {
+          "prompt": "Read the two saved drafts, theoretical-space-travel.md and fuel-requirements-illustration.md. Check their math and assumptions. Give a concise report. Treat the drafts as earlier model claims, not confirmed engineering facts.",
+          "answer": "## Review\n\n**Overall:** Both drafts are appropriately labeled as conceptual and idealized, not flight-ready designs. The rocket-equation arithmetic checks out to the precision shown; the examples should not be read as real mission propellant estimates.\n\n### Fuel calculation\n\n- The stated relation is correct for a single ideal burn:  \n  \\(m_0/m_f=\\exp(\\Delta v/(I_{sp}g_0))\\), with propellant \\(m_0-m_f\\).\n- For \\(I_{sp}=450\\) s and \\(g_0=9.80665\\ \\text{m/s}^2\\), effective exhaust velocity is **4,412.99 m/s**.\n- At **9.4 km/s**, the mass ratio is about **8.4155**, giving **74.15 t** of propellant for a 10 t final mass.\n- At **3.2 km/s**, the mass ratio is about **2.0650**, giving **10.65 t**.\n\nThese figures are internally consistent. The assumed 450 s is a hypothetical engine value, not a universal value for chemical propulsion. The calculation assumes constant Isp, a single burn, and that the 10 t final mass includes all non-propellant mass carried through that burn. It omits real-world losses, reserves, and vehicle details. The chosen Δv values are illustrative and do not establish complete mission budgets.\n\n### Theoretical overview\n\nThe discussion of delta-v, gravity assists, and broad propulsion trade-offs is sound at a conceptual level. In particular, high exhaust velocity alone does not ensure a faster or easier mission: thrust, power, vehicle mass, heat rejection, and other constraints matter. The propulsion descriptions are broad summaries, not performance guarantees; actual capability depends on a specific, demonstrated system.\n\n**Bottom line:** The arithmetic is correct under the stated ideal assumptions. Neither draft provides a validated vehicle design, trajectory, or mission-specific fuel estimate."
+        },
+        {
+          "prompt": "For the same idealized single burn, change final mass to 12 metric tonnes and delta-v to 3.2 km/s, keeping Isp=450 s and g0=9.80665 m/s^2. Calculate propellant and initial mass. Preserve the single-burn, no-staging, no-reserves caveats.",
+          "answer": "For the ideal single burn:\n\n- Effective exhaust velocity: \\(450 \\times 9.80665 = 4{,}412.99\\ \\text{m/s}\\)\n- Mass ratio: \\(\\exp(3{,}200 / 4{,}412.99) \\approx 2.0650\\)\n- **Initial mass:** \\(12 \\times 2.0650 \\approx 24.78\\) metric tonnes\n- **Propellant:** \\(24.78 - 12 \\approx 12.78\\) metric tonnes\n\nThis is an idealized, single-burn estimate with no staging or reserves; it excludes real-world losses and other vehicle-design requirements."
+        },
+        {
+          "prompt": "Write a concise comparison report named fuel-review.md with original assumptions and the corrected 12-tonne case. Keep theory separate from engineering recommendations. Read it back to verify if workspace tools are available; otherwise provide the report as Markdown.",
+          "answer": "I don’t have workspace tools available to create or read back a file. Here is the requested Markdown content for **fuel-review.md**:\n\n# Fuel Review\n\n## Original illustrative cases\n\nThe earlier draft assumed an ideal single burn with \\(I_{sp}=450\\) s, \\(g_0=9.80665\\ \\text{m/s}^2\\), and a final mass of 10 metric tonnes. Using the ideal rocket equation, the effective exhaust velocity is \\(4{,}412.99\\ \\text{m/s}\\).\n\n| Δv | Mass ratio | Initial mass | Propellant |\n|---:|---:|---:|---:|\n| 9.4 km/s | 8.4155 | 84.15 t | 74.15 t |\n| 3.2 km/s | 2.0650 | 20.65 t | 10.65 t |\n\n## Corrected 12-tonne case\n\nKeeping \\(I_{sp}\\), \\(g_0\\), and Δv = 3.2 km/s unchanged, but using a final mass of 12 metric tonnes:\n\n- Mass ratio: approximately **2.0650**\n- Initial mass: approximately **24.78 metric tonnes**\n- Propellant: approximately **12.78 metric tonnes**\n\n## Theory and limitations\n\nThese figures follow from the ideal single-burn rocket equation. They assume constant specific impulse and that final mass includes all non-propellant mass remaining after the burn. The model has no staging or reserves and excludes gravity and atmospheric losses, additional maneuvers, and other real-world effects. The Δv values are illustrative, not complete mission budgets.\n\n## Engineering recommendations\n\nThese calculations are arithmetic illustrations, not engineering recommendations or vehicle sizing. A mission-specific estimate would require a defined trajectory, propulsion and staging architecture, mass breakdown, and applicable margins."
+        }
+      ],
+      "quality_checklist": [
+        "Retrieves both original drafts",
+        "Uses corrected 12 tonnes, 3200 m/s, 450 s, g0=9.80665",
+        "Propellant about 12.78 t and initial mass about 24.78 t",
+        "Preserves no staging/reserves and ideal single burn",
+        "Produces a readable report; verifies saved workspace file in tool-enabled modes"
+      ],
+      "export": "conv_0a8370a0-89d8-416f-80fe-87e6e48c3a3b_2026-10-02T19-53-09-982Z.json",
+      "cost": {
+        "id": "conv_0a8370a0-89d8-416f-80fe-87e6e48c3a3b",
+        "exported_at": "2026-10-02T19:53:09.982Z",
+        "price_date": "2026-10-02",
+        "basis": "public direct API list rates; standard paid tier; not an invoice or historical effective-rate record",
+        "calls": [
+          {
+            "request_id": "evt_577b25fe-9298-4bbc-9bf9-71280cc6714f",
+            "seq": 4,
+            "purpose": "answer",
+            "requested_model": "gpt-6-luna",
+            "reported_model": "gpt-6-luna",
+            "status": "completed",
+            "counts": {
+              "input": 1560,
+              "output": 406,
+              "read": 0,
+              "write": 1557,
+              "write_5m": null,
+              "write_1h": null
+            },
+            "provider": "openai",
+            "model": "gpt-6-luna",
+            "usd_min": 0.00039792500000000004,
+            "usd_max": 0.00069435,
+            "reasons": [
+              "Short/long tier boundary unverified; range covers both"
+            ]
+          },
+          {
+            "request_id": "evt_072bd5e7-b511-41a2-8dc9-ac027b05de37",
+            "seq": 11,
+            "purpose": "answer",
+            "requested_model": "gpt-6-luna",
+            "reported_model": "gpt-6-luna",
+            "status": "completed",
+            "counts": {
+              "input": 2041,
+              "output": 148,
+              "read": 1557,
+              "write": 481,
+              "write_5m": null,
+              "write_1h": null
+            },
+            "provider": "openai",
+            "model": "gpt-6-luna",
+            "usd_min": 0.00014999500000000002,
+            "usd_max": 0.00026299,
+            "reasons": [
+              "Short/long tier boundary unverified; range covers both"
+            ]
+          },
+          {
+            "request_id": "evt_8b2de3c6-33be-4516-8122-1a693003133f",
+            "seq": 18,
+            "purpose": "answer",
+            "requested_model": "gpt-6-luna",
+            "reported_model": "gpt-6-luna",
+            "status": "completed",
+            "counts": {
+              "input": 2241,
+              "output": 389,
+              "read": 2038,
+              "write": 200,
+              "write_5m": null,
+              "write_1h": null
+            },
+            "provider": "openai",
+            "model": "gpt-6-luna",
+            "usd_min": 0.00024018,
+            "usd_max": 0.00038311000000000004,
+            "reasons": [
+              "Short/long tier boundary unverified; range covers both"
+            ]
+          }
+        ],
+        "priced_calls": 3,
+        "unpriced_calls": 0,
+        "known_usd_min": 0.0007881,
+        "known_usd_max": 0.0013404500000000002,
+        "purpose": {
+          "answer": {
+            "calls": 3,
+            "priced_calls": 3,
+            "unpriced_calls": 0,
+            "known_usd_min": 0.0007881,
+            "known_usd_max": 0.0013404500000000002
+          }
+        },
+        "context": {
+          "history_characters": 4428,
+          "working_characters": 4428,
+          "reduction_fraction": 0,
+          "measurement_note": "Plain-chat attachments are in request payloads; saved Harness projection is not its transmitted context"
+        },
+        "complete": false
+      }
+    },
+    {
+      "label": "openai-gpt-6-luna-document-fuel-append",
+      "provider": "openai",
+      "model": "gpt-6-luna",
+      "template": "document-fuel",
+      "mode": "append",
+      "jev": false,
+      "freeze_projection": false,
+      "status": "failed",
+      "turns": [],
+      "quality_checklist": [
+        "Retrieves both original drafts",
+        "Uses corrected 12 tonnes, 3200 m/s, 450 s, g0=9.80665",
+        "Propellant about 12.78 t and initial mass about 24.78 t",
+        "Preserves no staging/reserves and ideal single burn",
+        "Produces a readable report; verifies saved workspace file in tool-enabled modes"
+      ],
+      "error": "Stopped at 8 answer calls; history and context were saved",
+      "export": "conv_0938d65a-a739-4469-ac55-5c0af2910bd2_2026-10-02T19-53-19-642Z.json",
+      "cost": {
+        "id": "conv_0938d65a-a739-4469-ac55-5c0af2910bd2",
+        "exported_at": "2026-10-02T19:53:19.642Z",
+        "price_date": "2026-10-02",
+        "basis": "public direct API list rates; standard paid tier; not an invoice or historical effective-rate record",
+        "calls": [
+          {
+            "request_id": "evt_c0fd04eb-a8b6-41cc-8a44-f9d17cf4cb34",
+            "seq": 6,
+            "purpose": "answer",
+            "requested_model": "gpt-6-luna",
+            "reported_model": "gpt-6-luna",
+            "status": "completed",
+            "counts": {
+              "input": 3823,
+              "output": 27,
+              "read": 1821,
+              "write": 1999,
+              "write_5m": null,
+              "write_1h": null
+            },
+            "provider": "openai",
+            "model": "gpt-6-luna",
+            "usd_min": 0.000281885,
+            "usd_max": 0.00055702,
+            "reasons": [
+              "Short/long tier boundary unverified; range covers both"
+            ]
+          },
+          {
+            "request_id": "evt_6b0ab979-1596-4e63-bba2-31138b659e77",
+            "seq": 11,
+            "purpose": "answer",
+            "requested_model": "gpt-6-luna",
+            "reported_model": "gpt-6-luna",
+            "status": "completed",
+            "counts": {
+              "input": 4620,
+              "output": 29,
+              "read": 3820,
+              "write": 797,
+              "write_5m": null,
+              "write_1h": null
+            },
+            "provider": "openai",
+            "model": "gpt-6-luna",
+            "usd_min": 0.000152625,
+            "usd_max": 0.000298,
+            "reasons": [
+              "Short/long tier boundary unverified; range covers both"
+            ]
+          },
+          {
+            "request_id": "evt_93be5aab-c6d1-4297-95ea-c6292defacab",
+            "seq": 16,
+            "purpose": "answer",
+            "requested_model": "gpt-6-luna",
+            "reported_model": "gpt-6-luna",
+            "status": "completed",
+            "counts": {
+              "input": 5723,
+              "output": 26,
+              "read": 4617,
+              "write": 1103,
+              "write_5m": null,
+              "write_1h": null
+            },
+            "provider": "openai",
+            "model": "gpt-6-luna",
+            "usd_min": 0.00019734500000000003,
+            "usd_max": 0.00038819000000000006,
+            "reasons": [
+              "Short/long tier boundary unverified; range covers both"
+            ]
+          },
+          {
+            "request_id": "evt_d30b9581-dc4a-4938-98cd-27182e8302dd",
+            "seq": 20,
+            "purpose": "answer",
+            "requested_model": "gpt-6-luna",
+            "reported_model": "gpt-6-luna",
+            "status": "completed",
+            "counts": {
+              "input": 5770,
+              "output": 28,
+              "read": 5720,
+              "write": 47,
+              "write_5m": null,
+              "write_1h": null
+            },
+            "provider": "openai",
+            "model": "gpt-6-luna",
+            "usd_min": 0.000077375,
+            "usd_max": 0.00014775,
+            "reasons": [
+              "Short/long tier boundary unverified; range covers both"
+            ]
+          },
+          {
+            "request_id": "evt_468161e5-4cc8-424c-840b-fe8de5945ffa",
+            "seq": 24,
+            "purpose": "answer",
+            "requested_model": "gpt-6-luna",
+            "reported_model": "gpt-6-luna",
+            "status": "completed",
+            "counts": {
+              "input": 5819,
+              "output": 35,
+              "read": 5767,
+              "write": 49,
+              "write_5m": null,
+              "write_1h": null
+            },
+            "provider": "openai",
+            "model": "gpt-6-luna",
+            "usd_min": 0.000081595,
+            "usd_max": 0.00015444,
+            "reasons": [
+              "Short/long tier boundary unverified; range covers both"
+            ]
+          },
+          {
+            "request_id": "evt_e2e0a876-a405-4128-a7d8-904e297fc268",
+            "seq": 28,
+            "purpose": "answer",
+            "requested_model": "gpt-6-luna",
+            "reported_model": "gpt-6-luna",
+            "status": "completed",
+            "counts": {
+              "input": 5875,
+              "output": 29,
+              "read": 5816,
+              "write": 56,
+              "write_5m": null,
+              "write_1h": null
+            },
+            "provider": "openai",
+            "model": "gpt-6-luna",
+            "usd_min": 0.00007996,
+            "usd_max": 0.00015267,
+            "reasons": [
+              "Short/long tier boundary unverified; range covers both"
+            ]
+          },
+          {
+            "request_id": "evt_96b6c496-f299-4bf5-a786-64ae093de6f6",
+            "seq": 32,
+            "purpose": "answer",
+            "requested_model": "gpt-6-luna",
+            "reported_model": "gpt-6-luna",
+            "status": "completed",
+            "counts": {
+              "input": 5925,
+              "output": 29,
+              "read": 5872,
+              "write": 50,
+              "write_5m": null,
+              "write_1h": null
+            },
+            "provider": "openai",
+            "model": "gpt-6-luna",
+            "usd_min": 0.00007976999999999999,
+            "usd_max": 0.00015229,
+            "reasons": [
+              "Short/long tier boundary unverified; range covers both"
+            ]
+          },
+          {
+            "request_id": "evt_91230833-a5f0-4251-960b-59c1c8193831",
+            "seq": 36,
+            "purpose": "answer",
+            "requested_model": "gpt-6-luna",
+            "reported_model": "gpt-6-luna",
+            "status": "completed",
+            "counts": {
+              "input": 5975,
+              "output": 28,
+              "read": 5922,
+              "write": 50,
+              "write_5m": null,
+              "write_1h": null
+            },
+            "provider": "openai",
+            "model": "gpt-6-luna",
+            "usd_min": 0.00007976999999999999,
+            "usd_max": 0.00015254,
+            "reasons": [
+              "Short/long tier boundary unverified; range covers both"
+            ]
+          }
+        ],
+        "priced_calls": 8,
+        "unpriced_calls": 0,
+        "known_usd_min": 0.001030325,
+        "known_usd_max": 0.0020029,
+        "purpose": {
+          "answer": {
+            "calls": 8,
+            "priced_calls": 8,
+            "unpriced_calls": 0,
+            "known_usd_min": 0.001030325,
+            "known_usd_max": 0.0020029
+          }
+        },
+        "context": {
+          "history_characters": 6462,
+          "working_characters": 225,
+          "reduction_fraction": 0.9651810584958217
+        },
+        "complete": false
+      }
+    },
+    {
+      "label": "openai-gpt-6-luna-document-fuel-layered",
+      "provider": "openai",
+      "model": "gpt-6-luna",
+      "template": "document-fuel",
+      "mode": "layered",
+      "jev": false,
+      "freeze_projection": false,
+      "status": "failed",
+      "turns": [],
+      "quality_checklist": [
+        "Retrieves both original drafts",
+        "Uses corrected 12 tonnes, 3200 m/s, 450 s, g0=9.80665",
+        "Propellant about 12.78 t and initial mass about 24.78 t",
+        "Preserves no staging/reserves and ideal single burn",
+        "Produces a readable report; verifies saved workspace file in tool-enabled modes"
+      ],
+      "error": "Stopped at 8 answer calls; history and context were saved",
+      "export": "conv_4ec96a0d-c23c-4b02-8e09-168574f26cf2_2026-10-02T19-53-30-962Z.json",
+      "cost": {
+        "id": "conv_4ec96a0d-c23c-4b02-8e09-168574f26cf2",
+        "exported_at": "2026-10-02T19:53:30.962Z",
+        "price_date": "2026-10-02",
+        "basis": "public direct API list rates; standard paid tier; not an invoice or historical effective-rate record",
+        "calls": [
+          {
+            "request_id": "evt_cb2bba07-ed8e-4e19-963f-684a1aa57f5b",
+            "seq": 6,
+            "purpose": "answer",
+            "requested_model": "gpt-6-luna",
+            "reported_model": "gpt-6-luna",
+            "status": "completed",
+            "counts": {
+              "input": 2651,
+              "output": 27,
+              "read": 2223,
+              "write": 425,
+              "write_5m": null,
+              "write_1h": null
+            },
+            "provider": "openai",
+            "model": "gpt-6-luna",
+            "usd_min": 0.000089155,
+            "usd_max": 0.00017156,
+            "reasons": [
+              "Short/long tier boundary unverified; range covers both"
+            ]
+          },
+          {
+            "request_id": "evt_90b7272f-f8fd-43a1-a1ec-593c2c932b36",
+            "seq": 11,
+            "purpose": "answer",
+            "requested_model": "gpt-6-luna",
+            "reported_model": "gpt-6-luna",
+            "status": "completed",
+            "counts": {
+              "input": 3440,
+              "output": 29,
+              "read": 2648,
+              "write": 789,
+              "write_5m": null,
+              "write_1h": null
+            },
+            "provider": "openai",
+            "model": "gpt-6-luna",
+            "usd_min": 0.00013990500000000004,
+            "usd_max": 0.00027256000000000003,
+            "reasons": [
+              "Short/long tier boundary unverified; range covers both"
+            ]
+          },
+          {
+            "request_id": "evt_e45a1768-b8ec-4a83-bff6-9437dd871cdd",
+            "seq": 16,
+            "purpose": "answer",
+            "requested_model": "gpt-6-luna",
+            "reported_model": "gpt-6-luna",
+            "status": "completed",
+            "counts": {
+              "input": 4551,
+              "output": 26,
+              "read": 3437,
+              "write": 1111,
+              "write_5m": null,
+              "write_1h": null
+            },
+            "provider": "openai",
+            "model": "gpt-6-luna",
+            "usd_min": 0.000186545,
+            "usd_max": 0.00036659,
+            "reasons": [
+              "Short/long tier boundary unverified; range covers both"
+            ]
+          },
+          {
+            "request_id": "evt_e89f0171-e43f-4c14-b60c-0e1382e14b43",
+            "seq": 20,
+            "purpose": "answer",
+            "requested_model": "gpt-6-luna",
+            "reported_model": "gpt-6-luna",
+            "status": "completed",
+            "counts": {
+              "input": 4598,
+              "output": 28,
+              "read": 4548,
+              "write": 47,
+              "write_5m": null,
+              "write_1h": null
+            },
+            "provider": "openai",
+            "model": "gpt-6-luna",
+            "usd_min": 0.00006565500000000001,
+            "usd_max": 0.00012431,
+            "reasons": [
+              "Short/long tier boundary unverified; range covers both"
+            ]
+          },
+          {
+            "request_id": "evt_3240bd07-9edf-41e2-a935-0a1d8736153b",
+            "seq": 24,
+            "purpose": "answer",
+            "requested_model": "gpt-6-luna",
+            "reported_model": "gpt-6-luna",
+            "status": "completed",
+            "counts": {
+              "input": 4647,
+              "output": 28,
+              "read": 4595,
+              "write": 49,
+              "write_5m": null,
+              "write_1h": null
+            },
+            "provider": "openai",
+            "model": "gpt-6-luna",
+            "usd_min": 0.000066375,
+            "usd_max": 0.00012575,
+            "reasons": [
+              "Short/long tier boundary unverified; range covers both"
+            ]
+          },
+          {
+            "request_id": "evt_44cd69b5-d979-473c-a421-e6a85a1aa647",
+            "seq": 28,
+            "purpose": "answer",
+            "requested_model": "gpt-6-luna",
+            "reported_model": "gpt-6-luna",
+            "status": "completed",
+            "counts": {
+              "input": 4697,
+              "output": 35,
+              "read": 4644,
+              "write": 50,
+              "write_5m": null,
+              "write_1h": null
+            },
+            "provider": "openai",
+            "model": "gpt-6-luna",
+            "usd_min": 0.00007049,
+            "usd_max": 0.00013223,
+            "reasons": [
+              "Short/long tier boundary unverified; range covers both"
+            ]
+          },
+          {
+            "request_id": "evt_dc28bd58-e067-4d7d-aeb8-827485ae0102",
+            "seq": 32,
+            "purpose": "answer",
+            "requested_model": "gpt-6-luna",
+            "reported_model": "gpt-6-luna",
+            "status": "completed",
+            "counts": {
+              "input": 4753,
+              "output": 36,
+              "read": 4694,
+              "write": 56,
+              "write_5m": null,
+              "write_1h": null
+            },
+            "provider": "openai",
+            "model": "gpt-6-luna",
+            "usd_min": 0.00007224,
+            "usd_max": 0.00013548,
+            "reasons": [
+              "Short/long tier boundary unverified; range covers both"
+            ]
+          },
+          {
+            "request_id": "evt_fdf2c373-f322-464f-b278-ca14d4d0e8a6",
+            "seq": 36,
+            "purpose": "answer",
+            "requested_model": "gpt-6-luna",
+            "reported_model": "gpt-6-luna",
+            "status": "completed",
+            "counts": {
+              "input": 4810,
+              "output": 29,
+              "read": 4750,
+              "write": 57,
+              "write_5m": null,
+              "write_1h": null
+            },
+            "provider": "openai",
+            "model": "gpt-6-luna",
+            "usd_min": 0.000069425,
+            "usd_max": 0.0001316,
+            "reasons": [
+              "Short/long tier boundary unverified; range covers both"
+            ]
+          }
+        ],
+        "priced_calls": 8,
+        "unpriced_calls": 0,
+        "known_usd_min": 0.0007597900000000001,
+        "known_usd_max": 0.0014600799999999999,
+        "purpose": {
+          "answer": {
+            "calls": 8,
+            "priced_calls": 8,
+            "unpriced_calls": 0,
+            "known_usd_min": 0.0007597900000000001,
+            "known_usd_max": 0.0014600799999999999
+          }
+        },
+        "context": {
+          "history_characters": 6462,
+          "working_characters": 225,
+          "reduction_fraction": 0.9651810584958217
+        },
+        "complete": false
+      }
+    },
+    {
+      "label": "anthropic-claude-sonnet-5-5-ordinary-memory-plain",
+      "provider": "anthropic",
+      "model": "claude-sonnet-5-5",
+      "template": "ordinary-memory",
+      "mode": "plain",
+      "jev": false,
+      "freeze_projection": false,
+      "status": "completed",
+      "turns": [
+        {
+          "prompt": "Where are memories stored in the brain?",
+          "answer": "Memories aren't stored in one place. They're distributed across networks, and different types rely on different regions.\n\n**By memory type**\n- **Episodic memories (events, experiences):** The hippocampus binds the elements of an experience together at first. Over time, the details are thought to be consolidated into the neocortex, though how much the hippocampus remains involved is debated.\n- **Semantic memories (facts, knowledge):** Mainly the neocortex, especially the temporal lobes.\n- **Procedural memories (skills, habits):** The basal ganglia and cerebellum, plus motor cortex.\n- **Emotional memories (e.g., fear):** The amygdala, which modulates how strongly other memories are encoded.\n- **Working memory (short-term holding):** The prefrontal cortex and connected parietal areas.\n- **Sensory aspects:** The sensory cortices (visual, auditory, etc.) are reactivated when you recall related details.\n\n**How they're stored**\nMemories are thought to be encoded in changes to synaptic strength and connectivity among groups of neurons, sometimes called \"engrams.\" Recalling a memory reactivates a pattern across these distributed cells.\n\n**Caveats**\nThe details of consolidation, how long the hippocampus is needed, and how engrams are maintained over decades are still active research areas."
+        },
+        {
+          "prompt": "Could distributed memory be emulated for AI systems?",
+          "answer": "Partly, and in some ways it already is. Modern AI borrows the core idea, though the match to the brain is loose.\n\n**Where it already resembles distributed memory**\n- **Neural network weights:** Knowledge is spread across many parameters rather than stored at a specific location, and a single weight contributes to many \"memories.\"\n- **Associative memory models:** Hopfield networks and Kanerva's sparse distributed memory store patterns across many units and retrieve them from partial cues, like recall in the brain. Modern Hopfield networks are also closely related to transformer attention.\n- **Complementary learning systems:** This is a neuroscience-inspired idea of a fast learner (hippocampus-like) and a slow one (neocortex-like). It motivated experience replay in reinforcement learning, where stored experiences are replayed to train the main network gradually.\n- **External memory:** Neural Turing Machines, differentiable neural computers, and retrieval-augmented systems using vector databases add separate, fast-access stores alongside the main model.\n\n**Where it falls short**\n- **Catastrophic forgetting:** Networks trained on new data tend to overwrite old knowledge. The brain handles continual learning much better, and how it does so isn't fully understood.\n- **Consolidation:** Brains appear to transfer and reorganize memories over time, partly during sleep. AI analogues like replay or fine-tuning exist but are crude by comparison.\n- **Biological mechanisms:** Synaptic plasticity, neuromodulators, and structural changes are much richer than gradient descent on static weights.\n- **Uncertainty about the target:** Because neuroscientists still debate how engrams form and persist, \"emulating\" the brain is more accurately described as taking inspiration from it.\n\nSo the principle of distributed, content-addressable storage is well established in AI. Faithfully reproducing the brain's lifelong, adaptive, consolidating memory remains an open research problem."
+        },
+        {
+          "prompt": "Summarize the distributed-memory design and distinguish biological analogy from demonstrated AI behavior. Keep uncertainty explicit.",
+          "answer": "## Summary of the design\n\nA distributed-memory system for AI would combine:\n1. **A slow, distributed store:** knowledge spread across many parameters (like network weights).\n2. **A fast, episodic store:** an external or separate memory for new experiences (like a vector database or replay buffer).\n3. **Content-addressable retrieval:** recall from partial cues rather than by address.\n4. **Consolidation:** periodic transfer from the fast store to the slow one (replay, fine-tuning).\n\n## Demonstrated AI behavior (empirical or mathematical)\n- Neural networks store knowledge across many weights, with no single location per fact. Mechanistic details of *how* are still being studied.\n- Hopfield and sparse distributed memory models retrieve stored patterns from partial or noisy cues.\n- Modern Hopfield update rules are mathematically related to transformer attention. This is a formal correspondence, not evidence that transformers work like brains.\n- Experience replay improves stability in some reinforcement learning systems.\n- Retrieval-augmented systems can use external stores to supplement a model's knowledge.\n- Catastrophic forgetting occurs when networks are trained sequentially, and mitigations (replay, regularization) reduce it but don't eliminate it.\n\n## Biological analogy (inspiration, not established equivalence)\n- **Hippocampus as fast learner and neocortex as slow learner:** complementary learning systems is a influential theory, not settled fact. It motivated replay methods, but AI replay is a much simpler mechanism.\n- **Engrams:** rodent studies show that reactivating specific cell populations can trigger recall, but how engrams form, persist, and reorganize is debated.\n- **Sleep-based consolidation:** supported by evidence in biology, but AI analogues are loose metaphors.\n- **Synaptic plasticity and neuromodulation:** far richer than gradient descent, and no AI system replicates them.\n\n## Key uncertainties\n- Whether brain-like consolidation would actually improve AI continual learning is untested at scale.\n- Our understanding of the biological target is incomplete, so \"emulation\" is better read as \"inspiration.\"\n- Similar-looking behavior (e.g., pattern completion) doesn't imply the same underlying mechanism."
+        }
+      ],
+      "quality_checklist": [
+        "Distinguishes distributed biological memory from an AI design analogy",
+        "Keeps uncertain mechanisms and proposed designs tentative",
+        "Answers all three prompts"
+      ],
+      "export": "conv_621da627-ed32-4ce8-b231-94048ba52fca_2026-10-02T19-53-53-457Z.json",
+      "cost": {
+        "id": "conv_621da627-ed32-4ce8-b231-94048ba52fca",
+        "exported_at": "2026-10-02T19:53:53.457Z",
+        "price_date": "2026-10-02",
+        "basis": "public direct API list rates; standard paid tier; not an invoice or historical effective-rate record",
+        "calls": [
+          {
+            "request_id": "evt_f5efc9a4-321e-47a0-ae42-6a73f3167408",
+            "seq": 4,
+            "purpose": "answer",
+            "requested_model": "claude-sonnet-5-5",
+            "reported_model": "claude-sonnet-5-5",
+            "status": "completed",
+            "counts": {
+              "input": 95,
+              "output": 490,
+              "read": 0,
+              "write": 0,
+              "write_5m": 0,
+              "write_1h": 0
+            },
+            "provider": "anthropic",
+            "model": "claude-sonnet-5-5",
+            "usd_min": 0.00509,
+            "usd_max": 0.00509,
+            "reasons": []
+          },
+          {
+            "request_id": "evt_b49f1512-3ef7-4fb0-8634-15eb23636de2",
+            "seq": 11,
+            "purpose": "answer",
+            "requested_model": "claude-sonnet-5-5",
+            "reported_model": "claude-sonnet-5-5",
+            "status": "completed",
+            "counts": {
+              "input": 546,
+              "output": 882,
+              "read": 0,
+              "write": 542,
+              "write_5m": 542,
+              "write_1h": 0
+            },
+            "provider": "anthropic",
+            "model": "claude-sonnet-5-5",
+            "usd_min": 0.010183,
+            "usd_max": 0.010183,
+            "reasons": []
+          },
+          {
+            "request_id": "evt_cd42ffd3-7725-481b-a481-45baaddb4403",
+            "seq": 18,
+            "purpose": "answer",
+            "requested_model": "claude-sonnet-5-5",
+            "reported_model": "claude-sonnet-5-5",
+            "status": "completed",
+            "counts": {
+              "input": 1231,
+              "output": 1085,
+              "read": 542,
+              "write": 685,
+              "write_5m": 685,
+              "write_1h": 0
+            },
+            "provider": "anthropic",
+            "model": "claude-sonnet-5-5",
+            "usd_min": 0.0126789,
+            "usd_max": 0.0126789,
+            "reasons": []
+          }
+        ],
+        "priced_calls": 3,
+        "unpriced_calls": 0,
+        "known_usd_min": 0.0279519,
+        "known_usd_max": 0.0279519,
+        "purpose": {
+          "answer": {
+            "calls": 3,
+            "priced_calls": 3,
+            "unpriced_calls": 0,
+            "known_usd_min": 0.0279519,
+            "known_usd_max": 0.0279519
+          }
+        },
+        "context": {
+          "history_characters": 5762,
+          "working_characters": 5762,
+          "reduction_fraction": 0,
+          "measurement_note": "Plain-chat attachments are in request payloads; saved Harness projection is not its transmitted context"
+        },
+        "complete": true
+      }
+    },
+    {
+      "label": "anthropic-claude-sonnet-5-5-ordinary-memory-append",
+      "provider": "anthropic",
+      "model": "claude-sonnet-5-5",
+      "template": "ordinary-memory",
+      "mode": "append",
+      "jev": false,
+      "freeze_projection": false,
+      "status": "failed",
+      "turns": [
+        {
+          "prompt": "Where are memories stored in the brain?",
+          "answer": "Memories aren't kept in one place. They're spread across several brain regions, and which ones are involved depends on the type of memory.\n\n**By memory type**\n\n- **Working memory (short-term)**: The prefrontal cortex does most of the work. It holds and manipulates information for seconds to minutes. Parietal regions help.\n- **Episodic memory (personal events)**: The hippocampus binds together the who, what, where and when of an event. Over time, the memory is gradually stored in the neocortex, a process called systems consolidation.\n- **Semantic memory (facts and knowledge)**: This is stored mostly in the neocortex. The anterior temporal lobes act as a hub, and sensory and association areas hold specific features.\n- **Emotional memory**: The amygdala tags memories with emotional significance. It works with the hippocampus to strengthen them.\n- **Procedural memory (skills and habits)**: The basal ganglia (striatum) and cerebellum store these. The cerebellum is especially involved in motor learning and timing, and motor cortex areas contribute as well.\n- **Perceptual memory and priming**: Sensory cortices, such as the visual and auditory areas, hold these.\n\n**Distributed storage**\n\nA single memory is usually spread across many regions. Remembering a birthday party might involve the visual cortex for what you saw, the auditory cortex for the music, the amygdala for the feeling, and the hippocampus for tying it all together. Recall reactivates much of that same pattern.\n\n**Cellular level**\n\nAt the cellular level, memories are thought to be encoded in changes to synapses. Synaptic strengthening, such as long-term potentiation, and structural changes alter how groups of neurons connect. Researchers call these groups \"engram cells.\" Experiments in animals show that reactivating specific engram cells can trigger recall of a memory.\n\n**Caveats**\n\n- The consolidation model is still debated. Some researchers argue the hippocampus stays involved in vivid episodic memories indefinitely.\n- Much of the engram evidence comes from rodents. Human evidence relies on imaging and on patients with brain damage, such as the famous case of H.M., who lost the ability to form new episodic memories after his hippocampi were removed.\n\nI can go deeper on any one type, such as how sleep affects consolidation or how memories fail in Alzheimer's disease."
+        },
+        {
+          "prompt": "Could distributed memory be emulated for AI systems?",
+          "answer": "Yes, in part. Several AI techniques already borrow from how the brain distributes memory. None of them match it closely.\n\n**Existing approaches that resemble distributed memory**\n\n- **Neural network weights**: A trained network stores what it has learned across millions or billions of parameters. No single weight holds a fact. This is the closest parallel to synaptic storage. Researchers often describe it as \"parametric memory.\"\n- **Associative memory (Hopfield networks)**: These store patterns across the connections of a whole network. You can recover a full pattern from a partial or noisy cue, much like recalling a memory from a smell or a song. Modern Hopfield networks have far more capacity, and they are closely related to transformer attention.\n- **Sparse distributed memory (Kanerva)**: This 1980s model stores data across many addressed locations at once. Retrieval is content-based and tolerates noise.\n- **Vector databases and retrieval-augmented generation (RAG)**: These keep information outside the model as embeddings and retrieve by similarity. This loosely resembles cue-based recall, though the storage is usually an explicit database, not a truly distributed one.\n- **Attention and context windows**: These work like a working memory, holding and manipulating information for the current task.\n\n**Emulating the brain's division of labor**\n\nThe brain uses specialized systems that interact. Some AI designs copy this idea:\n\n- **Complementary learning systems**: A fast-learning, hippocampus-like store (such as an episodic buffer) is paired with a slow-learning, neocortex-like network. Experience replay in reinforcement learning is a direct example. Stored experiences are replayed to the slow network, much as sleep may consolidate memories.\n- **Memory-augmented networks**: Neural Turing Machines and Differentiable Neural Computers pair a network with a differentiable external memory.\n- **Engram-like ideas**: Some research looks at sparse, selective activation of subnetworks for particular memories or tasks.\n\n**Where the analogy breaks down**\n\n- **Catastrophic forgetting**: Networks often overwrite old knowledge when trained on new data. The brain handles this far better. Methods like replay, regularization (for example elastic weight consolidation) and modular architectures only partly address it.\n- **Learning and storage are separate in most AI systems**: Deployed models usually have frozen weights. They don't consolidate new experience continuously the way the brain does. Their \"memory\" of a conversation is whatever is in the context window or an external store.\n- **Biological detail**: Real memory involves neuromodulators, sleep cycles, structural changes in synapses, glia and emotional tagging. Most of this is missing or heavily simplified in AI.\n- **Uncertainty about the target**: Neuroscientists still debate how consolidation and engrams work. We can't copy a mechanism we don't fully understand.\n\n**Bottom line**\n\nEmulating the principles of distributed memory (content-based recall, spread-out storage, fast and slow systems, replay) is already happening and is an active research area. Reproducing the brain's actual mechanism is not possible yet. It is also not clearly the right goal, since engineered systems can use advantages the brain lacks, such as exact copying and external storage.\n\nI can go deeper on any of these, for example how Hopfield networks work or how continual learning could give AI more brain-like memory."
+        }
+      ],
+      "quality_checklist": [
+        "Distinguishes distributed biological memory from an AI design analogy",
+        "Keeps uncertain mechanisms and proposed designs tentative",
+        "Answers all three prompts"
+      ],
+      "error": "Model response incomplete (max_tokens); increase output tokens per call if it exhausted its output budget",
+      "export": "conv_02189012-2cd5-4b8a-996b-55325572d918_2026-10-02T19-54-33-445Z.json",
+      "cost": {
+        "id": "conv_02189012-2cd5-4b8a-996b-55325572d918",
+        "exported_at": "2026-10-02T19:54:33.445Z",
+        "price_date": "2026-10-02",
+        "basis": "public direct API list rates; standard paid tier; not an invoice or historical effective-rate record",
+        "calls": [
+          {
+            "request_id": "evt_6261afe8-ff23-4e08-9938-c0fe9ac3c00a",
+            "seq": 4,
+            "purpose": "answer",
+            "requested_model": "claude-sonnet-5-5",
+            "reported_model": "claude-sonnet-5-5",
+            "status": "completed",
+            "counts": {
+              "input": 4079,
+              "output": 771,
+              "read": 0,
+              "write": 4075,
+              "write_5m": 4075,
+              "write_1h": 0
+            },
+            "provider": "anthropic",
+            "model": "claude-sonnet-5-5",
+            "usd_min": 0.0179055,
+            "usd_max": 0.0179055,
+            "reasons": []
+          },
+          {
+            "request_id": "evt_22c52874-7989-4c63-9a2c-8447f50659ee",
+            "seq": 11,
+            "purpose": "answer",
+            "requested_model": "claude-sonnet-5-5",
+            "reported_model": "claude-sonnet-5-5",
+            "status": "completed",
+            "counts": {
+              "input": 5136,
+              "output": 1100,
+              "read": 3864,
+              "write": 1268,
+              "write_5m": 1268,
+              "write_1h": 0
+            },
+            "provider": "anthropic",
+            "model": "claude-sonnet-5-5",
+            "usd_min": 0.014950799999999998,
+            "usd_max": 0.014950799999999998,
+            "reasons": []
+          },
+          {
+            "request_id": "evt_9d7dc251-0f13-4612-b56d-036a044cadd6",
+            "seq": 18,
+            "purpose": "answer",
+            "requested_model": "claude-sonnet-5-5",
+            "reported_model": "claude-sonnet-5-5",
+            "status": "incomplete",
+            "counts": {
+              "input": 6543,
+              "output": 2048,
+              "read": 3864,
+              "write": 2675,
+              "write_5m": 2675,
+              "write_1h": 0
+            },
+            "provider": "anthropic",
+            "model": "claude-sonnet-5-5",
+            "usd_min": 0.0279483,
+            "usd_max": 0.0279483,
+            "reasons": []
+          }
+        ],
+        "priced_calls": 3,
+        "unpriced_calls": 0,
+        "known_usd_min": 0.0608046,
+        "known_usd_max": 0.0608046,
+        "purpose": {
+          "answer": {
+            "calls": 3,
+            "priced_calls": 3,
+            "unpriced_calls": 0,
+            "known_usd_min": 0.0608046,
+            "known_usd_max": 0.0608046
+          }
+        },
+        "context": {
+          "history_characters": 7372,
+          "working_characters": 6076,
+          "reduction_fraction": 0.17580032555615843
+        },
+        "complete": true
+      }
+    },
+    {
+      "label": "anthropic-claude-sonnet-5-5-ordinary-memory-layered",
+      "provider": "anthropic",
+      "model": "claude-sonnet-5-5",
+      "template": "ordinary-memory",
+      "mode": "layered",
+      "jev": false,
+      "freeze_projection": false,
+      "status": "failed",
+      "turns": [
+        {
+          "prompt": "Where are memories stored in the brain?",
+          "answer": "Memories aren't kept in one place. They're spread across networks of neurons, and different brain regions handle different kinds of memory.\n\n**Main regions and their roles**\n\n- **Hippocampus** (medial temporal lobe): This region forms new long-term memories of facts (semantic memory) and events (episodic memory). It binds together the different parts of an experience, such as where, when, and what happened. It also helps with spatial memory.\n- **Neocortex**: Over time, consolidated memories are stored across the cortex. The sensory areas hold the details, so visual memories involve visual cortex and sound memories involve auditory cortex. The prefrontal cortex helps organize, retrieve, and manage memories. It's also central to working memory, the short-term \"mental scratchpad.\"\n- **Amygdala**: It attaches emotional significance to memories, especially fear and strong emotions. This is part of why emotional events are remembered so well.\n- **Cerebellum**: It stores motor learning and conditioned responses, such as the timing of movements.\n- **Basal ganglia (striatum)**: It supports procedural memory, meaning habits and skills like riding a bike or typing.\n- **Temporal lobes**: These contribute to semantic knowledge, such as word meanings and facts about objects and people.\n\n**How memories are physically stored**\n\n- Memories are thought to be encoded in changes in the **strength of synaptic connections** between neurons. This is called synaptic plasticity, and long-term potentiation is a well-studied example.\n- Groups of neurons that were active during an experience, sometimes called **engram cells**, appear to carry a specific memory. Experiments in animals have shown that activating or silencing these cells can trigger or block recall of a particular memory.\n- Long-term storage involves protein synthesis and structural changes at synapses.\n\n**Consolidation**\n\nNew memories depend heavily on the hippocampus at first. Over days to years, and especially during sleep, they are gradually reorganized, and the neocortex becomes more important for storing them. The details of this process are still debated. Some models say the hippocampus eventually becomes unnecessary for old memories, while others say it stays involved in rich, detailed episodic recall.\n\n**Summary**\n\nA single memory, such as a birthday party, is distributed. Visual cortex holds the images, auditory areas hold the sounds, the amygdala holds the emotion, and the hippocampus helps bind these into one episode. Retrieval reconstructs the memory from these parts. It doesn't play back a stored recording."
+        },
+        {
+          "prompt": "Could distributed memory be emulated for AI systems?",
+          "answer": "Yes, in several ways. Distributed representation is already central to modern AI, and some brain-inspired memory mechanisms have been built explicitly. Current systems are still far from the brain's flexibility.\n\n**Where distribution already exists**\n\n- **Neural network weights.** A trained network stores knowledge across millions or billions of parameters. No single weight holds a fact. This resembles synaptic storage, since learning changes connection strengths. Large language models work this way: their \"memory\" of facts is spread across layers.\n- **Embeddings.** Concepts are encoded as high-dimensional vectors. Meaning comes from the overall pattern, much like a population code in cortex.\n\n**Architectures built to emulate brain memory**\n\n- **Associative memory models.** Hopfield networks store patterns across connection weights and can recall a whole pattern from a partial or noisy cue, which is similar to pattern completion in the hippocampus. Modern Hopfield networks have much higher capacity and are closely related to transformer attention.\n- **Sparse distributed memory (Kanerva).** This is a mathematical model of long-term memory that stores and retrieves data using patterns spread across many addresses. It is robust to noise.\n- **Hyperdimensional computing.** Information is encoded in very high-dimensional vectors that can be combined, bound, and retrieved. It loosely resembles distributed neural codes.\n- **Complementary Learning Systems.** Hippocampus-like fast learning and cortex-like slow learning have been modeled as two components. Experience replay in reinforcement learning (for example DQN) is inspired by hippocampal replay during sleep. Replay also helps reduce catastrophic forgetting.\n- **Memory-augmented networks.** Neural Turing Machines, Differentiable Neural Computers, and Memory Networks pair a neural controller with an external memory that it reads and writes through differentiable operations.\n- **Retrieval-augmented generation (RAG) and vector databases.** These are engineering analogues of episodic memory. Experiences or documents are stored externally and retrieved by similarity to a cue. This is not very brain-like internally, but the function is similar.\n\n**Mapping brain features to AI**\n\n| Brain feature | AI analogue |\n|---|---|\n| Synaptic plasticity | Weight updates and gradient descent |\n| Engrams and population codes | Distributed activation patterns and embeddings |\n| Hippocampal fast binding | Fast weights, external memory, RAG |\n| Consolidation during sleep | Replay, distillation, fine-tuning |\n| Working memory (prefrontal) | Context window, recurrent state, attention |\n| Procedural memory | Learned policies |\n| Emotional tagging (amygdala) | Reward signals and priority weighting in replay |\n\n**Where the emulation falls short**\n\n- **Catastrophic forgetting.** Networks trained on new tasks often overwrite old knowledge. The brain handles continual learning much better, though it also forgets.\n- **Training and inference are separate.** Most deployed models have frozen weights. The brain learns and recalls continuously, in the same substrate.\n- **Reconstructive retrieval.** Human memory is rebuilt at each recall and can change. Most AI retrieval systems return stored items unchanged, although generative models do reconstruct in a way that sometimes resembles confabulation.\n- **Biological detail.** Real memory involves neuromodulators, glia, dendritic computation, structural changes, and sleep-stage dynamics. Standard artificial networks mostly ignore these.\n- **Efficiency.** The brain runs on about 20 watts. Comparable AI systems need far more energy. Neuromorphic hardware and spiking networks aim to narrow this gap.\n- **Unclear mechanisms.** Neuroscientists still debate how consolidation works and how engrams are formed and maintained. Emulation is limited by that incomplete understanding.\n\n**Research directions**\n\n- Continual and lifelong learning, using methods such as elastic weight consolidation and generative replay.\n- Hybrid systems that combine a slow-learning parametric model with fast episodic memory.\n- Spiking neural networks and neuromorphic chips.\n- Memory consolidation in LLM agents, such as summarizing and compressing past interactions into long-term stores.\n\nAI systems can emulate the principle of distributed memory. Weights and embeddings already do this, and added episodic memory modules bring in other brain-like features. A full emulation that includes continual learning, reconstruction, and biological efficiency remains an open research problem."
+        }
+      ],
+      "quality_checklist": [
+        "Distinguishes distributed biological memory from an AI design analogy",
+        "Keeps uncertain mechanisms and proposed designs tentative",
+        "Answers all three prompts"
+      ],
+      "error": "Model response incomplete (max_tokens); increase output tokens per call if it exhausted its output budget",
+      "export": "conv_e2d93d69-6597-4769-a673-03a7478790c4_2026-10-02T19-55-12-952Z.json",
+      "cost": {
+        "id": "conv_e2d93d69-6597-4769-a673-03a7478790c4",
+        "exported_at": "2026-10-02T19:55:12.952Z",
+        "price_date": "2026-10-02",
+        "basis": "public direct API list rates; standard paid tier; not an invoice or historical effective-rate record",
+        "calls": [
+          {
+            "request_id": "evt_8461b4dd-1826-45c6-a603-7bdf35648b91",
+            "seq": 4,
+            "purpose": "answer",
+            "requested_model": "claude-sonnet-5-5",
+            "reported_model": "claude-sonnet-5-5",
+            "status": "completed",
+            "counts": {
+              "input": 5338,
+              "output": 825,
+              "read": 0,
+              "write": 5334,
+              "write_5m": 5334,
+              "write_1h": 0
+            },
+            "provider": "anthropic",
+            "model": "claude-sonnet-5-5",
+            "usd_min": 0.021593,
+            "usd_max": 0.021593,
+            "reasons": []
+          },
+          {
+            "request_id": "evt_7d097ffb-6297-4014-ba1a-efc4efcf5af2",
+            "seq": 11,
+            "purpose": "answer",
+            "requested_model": "claude-sonnet-5-5",
+            "reported_model": "claude-sonnet-5-5",
+            "status": "completed",
+            "counts": {
+              "input": 6506,
+              "output": 1512,
+              "read": 5021,
+              "write": 1481,
+              "write_5m": 1481,
+              "write_1h": 0
+            },
+            "provider": "anthropic",
+            "model": "claude-sonnet-5-5",
+            "usd_min": 0.0198347,
+            "usd_max": 0.0198347,
+            "reasons": []
+          },
+          {
+            "request_id": "evt_a3c2cb9b-ee82-4849-ad0e-e9e737a970af",
+            "seq": 18,
+            "purpose": "answer",
+            "requested_model": "claude-sonnet-5-5",
+            "reported_model": "claude-sonnet-5-5",
+            "status": "incomplete",
+            "counts": {
+              "input": 8366,
+              "output": 2048,
+              "read": 5021,
+              "write": 3341,
+              "write_5m": 3341,
+              "write_1h": 0
+            },
+            "provider": "anthropic",
+            "model": "claude-sonnet-5-5",
+            "usd_min": 0.029844700000000002,
+            "usd_max": 0.029844700000000002,
+            "reasons": []
+          }
+        ],
+        "priced_calls": 3,
+        "unpriced_calls": 0,
+        "known_usd_min": 0.0712724,
+        "known_usd_max": 0.0712724,
+        "purpose": {
+          "answer": {
+            "calls": 3,
+            "priced_calls": 3,
+            "unpriced_calls": 0,
+            "known_usd_min": 0.0712724,
+            "known_usd_max": 0.0712724
+          }
+        },
+        "context": {
+          "history_characters": 8190,
+          "working_characters": 7408,
+          "reduction_fraction": 0.09548229548229548
+        },
+        "complete": true
+      }
+    },
+    {
+      "label": "anthropic-claude-sonnet-5-5-document-fuel-plain",
+      "provider": "anthropic",
+      "model": "claude-sonnet-5-5",
+      "template": "document-fuel",
+      "mode": "plain",
+      "jev": false,
+      "freeze_projection": false,
+      "status": "failed",
+      "turns": [],
+      "quality_checklist": [
+        "Retrieves both original drafts",
+        "Uses corrected 12 tonnes, 3200 m/s, 450 s, g0=9.80665",
+        "Propellant about 12.78 t and initial mass about 24.78 t",
+        "Preserves no staging/reserves and ideal single burn",
+        "Produces a readable report; verifies saved workspace file in tool-enabled modes"
+      ],
+      "error": "Model response incomplete (max_tokens); increase output tokens per call if it exhausted its output budget",
+      "export": "conv_45d7f0ab-fa46-40eb-bd55-573624faf6ee_2026-10-02T19-55-28-024Z.json",
+      "cost": {
+        "id": "conv_45d7f0ab-fa46-40eb-bd55-573624faf6ee",
+        "exported_at": "2026-10-02T19:55:28.024Z",
+        "price_date": "2026-10-02",
+        "basis": "public direct API list rates; standard paid tier; not an invoice or historical effective-rate record",
+        "calls": [
+          {
+            "request_id": "evt_9c1c830c-6c1e-4365-9f9e-5e80d2875a2c",
+            "seq": 4,
+            "purpose": "answer",
+            "requested_model": "claude-sonnet-5-5",
+            "reported_model": "claude-sonnet-5-5",
+            "status": "incomplete",
+            "counts": {
+              "input": 2522,
+              "output": 2048,
+              "read": 0,
+              "write": 2518,
+              "write_5m": 2518,
+              "write_1h": 0
+            },
+            "provider": "anthropic",
+            "model": "claude-sonnet-5-5",
+            "usd_min": 0.026783,
+            "usd_max": 0.026783,
+            "reasons": []
+          }
+        ],
+        "priced_calls": 1,
+        "unpriced_calls": 0,
+        "known_usd_min": 0.026783,
+        "known_usd_max": 0.026783,
+        "purpose": {
+          "answer": {
+            "calls": 1,
+            "priced_calls": 1,
+            "unpriced_calls": 0,
+            "known_usd_min": 0.026783,
+            "known_usd_max": 0.026783
+          }
+        },
+        "context": {
+          "history_characters": 225,
+          "working_characters": 225,
+          "reduction_fraction": 0,
+          "measurement_note": "Plain-chat attachments are in request payloads; saved Harness projection is not its transmitted context"
+        },
+        "complete": true
+      }
+    },
+    {
+      "label": "anthropic-claude-sonnet-5-5-document-fuel-append",
+      "provider": "anthropic",
+      "model": "claude-sonnet-5-5",
+      "template": "document-fuel",
+      "mode": "append",
+      "jev": false,
+      "freeze_projection": false,
+      "status": "failed",
+      "turns": [
+        {
+          "prompt": "Read the two saved drafts, theoretical-space-travel.md and fuel-requirements-illustration.md. Check their math and assumptions. Give a concise report. Treat the drafts as earlier model claims, not confirmed engineering facts.",
+          "answer": "**Verdict:** The arithmetic in `fuel-requirements-illustration.md` checks out. Both drafts are suitably hedged, though a few assumptions need tightening. I checked the numbers with the calculator and treated both drafts as earlier model claims, not confirmed engineering facts.\n\n**Math check**\n\n| Step | Draft | Recomputed |\n|---|---|---|\n| Exhaust velocity, 450 × 9.80665 | 4,412.99 m/s | 4,412.9925 m/s ✔ |\n| Case A, Δv/vₑ | 2.1301 | 2.13007 ✔ |\n| Case A, mass ratio | 8.4155 | 8.41549 ✔ |\n| Case A, propellant (10 t final mass) | 74.15 t | 74.155 t |\n| Case B, Δv/vₑ | 0.7251 | 0.72513 ✔ |\n| Case B, mass ratio | 2.0650 | 2.06500 ✔ |\n| Case B, propellant (10 t final mass) | 10.65 t | 10.650 t ✔ |\n\n- **Case A rounding:** the unrounded propellant is 74.1549 t, so \"74.15 t\" is correct. Using the rounded ratio, 8.4155, gives 74.155 t, which is a trivial difference.\n- **Formulas:** the rocket equation and the propellant formula, (mass ratio − 1) × final mass, are applied correctly. The initial masses of 84.15 t and 20.65 t are consistent with the propellant figures.\n\n**Assumption issues (none are arithmetic errors)**\n1. **Single-stage structure is unrealistic.** Case A's 10 t final mass has to hold the payload, the tanks for about 74 t of propellant, the engines and the structure. That leaves roughly a 12% final-to-initial mass fraction, which is very hard for a real single stage. The draft says staging and tank mass are excluded, but it doesn't say this directly.\n2. **Isp of 450 s is a single value.** It is roughly vacuum performance for hydrogen/oxygen engines. Sea-level Isp is lower, and the draft treats it as constant throughout the burn.\n3. **The Δv values are unlabeled.** The draft never says what 9.4 km/s or 3.2 km/s represent. The 9.4 km/s figure resembles a commonly cited low-Earth-orbit ascent budget that includes losses, and 3.2 km/s resembles a mid-sized in-space maneuver. Both resemblances are my inference, not something the drafts state or I verified. The draft correctly warns against summing them.\n4. **Case A applies one Isp to a launch.** Real launch vehicles use staging and engines tuned to different altitudes.\n\n**`theoretical-space-travel.md`**\n- It contains no quantitative claims, and its qualitative statements are generally standard and appropriately hedged. Examples are the delta-v framing, the low-thrust, high-Isp trade-off for electric propulsion, and nuclear thermal propulsion as challenging.\n- It is consistent with the companion file's caveats.\n- Weak spots:\n  - It never gives the exponential relationship a number, so it relies on the companion file for that.\n  - \"Known physics\" and \"speculative\" are asserted without sources.\n  - Each file begins with a \"Replay source\" line above its H1 heading, which is a metadata artifact.\n\n**Suggested fixes (not applied; you asked only for a report)**\n- State in `fuel-requirements-illustration.md` that 10 t final mass must include tanks and structure, and add one sentence on the implied mass fraction.\n- Label what each Δv case is meant to represent, or say they are arbitrary.\n- Note the vacuum-versus-sea-level Isp distinction."
+        },
+        {
+          "prompt": "For the same idealized single burn, change final mass to 12 metric tonnes and delta-v to 3.2 km/s, keeping Isp=450 s and g0=9.80665 m/s^2. Calculate propellant and initial mass. Preserve the single-burn, no-staging, no-reserves caveats.",
+          "answer": "**Result (idealized single burn):** about **12.78 t of propellant**, for an initial mass of about **24.78 t**.\n\n**Assumptions:** one burn, no staging, and no reserves or unusable propellant. Isp = 450 s, g₀ = 9.80665 m/s², Δv = 3,200 m/s, and final mass = 12 t. Final mass means payload plus all dry vehicle mass left after the burn.\n\n**Calculation**\n1. Effective exhaust velocity: 450 × 9.80665 = 4,412.9925 m/s.\n2. Δv / exhaust velocity: 3,200 / 4,412.9925 = 0.72513.\n3. Ideal mass ratio: exp(0.72513) = 2.06500. This is the same ratio as the earlier Case B, because it depends only on Δv and Isp.\n4. Initial mass: 12 t × 2.06500 = 24.780 t.\n5. Propellant: 24.780 t − 12 t = 12.780 t. Equivalently, 12 × (2.06500 − 1) = 12.780 t.\n\n**Check:** the earlier Case B used a 10 t final mass and needed 10.65 t of propellant. Propellant scales linearly with final mass at a fixed mass ratio, so 10.65 × 1.2 = 12.78 t, which matches.\n\n**Caveats**\n- This is an arithmetic illustration, not a vehicle design.\n- It excludes gravity and drag losses, multiple burns, reserves, unusable propellant and engine performance changes during flight.\n- The 12 t final mass has to include the tanks and structure that hold the propellant, which this model does not size.\n- The result applies to this one 3.2 km/s burn only. It should not be added to other Δv budgets without a defined trajectory.\n- Values are rounded from the calculator's unrounded results, and no independent engineering validation is implied.\n\nI haven't changed the saved drafts. I can add this as a Case C in `fuel-requirements-illustration.md` if you want."
+        }
+      ],
+      "quality_checklist": [
+        "Retrieves both original drafts",
+        "Uses corrected 12 tonnes, 3200 m/s, 450 s, g0=9.80665",
+        "Propellant about 12.78 t and initial mass about 24.78 t",
+        "Preserves no staging/reserves and ideal single burn",
+        "Produces a readable report; verifies saved workspace file in tool-enabled modes"
+      ],
+      "error": "Model response incomplete (max_tokens); increase output tokens per call if it exhausted its output budget",
+      "export": "conv_8f074a67-cf47-43ca-99a3-eba30ff9c5a4_2026-10-02T19-56-20-022Z.json",
+      "cost": {
+        "id": "conv_8f074a67-cf47-43ca-99a3-eba30ff9c5a4",
+        "exported_at": "2026-10-02T19:56:20.022Z",
+        "price_date": "2026-10-02",
+        "basis": "public direct API list rates; standard paid tier; not an invoice or historical effective-rate record",
+        "calls": [
+          {
+            "request_id": "evt_ec86a666-ab99-45a6-9a1c-428f7da3abb2",
+            "seq": 6,
+            "purpose": "answer",
+            "requested_model": "claude-sonnet-5-5",
+            "reported_model": "claude-sonnet-5-5",
+            "status": "completed",
+            "counts": {
+              "input": 7058,
+              "output": 552,
+              "read": 3864,
+              "write": 3190,
+              "write_5m": 3190,
+              "write_1h": 0
+            },
+            "provider": "anthropic",
+            "model": "claude-sonnet-5-5",
+            "usd_min": 0.0142758,
+            "usd_max": 0.0142758,
+            "reasons": []
+          },
+          {
+            "request_id": "evt_e7ae0933-ea02-4835-b5fe-13083769fdf7",
+            "seq": 21,
+            "purpose": "answer",
+            "requested_model": "claude-sonnet-5-5",
+            "reported_model": "claude-sonnet-5-5",
+            "status": "completed",
+            "counts": {
+              "input": 10679,
+              "output": 170,
+              "read": 7054,
+              "write": 3623,
+              "write_5m": 3623,
+              "write_1h": 0
+            },
+            "provider": "anthropic",
+            "model": "claude-sonnet-5-5",
+            "usd_min": 0.012172299999999999,
+            "usd_max": 0.012172299999999999,
+            "reasons": []
+          },
+          {
+            "request_id": "evt_ed01bfec-1bc2-4dde-aeb9-34b53dda9a48",
+            "seq": 27,
+            "purpose": "answer",
+            "requested_model": "claude-sonnet-5-5",
+            "reported_model": "claude-sonnet-5-5",
+            "status": "completed",
+            "counts": {
+              "input": 10929,
+              "output": 1825,
+              "read": 10677,
+              "write": 250,
+              "write_5m": 250,
+              "write_1h": 0
+            },
+            "provider": "anthropic",
+            "model": "claude-sonnet-5-5",
+            "usd_min": 0.021014400000000003,
+            "usd_max": 0.021014400000000003,
+            "reasons": []
+          },
+          {
+            "request_id": "evt_67f3dc4a-f626-48a5-a10e-3c0305798f3b",
+            "seq": 35,
+            "purpose": "answer",
+            "requested_model": "claude-sonnet-5-5",
+            "reported_model": "claude-sonnet-5-5",
+            "status": "completed",
+            "counts": {
+              "input": 9580,
+              "output": 319,
+              "read": 3864,
+              "write": 5712,
+              "write_5m": 5712,
+              "write_1h": 0
+            },
+            "provider": "anthropic",
+            "model": "claude-sonnet-5-5",
+            "usd_min": 0.018250799999999998,
+            "usd_max": 0.018250799999999998,
+            "reasons": []
+          },
+          {
+            "request_id": "evt_aa135654-a4f9-41fd-a269-97bb8e3ee4fb",
+            "seq": 42,
+            "purpose": "answer",
+            "requested_model": "claude-sonnet-5-5",
+            "reported_model": "claude-sonnet-5-5",
+            "status": "completed",
+            "counts": {
+              "input": 9980,
+              "output": 87,
+              "read": 9576,
+              "write": 402,
+              "write_5m": 402,
+              "write_1h": 0
+            },
+            "provider": "anthropic",
+            "model": "claude-sonnet-5-5",
+            "usd_min": 0.0037941999999999997,
+            "usd_max": 0.0037941999999999997,
+            "reasons": []
+          },
+          {
+            "request_id": "evt_5785630d-1ab8-44d4-9891-021b9ce5e9af",
+            "seq": 46,
+            "purpose": "answer",
+            "requested_model": "claude-sonnet-5-5",
+            "reported_model": "claude-sonnet-5-5",
+            "status": "completed",
+            "counts": {
+              "input": 10084,
+              "output": 161,
+              "read": 9978,
+              "write": 104,
+              "write_5m": 104,
+              "write_1h": 0
+            },
+            "provider": "anthropic",
+            "model": "claude-sonnet-5-5",
+            "usd_min": 0.0038696000000000004,
+            "usd_max": 0.0038696000000000004,
+            "reasons": []
+          },
+          {
+            "request_id": "evt_f7b3231b-b060-4c13-8410-345b1139950c",
+            "seq": 52,
+            "purpose": "answer",
+            "requested_model": "claude-sonnet-5-5",
+            "reported_model": "claude-sonnet-5-5",
+            "status": "completed",
+            "counts": {
+              "input": 10325,
+              "output": 674,
+              "read": 10082,
+              "write": 241,
+              "write_5m": 241,
+              "write_1h": 0
+            },
+            "provider": "anthropic",
+            "model": "claude-sonnet-5-5",
+            "usd_min": 0.0093629,
+            "usd_max": 0.0093629,
+            "reasons": []
+          },
+          {
+            "request_id": "evt_8bc2c4ae-0a8e-4c2d-b1f3-459bf3a216b9",
+            "seq": 59,
+            "purpose": "answer",
+            "requested_model": "claude-sonnet-5-5",
+            "reported_model": "claude-sonnet-5-5",
+            "status": "incomplete",
+            "counts": {
+              "input": 10928,
+              "output": 2048,
+              "read": 3864,
+              "write": 7060,
+              "write_5m": 7060,
+              "write_1h": 0
+            },
+            "provider": "anthropic",
+            "model": "claude-sonnet-5-5",
+            "usd_min": 0.0389108,
+            "usd_max": 0.0389108,
+            "reasons": []
+          }
+        ],
+        "priced_calls": 8,
+        "unpriced_calls": 0,
+        "known_usd_min": 0.1216508,
+        "known_usd_max": 0.1216508,
+        "purpose": {
+          "answer": {
+            "calls": 8,
+            "priced_calls": 8,
+            "unpriced_calls": 0,
+            "known_usd_min": 0.1216508,
+            "known_usd_max": 0.1216508
+          }
+        },
+        "context": {
+          "history_characters": 13999,
+          "working_characters": 5469,
+          "reduction_fraction": 0.6093292378027002
+        },
+        "complete": true
+      }
+    },
+    {
+      "label": "anthropic-claude-sonnet-5-5-document-fuel-layered",
+      "provider": "anthropic",
+      "model": "claude-sonnet-5-5",
+      "template": "document-fuel",
+      "mode": "layered",
+      "jev": false,
+      "freeze_projection": false,
+      "status": "failed",
+      "turns": [],
+      "quality_checklist": [
+        "Retrieves both original drafts",
+        "Uses corrected 12 tonnes, 3200 m/s, 450 s, g0=9.80665",
+        "Propellant about 12.78 t and initial mass about 24.78 t",
+        "Preserves no staging/reserves and ideal single burn",
+        "Produces a readable report; verifies saved workspace file in tool-enabled modes"
+      ],
+      "error": "Local comparison expenditure guard: next conservative reservation exceeds cap",
+      "export": "conv_922d8a86-79b1-40d1-8cfd-f88d9901347a_2026-10-02T19-56-20-057Z.json",
+      "cost": {
+        "id": "conv_922d8a86-79b1-40d1-8cfd-f88d9901347a",
+        "exported_at": "2026-10-02T19:56:20.057Z",
+        "price_date": "2026-10-02",
+        "basis": "public direct API list rates; standard paid tier; not an invoice or historical effective-rate record",
+        "calls": [
+          {
+            "request_id": "evt_f8d82623-056a-4977-a35e-08747241b161",
+            "seq": 6,
+            "purpose": "answer",
+            "requested_model": "claude-sonnet-5-5",
+            "reported_model": null,
+            "status": "missing_response",
+            "counts": null,
+            "model": "claude-sonnet-5-5",
+            "provider": "anthropic",
+            "usd_min": null,
+            "usd_max": null,
+            "reasons": [
+              "Missing reported input/output usage"
+            ]
+          }
+        ],
+        "priced_calls": 0,
+        "unpriced_calls": 1,
+        "known_usd_min": 0,
+        "known_usd_max": 0,
+        "purpose": {
+          "answer": {
+            "calls": 1,
+            "priced_calls": 0,
+            "unpriced_calls": 1,
+            "known_usd_min": 0,
+            "known_usd_max": 0
+          }
+        },
+        "context": {
+          "history_characters": 6462,
+          "working_characters": 225,
+          "reduction_fraction": 0.9651810584958217
+        },
+        "complete": false
+      }
+    }
+  ]
+}

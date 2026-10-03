@@ -1,0 +1,3844 @@
+{
+  "generated_at": "2026-10-02T21:05:38.677Z",
+  "valuation_min_usd": 0.70832392,
+  "valuation_max_usd": 0.72038464,
+  "provider_submissions": 143,
+  "batches": [
+    {
+      "folder": "2026-10-02T19-52-30-387Z",
+      "runs": [
+        {
+          "label": "openai-gpt-6-luna-ordinary-memory-plain",
+          "status": "completed",
+          "completed_turns": 3,
+          "export": "conv_80679446-fa40-4a7c-85cf-bdde331f4e85_2026-10-02T19-52-39-069Z.json",
+          "cost": {
+            "id": "conv_80679446-fa40-4a7c-85cf-bdde331f4e85",
+            "exported_at": "2026-10-02T19:52:39.069Z",
+            "price_date": "2026-10-02",
+            "basis": "public direct API list rates; standard paid tier; not an invoice or historical effective-rate record",
+            "calls": [
+              {
+                "request_id": "evt_df3c91fa-5984-4721-957b-b54df560bdd2",
+                "seq": 4,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 59,
+                  "output": 92,
+                  "read": 0,
+                  "write": 0,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.0000519,
+                "usd_max": 0.0000808,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_1528522b-7e3d-46ec-9e20-82f38dba3e37",
+                "seq": 11,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 167,
+                  "output": 157,
+                  "read": 0,
+                  "write": 0,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.0000952,
+                "usd_max": 0.00015115000000000001,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_2c391f6b-2d3d-4cef-97c5-8c535eae0d9b",
+                "seq": 18,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 350,
+                  "output": 197,
+                  "read": 0,
+                  "write": 0,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.0001335,
+                "usd_max": 0.00021775,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              }
+            ],
+            "priced_calls": 3,
+            "unpriced_calls": 0,
+            "known_usd_min": 0.0002806,
+            "known_usd_max": 0.00044970000000000003,
+            "record_format": "canonical context events; normalized inference usage",
+            "purpose": {
+              "answer": {
+                "calls": 3,
+                "priced_calls": 3,
+                "unpriced_calls": 0,
+                "known_usd_min": 0.0002806,
+                "known_usd_max": 0.00044970000000000003
+              }
+            },
+            "context": {
+              "history_characters": 2709,
+              "working_characters": 2709,
+              "reduction_fraction": 0
+            },
+            "complete": false
+          }
+        },
+        {
+          "label": "openai-gpt-6-luna-ordinary-memory-append",
+          "status": "completed",
+          "completed_turns": 3,
+          "export": "conv_524b7360-55b3-4ccd-86b8-547052e456e9_2026-10-02T19-52-49-406Z.json",
+          "cost": {
+            "id": "conv_524b7360-55b3-4ccd-86b8-547052e456e9",
+            "exported_at": "2026-10-02T19:52:49.406Z",
+            "price_date": "2026-10-02",
+            "basis": "public direct API list rates; standard paid tier; not an invoice or historical effective-rate record",
+            "calls": [
+              {
+                "request_id": "evt_47aac1d2-d45a-4a45-be33-038fe5eb562c",
+                "seq": 4,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 1930,
+                  "output": 157,
+                  "read": 0,
+                  "write": 1927,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.000319675,
+                "usd_max": 0.0006001,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_9e6dbed2-0b9b-45c7-8bcc-e5c4280cdd09",
+                "seq": 11,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 2280,
+                  "output": 164,
+                  "read": 1821,
+                  "write": 456,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.00015751000000000003,
+                "usd_max": 0.00027402000000000004,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_eaf3a127-a7b7-4598-abde-001dabc0e773",
+                "seq": 18,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 2653,
+                  "output": 318,
+                  "read": 1821,
+                  "write": 829,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.00028113500000000007,
+                "usd_max": 0.00048277000000000004,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              }
+            ],
+            "priced_calls": 3,
+            "unpriced_calls": 0,
+            "known_usd_min": 0.00075832,
+            "known_usd_max": 0.0013568900000000001,
+            "record_format": "canonical context events; normalized inference usage",
+            "purpose": {
+              "answer": {
+                "calls": 3,
+                "priced_calls": 3,
+                "unpriced_calls": 0,
+                "known_usd_min": 0.00075832,
+                "known_usd_max": 0.0013568900000000001
+              }
+            },
+            "context": {
+              "history_characters": 3596,
+              "working_characters": 3596,
+              "reduction_fraction": 0
+            },
+            "complete": false
+          }
+        },
+        {
+          "label": "openai-gpt-6-luna-ordinary-memory-layered",
+          "status": "completed",
+          "completed_turns": 3,
+          "export": "conv_eec7d173-bf4a-41c4-8d01-a8e6d2a1fa21_2026-10-02T19-52-59-790Z.json",
+          "cost": {
+            "id": "conv_eec7d173-bf4a-41c4-8d01-a8e6d2a1fa21",
+            "exported_at": "2026-10-02T19:52:59.790Z",
+            "price_date": "2026-10-02",
+            "basis": "public direct API list rates; standard paid tier; not an invoice or historical effective-rate record",
+            "calls": [
+              {
+                "request_id": "evt_8a0b81ba-c872-4f5a-ae7d-fb7a2b52e882",
+                "seq": 4,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 2384,
+                  "output": 166,
+                  "read": 0,
+                  "write": 2381,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.000380925,
+                "usd_max": 0.00072035,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_525b3cdf-ef30-478c-a838-174ceaf076e9",
+                "seq": 11,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 2745,
+                  "output": 175,
+                  "read": 2223,
+                  "write": 519,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.00017490500000000002,
+                "usd_max": 0.00030606000000000003,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_e5a6603d-0479-45a2-b026-74d7cd74d236",
+                "seq": 18,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 3095,
+                  "output": 179,
+                  "read": 2223,
+                  "write": 869,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.00022065500000000002,
+                "usd_max": 0.00039656000000000007,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              }
+            ],
+            "priced_calls": 3,
+            "unpriced_calls": 0,
+            "known_usd_min": 0.000776485,
+            "known_usd_max": 0.0014229700000000002,
+            "record_format": "canonical context events; normalized inference usage",
+            "purpose": {
+              "answer": {
+                "calls": 3,
+                "priced_calls": 3,
+                "unpriced_calls": 0,
+                "known_usd_min": 0.000776485,
+                "known_usd_max": 0.0014229700000000002
+              }
+            },
+            "context": {
+              "history_characters": 3015,
+              "working_characters": 3015,
+              "reduction_fraction": 0
+            },
+            "complete": false
+          }
+        },
+        {
+          "label": "openai-gpt-6-luna-document-fuel-plain",
+          "status": "completed",
+          "completed_turns": 3,
+          "export": "conv_0a8370a0-89d8-416f-80fe-87e6e48c3a3b_2026-10-02T19-53-09-982Z.json",
+          "cost": {
+            "id": "conv_0a8370a0-89d8-416f-80fe-87e6e48c3a3b",
+            "exported_at": "2026-10-02T19:53:09.982Z",
+            "price_date": "2026-10-02",
+            "basis": "public direct API list rates; standard paid tier; not an invoice or historical effective-rate record",
+            "calls": [
+              {
+                "request_id": "evt_577b25fe-9298-4bbc-9bf9-71280cc6714f",
+                "seq": 4,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 1560,
+                  "output": 406,
+                  "read": 0,
+                  "write": 1557,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.00039792500000000004,
+                "usd_max": 0.00069435,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_072bd5e7-b511-41a2-8dc9-ac027b05de37",
+                "seq": 11,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 2041,
+                  "output": 148,
+                  "read": 1557,
+                  "write": 481,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.00014999500000000002,
+                "usd_max": 0.00026299,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_8b2de3c6-33be-4516-8122-1a693003133f",
+                "seq": 18,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 2241,
+                  "output": 389,
+                  "read": 2038,
+                  "write": 200,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.00024018,
+                "usd_max": 0.00038311000000000004,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              }
+            ],
+            "priced_calls": 3,
+            "unpriced_calls": 0,
+            "known_usd_min": 0.0007881,
+            "known_usd_max": 0.0013404500000000002,
+            "record_format": "canonical context events; normalized inference usage",
+            "purpose": {
+              "answer": {
+                "calls": 3,
+                "priced_calls": 3,
+                "unpriced_calls": 0,
+                "known_usd_min": 0.0007881,
+                "known_usd_max": 0.0013404500000000002
+              }
+            },
+            "context": {
+              "history_characters": 4428,
+              "working_characters": 4428,
+              "reduction_fraction": 0
+            },
+            "complete": false
+          }
+        },
+        {
+          "label": "openai-gpt-6-luna-document-fuel-append",
+          "status": "failed",
+          "completed_turns": 0,
+          "export": "conv_0938d65a-a739-4469-ac55-5c0af2910bd2_2026-10-02T19-53-19-642Z.json",
+          "cost": {
+            "id": "conv_0938d65a-a739-4469-ac55-5c0af2910bd2",
+            "exported_at": "2026-10-02T19:53:19.642Z",
+            "price_date": "2026-10-02",
+            "basis": "public direct API list rates; standard paid tier; not an invoice or historical effective-rate record",
+            "calls": [
+              {
+                "request_id": "evt_c0fd04eb-a8b6-41cc-8a44-f9d17cf4cb34",
+                "seq": 6,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 3823,
+                  "output": 27,
+                  "read": 1821,
+                  "write": 1999,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.000281885,
+                "usd_max": 0.00055702,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_6b0ab979-1596-4e63-bba2-31138b659e77",
+                "seq": 11,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 4620,
+                  "output": 29,
+                  "read": 3820,
+                  "write": 797,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.000152625,
+                "usd_max": 0.000298,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_93be5aab-c6d1-4297-95ea-c6292defacab",
+                "seq": 16,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 5723,
+                  "output": 26,
+                  "read": 4617,
+                  "write": 1103,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.00019734500000000003,
+                "usd_max": 0.00038819000000000006,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_d30b9581-dc4a-4938-98cd-27182e8302dd",
+                "seq": 20,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 5770,
+                  "output": 28,
+                  "read": 5720,
+                  "write": 47,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.000077375,
+                "usd_max": 0.00014775,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_468161e5-4cc8-424c-840b-fe8de5945ffa",
+                "seq": 24,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 5819,
+                  "output": 35,
+                  "read": 5767,
+                  "write": 49,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.000081595,
+                "usd_max": 0.00015444,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_e2e0a876-a405-4128-a7d8-904e297fc268",
+                "seq": 28,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 5875,
+                  "output": 29,
+                  "read": 5816,
+                  "write": 56,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.00007996,
+                "usd_max": 0.00015267,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_96b6c496-f299-4bf5-a786-64ae093de6f6",
+                "seq": 32,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 5925,
+                  "output": 29,
+                  "read": 5872,
+                  "write": 50,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.00007976999999999999,
+                "usd_max": 0.00015229,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_91230833-a5f0-4251-960b-59c1c8193831",
+                "seq": 36,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 5975,
+                  "output": 28,
+                  "read": 5922,
+                  "write": 50,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.00007976999999999999,
+                "usd_max": 0.00015254,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              }
+            ],
+            "priced_calls": 8,
+            "unpriced_calls": 0,
+            "known_usd_min": 0.001030325,
+            "known_usd_max": 0.0020029,
+            "record_format": "canonical context events; normalized inference usage",
+            "purpose": {
+              "answer": {
+                "calls": 8,
+                "priced_calls": 8,
+                "unpriced_calls": 0,
+                "known_usd_min": 0.001030325,
+                "known_usd_max": 0.0020029
+              }
+            },
+            "context": {
+              "history_characters": 6462,
+              "working_characters": 225,
+              "reduction_fraction": 0.9651810584958217
+            },
+            "complete": false
+          }
+        },
+        {
+          "label": "openai-gpt-6-luna-document-fuel-layered",
+          "status": "failed",
+          "completed_turns": 0,
+          "export": "conv_4ec96a0d-c23c-4b02-8e09-168574f26cf2_2026-10-02T19-53-30-962Z.json",
+          "cost": {
+            "id": "conv_4ec96a0d-c23c-4b02-8e09-168574f26cf2",
+            "exported_at": "2026-10-02T19:53:30.962Z",
+            "price_date": "2026-10-02",
+            "basis": "public direct API list rates; standard paid tier; not an invoice or historical effective-rate record",
+            "calls": [
+              {
+                "request_id": "evt_cb2bba07-ed8e-4e19-963f-684a1aa57f5b",
+                "seq": 6,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 2651,
+                  "output": 27,
+                  "read": 2223,
+                  "write": 425,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.000089155,
+                "usd_max": 0.00017156,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_90b7272f-f8fd-43a1-a1ec-593c2c932b36",
+                "seq": 11,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 3440,
+                  "output": 29,
+                  "read": 2648,
+                  "write": 789,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.00013990500000000004,
+                "usd_max": 0.00027256000000000003,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_e45a1768-b8ec-4a83-bff6-9437dd871cdd",
+                "seq": 16,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 4551,
+                  "output": 26,
+                  "read": 3437,
+                  "write": 1111,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.000186545,
+                "usd_max": 0.00036659,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_e89f0171-e43f-4c14-b60c-0e1382e14b43",
+                "seq": 20,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 4598,
+                  "output": 28,
+                  "read": 4548,
+                  "write": 47,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.00006565500000000001,
+                "usd_max": 0.00012431,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_3240bd07-9edf-41e2-a935-0a1d8736153b",
+                "seq": 24,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 4647,
+                  "output": 28,
+                  "read": 4595,
+                  "write": 49,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.000066375,
+                "usd_max": 0.00012575,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_44cd69b5-d979-473c-a421-e6a85a1aa647",
+                "seq": 28,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 4697,
+                  "output": 35,
+                  "read": 4644,
+                  "write": 50,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.00007049,
+                "usd_max": 0.00013223,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_dc28bd58-e067-4d7d-aeb8-827485ae0102",
+                "seq": 32,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 4753,
+                  "output": 36,
+                  "read": 4694,
+                  "write": 56,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.00007224,
+                "usd_max": 0.00013548,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_fdf2c373-f322-464f-b278-ca14d4d0e8a6",
+                "seq": 36,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 4810,
+                  "output": 29,
+                  "read": 4750,
+                  "write": 57,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.000069425,
+                "usd_max": 0.0001316,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              }
+            ],
+            "priced_calls": 8,
+            "unpriced_calls": 0,
+            "known_usd_min": 0.0007597900000000001,
+            "known_usd_max": 0.0014600799999999999,
+            "record_format": "canonical context events; normalized inference usage",
+            "purpose": {
+              "answer": {
+                "calls": 8,
+                "priced_calls": 8,
+                "unpriced_calls": 0,
+                "known_usd_min": 0.0007597900000000001,
+                "known_usd_max": 0.0014600799999999999
+              }
+            },
+            "context": {
+              "history_characters": 6462,
+              "working_characters": 225,
+              "reduction_fraction": 0.9651810584958217
+            },
+            "complete": false
+          }
+        },
+        {
+          "label": "anthropic-claude-sonnet-5-5-ordinary-memory-plain",
+          "status": "completed",
+          "completed_turns": 3,
+          "export": "conv_621da627-ed32-4ce8-b231-94048ba52fca_2026-10-02T19-53-53-457Z.json",
+          "cost": {
+            "id": "conv_621da627-ed32-4ce8-b231-94048ba52fca",
+            "exported_at": "2026-10-02T19:53:53.457Z",
+            "price_date": "2026-10-02",
+            "basis": "public direct API list rates; standard paid tier; not an invoice or historical effective-rate record",
+            "calls": [
+              {
+                "request_id": "evt_f5efc9a4-321e-47a0-ae42-6a73f3167408",
+                "seq": 4,
+                "purpose": "answer",
+                "requested_model": "claude-sonnet-5-5",
+                "reported_model": "claude-sonnet-5-5",
+                "status": "completed",
+                "counts": {
+                  "input": 95,
+                  "output": 490,
+                  "read": 0,
+                  "write": 0,
+                  "write_5m": 0,
+                  "write_1h": 0
+                },
+                "provider": "anthropic",
+                "model": "claude-sonnet-5-5",
+                "usd_min": 0.00509,
+                "usd_max": 0.00509,
+                "reasons": []
+              },
+              {
+                "request_id": "evt_b49f1512-3ef7-4fb0-8634-15eb23636de2",
+                "seq": 11,
+                "purpose": "answer",
+                "requested_model": "claude-sonnet-5-5",
+                "reported_model": "claude-sonnet-5-5",
+                "status": "completed",
+                "counts": {
+                  "input": 546,
+                  "output": 882,
+                  "read": 0,
+                  "write": 542,
+                  "write_5m": 542,
+                  "write_1h": 0
+                },
+                "provider": "anthropic",
+                "model": "claude-sonnet-5-5",
+                "usd_min": 0.010183,
+                "usd_max": 0.010183,
+                "reasons": []
+              },
+              {
+                "request_id": "evt_cd42ffd3-7725-481b-a481-45baaddb4403",
+                "seq": 18,
+                "purpose": "answer",
+                "requested_model": "claude-sonnet-5-5",
+                "reported_model": "claude-sonnet-5-5",
+                "status": "completed",
+                "counts": {
+                  "input": 1231,
+                  "output": 1085,
+                  "read": 542,
+                  "write": 685,
+                  "write_5m": 685,
+                  "write_1h": 0
+                },
+                "provider": "anthropic",
+                "model": "claude-sonnet-5-5",
+                "usd_min": 0.0126789,
+                "usd_max": 0.0126789,
+                "reasons": []
+              }
+            ],
+            "priced_calls": 3,
+            "unpriced_calls": 0,
+            "known_usd_min": 0.0279519,
+            "known_usd_max": 0.0279519,
+            "record_format": "canonical context events; normalized inference usage",
+            "purpose": {
+              "answer": {
+                "calls": 3,
+                "priced_calls": 3,
+                "unpriced_calls": 0,
+                "known_usd_min": 0.0279519,
+                "known_usd_max": 0.0279519
+              }
+            },
+            "context": {
+              "history_characters": 5762,
+              "working_characters": 5762,
+              "reduction_fraction": 0
+            },
+            "complete": true
+          }
+        },
+        {
+          "label": "anthropic-claude-sonnet-5-5-ordinary-memory-append",
+          "status": "failed",
+          "completed_turns": 2,
+          "export": "conv_02189012-2cd5-4b8a-996b-55325572d918_2026-10-02T19-54-33-445Z.json",
+          "cost": {
+            "id": "conv_02189012-2cd5-4b8a-996b-55325572d918",
+            "exported_at": "2026-10-02T19:54:33.445Z",
+            "price_date": "2026-10-02",
+            "basis": "public direct API list rates; standard paid tier; not an invoice or historical effective-rate record",
+            "calls": [
+              {
+                "request_id": "evt_6261afe8-ff23-4e08-9938-c0fe9ac3c00a",
+                "seq": 4,
+                "purpose": "answer",
+                "requested_model": "claude-sonnet-5-5",
+                "reported_model": "claude-sonnet-5-5",
+                "status": "completed",
+                "counts": {
+                  "input": 4079,
+                  "output": 771,
+                  "read": 0,
+                  "write": 4075,
+                  "write_5m": 4075,
+                  "write_1h": 0
+                },
+                "provider": "anthropic",
+                "model": "claude-sonnet-5-5",
+                "usd_min": 0.0179055,
+                "usd_max": 0.0179055,
+                "reasons": []
+              },
+              {
+                "request_id": "evt_22c52874-7989-4c63-9a2c-8447f50659ee",
+                "seq": 11,
+                "purpose": "answer",
+                "requested_model": "claude-sonnet-5-5",
+                "reported_model": "claude-sonnet-5-5",
+                "status": "completed",
+                "counts": {
+                  "input": 5136,
+                  "output": 1100,
+                  "read": 3864,
+                  "write": 1268,
+                  "write_5m": 1268,
+                  "write_1h": 0
+                },
+                "provider": "anthropic",
+                "model": "claude-sonnet-5-5",
+                "usd_min": 0.014950799999999998,
+                "usd_max": 0.014950799999999998,
+                "reasons": []
+              },
+              {
+                "request_id": "evt_9d7dc251-0f13-4612-b56d-036a044cadd6",
+                "seq": 18,
+                "purpose": "answer",
+                "requested_model": "claude-sonnet-5-5",
+                "reported_model": "claude-sonnet-5-5",
+                "status": "incomplete",
+                "counts": {
+                  "input": 6543,
+                  "output": 2048,
+                  "read": 3864,
+                  "write": 2675,
+                  "write_5m": 2675,
+                  "write_1h": 0
+                },
+                "provider": "anthropic",
+                "model": "claude-sonnet-5-5",
+                "usd_min": 0.0279483,
+                "usd_max": 0.0279483,
+                "reasons": []
+              }
+            ],
+            "priced_calls": 3,
+            "unpriced_calls": 0,
+            "known_usd_min": 0.0608046,
+            "known_usd_max": 0.0608046,
+            "record_format": "canonical context events; normalized inference usage",
+            "purpose": {
+              "answer": {
+                "calls": 3,
+                "priced_calls": 3,
+                "unpriced_calls": 0,
+                "known_usd_min": 0.0608046,
+                "known_usd_max": 0.0608046
+              }
+            },
+            "context": {
+              "history_characters": 7372,
+              "working_characters": 6076,
+              "reduction_fraction": 0.17580032555615843
+            },
+            "complete": true
+          }
+        },
+        {
+          "label": "anthropic-claude-sonnet-5-5-ordinary-memory-layered",
+          "status": "failed",
+          "completed_turns": 2,
+          "export": "conv_e2d93d69-6597-4769-a673-03a7478790c4_2026-10-02T19-55-12-952Z.json",
+          "cost": {
+            "id": "conv_e2d93d69-6597-4769-a673-03a7478790c4",
+            "exported_at": "2026-10-02T19:55:12.952Z",
+            "price_date": "2026-10-02",
+            "basis": "public direct API list rates; standard paid tier; not an invoice or historical effective-rate record",
+            "calls": [
+              {
+                "request_id": "evt_8461b4dd-1826-45c6-a603-7bdf35648b91",
+                "seq": 4,
+                "purpose": "answer",
+                "requested_model": "claude-sonnet-5-5",
+                "reported_model": "claude-sonnet-5-5",
+                "status": "completed",
+                "counts": {
+                  "input": 5338,
+                  "output": 825,
+                  "read": 0,
+                  "write": 5334,
+                  "write_5m": 5334,
+                  "write_1h": 0
+                },
+                "provider": "anthropic",
+                "model": "claude-sonnet-5-5",
+                "usd_min": 0.021593,
+                "usd_max": 0.021593,
+                "reasons": []
+              },
+              {
+                "request_id": "evt_7d097ffb-6297-4014-ba1a-efc4efcf5af2",
+                "seq": 11,
+                "purpose": "answer",
+                "requested_model": "claude-sonnet-5-5",
+                "reported_model": "claude-sonnet-5-5",
+                "status": "completed",
+                "counts": {
+                  "input": 6506,
+                  "output": 1512,
+                  "read": 5021,
+                  "write": 1481,
+                  "write_5m": 1481,
+                  "write_1h": 0
+                },
+                "provider": "anthropic",
+                "model": "claude-sonnet-5-5",
+                "usd_min": 0.0198347,
+                "usd_max": 0.0198347,
+                "reasons": []
+              },
+              {
+                "request_id": "evt_a3c2cb9b-ee82-4849-ad0e-e9e737a970af",
+                "seq": 18,
+                "purpose": "answer",
+                "requested_model": "claude-sonnet-5-5",
+                "reported_model": "claude-sonnet-5-5",
+                "status": "incomplete",
+                "counts": {
+                  "input": 8366,
+                  "output": 2048,
+                  "read": 5021,
+                  "write": 3341,
+                  "write_5m": 3341,
+                  "write_1h": 0
+                },
+                "provider": "anthropic",
+                "model": "claude-sonnet-5-5",
+                "usd_min": 0.029844700000000002,
+                "usd_max": 0.029844700000000002,
+                "reasons": []
+              }
+            ],
+            "priced_calls": 3,
+            "unpriced_calls": 0,
+            "known_usd_min": 0.0712724,
+            "known_usd_max": 0.0712724,
+            "record_format": "canonical context events; normalized inference usage",
+            "purpose": {
+              "answer": {
+                "calls": 3,
+                "priced_calls": 3,
+                "unpriced_calls": 0,
+                "known_usd_min": 0.0712724,
+                "known_usd_max": 0.0712724
+              }
+            },
+            "context": {
+              "history_characters": 8190,
+              "working_characters": 7408,
+              "reduction_fraction": 0.09548229548229548
+            },
+            "complete": true
+          }
+        },
+        {
+          "label": "anthropic-claude-sonnet-5-5-document-fuel-plain",
+          "status": "failed",
+          "completed_turns": 0,
+          "export": "conv_45d7f0ab-fa46-40eb-bd55-573624faf6ee_2026-10-02T19-55-28-024Z.json",
+          "cost": {
+            "id": "conv_45d7f0ab-fa46-40eb-bd55-573624faf6ee",
+            "exported_at": "2026-10-02T19:55:28.024Z",
+            "price_date": "2026-10-02",
+            "basis": "public direct API list rates; standard paid tier; not an invoice or historical effective-rate record",
+            "calls": [
+              {
+                "request_id": "evt_9c1c830c-6c1e-4365-9f9e-5e80d2875a2c",
+                "seq": 4,
+                "purpose": "answer",
+                "requested_model": "claude-sonnet-5-5",
+                "reported_model": "claude-sonnet-5-5",
+                "status": "incomplete",
+                "counts": {
+                  "input": 2522,
+                  "output": 2048,
+                  "read": 0,
+                  "write": 2518,
+                  "write_5m": 2518,
+                  "write_1h": 0
+                },
+                "provider": "anthropic",
+                "model": "claude-sonnet-5-5",
+                "usd_min": 0.026783,
+                "usd_max": 0.026783,
+                "reasons": []
+              }
+            ],
+            "priced_calls": 1,
+            "unpriced_calls": 0,
+            "known_usd_min": 0.026783,
+            "known_usd_max": 0.026783,
+            "record_format": "canonical context events; normalized inference usage",
+            "purpose": {
+              "answer": {
+                "calls": 1,
+                "priced_calls": 1,
+                "unpriced_calls": 0,
+                "known_usd_min": 0.026783,
+                "known_usd_max": 0.026783
+              }
+            },
+            "context": {
+              "history_characters": 225,
+              "working_characters": 225,
+              "reduction_fraction": 0
+            },
+            "complete": true
+          }
+        },
+        {
+          "label": "anthropic-claude-sonnet-5-5-document-fuel-append",
+          "status": "failed",
+          "completed_turns": 2,
+          "export": "conv_8f074a67-cf47-43ca-99a3-eba30ff9c5a4_2026-10-02T19-56-20-022Z.json",
+          "cost": {
+            "id": "conv_8f074a67-cf47-43ca-99a3-eba30ff9c5a4",
+            "exported_at": "2026-10-02T19:56:20.022Z",
+            "price_date": "2026-10-02",
+            "basis": "public direct API list rates; standard paid tier; not an invoice or historical effective-rate record",
+            "calls": [
+              {
+                "request_id": "evt_ec86a666-ab99-45a6-9a1c-428f7da3abb2",
+                "seq": 6,
+                "purpose": "answer",
+                "requested_model": "claude-sonnet-5-5",
+                "reported_model": "claude-sonnet-5-5",
+                "status": "completed",
+                "counts": {
+                  "input": 7058,
+                  "output": 552,
+                  "read": 3864,
+                  "write": 3190,
+                  "write_5m": 3190,
+                  "write_1h": 0
+                },
+                "provider": "anthropic",
+                "model": "claude-sonnet-5-5",
+                "usd_min": 0.0142758,
+                "usd_max": 0.0142758,
+                "reasons": []
+              },
+              {
+                "request_id": "evt_e7ae0933-ea02-4835-b5fe-13083769fdf7",
+                "seq": 21,
+                "purpose": "answer",
+                "requested_model": "claude-sonnet-5-5",
+                "reported_model": "claude-sonnet-5-5",
+                "status": "completed",
+                "counts": {
+                  "input": 10679,
+                  "output": 170,
+                  "read": 7054,
+                  "write": 3623,
+                  "write_5m": 3623,
+                  "write_1h": 0
+                },
+                "provider": "anthropic",
+                "model": "claude-sonnet-5-5",
+                "usd_min": 0.012172299999999999,
+                "usd_max": 0.012172299999999999,
+                "reasons": []
+              },
+              {
+                "request_id": "evt_ed01bfec-1bc2-4dde-aeb9-34b53dda9a48",
+                "seq": 27,
+                "purpose": "answer",
+                "requested_model": "claude-sonnet-5-5",
+                "reported_model": "claude-sonnet-5-5",
+                "status": "completed",
+                "counts": {
+                  "input": 10929,
+                  "output": 1825,
+                  "read": 10677,
+                  "write": 250,
+                  "write_5m": 250,
+                  "write_1h": 0
+                },
+                "provider": "anthropic",
+                "model": "claude-sonnet-5-5",
+                "usd_min": 0.021014400000000003,
+                "usd_max": 0.021014400000000003,
+                "reasons": []
+              },
+              {
+                "request_id": "evt_67f3dc4a-f626-48a5-a10e-3c0305798f3b",
+                "seq": 35,
+                "purpose": "answer",
+                "requested_model": "claude-sonnet-5-5",
+                "reported_model": "claude-sonnet-5-5",
+                "status": "completed",
+                "counts": {
+                  "input": 9580,
+                  "output": 319,
+                  "read": 3864,
+                  "write": 5712,
+                  "write_5m": 5712,
+                  "write_1h": 0
+                },
+                "provider": "anthropic",
+                "model": "claude-sonnet-5-5",
+                "usd_min": 0.018250799999999998,
+                "usd_max": 0.018250799999999998,
+                "reasons": []
+              },
+              {
+                "request_id": "evt_aa135654-a4f9-41fd-a269-97bb8e3ee4fb",
+                "seq": 42,
+                "purpose": "answer",
+                "requested_model": "claude-sonnet-5-5",
+                "reported_model": "claude-sonnet-5-5",
+                "status": "completed",
+                "counts": {
+                  "input": 9980,
+                  "output": 87,
+                  "read": 9576,
+                  "write": 402,
+                  "write_5m": 402,
+                  "write_1h": 0
+                },
+                "provider": "anthropic",
+                "model": "claude-sonnet-5-5",
+                "usd_min": 0.0037941999999999997,
+                "usd_max": 0.0037941999999999997,
+                "reasons": []
+              },
+              {
+                "request_id": "evt_5785630d-1ab8-44d4-9891-021b9ce5e9af",
+                "seq": 46,
+                "purpose": "answer",
+                "requested_model": "claude-sonnet-5-5",
+                "reported_model": "claude-sonnet-5-5",
+                "status": "completed",
+                "counts": {
+                  "input": 10084,
+                  "output": 161,
+                  "read": 9978,
+                  "write": 104,
+                  "write_5m": 104,
+                  "write_1h": 0
+                },
+                "provider": "anthropic",
+                "model": "claude-sonnet-5-5",
+                "usd_min": 0.0038696000000000004,
+                "usd_max": 0.0038696000000000004,
+                "reasons": []
+              },
+              {
+                "request_id": "evt_f7b3231b-b060-4c13-8410-345b1139950c",
+                "seq": 52,
+                "purpose": "answer",
+                "requested_model": "claude-sonnet-5-5",
+                "reported_model": "claude-sonnet-5-5",
+                "status": "completed",
+                "counts": {
+                  "input": 10325,
+                  "output": 674,
+                  "read": 10082,
+                  "write": 241,
+                  "write_5m": 241,
+                  "write_1h": 0
+                },
+                "provider": "anthropic",
+                "model": "claude-sonnet-5-5",
+                "usd_min": 0.0093629,
+                "usd_max": 0.0093629,
+                "reasons": []
+              },
+              {
+                "request_id": "evt_8bc2c4ae-0a8e-4c2d-b1f3-459bf3a216b9",
+                "seq": 59,
+                "purpose": "answer",
+                "requested_model": "claude-sonnet-5-5",
+                "reported_model": "claude-sonnet-5-5",
+                "status": "incomplete",
+                "counts": {
+                  "input": 10928,
+                  "output": 2048,
+                  "read": 3864,
+                  "write": 7060,
+                  "write_5m": 7060,
+                  "write_1h": 0
+                },
+                "provider": "anthropic",
+                "model": "claude-sonnet-5-5",
+                "usd_min": 0.0389108,
+                "usd_max": 0.0389108,
+                "reasons": []
+              }
+            ],
+            "priced_calls": 8,
+            "unpriced_calls": 0,
+            "known_usd_min": 0.1216508,
+            "known_usd_max": 0.1216508,
+            "record_format": "canonical context events; normalized inference usage",
+            "purpose": {
+              "answer": {
+                "calls": 8,
+                "priced_calls": 8,
+                "unpriced_calls": 0,
+                "known_usd_min": 0.1216508,
+                "known_usd_max": 0.1216508
+              }
+            },
+            "context": {
+              "history_characters": 13999,
+              "working_characters": 5469,
+              "reduction_fraction": 0.6093292378027002
+            },
+            "complete": true
+          }
+        },
+        {
+          "label": "anthropic-claude-sonnet-5-5-document-fuel-layered",
+          "status": "failed",
+          "completed_turns": 0,
+          "export": "conv_922d8a86-79b1-40d1-8cfd-f88d9901347a_2026-10-02T19-56-20-057Z.json",
+          "cost": {
+            "id": "conv_922d8a86-79b1-40d1-8cfd-f88d9901347a",
+            "exported_at": "2026-10-02T19:56:20.057Z",
+            "price_date": "2026-10-02",
+            "basis": "public direct API list rates; standard paid tier; not an invoice or historical effective-rate record",
+            "calls": [
+              {
+                "request_id": "evt_f8d82623-056a-4977-a35e-08747241b161",
+                "seq": 6,
+                "purpose": "answer",
+                "requested_model": "claude-sonnet-5-5",
+                "reported_model": null,
+                "status": "missing_response",
+                "counts": null,
+                "model": "claude-sonnet-5-5",
+                "provider": "anthropic",
+                "usd_min": null,
+                "usd_max": null,
+                "reasons": [
+                  "Missing reported input/output usage"
+                ]
+              }
+            ],
+            "priced_calls": 0,
+            "unpriced_calls": 1,
+            "known_usd_min": 0,
+            "known_usd_max": 0,
+            "record_format": "canonical context events; normalized inference usage",
+            "purpose": {
+              "answer": {
+                "calls": 1,
+                "priced_calls": 0,
+                "unpriced_calls": 1,
+                "known_usd_min": 0,
+                "known_usd_max": 0
+              }
+            },
+            "context": {
+              "history_characters": 6462,
+              "working_characters": 225,
+              "reduction_fraction": 0.9651810584958217
+            },
+            "complete": false
+          }
+        }
+      ]
+    },
+    {
+      "folder": "2026-10-02T19-58-20-256Z",
+      "protocol": "diagnostic-v2-output4096-calls16",
+      "runs": [
+        {
+          "label": "openai-gpt-6-luna-document-fuel-append",
+          "status": "completed",
+          "completed_turns": 3,
+          "export": "conv_c99c835a-f136-420e-a26d-1e5caaf5294c_2026-10-02T19-58-58-561Z.json",
+          "cost": {
+            "id": "conv_c99c835a-f136-420e-a26d-1e5caaf5294c",
+            "exported_at": "2026-10-02T19:58:58.561Z",
+            "price_date": "2026-10-02",
+            "basis": "public direct API list rates; standard paid tier; not an invoice or historical effective-rate record",
+            "calls": [
+              {
+                "request_id": "evt_f083bb55-eaf2-4e50-bb3d-aed7b4d7b245",
+                "seq": 6,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 3845,
+                  "output": 27,
+                  "read": 1821,
+                  "write": 2021,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.000284635,
+                "usd_max": 0.00056252,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_5251169d-5e89-47e5-9c5e-6d46ec935c57",
+                "seq": 11,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 4636,
+                  "output": 29,
+                  "read": 3842,
+                  "write": 791,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.00015209500000000004,
+                "usd_max": 0.00029694000000000004,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_f839965b-545f-485d-ac53-4ad0d6dbc607",
+                "seq": 16,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 5753,
+                  "output": 26,
+                  "read": 4633,
+                  "write": 1117,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.000199255,
+                "usd_max": 0.00039201,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_3feb1108-a501-4ce8-96af-babad017dcd6",
+                "seq": 20,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 5800,
+                  "output": 28,
+                  "read": 5750,
+                  "write": 47,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.00007767499999999999,
+                "usd_max": 0.00014835,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_0a29c063-e30e-40d4-bf84-27e21e51e813",
+                "seq": 24,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 5849,
+                  "output": 28,
+                  "read": 5797,
+                  "write": 49,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.000078395,
+                "usd_max": 0.00014979,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_14fd8355-5688-459c-91fb-a037d2e1d7cd",
+                "seq": 28,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 5899,
+                  "output": 35,
+                  "read": 5846,
+                  "write": 50,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.00008251000000000001,
+                "usd_max": 0.00015627000000000002,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_5ec3e6c2-b452-4333-9f86-335d336f438c",
+                "seq": 32,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 5955,
+                  "output": 36,
+                  "read": 5896,
+                  "write": 56,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.00008426000000000001,
+                "usd_max": 0.00015952000000000002,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_0948c92b-0bc7-42e9-92f2-f32d7ddbc8df",
+                "seq": 36,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 6012,
+                  "output": 29,
+                  "read": 5952,
+                  "write": 57,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.000081445,
+                "usd_max": 0.00015564000000000002,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_cd272e59-8628-4fa6-b40b-1501ba832de6",
+                "seq": 40,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 6062,
+                  "output": 29,
+                  "read": 6009,
+                  "write": 50,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.00008114,
+                "usd_max": 0.00015503,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_6cfd2c17-359a-46fa-85a2-04ef8334ceff",
+                "seq": 44,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 6112,
+                  "output": 29,
+                  "read": 6059,
+                  "write": 50,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.00008164,
+                "usd_max": 0.00015603,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_439d1eae-5879-4801-a0d8-cb987da7e526",
+                "seq": 48,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 6163,
+                  "output": 30,
+                  "read": 6109,
+                  "write": 51,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.000082765,
+                "usd_max": 0.00015803,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_829445d4-4496-4632-86a9-f04599ef860a",
+                "seq": 52,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 6214,
+                  "output": 347,
+                  "read": 6160,
+                  "write": 51,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.000241775,
+                "usd_max": 0.0003968,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_7d18c50c-6f74-4f52-bd3e-b8e423423f7c",
+                "seq": 59,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 4444,
+                  "output": 26,
+                  "read": 1821,
+                  "write": 2620,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.00035901,
+                "usd_max": 0.00071152,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_ff11ee08-18e5-4cb0-8ef6-55bbd8a6e1a2",
+                "seq": 63,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 4486,
+                  "output": 25,
+                  "read": 4441,
+                  "write": 42,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.00006246,
+                "usd_max": 0.00011867,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_12f17375-a3ed-4a24-b7ec-7b0dd72a7feb",
+                "seq": 67,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 4532,
+                  "output": 28,
+                  "read": 4483,
+                  "write": 46,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.00006487999999999999,
+                "usd_max": 0.00012276,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_ce5c7c63-f563-497e-a01c-d19587c0fe26",
+                "seq": 71,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 4582,
+                  "output": 25,
+                  "read": 4529,
+                  "write": 50,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.00006433999999999998,
+                "usd_max": 0.00012243,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_299ae0c1-6116-4e24-9a60-1c24b5c8272f",
+                "seq": 75,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 4624,
+                  "output": 36,
+                  "read": 4579,
+                  "write": 42,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.00006933999999999998,
+                "usd_max": 0.00012968,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_edc15422-4464-48d7-b3b4-4d70ef0da44d",
+                "seq": 79,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 4681,
+                  "output": 29,
+                  "read": 4621,
+                  "write": 57,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.00006813500000000001,
+                "usd_max": 0.00012902,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_0e6fa481-e87c-43fd-8acb-31e402c0f2f1",
+                "seq": 83,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 4731,
+                  "output": 29,
+                  "read": 4678,
+                  "write": 50,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.00006782999999999999,
+                "usd_max": 0.00012841,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_53914194-9680-4494-910c-1daa9ffb3d5d",
+                "seq": 87,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 4781,
+                  "output": 160,
+                  "read": 4728,
+                  "write": 50,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.00013383,
+                "usd_max": 0.00022766,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_ab5fc91e-bcc3-47a5-a3c7-a76af4887910",
+                "seq": 94,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 4833,
+                  "output": 605,
+                  "read": 1821,
+                  "write": 3009,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.000697135,
+                "usd_max": 0.00124302,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_687ad4b3-5c37-4c94-8497-574eb1cf0b8e",
+                "seq": 100,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 6309,
+                  "output": 24,
+                  "read": 1821,
+                  "write": 4485,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.000591135,
+                "usd_max": 0.0011762699999999999,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_87aff5a5-e545-4fce-b8d2-426b027c3d84",
+                "seq": 105,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 7089,
+                  "output": 61,
+                  "read": 6306,
+                  "write": 780,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.00019136,
+                "usd_max": 0.00036747,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              }
+            ],
+            "priced_calls": 23,
+            "unpriced_calls": 0,
+            "known_usd_min": 0.003897045000000001,
+            "known_usd_max": 0.00736384,
+            "record_format": "canonical context events; normalized inference usage",
+            "purpose": {
+              "answer": {
+                "calls": 23,
+                "priced_calls": 23,
+                "unpriced_calls": 0,
+                "known_usd_min": 0.003897045000000001,
+                "known_usd_max": 0.00736384
+              }
+            },
+            "context": {
+              "history_characters": 11347,
+              "working_characters": 5311,
+              "reduction_fraction": 0.5319467700713845
+            },
+            "complete": false
+          }
+        },
+        {
+          "label": "openai-gpt-6-luna-document-fuel-layered",
+          "status": "completed",
+          "completed_turns": 3,
+          "export": "conv_e7f1ee30-c4f8-4f50-ad50-c0d126ab9c66_2026-10-02T19-59-44-449Z.json",
+          "cost": {
+            "id": "conv_e7f1ee30-c4f8-4f50-ad50-c0d126ab9c66",
+            "exported_at": "2026-10-02T19:59:44.449Z",
+            "price_date": "2026-10-02",
+            "basis": "public direct API list rates; standard paid tier; not an invoice or historical effective-rate record",
+            "calls": [
+              {
+                "request_id": "evt_4b850ba4-e46f-4e0e-ad1c-6c7b74896019",
+                "seq": 6,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 2653,
+                  "output": 27,
+                  "read": 2223,
+                  "write": 427,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.000089405,
+                "usd_max": 0.00017206,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_77e6c8ac-f826-4d57-b340-a0ebafe7cedd",
+                "seq": 11,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 3444,
+                  "output": 29,
+                  "read": 2650,
+                  "write": 791,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.000140175,
+                "usd_max": 0.0002731,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_f148c24d-7e4a-48e1-9a22-174a8dee52ed",
+                "seq": 16,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 4555,
+                  "output": 26,
+                  "read": 3441,
+                  "write": 1111,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.00018658500000000002,
+                "usd_max": 0.00036667000000000004,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_641d3f43-60c7-4cbf-9328-7f070bfa4584",
+                "seq": 20,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 4602,
+                  "output": 28,
+                  "read": 4552,
+                  "write": 47,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.00006569500000000001,
+                "usd_max": 0.00012439,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_ac0fcaf9-6ad1-4e75-a9d9-97c8fd3fc4d8",
+                "seq": 24,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 4651,
+                  "output": 35,
+                  "read": 4599,
+                  "write": 49,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.00006991500000000001,
+                "usd_max": 0.00013108000000000003,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_87ed511a-69b3-4e34-9223-600040cb10b9",
+                "seq": 28,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 4707,
+                  "output": 29,
+                  "read": 4648,
+                  "write": 56,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.00006828,
+                "usd_max": 0.00012931,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_7bedae0e-e8d9-41b8-81e2-c740b687ae70",
+                "seq": 32,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 4757,
+                  "output": 29,
+                  "read": 4704,
+                  "write": 50,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.00006809,
+                "usd_max": 0.00012892999999999997,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_f7632fe4-6cea-40de-b596-7cd9455e83be",
+                "seq": 36,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 4807,
+                  "output": 28,
+                  "read": 4754,
+                  "write": 50,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.00006809,
+                "usd_max": 0.00012917999999999998,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_357c8e3c-c680-4bdf-987a-b5c638ebb75a",
+                "seq": 40,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 4857,
+                  "output": 36,
+                  "read": 4804,
+                  "write": 50,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.00007259,
+                "usd_max": 0.00013618,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_afd67b02-c8ba-4a73-9c44-58f0538aefbe",
+                "seq": 44,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 4914,
+                  "output": 29,
+                  "read": 4854,
+                  "write": 57,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.00007046499999999998,
+                "usd_max": 0.00013367999999999998,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_0862304f-45b7-41c9-9794-d38f92aeadd1",
+                "seq": 48,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 4965,
+                  "output": 30,
+                  "read": 4911,
+                  "write": 51,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.000070785,
+                "usd_max": 0.00013407,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_beb69047-80ca-456f-a819-65308bb6a7ef",
+                "seq": 52,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 5016,
+                  "output": 351,
+                  "read": 4962,
+                  "write": 51,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.00023179500000000003,
+                "usd_max": 0.00037584,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_68a3431c-e0cc-4e2b-8381-9d4fa7e0bfbe",
+                "seq": 59,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 3262,
+                  "output": 26,
+                  "read": 2223,
+                  "write": 1036,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.00016503000000000004,
+                "usd_max": 0.00032356,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_becea326-1323-4120-825a-5995a07bcf68",
+                "seq": 63,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 3309,
+                  "output": 28,
+                  "read": 3259,
+                  "write": 47,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.000052765,
+                "usd_max": 0.00009853000000000001,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_a2a28fb9-e6b7-4a1c-86c2-5e7eab5ef901",
+                "seq": 67,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 3359,
+                  "output": 27,
+                  "read": 3306,
+                  "write": 50,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.00005311,
+                "usd_max": 0.00009947,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_6b3d62fd-7008-4fc2-a788-8627317d73c3",
+                "seq": 71,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 3405,
+                  "output": 27,
+                  "read": 3356,
+                  "write": 46,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.00005311,
+                "usd_max": 0.00009947,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_f1049ca2-2be7-42fa-b79a-d1dd34544c96",
+                "seq": 75,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 3451,
+                  "output": 27,
+                  "read": 3402,
+                  "write": 46,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.00005357,
+                "usd_max": 0.00010039,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_2c4bb17b-3d34-44ed-ac46-2e8d2ef6411e",
+                "seq": 79,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 3497,
+                  "output": 30,
+                  "read": 3448,
+                  "write": 46,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.00005553,
+                "usd_max": 0.00010356,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_6928c689-1493-464c-bffc-0a8e037b93b1",
+                "seq": 83,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 3549,
+                  "output": 27,
+                  "read": 3494,
+                  "write": 52,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.00005523999999999999,
+                "usd_max": 0.00010372999999999998,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_4f9312d2-4e09-4a78-b8bd-e7cc844c5ac2",
+                "seq": 87,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 3595,
+                  "output": 28,
+                  "read": 3546,
+                  "write": 46,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.000055509999999999995,
+                "usd_max": 0.00010402,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_2ea31b34-aa29-4f7d-af0e-64d8edb7e25c",
+                "seq": 91,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 3644,
+                  "output": 28,
+                  "read": 3592,
+                  "write": 49,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.000056345,
+                "usd_max": 0.00010569,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_ba55de48-bd63-4e16-8b26-3d889b510b15",
+                "seq": 95,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 3691,
+                  "output": 152,
+                  "read": 3641,
+                  "write": 47,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.00011858499999999999,
+                "usd_max": 0.00019916999999999998,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_5a5a4995-d619-44ab-8159-7fd1885e69e9",
+                "seq": 102,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 3619,
+                  "output": 624,
+                  "read": 2223,
+                  "write": 1393,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.000508655,
+                "usd_max": 0.00086131,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_736c2648-0dbb-4788-98cc-9c1fea76e540",
+                "seq": 108,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 5136,
+                  "output": 24,
+                  "read": 2223,
+                  "write": 2910,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.00039828000000000004,
+                "usd_max": 0.00079056,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_2dc6dc33-f277-460e-9ab4-c0365b444060",
+                "seq": 113,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 5932,
+                  "output": 56,
+                  "read": 5133,
+                  "write": 796,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.00017913,
+                "usd_max": 0.00034426,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              }
+            ],
+            "priced_calls": 25,
+            "unpriced_calls": 0,
+            "known_usd_min": 0.0030067300000000004,
+            "known_usd_max": 0.005568209999999999,
+            "record_format": "canonical context events; normalized inference usage",
+            "purpose": {
+              "answer": {
+                "calls": 25,
+                "priced_calls": 25,
+                "unpriced_calls": 0,
+                "known_usd_min": 0.0030067300000000004,
+                "known_usd_max": 0.005568209999999999
+              }
+            },
+            "context": {
+              "history_characters": 11501,
+              "working_characters": 5193,
+              "reduction_fraction": 0.5484740457351535
+            },
+            "complete": false
+          }
+        },
+        {
+          "label": "openai-gpt-6-luna-document-fuel-frozen",
+          "status": "completed",
+          "completed_turns": 3,
+          "export": "conv_4ea13edc-6c20-4dc1-9749-ceee118ca4cc_2026-10-02T20-00-19-022Z.json",
+          "cost": {
+            "id": "conv_4ea13edc-6c20-4dc1-9749-ceee118ca4cc",
+            "exported_at": "2026-10-02T20:00:19.022Z",
+            "price_date": "2026-10-02",
+            "basis": "public direct API list rates; standard paid tier; not an invoice or historical effective-rate record",
+            "calls": [
+              {
+                "request_id": "evt_6c2bbd63-bbbb-4d51-99a6-227c2b35a30e",
+                "seq": 6,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 2741,
+                  "output": 27,
+                  "read": 0,
+                  "write": 2738,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.00035605,
+                "usd_max": 0.00070535,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_e7485c46-1fc0-4f66-abcd-a47bf90f3de2",
+                "seq": 11,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 3553,
+                  "output": 29,
+                  "read": 2738,
+                  "write": 812,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.00014368,
+                "usd_max": 0.00028011,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_e3de99d4-93a0-4975-bd7a-2e6cab019707",
+                "seq": 16,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 4687,
+                  "output": 26,
+                  "read": 3550,
+                  "write": 1134,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.00019055000000000002,
+                "usd_max": 0.0003746,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_2189c16d-3e82-4854-ab05-4b791bd13cdf",
+                "seq": 20,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 4749,
+                  "output": 28,
+                  "read": 4684,
+                  "write": 62,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.00006889,
+                "usd_max": 0.00013078,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_3b821436-9a63-49ff-8fd9-5fe0deddd001",
+                "seq": 24,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 4813,
+                  "output": 35,
+                  "read": 4746,
+                  "write": 64,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.00007326,
+                "usd_max": 0.00013777,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_231ff8f0-50b8-4241-afee-131fc0339dc2",
+                "seq": 28,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 4884,
+                  "output": 29,
+                  "read": 4810,
+                  "write": 71,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.000071775,
+                "usd_max": 0.00013629999999999998,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_4062e0b5-ea9d-423d-83cf-8629d5bb8038",
+                "seq": 32,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 4949,
+                  "output": 28,
+                  "read": 4881,
+                  "write": 65,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.000071235,
+                "usd_max": 0.00013547,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_22097593-261d-4754-8bb9-0303df0487db",
+                "seq": 36,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 5014,
+                  "output": 36,
+                  "read": 4946,
+                  "write": 65,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.00007588500000000001,
+                "usd_max": 0.00014277000000000002,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_7611f194-cd67-49d4-8749-d5affcfd9ab0",
+                "seq": 40,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 5086,
+                  "output": 29,
+                  "read": 5011,
+                  "write": 72,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.00007391,
+                "usd_max": 0.00014057,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_497aa04d-a762-417e-9235-51de71b89d02",
+                "seq": 44,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 5151,
+                  "output": 275,
+                  "read": 5083,
+                  "write": 65,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.00019675499999999998,
+                "usd_max": 0.00032476,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_6f394990-6324-439b-981c-0e72055bff9a",
+                "seq": 51,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 3268,
+                  "output": 24,
+                  "read": 2297,
+                  "write": 968,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.00015627000000000002,
+                "usd_max": 0.00030654,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_fcaa71b0-fd51-45ca-86c3-ef4dddde636c",
+                "seq": 55,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 3328,
+                  "output": 26,
+                  "read": 3265,
+                  "write": 60,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.00005345,
+                "usd_max": 0.00010039999999999999,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_7b9765e1-7bb9-4a90-a674-2f3f764292cc",
+                "seq": 59,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 3390,
+                  "output": 28,
+                  "read": 3325,
+                  "write": 62,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.000055299999999999996,
+                "usd_max": 0.0001036,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_285684da-e8ee-4370-b505-db2296143354",
+                "seq": 63,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 3455,
+                  "output": 32,
+                  "read": 3387,
+                  "write": 65,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.000058295,
+                "usd_max": 0.00010858999999999999,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_847fbf9d-00a8-4a16-a686-d5c580166c43",
+                "seq": 67,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 3524,
+                  "output": 30,
+                  "read": 3452,
+                  "write": 69,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.000058445,
+                "usd_max": 0.00010939,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_9cfcaf52-bd51-45f0-859d-7e6ef6be7b43",
+                "seq": 71,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 3591,
+                  "output": 30,
+                  "read": 3521,
+                  "write": 67,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.000058884999999999996,
+                "usd_max": 0.00011027,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_58c0e35c-2d8c-4dfe-acbb-cbf7a0d1e89f",
+                "seq": 75,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 3657,
+                  "output": 29,
+                  "read": 3588,
+                  "write": 66,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.00005893,
+                "usd_max": 0.00011061,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_66e0d9d9-7e71-48a2-8383-a0555c3cb627",
+                "seq": 79,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 3722,
+                  "output": 159,
+                  "read": 3654,
+                  "write": 65,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.00012446499999999998,
+                "usd_max": 0.00020917999999999997,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_c57a572c-761d-4ca8-b437-a83f5511dbdb",
+                "seq": 86,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 3632,
+                  "output": 692,
+                  "read": 2297,
+                  "write": 1332,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.00053577,
+                "usd_max": 0.0008985400000000001,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_776ee9bc-e0ff-4e87-9d1f-85796dcfe817",
+                "seq": 92,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 4404,
+                  "output": 24,
+                  "read": 3629,
+                  "write": 772,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.00014509,
+                "usd_max": 0.00028418000000000003,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              },
+              {
+                "request_id": "evt_3326ed8f-2f80-4459-9f04-2d9d38786c88",
+                "seq": 97,
+                "purpose": "answer",
+                "requested_model": "gpt-6-luna",
+                "reported_model": "gpt-6-luna",
+                "status": "completed",
+                "counts": {
+                  "input": 5281,
+                  "output": 65,
+                  "read": 4401,
+                  "write": 877,
+                  "write_5m": null,
+                  "write_1h": null
+                },
+                "provider": "openai",
+                "model": "gpt-6-luna",
+                "usd_min": 0.000186435,
+                "usd_max": 0.00035662,
+                "reasons": [
+                  "Short/long tier boundary unverified; range covers both"
+                ]
+              }
+            ],
+            "priced_calls": 21,
+            "unpriced_calls": 0,
+            "known_usd_min": 0.002813325,
+            "known_usd_max": 0.005206400000000001,
+            "record_format": "canonical context events; normalized inference usage",
+            "purpose": {
+              "answer": {
+                "calls": 21,
+                "priced_calls": 21,
+                "unpriced_calls": 0,
+                "known_usd_min": 0.002813325,
+                "known_usd_max": 0.005206400000000001
+              }
+            },
+            "context": {
+              "history_characters": 11383,
+              "working_characters": 5008,
+              "reduction_fraction": 0.5600456821576034
+            },
+            "complete": false
+          }
+        },
+        {
+          "label": "anthropic-claude-sonnet-5-5-document-fuel-plain",
+          "status": "completed",
+          "completed_turns": 3,
+          "export": "conv_d6695b8e-cbab-4ccf-ace7-d3016b066870_2026-10-02T20-01-01-099Z.json",
+          "cost": {
+            "id": "conv_d6695b8e-cbab-4ccf-ace7-d3016b066870",
+            "exported_at": "2026-10-02T20:01:01.099Z",
+            "price_date": "2026-10-02",
+            "basis": "public direct API list rates; standard paid tier; not an invoice or historical effective-rate record",
+            "calls": [
+              {
+                "request_id": "evt_8d71084e-570b-4ddc-b02e-00fe7a3565ce",
+                "seq": 4,
+                "purpose": "answer",
+                "requested_model": "claude-sonnet-5-5",
+                "reported_model": "claude-sonnet-5-5",
+                "status": "completed",
+                "counts": {
+                  "input": 2522,
+                  "output": 2532,
+                  "read": 2518,
+                  "write": 0,
+                  "write_5m": 0,
+                  "write_1h": 0
+                },
+                "provider": "anthropic",
+                "model": "claude-sonnet-5-5",
+                "usd_min": 0.0258316,
+                "usd_max": 0.0258316,
+                "reasons": []
+              },
+              {
+                "request_id": "evt_0639a4d3-5f15-4975-bca6-7d92c8e77d54",
+                "seq": 11,
+                "purpose": "answer",
+                "requested_model": "claude-sonnet-5-5",
+                "reported_model": "claude-sonnet-5-5",
+                "status": "completed",
+                "counts": {
+                  "input": 3757,
+                  "output": 1055,
+                  "read": 2518,
+                  "write": 1235,
+                  "write_5m": 1235,
+                  "write_1h": 0
+                },
+                "provider": "anthropic",
+                "model": "claude-sonnet-5-5",
+                "usd_min": 0.0141491,
+                "usd_max": 0.0141491,
+                "reasons": []
+              },
+              {
+                "request_id": "evt_f237a3c7-9d81-499c-b9f4-bb83386b83ac",
+                "seq": 18,
+                "purpose": "answer",
+                "requested_model": "claude-sonnet-5-5",
+                "reported_model": "claude-sonnet-5-5",
+                "status": "completed",
+                "counts": {
+                  "input": 4430,
+                  "output": 1555,
+                  "read": 3753,
+                  "write": 673,
+                  "write_5m": 673,
+                  "write_1h": 0
+                },
+                "provider": "anthropic",
+                "model": "claude-sonnet-5-5",
+                "usd_min": 0.0179911,
+                "usd_max": 0.0179911,
+                "reasons": []
+              }
+            ],
+            "priced_calls": 3,
+            "unpriced_calls": 0,
+            "known_usd_min": 0.057971800000000004,
+            "known_usd_max": 0.057971800000000004,
+            "record_format": "canonical context events; normalized inference usage",
+            "purpose": {
+              "answer": {
+                "calls": 3,
+                "priced_calls": 3,
+                "unpriced_calls": 0,
+                "known_usd_min": 0.057971800000000004,
+                "known_usd_max": 0.057971800000000004
+              }
+            },
+            "context": {
+              "history_characters": 7761,
+              "working_characters": 7761,
+              "reduction_fraction": 0
+            },
+            "complete": true
+          }
+        },
+        {
+          "label": "anthropic-claude-sonnet-5-5-document-fuel-append",
+          "status": "completed",
+          "completed_turns": 3,
+          "export": "conv_422b4990-5395-4d8e-8286-d243eaf98605_2026-10-02T20-02-06-489Z.json",
+          "cost": {
+            "id": "conv_422b4990-5395-4d8e-8286-d243eaf98605",
+            "exported_at": "2026-10-02T20:02:06.489Z",
+            "price_date": "2026-10-02",
+            "basis": "public direct API list rates; standard paid tier; not an invoice or historical effective-rate record",
+            "calls": [
+              {
+                "request_id": "evt_98e51fdb-9cdf-406f-b9d3-861796c5e469",
+                "seq": 6,
+                "purpose": "answer",
+                "requested_model": "claude-sonnet-5-5",
+                "reported_model": "claude-sonnet-5-5",
+                "status": "completed",
+                "counts": {
+                  "input": 7028,
+                  "output": 480,
+                  "read": 3864,
+                  "write": 3160,
+                  "write_5m": 3160,
+                  "write_1h": 0
+                },
+                "provider": "anthropic",
+                "model": "claude-sonnet-5-5",
+                "usd_min": 0.0134808,
+                "usd_max": 0.0134808,
+                "reasons": []
+              },
+              {
+                "request_id": "evt_06e1b6be-1595-4bd8-8a69-d42293bc240c",
+                "seq": 21,
+                "purpose": "answer",
+                "requested_model": "claude-sonnet-5-5",
+                "reported_model": "claude-sonnet-5-5",
+                "status": "completed",
+                "counts": {
+                  "input": 10565,
+                  "output": 202,
+                  "read": 7024,
+                  "write": 3539,
+                  "write_5m": 3539,
+                  "write_1h": 0
+                },
+                "provider": "anthropic",
+                "model": "claude-sonnet-5-5",
+                "usd_min": 0.012276299999999999,
+                "usd_max": 0.012276299999999999,
+                "reasons": []
+              },
+              {
+                "request_id": "evt_a3a4c2c5-2264-424d-aea6-51fad0a5df6e",
+                "seq": 28,
+                "purpose": "answer",
+                "requested_model": "claude-sonnet-5-5",
+                "reported_model": "claude-sonnet-5-5",
+                "status": "completed",
+                "counts": {
+                  "input": 10847,
+                  "output": 2147,
+                  "read": 10563,
+                  "write": 282,
+                  "write_5m": 282,
+                  "write_1h": 0
+                },
+                "provider": "anthropic",
+                "model": "claude-sonnet-5-5",
+                "usd_min": 0.0242916,
+                "usd_max": 0.0242916,
+                "reasons": []
+              },
+              {
+                "request_id": "evt_ce8c80b8-2565-4d2e-be31-5f589659b62a",
+                "seq": 36,
+                "purpose": "answer",
+                "requested_model": "claude-sonnet-5-5",
+                "reported_model": "claude-sonnet-5-5",
+                "status": "completed",
+                "counts": {
+                  "input": 10059,
+                  "output": 259,
+                  "read": 3864,
+                  "write": 6191,
+                  "write_5m": 6191,
+                  "write_1h": 0
+                },
+                "provider": "anthropic",
+                "model": "claude-sonnet-5-5",
+                "usd_min": 0.0188483,
+                "usd_max": 0.0188483,
+                "reasons": []
+              },
+              {
+                "request_id": "evt_cdbc040c-aaff-4c6f-a928-6c385b9ce6e6",
+                "seq": 43,
+                "purpose": "answer",
+                "requested_model": "claude-sonnet-5-5",
+                "reported_model": "claude-sonnet-5-5",
+                "status": "completed",
+                "counts": {
+                  "input": 10399,
+                  "output": 87,
+                  "read": 10055,
+                  "write": 342,
+                  "write_5m": 342,
+                  "write_1h": 0
+                },
+                "provider": "anthropic",
+                "model": "claude-sonnet-5-5",
+                "usd_min": 0.00374,
+                "usd_max": 0.00374,
+                "reasons": []
+              },
+              {
+                "request_id": "evt_de23aef1-4e9e-4f04-b955-84430e66a94a",
+                "seq": 47,
+                "purpose": "answer",
+                "requested_model": "claude-sonnet-5-5",
+                "reported_model": "claude-sonnet-5-5",
+                "status": "completed",
+                "counts": {
+                  "input": 10503,
+                  "output": 161,
+                  "read": 10397,
+                  "write": 104,
+                  "write_5m": 104,
+                  "write_1h": 0
+                },
+                "provider": "anthropic",
+                "model": "claude-sonnet-5-5",
+                "usd_min": 0.0039534,
+                "usd_max": 0.0039534,
+                "reasons": []
+              },
+              {
+                "request_id": "evt_61765e2b-6288-4673-99f6-5a7cedbf1976",
+                "seq": 53,
+                "purpose": "answer",
+                "requested_model": "claude-sonnet-5-5",
+                "reported_model": "claude-sonnet-5-5",
+                "status": "completed",
+                "counts": {
+                  "input": 10744,
+                  "output": 618,
+                  "read": 10501,
+                  "write": 241,
+                  "write_5m": 241,
+                  "write_1h": 0
+                },
+                "provider": "anthropic",
+                "model": "claude-sonnet-5-5",
+                "usd_min": 0.0088867,
+                "usd_max": 0.0088867,
+                "reasons": []
+              },
+              {
+                "request_id": "evt_d89d371c-d672-466e-9b30-97a47480604c",
+                "seq": 60,
+                "purpose": "answer",
+                "requested_model": "claude-sonnet-5-5",
+                "reported_model": "claude-sonnet-5-5",
+                "status": "completed",
+                "counts": {
+                  "input": 11353,
+                  "output": 379,
+                  "read": 3864,
+                  "write": 7485,
+                  "write_5m": 7485,
+                  "write_1h": 0
+                },
+                "provider": "anthropic",
+                "model": "claude-sonnet-5-5",
+                "usd_min": 0.0232833,
+                "usd_max": 0.0232833,
+                "reasons": []
+              },
+              {
+                "request_id": "evt_7fc74aa4-1eb9-448a-8300-da041098fb03",
+                "seq": 65,
+                "purpose": "answer",
+                "requested_model": "claude-sonnet-5-5",
+                "reported_model": "claude-sonnet-5-5",
+                "status": "completed",
+                "counts": {
+                  "input": 11750,
+                  "output": 87,
+                  "read": 11349,
+                  "write": 399,
+                  "write_5m": 399,
+                  "write_1h": 0
+                },
+                "provider": "anthropic",
+                "model": "claude-sonnet-5-5",
+                "usd_min": 0.0041413000000000005,
+                "usd_max": 0.0041413000000000005,
+                "reasons": []
+              },
+              {
+                "request_id": "evt_801683a6-846a-404f-bb5d-7411efadd874",
+                "seq": 69,
+                "purpose": "answer",
+                "requested_model": "claude-sonnet-5-5",
+                "reported_model": "claude-sonnet-5-5",
+                "status": "completed",
+                "counts": {
+                  "input": 11854,
+                  "output": 82,
+                  "read": 11748,
+                  "write": 104,
+                  "write_5m": 104,
+                  "write_1h": 0
+                },
+                "provider": "anthropic",
+                "model": "claude-sonnet-5-5",
+                "usd_min": 0.0034335999999999998,
+                "usd_max": 0.0034335999999999998,
+                "reasons": []
+              },
+              {
+                "request_id": "evt_5192e107-ced5-4f27-8a81-ac7a7608db0b",
+                "seq": 73,
+                "purpose": "answer",
+                "requested_model": "claude-sonnet-5-5",
+                "reported_model": "claude-sonnet-5-5",
+                "status": "completed",
+                "counts": {
+                  "input": 11953,
+                  "output": 1899,
+                  "read": 11852,
+                  "write": 99,
+                  "write_5m": 99,
+                  "write_1h": 0
+                },
+                "provider": "anthropic",
+                "model": "claude-sonnet-5-5",
+                "usd_min": 0.0216119,
+                "usd_max": 0.0216119,
+                "reasons": []
+              },
+              {
+                "request_id": "evt_a6ca15fb-61cd-498e-a283-2c9656478e16",
+                "seq": 81,
+                "purpose": "answer",
+                "requested_model": "claude-sonnet-5-5",
+                "reported_model": "claude-sonnet-5-5",
+                "status": "completed",
+                "counts": {
+                  "input": 14672,
+                  "output": 113,
+                  "read": 3864,
+                  "write": 10804,
+                  "write_5m": 10804,
+                  "write_1h": 0
+                },
+                "provider": "anthropic",
+                "model": "claude-sonnet-5-5",
+                "usd_min": 0.0289208,
+                "usd_max": 0.0289208,
+                "reasons": []
+              },
+              {
+                "request_id": "evt_eaaa31e0-4d6d-4da4-a099-1a5449e00231",
+                "seq": 87,
+                "purpose": "answer",
+                "requested_model": "claude-sonnet-5-5",
+                "reported_model": "claude-sonnet-5-5",
+                "status": "completed",
+                "counts": {
+                  "input": 16826,
+                  "output": 514,
+                  "read": 14668,
+                  "write": 2156,
+                  "write_5m": 2156,
+                  "write_1h": 0
+                },
+                "provider": "anthropic",
+                "model": "claude-sonnet-5-5",
+                "usd_min": 0.0134676,
+                "usd_max": 0.0134676,
+                "reasons": []
+              }
+            ],
+            "priced_calls": 13,
+            "unpriced_calls": 0,
+            "known_usd_min": 0.18033559999999996,
+            "known_usd_max": 0.18033559999999996,
+            "record_format": "canonical context events; normalized inference usage",
+            "purpose": {
+              "answer": {
+                "calls": 13,
+                "priced_calls": 13,
+                "unpriced_calls": 0,
+                "known_usd_min": 0.18033559999999996,
+                "known_usd_max": 0.18033559999999996
+              }
+            },
+            "context": {
+              "history_characters": 19647,
+              "working_characters": 9000,
+              "reduction_fraction": 0.5419147961520843
+            },
+            "complete": true
+          }
+        },
+        {
+          "label": "anthropic-claude-sonnet-5-5-document-fuel-layered",
+          "status": "completed",
+          "completed_turns": 3,
+          "export": "conv_560ba4b4-b229-490a-85ef-c308463803a1_2026-10-02T20-03-07-594Z.json",
+          "cost": {
+            "id": "conv_560ba4b4-b229-490a-85ef-c308463803a1",
+            "exported_at": "2026-10-02T20:03:07.594Z",
+            "price_date": "2026-10-02",
+            "basis": "public direct API list rates; standard paid tier; not an invoice or historical effective-rate record",
+            "calls": [
+              {
+                "request_id": "evt_403cb046-4091-4107-a189-a653c9e011ae",
+                "seq": 6,
+                "purpose": "answer",
+                "requested_model": "claude-sonnet-5-5",
+                "reported_model": "claude-sonnet-5-5",
+                "status": "completed",
+                "counts": {
+                  "input": 5739,
+                  "output": 161,
+                  "read": 0,
+                  "write": 5735,
+                  "write_5m": 5735,
+                  "write_1h": 0
+                },
+                "provider": "anthropic",
+                "model": "claude-sonnet-5-5",
+                "usd_min": 0.0159555,
+                "usd_max": 0.0159555,
+                "reasons": []
+              },
+              {
+                "request_id": "evt_50a3751e-1f0c-4b59-9808-62e3766a3163",
+                "seq": 14,
+                "purpose": "answer",
+                "requested_model": "claude-sonnet-5-5",
+                "reported_model": "claude-sonnet-5-5",
+                "status": "completed",
+                "counts": {
+                  "input": 8867,
+                  "output": 272,
+                  "read": 5735,
+                  "write": 3130,
+                  "write_5m": 3130,
+                  "write_1h": 0
+                },
+                "provider": "anthropic",
+                "model": "claude-sonnet-5-5",
+                "usd_min": 0.011696,
+                "usd_max": 0.011696,
+                "reasons": []
+              },
+              {
+                "request_id": "evt_0fc5fc3b-fc87-4e82-b6aa-b17322162145",
+                "seq": 23,
+                "purpose": "answer",
+                "requested_model": "claude-sonnet-5-5",
+                "reported_model": "claude-sonnet-5-5",
+                "status": "completed",
+                "counts": {
+                  "input": 9257,
+                  "output": 170,
+                  "read": 8865,
+                  "write": 390,
+                  "write_5m": 390,
+                  "write_1h": 0
+                },
+                "provider": "anthropic",
+                "model": "claude-sonnet-5-5",
+                "usd_min": 0.004452,
+                "usd_max": 0.004452,
+                "reasons": []
+              },
+              {
+                "request_id": "evt_05db0ddb-4c85-4711-9fa6-9e0b9d20850c",
+                "seq": 29,
+                "purpose": "answer",
+                "requested_model": "claude-sonnet-5-5",
+                "reported_model": "claude-sonnet-5-5",
+                "status": "completed",
+                "counts": {
+                  "input": 9507,
+                  "output": 1201,
+                  "read": 9255,
+                  "write": 250,
+                  "write_5m": 250,
+                  "write_1h": 0
+                },
+                "provider": "anthropic",
+                "model": "claude-sonnet-5-5",
+                "usd_min": 0.01449,
+                "usd_max": 0.01449,
+                "reasons": []
+              },
+              {
+                "request_id": "evt_ed532717-a3c7-4b46-b436-804d111eef90",
+                "seq": 36,
+                "purpose": "answer",
+                "requested_model": "claude-sonnet-5-5",
+                "reported_model": "claude-sonnet-5-5",
+                "status": "completed",
+                "counts": {
+                  "input": 7480,
+                  "output": 260,
+                  "read": 5021,
+                  "write": 2455,
+                  "write_5m": 2455,
+                  "write_1h": 0
+                },
+                "provider": "anthropic",
+                "model": "claude-sonnet-5-5",
+                "usd_min": 0.0097497,
+                "usd_max": 0.0097497,
+                "reasons": []
+              },
+              {
+                "request_id": "evt_aaf33296-6df0-4471-83e0-7ef3d5866a09",
+                "seq": 43,
+                "purpose": "answer",
+                "requested_model": "claude-sonnet-5-5",
+                "reported_model": "claude-sonnet-5-5",
+                "status": "completed",
+                "counts": {
+                  "input": 7821,
+                  "output": 87,
+                  "read": 7476,
+                  "write": 343,
+                  "write_5m": 343,
+                  "write_1h": 0
+                },
+                "provider": "anthropic",
+                "model": "claude-sonnet-5-5",
+                "usd_min": 0.0032267,
+                "usd_max": 0.0032267,
+                "reasons": []
+              },
+              {
+                "request_id": "evt_f4e82218-24c2-42e5-adff-dfaeebaea23b",
+                "seq": 47,
+                "purpose": "answer",
+                "requested_model": "claude-sonnet-5-5",
+                "reported_model": "claude-sonnet-5-5",
+                "status": "completed",
+                "counts": {
+                  "input": 7925,
+                  "output": 161,
+                  "read": 7819,
+                  "write": 104,
+                  "write_5m": 104,
+                  "write_1h": 0
+                },
+                "provider": "anthropic",
+                "model": "claude-sonnet-5-5",
+                "usd_min": 0.0034378,
+                "usd_max": 0.0034378,
+                "reasons": []
+              },
+              {
+                "request_id": "evt_749444f5-e579-4382-a374-ae5da3b77b66",
+                "seq": 53,
+                "purpose": "answer",
+                "requested_model": "claude-sonnet-5-5",
+                "reported_model": "claude-sonnet-5-5",
+                "status": "completed",
+                "counts": {
+                  "input": 8166,
+                  "output": 636,
+                  "read": 7923,
+                  "write": 241,
+                  "write_5m": 241,
+                  "write_1h": 0
+                },
+                "provider": "anthropic",
+                "model": "claude-sonnet-5-5",
+                "usd_min": 0.0085511,
+                "usd_max": 0.0085511,
+                "reasons": []
+              },
+              {
+                "request_id": "evt_df433525-9789-4e72-9840-247eb972f88b",
+                "seq": 60,
+                "purpose": "answer",
+                "requested_model": "claude-sonnet-5-5",
+                "reported_model": "claude-sonnet-5-5",
+                "status": "completed",
+                "counts": {
+                  "input": 8604,
+                  "output": 475,
+                  "read": 5021,
+                  "write": 3579,
+                  "write_5m": 3579,
+                  "write_1h": 0
+                },
+                "provider": "anthropic",
+                "model": "claude-sonnet-5-5",
+                "usd_min": 0.014709700000000001,
+                "usd_max": 0.014709700000000001,
+                "reasons": []
+              },
+              {
+                "request_id": "evt_b8c44fb0-4161-4a00-ba64-d5ea41484112",
+                "seq": 75,
+                "purpose": "answer",
+                "requested_model": "claude-sonnet-5-5",
+                "reported_model": "claude-sonnet-5-5",
+                "status": "completed",
+                "counts": {
+                  "input": 12159,
+                  "output": 1799,
+                  "read": 8600,
+                  "write": 3557,
+                  "write_5m": 3557,
+                  "write_1h": 0
+                },
+                "provider": "anthropic",
+                "model": "claude-sonnet-5-5",
+                "usd_min": 0.0286065,
+                "usd_max": 0.0286065,
+                "reasons": []
+              },
+              {
+                "request_id": "evt_2a2b7af2-2738-438f-9027-21d165464830",
+                "seq": 83,
+                "purpose": "answer",
+                "requested_model": "claude-sonnet-5-5",
+                "reported_model": "claude-sonnet-5-5",
+                "status": "completed",
+                "counts": {
+                  "input": 11501,
+                  "output": 188,
+                  "read": 5021,
+                  "write": 6476,
+                  "write_5m": 6476,
+                  "write_1h": 0
+                },
+                "provider": "anthropic",
+                "model": "claude-sonnet-5-5",
+                "usd_min": 0.0190822,
+                "usd_max": 0.0190822,
+                "reasons": []
+              },
+              {
+                "request_id": "evt_203eca37-a908-41ce-b4d7-f2e1e8579df4",
+                "seq": 89,
+                "purpose": "answer",
+                "requested_model": "claude-sonnet-5-5",
+                "reported_model": "claude-sonnet-5-5",
+                "status": "completed",
+                "counts": {
+                  "input": 13576,
+                  "output": 599,
+                  "read": 11497,
+                  "write": 2077,
+                  "write_5m": 2077,
+                  "write_1h": 0
+                },
+                "provider": "anthropic",
+                "model": "claude-sonnet-5-5",
+                "usd_min": 0.0134859,
+                "usd_max": 0.0134859,
+                "reasons": []
+              }
+            ],
+            "priced_calls": 12,
+            "unpriced_calls": 0,
+            "known_usd_min": 0.1474431,
+            "known_usd_max": 0.1474431,
+            "record_format": "canonical context events; normalized inference usage",
+            "purpose": {
+              "answer": {
+                "calls": 12,
+                "priced_calls": 12,
+                "unpriced_calls": 0,
+                "known_usd_min": 0.1474431,
+                "known_usd_max": 0.1474431
+              }
+            },
+            "context": {
+              "history_characters": 17363,
+              "working_characters": 8568,
+              "reduction_fraction": 0.5065368887865
+            },
+            "complete": true
+          }
+        }
+      ]
+    }
+  ]
+}

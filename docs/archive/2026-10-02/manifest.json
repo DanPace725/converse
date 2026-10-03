@@ -1,0 +1,605 @@
+{
+  "date": "2026-10-02",
+  "files": [
+    {
+      "original": "docs/agent-mode-increment.md",
+      "archived": "docs/archive/2026-10-02/docs/agent-mode-increment.md",
+      "sha256": "29dfc53f527fd86f1b77a7a239ac64578863b07e250a587444ec04a1d1779373"
+    },
+    {
+      "original": "docs/comparisons/2026-10-02T19-52-30-387Z/anthropic-claude-sonnet-5-5-document-fuel-append-answers.md",
+      "archived": "docs/archive/2026-10-02/docs/comparisons/2026-10-02T19-52-30-387Z/anthropic-claude-sonnet-5-5-document-fuel-append-answers.md",
+      "sha256": "627a5adc2b94063fc4bd89c7ade8b4c58228d8c7a018d4f548878918ea4e440c"
+    },
+    {
+      "original": "docs/comparisons/2026-10-02T19-52-30-387Z/anthropic-claude-sonnet-5-5-document-fuel-append-costs.md",
+      "archived": "docs/archive/2026-10-02/docs/comparisons/2026-10-02T19-52-30-387Z/anthropic-claude-sonnet-5-5-document-fuel-append-costs.md",
+      "sha256": "f8c2ce7bfc44dff5e61aeed96a15405c4d89308689b5b2025b6dd5fc172b73fd"
+    },
+    {
+      "original": "docs/comparisons/2026-10-02T19-52-30-387Z/anthropic-claude-sonnet-5-5-document-fuel-layered-costs.md",
+      "archived": "docs/archive/2026-10-02/docs/comparisons/2026-10-02T19-52-30-387Z/anthropic-claude-sonnet-5-5-document-fuel-layered-costs.md",
+      "sha256": "1ce9f1db869187b744eb5d4b2cc36d1f2801fd7dcbbd0af1943241444ae9d8c8"
+    },
+    {
+      "original": "docs/comparisons/2026-10-02T19-52-30-387Z/anthropic-claude-sonnet-5-5-document-fuel-plain-costs.md",
+      "archived": "docs/archive/2026-10-02/docs/comparisons/2026-10-02T19-52-30-387Z/anthropic-claude-sonnet-5-5-document-fuel-plain-costs.md",
+      "sha256": "43898156d66099f9f4098ad0f5dd2715eea2c8d77bb081a5fb03696a82c132be"
+    },
+    {
+      "original": "docs/comparisons/2026-10-02T19-52-30-387Z/anthropic-claude-sonnet-5-5-ordinary-memory-append-answers.md",
+      "archived": "docs/archive/2026-10-02/docs/comparisons/2026-10-02T19-52-30-387Z/anthropic-claude-sonnet-5-5-ordinary-memory-append-answers.md",
+      "sha256": "23074010dc0df0b4535721ac4ee03c6eb2882db273f5574bd63d9381e8def11f"
+    },
+    {
+      "original": "docs/comparisons/2026-10-02T19-52-30-387Z/anthropic-claude-sonnet-5-5-ordinary-memory-append-costs.md",
+      "archived": "docs/archive/2026-10-02/docs/comparisons/2026-10-02T19-52-30-387Z/anthropic-claude-sonnet-5-5-ordinary-memory-append-costs.md",
+      "sha256": "02c1908b19184c76b436b6399cb207b8433a7b97ebe44f672e85a7727c89d527"
+    },
+    {
+      "original": "docs/comparisons/2026-10-02T19-52-30-387Z/anthropic-claude-sonnet-5-5-ordinary-memory-layered-answers.md",
+      "archived": "docs/archive/2026-10-02/docs/comparisons/2026-10-02T19-52-30-387Z/anthropic-claude-sonnet-5-5-ordinary-memory-layered-answers.md",
+      "sha256": "72dd29751761448ce7f9d2bf3d8a5756b7e06b135bd20a8d495d164fe959a58a"
+    },
+    {
+      "original": "docs/comparisons/2026-10-02T19-52-30-387Z/anthropic-claude-sonnet-5-5-ordinary-memory-layered-costs.md",
+      "archived": "docs/archive/2026-10-02/docs/comparisons/2026-10-02T19-52-30-387Z/anthropic-claude-sonnet-5-5-ordinary-memory-layered-costs.md",
+      "sha256": "5d6790d3421885e63ecab357c79c375e6efdc14c50358b95f0096d1d6f384930"
+    },
+    {
+      "original": "docs/comparisons/2026-10-02T19-52-30-387Z/anthropic-claude-sonnet-5-5-ordinary-memory-plain-answers.md",
+      "archived": "docs/archive/2026-10-02/docs/comparisons/2026-10-02T19-52-30-387Z/anthropic-claude-sonnet-5-5-ordinary-memory-plain-answers.md",
+      "sha256": "8823cca9928c8f0a37d1bd9d2783a9910a206ba5427a558ab9c859d10c6afc60"
+    },
+    {
+      "original": "docs/comparisons/2026-10-02T19-52-30-387Z/anthropic-claude-sonnet-5-5-ordinary-memory-plain-costs.md",
+      "archived": "docs/archive/2026-10-02/docs/comparisons/2026-10-02T19-52-30-387Z/anthropic-claude-sonnet-5-5-ordinary-memory-plain-costs.md",
+      "sha256": "220c03bfb87b0c1e87297c9071e6789bd7d65f332af30b4e92d434c0f24b6db5"
+    },
+    {
+      "original": "docs/comparisons/2026-10-02T19-52-30-387Z/openai-gpt-6-luna-document-fuel-append-costs.md",
+      "archived": "docs/archive/2026-10-02/docs/comparisons/2026-10-02T19-52-30-387Z/openai-gpt-6-luna-document-fuel-append-costs.md",
+      "sha256": "70f8a90960ace51c3615f7c656d821b8d4254b79bbb7706886cd04c27c04e21a"
+    },
+    {
+      "original": "docs/comparisons/2026-10-02T19-52-30-387Z/openai-gpt-6-luna-document-fuel-layered-costs.md",
+      "archived": "docs/archive/2026-10-02/docs/comparisons/2026-10-02T19-52-30-387Z/openai-gpt-6-luna-document-fuel-layered-costs.md",
+      "sha256": "cd31698b472a433447e99897b3a554a29ae1260c09fc68cb2233ea5f01017368"
+    },
+    {
+      "original": "docs/comparisons/2026-10-02T19-52-30-387Z/openai-gpt-6-luna-document-fuel-plain-answers.md",
+      "archived": "docs/archive/2026-10-02/docs/comparisons/2026-10-02T19-52-30-387Z/openai-gpt-6-luna-document-fuel-plain-answers.md",
+      "sha256": "2b275645c8ff796e106acb2dd2b984913d78515478903f62f2da3f6d3ec58205"
+    },
+    {
+      "original": "docs/comparisons/2026-10-02T19-52-30-387Z/openai-gpt-6-luna-document-fuel-plain-costs.md",
+      "archived": "docs/archive/2026-10-02/docs/comparisons/2026-10-02T19-52-30-387Z/openai-gpt-6-luna-document-fuel-plain-costs.md",
+      "sha256": "9ec279a47f9cc94b8426bb717bb8b7765c0104c31c0d48d0a55a927a4871766f"
+    },
+    {
+      "original": "docs/comparisons/2026-10-02T19-52-30-387Z/openai-gpt-6-luna-ordinary-memory-append-answers.md",
+      "archived": "docs/archive/2026-10-02/docs/comparisons/2026-10-02T19-52-30-387Z/openai-gpt-6-luna-ordinary-memory-append-answers.md",
+      "sha256": "f5d62895c778acc8416000a8af320c5844ca39752307064bc381e3a6fbd728d1"
+    },
+    {
+      "original": "docs/comparisons/2026-10-02T19-52-30-387Z/openai-gpt-6-luna-ordinary-memory-append-costs.md",
+      "archived": "docs/archive/2026-10-02/docs/comparisons/2026-10-02T19-52-30-387Z/openai-gpt-6-luna-ordinary-memory-append-costs.md",
+      "sha256": "fdc6a2a54f5f15db29949c4ac37e952e71d51ec2316bf6bde13944bd5d49c210"
+    },
+    {
+      "original": "docs/comparisons/2026-10-02T19-52-30-387Z/openai-gpt-6-luna-ordinary-memory-layered-answers.md",
+      "archived": "docs/archive/2026-10-02/docs/comparisons/2026-10-02T19-52-30-387Z/openai-gpt-6-luna-ordinary-memory-layered-answers.md",
+      "sha256": "ac6d8262dd258741a859ea253174ec62d9168660553c8ab656f9abf361910b48"
+    },
+    {
+      "original": "docs/comparisons/2026-10-02T19-52-30-387Z/openai-gpt-6-luna-ordinary-memory-layered-costs.md",
+      "archived": "docs/archive/2026-10-02/docs/comparisons/2026-10-02T19-52-30-387Z/openai-gpt-6-luna-ordinary-memory-layered-costs.md",
+      "sha256": "b0dc27393a2d0c362da20836dfd883c59322ac8f6d9a67a9b7c0bdcde66af043"
+    },
+    {
+      "original": "docs/comparisons/2026-10-02T19-52-30-387Z/openai-gpt-6-luna-ordinary-memory-plain-answers.md",
+      "archived": "docs/archive/2026-10-02/docs/comparisons/2026-10-02T19-52-30-387Z/openai-gpt-6-luna-ordinary-memory-plain-answers.md",
+      "sha256": "c220402bdcd9395d7746659ba872b0e71286ca53f68fdcae672cc9c298c50f3c"
+    },
+    {
+      "original": "docs/comparisons/2026-10-02T19-52-30-387Z/openai-gpt-6-luna-ordinary-memory-plain-costs.md",
+      "archived": "docs/archive/2026-10-02/docs/comparisons/2026-10-02T19-52-30-387Z/openai-gpt-6-luna-ordinary-memory-plain-costs.md",
+      "sha256": "0a24cf80704b2ad8dc01a27db81d59202ad6afd4e3cda048c48d571f2ec4b602"
+    },
+    {
+      "original": "docs/comparisons/2026-10-02T19-58-20-256Z/anthropic-claude-sonnet-5-5-document-fuel-append-answers.md",
+      "archived": "docs/archive/2026-10-02/docs/comparisons/2026-10-02T19-58-20-256Z/anthropic-claude-sonnet-5-5-document-fuel-append-answers.md",
+      "sha256": "08356645afdf9914fc5660bf110ecffb1aaa3a69a456e26391198600cdac5a01"
+    },
+    {
+      "original": "docs/comparisons/2026-10-02T19-58-20-256Z/anthropic-claude-sonnet-5-5-document-fuel-append-costs.md",
+      "archived": "docs/archive/2026-10-02/docs/comparisons/2026-10-02T19-58-20-256Z/anthropic-claude-sonnet-5-5-document-fuel-append-costs.md",
+      "sha256": "40d7ebcb82ea7b7ccab212c892c07ba9f4c8d179f3bb1e9b285553d8f25d77ca"
+    },
+    {
+      "original": "docs/comparisons/2026-10-02T19-58-20-256Z/anthropic-claude-sonnet-5-5-document-fuel-layered-answers.md",
+      "archived": "docs/archive/2026-10-02/docs/comparisons/2026-10-02T19-58-20-256Z/anthropic-claude-sonnet-5-5-document-fuel-layered-answers.md",
+      "sha256": "87e1d97f4792e1c472ddc86d3ba37db79fba1200208a593a1126aae81a31861b"
+    },
+    {
+      "original": "docs/comparisons/2026-10-02T19-58-20-256Z/anthropic-claude-sonnet-5-5-document-fuel-layered-costs.md",
+      "archived": "docs/archive/2026-10-02/docs/comparisons/2026-10-02T19-58-20-256Z/anthropic-claude-sonnet-5-5-document-fuel-layered-costs.md",
+      "sha256": "7a33459aeb859bbf8be271c53f83f12dde2e70992cf19ce6620a41a3b42b1104"
+    },
+    {
+      "original": "docs/comparisons/2026-10-02T19-58-20-256Z/anthropic-claude-sonnet-5-5-document-fuel-plain-answers.md",
+      "archived": "docs/archive/2026-10-02/docs/comparisons/2026-10-02T19-58-20-256Z/anthropic-claude-sonnet-5-5-document-fuel-plain-answers.md",
+      "sha256": "25a31c9e434d7c0ccabe3982ec2d6f33a843d8969d8e9a4a66ac77cfdad2910a"
+    },
+    {
+      "original": "docs/comparisons/2026-10-02T19-58-20-256Z/anthropic-claude-sonnet-5-5-document-fuel-plain-costs.md",
+      "archived": "docs/archive/2026-10-02/docs/comparisons/2026-10-02T19-58-20-256Z/anthropic-claude-sonnet-5-5-document-fuel-plain-costs.md",
+      "sha256": "2aa72ea991d0f5743567af6c79cc449f0dae0fff1bafba2af61726ac30bc7be4"
+    },
+    {
+      "original": "docs/comparisons/2026-10-02T19-58-20-256Z/openai-gpt-6-luna-document-fuel-append-answers.md",
+      "archived": "docs/archive/2026-10-02/docs/comparisons/2026-10-02T19-58-20-256Z/openai-gpt-6-luna-document-fuel-append-answers.md",
+      "sha256": "d420b44b68238dfd130ba9162164546b939a55ce5233d225a63d2c9151488429"
+    },
+    {
+      "original": "docs/comparisons/2026-10-02T19-58-20-256Z/openai-gpt-6-luna-document-fuel-append-costs.md",
+      "archived": "docs/archive/2026-10-02/docs/comparisons/2026-10-02T19-58-20-256Z/openai-gpt-6-luna-document-fuel-append-costs.md",
+      "sha256": "a6bb31e9e444c818a0c2701c425210c2f254cf99fd802b45aef5e92ae8f9795b"
+    },
+    {
+      "original": "docs/comparisons/2026-10-02T19-58-20-256Z/openai-gpt-6-luna-document-fuel-frozen-answers.md",
+      "archived": "docs/archive/2026-10-02/docs/comparisons/2026-10-02T19-58-20-256Z/openai-gpt-6-luna-document-fuel-frozen-answers.md",
+      "sha256": "6f82deb757eb45906a286ffcd46d6dad85f60b2ac44406477c2405af31bde12d"
+    },
+    {
+      "original": "docs/comparisons/2026-10-02T19-58-20-256Z/openai-gpt-6-luna-document-fuel-frozen-costs.md",
+      "archived": "docs/archive/2026-10-02/docs/comparisons/2026-10-02T19-58-20-256Z/openai-gpt-6-luna-document-fuel-frozen-costs.md",
+      "sha256": "7bba6a4f21f954062c0110eac9bc08fb8e40eee14f8ce18236e12bbd972579b6"
+    },
+    {
+      "original": "docs/comparisons/2026-10-02T19-58-20-256Z/openai-gpt-6-luna-document-fuel-layered-answers.md",
+      "archived": "docs/archive/2026-10-02/docs/comparisons/2026-10-02T19-58-20-256Z/openai-gpt-6-luna-document-fuel-layered-answers.md",
+      "sha256": "d69ed18fa8c0deec9b842cfb67f5c458def4d68659c5900ba961add6d610825f"
+    },
+    {
+      "original": "docs/comparisons/2026-10-02T19-58-20-256Z/openai-gpt-6-luna-document-fuel-layered-costs.md",
+      "archived": "docs/archive/2026-10-02/docs/comparisons/2026-10-02T19-58-20-256Z/openai-gpt-6-luna-document-fuel-layered-costs.md",
+      "sha256": "f291d92f758c4b95867608bab4548d07cc6c56eb4246aa24a718e94e7812386c"
+    },
+    {
+      "original": "docs/comparisons/baseline-2026-10-02T23-21-32-534Z/artifacts/homelessness_architecture_part1_claude.md",
+      "archived": "docs/archive/2026-10-02/docs/comparisons/baseline-2026-10-02T23-21-32-534Z/artifacts/homelessness_architecture_part1_claude.md",
+      "sha256": "c9952df964300b4382ffff3d66487be25d54cf524656d5e2fdffd097b939173e"
+    },
+    {
+      "original": "docs/comparisons/baseline-2026-10-02T23-21-32-534Z/artifacts/homelessness_architecture_part2_claude.md",
+      "archived": "docs/archive/2026-10-02/docs/comparisons/baseline-2026-10-02T23-21-32-534Z/artifacts/homelessness_architecture_part2_claude.md",
+      "sha256": "d6a4fce44f10dde8183b7fe26fa07d9036e55c117c7d8b7089fbbe2422bceab6"
+    },
+    {
+      "original": "docs/comparisons/baseline-2026-10-02T23-21-32-534Z/artifacts/homelessness_architecture_part3_claude.md",
+      "archived": "docs/archive/2026-10-02/docs/comparisons/baseline-2026-10-02T23-21-32-534Z/artifacts/homelessness_architecture_part3_claude.md",
+      "sha256": "58b0c91c1618c644017186cd1e7b6bb45bb8c8d3af291f1b5154bfd95210209f"
+    },
+    {
+      "original": "docs/comparisons/baseline-2026-10-02T23-21-32-534Z/artifacts/homelessness_architecture_part4_claude.md",
+      "archived": "docs/archive/2026-10-02/docs/comparisons/baseline-2026-10-02T23-21-32-534Z/artifacts/homelessness_architecture_part4_claude.md",
+      "sha256": "d52c36b8f8f64e475a495421cada9e57c01150dea4618d86408ff99bc1377141"
+    },
+    {
+      "original": "docs/comparisons/baseline-2026-10-02T23-21-32-534Z/artifacts/homelessness_decision_memo_claude.md",
+      "archived": "docs/archive/2026-10-02/docs/comparisons/baseline-2026-10-02T23-21-32-534Z/artifacts/homelessness_decision_memo_claude.md",
+      "sha256": "0a19fbc5f1062826f12cd4de434bb3d3fbee7f20cda97482ee7a005f6b363a6e"
+    },
+    {
+      "original": "docs/comparisons/baseline-2026-10-02T23-21-32-534Z/artifacts/homelessness_operating_package_openai.md",
+      "archived": "docs/archive/2026-10-02/docs/comparisons/baseline-2026-10-02T23-21-32-534Z/artifacts/homelessness_operating_package_openai.md",
+      "sha256": "382fa17ba8ef8037562e88c7478c6e81de8a57c09d07226e2f324c1fd7c4ef02"
+    },
+    {
+      "original": "docs/comparisons/baseline-2026-10-02T23-21-32-534Z/artifacts/homelessness_plan_addendum_claude.md",
+      "archived": "docs/archive/2026-10-02/docs/comparisons/baseline-2026-10-02T23-21-32-534Z/artifacts/homelessness_plan_addendum_claude.md",
+      "sha256": "01dc94ae2550507bb1708b489bf57b9e6c5c6e6f27bfed98ee3aee6c82b4ba2e"
+    },
+    {
+      "original": "docs/comparisons/baseline-2026-10-02T23-21-32-534Z/artifacts/homelessness_policy_plan.md",
+      "archived": "docs/archive/2026-10-02/docs/comparisons/baseline-2026-10-02T23-21-32-534Z/artifacts/homelessness_policy_plan.md",
+      "sha256": "0eab7af4495d054ef427ca672d9ccd68caa3b3b6c2fd5606f17b872716ed569b"
+    },
+    {
+      "original": "docs/comparisons/baseline-2026-10-02T23-21-32-534Z/artifacts/homlesness.md",
+      "archived": "docs/archive/2026-10-02/docs/comparisons/baseline-2026-10-02T23-21-32-534Z/artifacts/homlesness.md",
+      "sha256": "5688b15869c1c6fb728d593f9063597a6fe54c0061707afde73120295b110ad2"
+    },
+    {
+      "original": "docs/comparisons/baseline-2026-10-02T23-21-32-534Z/artifacts/multnomah_county_homelessness_research_packet.md",
+      "archived": "docs/archive/2026-10-02/docs/comparisons/baseline-2026-10-02T23-21-32-534Z/artifacts/multnomah_county_homelessness_research_packet.md",
+      "sha256": "eca13bcb9ca12be05209f2d61096f0197d6ff2205dbd574a544551f8510bdf0f"
+    },
+    {
+      "original": "docs/comparisons/baseline-2026-10-02T23-21-32-534Z/comparison.md",
+      "archived": "docs/archive/2026-10-02/docs/comparisons/baseline-2026-10-02T23-21-32-534Z/comparison.md",
+      "sha256": "c889e179ab14198192cdbd6c68273669dc797cfd7f2a43ff16fbd5d7b8e848b0"
+    },
+    {
+      "original": "docs/comparisons/baseline-2026-10-02T23-21-32-534Z/PROTOCOL.md",
+      "archived": "docs/archive/2026-10-02/docs/comparisons/baseline-2026-10-02T23-21-32-534Z/PROTOCOL.md",
+      "sha256": "629249ffba65ee8924f2cac0df23fc38509dfaa94d0a1fd51b35bdb742486222"
+    },
+    {
+      "original": "docs/comparisons/baseline-2026-10-02T23-21-32-534Z/QUALITY_AND_NEXT_ITERATION.md",
+      "archived": "docs/archive/2026-10-02/docs/comparisons/baseline-2026-10-02T23-21-32-534Z/QUALITY_AND_NEXT_ITERATION.md",
+      "sha256": "c43497847d228f4ad0c26f6efee46a104ae2a1978d711f48abec6ac6350c1084"
+    },
+    {
+      "original": "docs/comparisons/baseline-2026-10-02T23-21-32-534Z/reference-artifacts/homelessness_implementation_decisions.md",
+      "archived": "docs/archive/2026-10-02/docs/comparisons/baseline-2026-10-02T23-21-32-534Z/reference-artifacts/homelessness_implementation_decisions.md",
+      "sha256": "1569b2a4e09057ca9a87c0396577a4cf1cc9d61fc1bce0c3571989379edf09b9"
+    },
+    {
+      "original": "docs/comparisons/baseline-2026-10-02T23-21-32-534Z/reference-artifacts/homelessness_multnomah_architecture_anthropic.md",
+      "archived": "docs/archive/2026-10-02/docs/comparisons/baseline-2026-10-02T23-21-32-534Z/reference-artifacts/homelessness_multnomah_architecture_anthropic.md",
+      "sha256": "5e5ac9d2aded9ab3d95eb1c2c12a0ca977dfce123a460f96f39c4e16a7327bc3"
+    },
+    {
+      "original": "docs/comparisons/baseline-2026-10-02T23-21-32-534Z/reference-artifacts/homelessness_plan_extension_anthropic.md",
+      "archived": "docs/archive/2026-10-02/docs/comparisons/baseline-2026-10-02T23-21-32-534Z/reference-artifacts/homelessness_plan_extension_anthropic.md",
+      "sha256": "0a8c29ce5e9a360338565ee7e55cddd0d0f9ceee461aa2462fede12f3ae6ae54"
+    },
+    {
+      "original": "docs/comparisons/baseline-2026-10-02T23-21-32-534Z/reference-artifacts/homelessness_policy_plan.md",
+      "archived": "docs/archive/2026-10-02/docs/comparisons/baseline-2026-10-02T23-21-32-534Z/reference-artifacts/homelessness_policy_plan.md",
+      "sha256": "a8fcb9f6100ae1b7b1296c4f0d3643fa6e45eb2bfa29a521d59f8798d7b0b9db"
+    },
+    {
+      "original": "docs/comparisons/baseline-2026-10-02T23-21-32-534Z/reference-artifacts/homlesness.md",
+      "archived": "docs/archive/2026-10-02/docs/comparisons/baseline-2026-10-02T23-21-32-534Z/reference-artifacts/homlesness.md",
+      "sha256": "5688b15869c1c6fb728d593f9063597a6fe54c0061707afde73120295b110ad2"
+    },
+    {
+      "original": "docs/comparisons/baseline-2026-10-02T23-21-32-534Z/reference-artifacts/multnomah_county_homelessness_research_packet.md",
+      "archived": "docs/archive/2026-10-02/docs/comparisons/baseline-2026-10-02T23-21-32-534Z/reference-artifacts/multnomah_county_homelessness_research_packet.md",
+      "sha256": "eca13bcb9ca12be05209f2d61096f0197d6ff2205dbd574a544551f8510bdf0f"
+    },
+    {
+      "original": "docs/comparisons/baseline-2026-10-02T23-21-32-534Z/request-costs.md",
+      "archived": "docs/archive/2026-10-02/docs/comparisons/baseline-2026-10-02T23-21-32-534Z/request-costs.md",
+      "sha256": "932534bca2d8c12c046dec8032c237232678a52af1e7ad1f1e4a78229c015ace"
+    },
+    {
+      "original": "docs/comparisons/baseline-2026-10-02T23-21-32-534Z/sandbox/conv_d3d75e87-0948-4294-98d2-748364414106/context.md",
+      "archived": "docs/archive/2026-10-02/docs/comparisons/baseline-2026-10-02T23-21-32-534Z/sandbox/conv_d3d75e87-0948-4294-98d2-748364414106/context.md",
+      "sha256": "0785a8ea5cde00c5153a9eb3bbad4b7adbf77317f58f45c62bf8a8fe272031ff"
+    },
+    {
+      "original": "docs/conversations/analysis/2026-10-02-homelessness/analysis.md",
+      "archived": "docs/archive/2026-10-02/docs/conversations/analysis/2026-10-02-homelessness/analysis.md",
+      "sha256": "998f14198b4a217a82d1e76b883f4a67c69bf690f7f887e9b388ba216b7e9e5b"
+    },
+    {
+      "original": "docs/conversations/analysis/2026-10-02-homelessness/conversation-diagnostics.md",
+      "archived": "docs/archive/2026-10-02/docs/conversations/analysis/2026-10-02-homelessness/conversation-diagnostics.md",
+      "sha256": "5dcc368a9e652b4a3116af41ee85e318816d876b77c1cc16fd7e9776c6f75b43"
+    },
+    {
+      "original": "docs/conversations/analysis/2026-10-02-homelessness/request-costs.md",
+      "archived": "docs/archive/2026-10-02/docs/conversations/analysis/2026-10-02-homelessness/request-costs.md",
+      "sha256": "415894846429c01bb3c9d89a66f48c4e59c789faa45cd8c689bc3b34deb7b200"
+    },
+    {
+      "original": "docs/conversations/conclave-reports/conv_1acde777-ef0d-471b-8e95-bdad014149db.md",
+      "archived": "docs/archive/2026-10-02/docs/conversations/conclave-reports/conv_1acde777-ef0d-471b-8e95-bdad014149db.md",
+      "sha256": "4cf72ff80709c4499c46e4fac847e4f28e75f42963762588d692156351b2643b"
+    },
+    {
+      "original": "docs/conversations/conclave-reports/conv_29711123-738b-4701-b7f2-716a1d2baea4.md",
+      "archived": "docs/archive/2026-10-02/docs/conversations/conclave-reports/conv_29711123-738b-4701-b7f2-716a1d2baea4.md",
+      "sha256": "a4149c37c1fa84d52adc047f67d21a8819fded4dc80f9e48e27a69a098fa491a"
+    },
+    {
+      "original": "docs/conversations/conclave-reports/conv_3cb9a9e8-7d42-4f37-8d30-632c321fefe4.md",
+      "archived": "docs/archive/2026-10-02/docs/conversations/conclave-reports/conv_3cb9a9e8-7d42-4f37-8d30-632c321fefe4.md",
+      "sha256": "223def9bac813914dda1f202b3e0a827965ee5d62d791e28650a4f981cb770f1"
+    },
+    {
+      "original": "docs/conversations/conclave-reports/conv_550f6b41-7b14-4322-aeaa-1624ccf60db1.md",
+      "archived": "docs/archive/2026-10-02/docs/conversations/conclave-reports/conv_550f6b41-7b14-4322-aeaa-1624ccf60db1.md",
+      "sha256": "378184fefb6de881495fba44fb144c1ed33ce7ae381215e5a8198a032ba59925"
+    },
+    {
+      "original": "docs/conversations/conclave-reports/conv_5a7a1139-8413-4ebb-8846-13c1afb07ef7.md",
+      "archived": "docs/archive/2026-10-02/docs/conversations/conclave-reports/conv_5a7a1139-8413-4ebb-8846-13c1afb07ef7.md",
+      "sha256": "76623b3f9c1d2f307d26bb697dfdff03c061b688b7bda8f43e9fae697d97958e"
+    },
+    {
+      "original": "docs/conversations/conclave-reports/conv_8aa1a561-63d8-4dba-b345-8c16723b0b7c.md",
+      "archived": "docs/archive/2026-10-02/docs/conversations/conclave-reports/conv_8aa1a561-63d8-4dba-b345-8c16723b0b7c.md",
+      "sha256": "33de89c5933f369415e730d97996dce3bc2ee0548ca5dad91fa7799bf3bb3006"
+    },
+    {
+      "original": "docs/conversations/conclave-reports/conv_944a48ee-220c-4917-a94a-b8b834c74f1d.md",
+      "archived": "docs/archive/2026-10-02/docs/conversations/conclave-reports/conv_944a48ee-220c-4917-a94a-b8b834c74f1d.md",
+      "sha256": "e677ab20388f7847624db67b4ced4750e8e9daa05dc8e27ef4b7476936b9376f"
+    },
+    {
+      "original": "docs/conversations/conclave-reports/conv_af2bc22d-b525-4727-ae99-8137d8e0b6fa.md",
+      "archived": "docs/archive/2026-10-02/docs/conversations/conclave-reports/conv_af2bc22d-b525-4727-ae99-8137d8e0b6fa.md",
+      "sha256": "4c9c00e78fbcd47f3b0946e8ad6233d53bfe04d6d8f05b05bf92b45a5ce0c0c1"
+    },
+    {
+      "original": "docs/conversations/conclave-reports/conv_b53ebbe1-a7b3-403a-8dc3-f2b40cd67582.md",
+      "archived": "docs/archive/2026-10-02/docs/conversations/conclave-reports/conv_b53ebbe1-a7b3-403a-8dc3-f2b40cd67582.md",
+      "sha256": "a20ae377d306955a7a6ed499374736388d8f5eb4756478249a5c4bddc70a7428"
+    },
+    {
+      "original": "docs/conversations/conclave-reports/conv_b65bc693-2839-4ff5-a3ce-31d9ba602b42.md",
+      "archived": "docs/archive/2026-10-02/docs/conversations/conclave-reports/conv_b65bc693-2839-4ff5-a3ce-31d9ba602b42.md",
+      "sha256": "a95af17a5fd49a6d1cd1a693c4f5b41ff3c8741243d16459d71055de6ddbd8cb"
+    },
+    {
+      "original": "docs/conversations/conclave-reports/conv_e0427e3c-bfc8-4bba-9d75-0b8000dd4a56.md",
+      "archived": "docs/archive/2026-10-02/docs/conversations/conclave-reports/conv_e0427e3c-bfc8-4bba-9d75-0b8000dd4a56.md",
+      "sha256": "48b32b497bea3d07357513a8334427647daccb7cf4e961b91b25abd4ef996121"
+    },
+    {
+      "original": "docs/conversations/conclave_master_report.md",
+      "archived": "docs/archive/2026-10-02/docs/conversations/conclave_master_report.md",
+      "sha256": "3e14421aaa6d027b238d20c668d845cd5c152fea6200d0e8d742511eaa1a2969"
+    },
+    {
+      "original": "docs/conversations/conv_04c7515d-3d38-40aa-8102-b05340b9d02b_2026-10-02T22-17-39-337Z.md",
+      "archived": "docs/archive/2026-10-02/docs/conversations/conv_04c7515d-3d38-40aa-8102-b05340b9d02b_2026-10-02T22-17-39-337Z.md",
+      "sha256": "72e6842a329c30a51f3545e4e6163a4239e8fde1596781ed7dbc2484c17e1457"
+    },
+    {
+      "original": "docs/conversations/cost-reports/conv_1acde777-ef0d-471b-8e95-bdad014149db.md",
+      "archived": "docs/archive/2026-10-02/docs/conversations/cost-reports/conv_1acde777-ef0d-471b-8e95-bdad014149db.md",
+      "sha256": "d208a339fe387e630ebaef82644b4da37f3deb354c0d3f73863635d49c561b7b"
+    },
+    {
+      "original": "docs/conversations/cost-reports/conv_29711123-738b-4701-b7f2-716a1d2baea4.md",
+      "archived": "docs/archive/2026-10-02/docs/conversations/cost-reports/conv_29711123-738b-4701-b7f2-716a1d2baea4.md",
+      "sha256": "2b97c1ab8f823d7d258862404fc41fa322a4464545834b233ec7c8718776b88f"
+    },
+    {
+      "original": "docs/conversations/cost-reports/conv_3cb9a9e8-7d42-4f37-8d30-632c321fefe4.md",
+      "archived": "docs/archive/2026-10-02/docs/conversations/cost-reports/conv_3cb9a9e8-7d42-4f37-8d30-632c321fefe4.md",
+      "sha256": "bb0a2d2839f4c23d7626854a97c254145bc3bd64167f1e9e613e91e94a370a2e"
+    },
+    {
+      "original": "docs/conversations/cost-reports/conv_550f6b41-7b14-4322-aeaa-1624ccf60db1.md",
+      "archived": "docs/archive/2026-10-02/docs/conversations/cost-reports/conv_550f6b41-7b14-4322-aeaa-1624ccf60db1.md",
+      "sha256": "0c678329df629d4ba66d57af0f56a28b11dec2e22d6389252c292f01e7695bb2"
+    },
+    {
+      "original": "docs/conversations/cost-reports/conv_5a7a1139-8413-4ebb-8846-13c1afb07ef7.md",
+      "archived": "docs/archive/2026-10-02/docs/conversations/cost-reports/conv_5a7a1139-8413-4ebb-8846-13c1afb07ef7.md",
+      "sha256": "7e976a132842c03a8cec4ecbbaff05329b362c28562cead8682b0fb1171a458c"
+    },
+    {
+      "original": "docs/conversations/cost-reports/conv_8aa1a561-63d8-4dba-b345-8c16723b0b7c.md",
+      "archived": "docs/archive/2026-10-02/docs/conversations/cost-reports/conv_8aa1a561-63d8-4dba-b345-8c16723b0b7c.md",
+      "sha256": "138a67723c812e6f16ce8fb58448a30eb35e17fb7c03721789faa783ed848da5"
+    },
+    {
+      "original": "docs/conversations/cost-reports/conv_944a48ee-220c-4917-a94a-b8b834c74f1d.md",
+      "archived": "docs/archive/2026-10-02/docs/conversations/cost-reports/conv_944a48ee-220c-4917-a94a-b8b834c74f1d.md",
+      "sha256": "9884b86a8b2f0d779c33351ed88a876b7be21c6e426e987a0ff5c962231d9728"
+    },
+    {
+      "original": "docs/conversations/cost-reports/conv_af2bc22d-b525-4727-ae99-8137d8e0b6fa.md",
+      "archived": "docs/archive/2026-10-02/docs/conversations/cost-reports/conv_af2bc22d-b525-4727-ae99-8137d8e0b6fa.md",
+      "sha256": "c83eddac9fce37cca57aacd3a45578251d01ea132f9bf5ff5e8fc001e2ae81d3"
+    },
+    {
+      "original": "docs/conversations/cost-reports/conv_b53ebbe1-a7b3-403a-8dc3-f2b40cd67582.md",
+      "archived": "docs/archive/2026-10-02/docs/conversations/cost-reports/conv_b53ebbe1-a7b3-403a-8dc3-f2b40cd67582.md",
+      "sha256": "d88d37157feda293d0ac32775d10f451be6270328e23d8e97944e87e385c415b"
+    },
+    {
+      "original": "docs/conversations/cost-reports/conv_b65bc693-2839-4ff5-a3ce-31d9ba602b42.md",
+      "archived": "docs/archive/2026-10-02/docs/conversations/cost-reports/conv_b65bc693-2839-4ff5-a3ce-31d9ba602b42.md",
+      "sha256": "126ef008b7095d32cd43eacbd5d9814960bd9774beba5960e716f12edbf60bc3"
+    },
+    {
+      "original": "docs/conversations/cost-reports/conv_e0427e3c-bfc8-4bba-9d75-0b8000dd4a56.md",
+      "archived": "docs/archive/2026-10-02/docs/conversations/cost-reports/conv_e0427e3c-bfc8-4bba-9d75-0b8000dd4a56.md",
+      "sha256": "5a8281aa4ae3cf6c037ff86c11406918fb0e17d450ca111b458a74affaf9bcf5"
+    },
+    {
+      "original": "docs/conversations/cost-reports/index.md",
+      "archived": "docs/archive/2026-10-02/docs/conversations/cost-reports/index.md",
+      "sha256": "616c04e9ef5d225d3d5c399b7e3a2d9c9d8e8a61e792619d0f40dac3635ffdbe"
+    },
+    {
+      "original": "docs/conversations/master_report.md",
+      "archived": "docs/archive/2026-10-02/docs/conversations/master_report.md",
+      "sha256": "c00e9157eac80cf0f636433161b98288293f4f4fa424a4764261740828363b72"
+    },
+    {
+      "original": "docs/conversations/Report/conv_1acde777-ef0d-471b-8e95-bdad014149db.md",
+      "archived": "docs/archive/2026-10-02/docs/conversations/Report/conv_1acde777-ef0d-471b-8e95-bdad014149db.md",
+      "sha256": "e239f1467033980db69421b454b04dd5af702ae8e3438d7de660ea1beaf0510a"
+    },
+    {
+      "original": "docs/conversations/Report/conv_29711123-738b-4701-b7f2-716a1d2baea4.md",
+      "archived": "docs/archive/2026-10-02/docs/conversations/Report/conv_29711123-738b-4701-b7f2-716a1d2baea4.md",
+      "sha256": "cd752ffbd9456f7049509392b5a6fd7a835d42e1269fa546fb05865534d30f8d"
+    },
+    {
+      "original": "docs/conversations/Report/conv_3cb9a9e8-7d42-4f37-8d30-632c321fefe4.md",
+      "archived": "docs/archive/2026-10-02/docs/conversations/Report/conv_3cb9a9e8-7d42-4f37-8d30-632c321fefe4.md",
+      "sha256": "5a7dfe5e77f801ac11912845c4ced94745241e44bc6e5693021ff0024929542b"
+    },
+    {
+      "original": "docs/conversations/Report/conv_550f6b41-7b14-4322-aeaa-1624ccf60db1.md",
+      "archived": "docs/archive/2026-10-02/docs/conversations/Report/conv_550f6b41-7b14-4322-aeaa-1624ccf60db1.md",
+      "sha256": "b46751dd8c45089de30286fd3e07d2eafa074864915cded92330c81c652b78e1"
+    },
+    {
+      "original": "docs/conversations/Report/conv_5a7a1139-8413-4ebb-8846-13c1afb07ef7.md",
+      "archived": "docs/archive/2026-10-02/docs/conversations/Report/conv_5a7a1139-8413-4ebb-8846-13c1afb07ef7.md",
+      "sha256": "39c1741a5962f6eef63142fa35935df7d642555fef455cac0371118ad1827e04"
+    },
+    {
+      "original": "docs/conversations/Report/conv_8aa1a561-63d8-4dba-b345-8c16723b0b7c.md",
+      "archived": "docs/archive/2026-10-02/docs/conversations/Report/conv_8aa1a561-63d8-4dba-b345-8c16723b0b7c.md",
+      "sha256": "8e4bc234656175b7a5b8cf5d2b5058e58afacea2a153994db9e5f30f4892c184"
+    },
+    {
+      "original": "docs/conversations/Report/conv_944a48ee-220c-4917-a94a-b8b834c74f1d.md",
+      "archived": "docs/archive/2026-10-02/docs/conversations/Report/conv_944a48ee-220c-4917-a94a-b8b834c74f1d.md",
+      "sha256": "4ce5e9dc8dccf3e9f9436c4bbc6d77f6c93d99725db60e033ba1ee8ff175ec1a"
+    },
+    {
+      "original": "docs/conversations/Report/conv_af2bc22d-b525-4727-ae99-8137d8e0b6fa.md",
+      "archived": "docs/archive/2026-10-02/docs/conversations/Report/conv_af2bc22d-b525-4727-ae99-8137d8e0b6fa.md",
+      "sha256": "54e686ecfd74cff55f685cc0be22f2b25960f907cf80c8f0be9ced815ca41e84"
+    },
+    {
+      "original": "docs/conversations/Report/conv_b53ebbe1-a7b3-403a-8dc3-f2b40cd67582.md",
+      "archived": "docs/archive/2026-10-02/docs/conversations/Report/conv_b53ebbe1-a7b3-403a-8dc3-f2b40cd67582.md",
+      "sha256": "060a3ee21d78bd3d162c50758148c7e945fe2295d00c1701200f05953a43e808"
+    },
+    {
+      "original": "docs/conversations/Report/conv_b65bc693-2839-4ff5-a3ce-31d9ba602b42.md",
+      "archived": "docs/archive/2026-10-02/docs/conversations/Report/conv_b65bc693-2839-4ff5-a3ce-31d9ba602b42.md",
+      "sha256": "fc3fd7acfaa944dddf0c7a4887680e9d358a313ff1f76b1f6ddd6d4a7b6a063d"
+    },
+    {
+      "original": "docs/conversations/Report/conv_e0427e3c-bfc8-4bba-9d75-0b8000dd4a56.md",
+      "archived": "docs/archive/2026-10-02/docs/conversations/Report/conv_e0427e3c-bfc8-4bba-9d75-0b8000dd4a56.md",
+      "sha256": "a73e237b59eb1d5b105991a02fc685a836d828299149523b50ca5bd7d6601d80"
+    },
+    {
+      "original": "docs/homlesness.md",
+      "archived": "docs/archive/2026-10-02/docs/homlesness.md",
+      "sha256": "5688b15869c1c6fb728d593f9063597a6fe54c0061707afde73120295b110ad2"
+    },
+    {
+      "original": "docs/issue-13-reasoning-integration.md",
+      "archived": "docs/archive/2026-10-02/docs/issue-13-reasoning-integration.md",
+      "sha256": "3cbe21c79b7730f96f2463f0be67026165fa2de67502d23281da8805dd30e802"
+    },
+    {
+      "original": "docs/model suggestions/context-telemetry-proposal-revised.md",
+      "archived": "docs/archive/2026-10-02/docs/model suggestions/context-telemetry-proposal-revised.md",
+      "sha256": "625c13478bdbf7a3271a7e620861ef5984bcb7fdbd6d31116c4095ea69a7f9d1"
+    },
+    {
+      "original": "docs/model suggestions/context-telemetry-proposal.md",
+      "archived": "docs/archive/2026-10-02/docs/model suggestions/context-telemetry-proposal.md",
+      "sha256": "69ff5397ec053cc898453912cafca20346222366f1a9068557698028cc1f494a"
+    },
+    {
+      "original": "docs/model suggestions/suggested_improvements.md",
+      "archived": "docs/archive/2026-10-02/docs/model suggestions/suggested_improvements.md",
+      "sha256": "304f29caf197215ef854c96ea109e5ea07ba5118603dc47a97282ca4340c729e"
+    },
+    {
+      "original": "docs/MODEL_COSTS_2026-10-02.md",
+      "archived": "docs/archive/2026-10-02/docs/MODEL_COSTS_2026-10-02.md",
+      "sha256": "dfaa9371657c03498869ce178aa77f8881ab07212008092b22424124d56d57a4"
+    },
+    {
+      "original": "docs/reports/agent-limits-export-review-2026-10-01.md",
+      "archived": "docs/archive/2026-10-02/docs/reports/agent-limits-export-review-2026-10-01.md",
+      "sha256": "e92851f3e70007255d2d756dc9cd21b760f7cbf6c1eff8cba02b9d4a6dd2526b"
+    },
+    {
+      "original": "docs/reports/agent-tool-batches-2026-10-02.md",
+      "archived": "docs/archive/2026-10-02/docs/reports/agent-tool-batches-2026-10-02.md",
+      "sha256": "35fbeaf995b99ce7cb20e57daf153c2385a7a609f3d928f52763b0c8f1c5412f"
+    },
+    {
+      "original": "docs/reports/claude-conclave-integration-2026-10-01.md",
+      "archived": "docs/archive/2026-10-02/docs/reports/claude-conclave-integration-2026-10-01.md",
+      "sha256": "0cafc1679609a69adeb85607cd9c9f233d5bb853d129dc4dd4b6abe127941ebf"
+    },
+    {
+      "original": "docs/reports/conclave-cost-plan-2026-10-02.md",
+      "archived": "docs/archive/2026-10-02/docs/reports/conclave-cost-plan-2026-10-02.md",
+      "sha256": "a1184fe4a2eea39c67cac50572fe84e91e228b8fa1faff1276c200bb4920e7a2"
+    },
+    {
+      "original": "docs/reports/conclave-iteration-2026-10-02.md",
+      "archived": "docs/archive/2026-10-02/docs/reports/conclave-iteration-2026-10-02.md",
+      "sha256": "a857163111e1c6b051cc125b28637ee61b670ca5e61cbbbc3466789544f3b159"
+    },
+    {
+      "original": "docs/reports/context-repairs-2026-10-02.md",
+      "archived": "docs/archive/2026-10-02/docs/reports/context-repairs-2026-10-02.md",
+      "sha256": "e79b2e5ec751f3310b03e0538ad0279d2782f456e8c172d5909fcfbb0ddbcf80"
+    },
+    {
+      "original": "docs/reports/control-telemetry-2026-10-02.md",
+      "archived": "docs/archive/2026-10-02/docs/reports/control-telemetry-2026-10-02.md",
+      "sha256": "1eee085ee793cc6d960fff8b7e748619353b21bf7157c0f63997cb2f0e822485"
+    },
+    {
+      "original": "docs/reports/conversation-1acde777-review-2026-10-01.md",
+      "archived": "docs/archive/2026-10-02/docs/reports/conversation-1acde777-review-2026-10-01.md",
+      "sha256": "a4203d5d654e5518e94334c5644878647e8d8bb9055d440650af7a72ad6a71c2"
+    },
+    {
+      "original": "docs/reports/hosted-agent-integration-2026-10-01.md",
+      "archived": "docs/archive/2026-10-02/docs/reports/hosted-agent-integration-2026-10-01.md",
+      "sha256": "78a9b74bf9020a40cbeee63ee5ea2d7f5a2997a4a0ac8009bba3f4855ff6a12d"
+    },
+    {
+      "original": "docs/reports/issue-10-ui-2026-10-01.md",
+      "archived": "docs/archive/2026-10-02/docs/reports/issue-10-ui-2026-10-01.md",
+      "sha256": "6ac25ae089f486a9d214ecc7a8947831555842906ec8ba737c79606732bf1d06"
+    },
+    {
+      "original": "docs/reports/issue-12-review-2026-10-01.md",
+      "archived": "docs/archive/2026-10-02/docs/reports/issue-12-review-2026-10-01.md",
+      "sha256": "3968b1edb57671903528f39ad79b2a5c64451d7f44129787768c1bf49f04dddf"
+    },
+    {
+      "original": "docs/reports/issue-13-implementation.md",
+      "archived": "docs/archive/2026-10-02/docs/reports/issue-13-implementation.md",
+      "sha256": "72705e5dd4639581a928ac8f94ffa7c64e3b7b283059b5bce0dbcaeaa18b18f0"
+    },
+    {
+      "original": "docs/reports/makerspace-agent-review-2026-10-01.md",
+      "archived": "docs/archive/2026-10-02/docs/reports/makerspace-agent-review-2026-10-01.md",
+      "sha256": "91a7c7278419e3d9eaa0c3e4217a8c11ebd119518d661b1f212f71ab07c543e6"
+    },
+    {
+      "original": "docs/reports/recent-conversation-master-review-2026-10-02.md",
+      "archived": "docs/archive/2026-10-02/docs/reports/recent-conversation-master-review-2026-10-02.md",
+      "sha256": "5135c558ac258b3a9b93941e76a7d5e75024b6a866bd986381c81dee660754d5"
+    },
+    {
+      "original": "docs/reports/request-context-repair-2026-10-01.md",
+      "archived": "docs/archive/2026-10-02/docs/reports/request-context-repair-2026-10-01.md",
+      "sha256": "0cdabfa6006e53b7e84cdb4b45890b4be9299279363dcae22532fd23757d443d"
+    },
+    {
+      "original": "docs/reports/response-timeouts-2026-10-02.md",
+      "archived": "docs/archive/2026-10-02/docs/reports/response-timeouts-2026-10-02.md",
+      "sha256": "aa6b7faf4887b447d69c07a5bd1d2ee2b2b25cba7ad3e85b2fceaabbd84aceb8"
+    },
+    {
+      "original": "docs/reports/workspace-editor-2026-10-01.md",
+      "archived": "docs/archive/2026-10-02/docs/reports/workspace-editor-2026-10-01.md",
+      "sha256": "5ebf1af5115e40d01ce63ae8a865c7c03a6683ce5b39f9f2aa8d5cee1e5c73cc"
+    },
+    {
+      "original": "docs/roadmap.md",
+      "archived": "docs/archive/2026-10-02/docs/roadmap.md",
+      "sha256": "55c9bd14370e3bdabdbfb55e65d48c1ef3a8357113ba2a253b6bd9545b6d5300"
+    },
+    {
+      "original": "docs/ui-ux-plan.md",
+      "archived": "docs/archive/2026-10-02/docs/ui-ux-plan.md",
+      "sha256": "10407bf36316f56489a0f60393bfe185fb051347b96b82edfc30b96d5f1e3e6d"
+    },
+    {
+      "original": "VERCEL_CONTEXT_PLAN.md",
+      "archived": "docs/archive/2026-10-02/VERCEL_CONTEXT_PLAN.md",
+      "sha256": "ce8b05d39a745f269642ccd616111a610cf754ea312ab535a77c379f89b66452"
+    }
+  ]
+}
