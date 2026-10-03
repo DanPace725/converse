@@ -4,6 +4,7 @@
     panel = el("workspace-editor");
   let view = null,
     tab = "documents",
+    contextView = "pieces",
     selected = null,
     editing = false,
     preview = false,
@@ -55,16 +56,14 @@
       })),
     ];
   }
-  function items() {
-    if (!view) return [];
-    if (tab === "documents") return documents();
-    const segments =
-      tab === "state"
+  function segments(kind) {
+    const list =
+      kind === "state"
         ? view.state.entries
         : view.context.segments.filter((s) => !s.state_key);
-    return segments.map((s) => ({
-      kind: tab,
-      id: tab === "state" ? s.state_key : s.id,
+    return list.map((s) => ({
+      kind,
+      id: kind === "state" ? s.state_key : s.id,
       title: segmentLabel(s),
       content: s.content,
       token: s.id,
@@ -72,16 +71,21 @@
       protected: !!(
         s.pinned ||
         s.verbatim_required ||
-        (tab === "context" && s.type === "reference")
+        (kind === "context" && s.type === "reference")
       ),
     }));
   }
+  function items() {
+    if (!view) return [];
+    return tab === "documents" ? documents() : segments(tab);
+  }
   function latest(item = selected) {
     if (!item || !view) return null;
+    // Saved historical text has no newer version to follow.
+    if (item.historical) return item;
     if (item.kind === "document" || item.kind === "source")
       return (
-        documents().find((i) => i.kind === item.kind && i.id === item.id) ||
-        (item.kind === "source" && item.historical ? item : null)
+        documents().find((i) => i.kind === item.kind && i.id === item.id) || null
       );
     const s = (
       item.kind === "state" ? view.state.entries : view.context.segments
@@ -119,7 +123,7 @@
     const blocked =
       busy || saving || !view || view.busy || view.agent?.status === "running";
     for (const field of panel.querySelectorAll(
-      "textarea, input, select, #editor-items button, #editor-tabs button, #editor-history button, #editor-reference, #editor-edit, #editor-discard, #editor-latest, #editor-new-state",
+      "textarea, input, select, #editor-items button, #editor-tabs button, #editor-history button, #editor-reference, #editor-edit, #editor-discard, #editor-latest, #editor-new-state, #editor-back, #context-views button, .breakdown-item",
     ))
       field.disabled = saving;
     el("editor-state-key").disabled = saving || !selected?.newEntry;
@@ -149,9 +153,33 @@
     }
     renderReply(target, text);
   }
+  // Files show their list above the open file. Context and Memory drill in:
+  // the list gives way to one piece, and the garden stays above it.
+  function layout() {
+    const context = tab === "context",
+      detail = tab !== "documents" && !!selected,
+      activity = context && contextView === "activity";
+    panel.toggleAttribute("data-detail", detail);
+    el("request-breakdown").hidden = !context || detail;
+    el("context-views").hidden = !context || detail || !view;
+    el("editor-telemetry").hidden = !activity || detail || !view;
+    el("editor-note").hidden = detail || activity;
+    el("editor-items").hidden = detail || activity;
+    el("editor-new-state").hidden = tab !== "state" || detail || !view;
+    el("editor-upload-controls").hidden = tab !== "documents";
+    el("editor-upload-status").hidden = tab !== "documents";
+    el("editor-back").hidden = !detail;
+    el("editor-back").textContent =
+      tab === "state" ? "← All memory" : "← All pieces";
+    for (const button of el("context-views").querySelectorAll("button"))
+      button.setAttribute("aria-pressed", String(button.dataset.view === contextView));
+    window.contextGarden?.setVisible(!panel.hidden && context);
+    window.contextGarden?.mark(context && selected ? selected.token : null);
+  }
   function renderList() {
     renderTelemetry();
     renderRemoved();
+    layout();
     const container = el("editor-items");
     const rows = items();
     for (const d of Object.values(drafts).filter(
@@ -174,11 +202,6 @@
     ]);
     if (signature === listSignature) return;
     listSignature = signature;
-    const expanded = new Set(
-      [...container.querySelectorAll("details[open]")].map(
-        (d) => d.dataset.item,
-      ),
-    );
     container.replaceChildren();
     for (const item of rows) {
       const button = document.createElement('button');
@@ -189,17 +212,16 @@
       if (selected?.id === item.id && selected.kind === item.kind)
         button.setAttribute("aria-current", "true");
       button.onclick = () => select(item);
-      if (tab === "documents" || item.detached) container.append(button);
-      else {
-        const detail = document.createElement('details'), summary = document.createElement('summary'), text = document.createElement('p');
-        detail.dataset.item = item.id;
-        detail.open = expanded.has(item.id);
-        summary.textContent = item.title + (hasDraft ? " · draft" : "");
-        text.textContent = item.content;
-        button.textContent = "Open " + (tab === "state" ? "entry" : "section");
-        detail.append(summary, text, button);
-        container.append(detail);
+      if (tab !== "documents" && !item.detached) {
+        // One click opens a piece; the row previews its start and size.
+        const preview = document.createElement("small");
+        preview.textContent =
+          item.content.length.toLocaleString() +
+          " characters · " +
+          item.content.slice(0, 140).replace(/\s+/g, " ");
+        button.append(preview);
       }
+      container.append(button);
     }
     el("editor-note").textContent = !view
       ? "Upload a Markdown or plain text document to start a saved workspace. Up to 100 KB per file."
@@ -211,12 +233,9 @@
           ? "Working context · revision " +
             view.context.revision +
             ". References and pinned text are protected."
-          : "Remembered state · revision " +
+          : "Memory · revision " +
             view.state.revision +
             ". Edit an entry or add a named detail.";
-    el("editor-new-state").hidden = tab !== "state" || !view;
-    el("editor-upload-controls").hidden = tab !== "documents";
-    el("editor-upload-status").hidden = tab !== "documents";
   }
   function show() {
     if (!selected) {
@@ -238,7 +257,7 @@
         : selected.kind === "source"
           ? "Original source · preserved in history. Edit creates a workspace copy."
           : "Source-linked " +
-            (selected.kind === "state" ? "state entry" : "context section") +
+            (selected.kind === "state" ? "memory entry" : "context piece") +
             (selected.protected ? " · protected" : "");
     if (selected.kind === 'document' && selected.author) {
       const author = selected.author;
@@ -250,7 +269,7 @@
     if (selected.section?.type === 'evidence' && selected.section.source_event_ids.length === 1) {
       const file = view.workspace?.find(f => f.source_event_id === selected.section.source_event_ids[0]);
       if (file && selected.content === `Workspace ${file.path}; source ${file.source_event_id}.\n${file.content.slice(0, 2000)}` && file.content.length > 2000)
-        el('editor-meta').textContent += ` · Partial excerpt: first 2000 characters; ${file.content.length - 2000} more characters. Open the file in Documents for full text.`;
+        el('editor-meta').textContent += ` · Partial excerpt: first 2000 characters; ${file.content.length - 2000} more characters. Open the file in Files for full text.`;
     }
     const section = selected.section,
       identifiers = el("editor-identifiers");
@@ -290,14 +309,14 @@
         button.textContent =
           "Open previous revision · " +
           (view.segment_refs?.[id] || "historical segment");
-        button.onclick = () => inspect({ id, state_key: selected.section.state_key }, false);
+        button.onclick = () => inspect({ id, state_key: selected.section.state_key }, false, true);
         return button;
       }),
     );
     el('editor-reference').hidden = !selected.section?.ref_bundle_id;
     el("editor-reference").textContent =
       "Open original context " + (selected.section?.referenceRef || "");
-    el('editor-reference').onclick = () => inspect({ id: selected.section.ref_bundle_id }, false);
+    el('editor-reference').onclick = () => inspect({ id: selected.section.ref_bundle_id }, false, true);
     el("editor-edit").hidden =
       editing || !!selected.protected || !!selected.historical;
     el("editor-preview-toggle").hidden = !editing;
@@ -332,6 +351,7 @@
     preview = false;
     renderList();
     show();
+    if (item && tab !== "documents") el("editor-pane").scrollTop = 0;
   }
   function setTab(value) {
     inspection++;
@@ -354,7 +374,7 @@
           ? ["document", "source"].includes(d.item.kind)
           : d.item.kind === tab),
     );
-    select(pending?.item || items()[0] || null);
+    select(pending?.item || (tab === "documents" && items()[0]) || null);
   }
   function adopt(data) {
     const changed = view?.conversation_id !== data?.conversation_id;
@@ -401,16 +421,19 @@
         schedule();
       }, 2500);
   }
-  function open() {
-    window.contextGarden?.close();
-    panel.hidden = false;
-    document.body.classList.add("workspace-visible");
-    el("workspace-open").setAttribute("aria-expanded", "true");
-    if (window.contextLayer?.editorView())
-    adopt(window.contextLayer.editorView());
-    refresh();
-    schedule();
-    el("editor-close").focus();
+  function open(next) {
+    if (panel.hidden) {
+      panel.hidden = false;
+      document.body.classList.add("workspace-visible");
+      el("workspace-open").setAttribute("aria-expanded", "true");
+      if (window.contextLayer?.editorView())
+        adopt(window.contextLayer.editorView());
+      refresh();
+      schedule();
+      el("editor-close").focus();
+    }
+    if (next && next !== tab) setTab(next);
+    layout();
   }
   function close() {
     inspection++;
@@ -418,6 +441,7 @@
     document.body.classList.remove("workspace-visible");
     clearTimeout(timer);
     el("workspace-open").setAttribute("aria-expanded", "false");
+    layout();
   }
   function beginEdit() {
     if (!selected || selected.protected || selected.historical) return;
@@ -536,15 +560,23 @@
       syncControls();
     }
   }
-  async function inspect(item, source) {
+  // `stay` opens the piece where the reader already is, whatever its kind, so
+  // the garden and the way back remain in view.
+  async function inspect(item, source, stay = false) {
     const id = window.contextLayer?.currentId();
     if (!id) return;
+    const target = stay
+      ? panel.hidden || tab === "documents" ? "context" : tab
+      : source ? "documents" : item.state_key ? "state" : "context";
     open();
-    setTab(source ? "documents" : item.state_key ? "state" : "context");
+    if (!stay || tab !== target) setTab(target);
+    if (stay) contextView = "pieces";
     const generation = ++inspection;
-    const current = items().find((i) =>
-      source ? i.token === item.id : i.token === item.id,
-    );
+    // Request breakdowns name pieces by their S reference.
+    if (!item.id && item.ref)
+      item = { ...item, id: Object.keys(view?.segment_refs || {}).find((key) => view.segment_refs[key] === item.ref) || item.ref };
+    const pool = !view ? [] : stay ? [...documents(), ...segments("context"), ...segments("state")] : items();
+    const current = pool.find((i) => i.token === item.id);
     if (current) {
       select(current);
       return;
@@ -586,7 +618,19 @@
     close();
     el("workspace-open").focus();
   };
-  el("editor-refresh").onclick = refresh;
+  el("editor-back").onclick = () => {
+    const from = selected;
+    select(null);
+    [...el("editor-items").querySelectorAll("button")]
+      .find((button) => button.dataset.item === from?.id)
+      ?.focus();
+  };
+  el("context-views").onclick = (event) => {
+    const button = event.target.closest("[data-view]");
+    if (!button) return;
+    contextView = button.dataset.view;
+    renderList();
+  };
   el("editor-upload").onclick = () => el("editor-upload-file").click();
   el("editor-upload-file").onchange = async () => {
     const input = el("editor-upload-file"), file = input.files[0];
@@ -667,17 +711,32 @@
   };
   const countLabel = method => method === 'openai-input-token-count' ? 'OpenAI preflight count'
     : method === 'anthropic-preflight-estimate' ? 'Anthropic preflight estimate' : 'local tokenizer estimate · o200k_base';
+  const tokenFormat = new Intl.NumberFormat(undefined, { notation: "compact", maximumFractionDigits: 1 });
   function renderTelemetry() {
-    el('editor-telemetry').hidden = tab !== 'context' || !view;
+    // The top-bar shortcut carries the size of the last request sent.
+    const sentTokens = view?.model_input?.latest?.input_tokens;
+    el("context-watch-label").textContent =
+      "Context" + (sentTokens == null ? "" : " · " + tokenFormat.format(sentTokens));
+    el("context-watch").title = sentTokens == null
+      ? "See what the model was sent"
+      : `Last request: ${sentTokens.toLocaleString()} input tokens. See what filled it.`;
     if (!view) return;
     const m = view.model_input, next = m?.next;
     if (countedFingerprint && countedFingerprint !== next?.fingerprint) {
       el('editor-count-status').textContent = 'The saved request changed. Its previous provider count no longer applies.';
       countedFingerprint = null;
     }
-    el("editor-token-summary").textContent = next
-      ? `${next.continuation_included ? "Next running" : "Saved"} ${next.model} request · ${next.provider_count == null || next.provider === "anthropic" ? "~" : ""}${next.estimated_tokens.toLocaleString()} input tokens (${countLabel(next.method)}; ${next.continuation_included ? "pending continuation included" : "no pending tool continuation"}). Latest sent: ${m.latest?.input_tokens?.toLocaleString() ?? "unknown"} reported input tokens; ${m.latest?.tokenizer_tokens?.toLocaleString() ?? "unknown"} local estimate including continuation, revision ${m.latest?.revision ?? "?"}. Byte guard: ${m.byte_guard.toLocaleString()}; output reserve: ${m.output_reserve.toLocaleString()} tokens. Unsent draft excluded.`
-      : "Input count unavailable.";
+    const facts = next ? [
+      [next.continuation_included ? "Running" : "Saved", `${next.model} · ${next.provider_count == null || next.provider === "anthropic" ? "~" : ""}${next.estimated_tokens.toLocaleString()} input tokens · ${countLabel(next.method)} · ${next.continuation_included ? "pending tool continuation included" : "no pending tool continuation"}`],
+      ["Last sent", `${m.latest?.input_tokens?.toLocaleString() ?? "unknown"} reported input tokens · ${m.latest?.tokenizer_tokens?.toLocaleString() ?? "unknown"} local estimate with continuation · revision ${m.latest?.revision ?? "?"}`],
+      ["Limits", `Byte guard ${m.byte_guard.toLocaleString()} · output reserve ${m.output_reserve.toLocaleString()} tokens · unsent draft excluded`],
+    ] : [["Saved", "Input count unavailable."]];
+    el("editor-token-summary").replaceChildren(...facts.flatMap(([term, value]) => {
+      const dt = document.createElement("dt"), dd = document.createElement("dd");
+      dt.textContent = term;
+      dd.textContent = value;
+      return [dt, dd];
+    }));
     const audit = auditPage || view.context_audit;
     el("editor-audit-earlier").disabled = !audit?.has_more;
     el("editor-audit-status").textContent = auditPage?.historical
@@ -724,7 +783,7 @@
           (entry.segmentRef ||
             view.segment_refs?.[entry.bundle_id] ||
             "historical segment");
-        button.onclick = () => inspect({ id: entry.bundle_id }, false);
+        button.onclick = () => inspect({ id: entry.bundle_id }, false, true);
         line.append(' ', button);
         detail.append(line);
       }
@@ -773,7 +832,7 @@
       adopt(data);
       el('editor-upload-status').textContent = input.operation === 'remove'
         ? 'Removed. Restore it below. Historical content and previous replies remain saved.'
-        : 'Restored to Documents. Removed context sections are not automatically reinserted.';
+        : 'Restored to Files. Removed context pieces are not automatically reinserted.';
     } catch (error) { el('editor-upload-status').textContent = error.message; }
     finally { saving = false; syncControls(); }
   }
@@ -848,7 +907,7 @@
     const item = {
       kind: "state",
       id: "new_" + crypto.randomUUID(),
-      title: "New remembered entry",
+      title: "New memory entry",
       content: "",
       token: null,
       newEntry: true,

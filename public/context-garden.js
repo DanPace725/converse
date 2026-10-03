@@ -1,3 +1,4 @@
+// The garden and request breakdown live in the Workspace's Context tab.
 (() => {
   const el = (id) => document.getElementById(id);
   const panel = el("context-garden"),
@@ -16,7 +17,8 @@
     queue = [],
     live = null,
     scene = null,
-    locallyBusy = false;
+    locallyBusy = false,
+    marked = null;
   const protectedItem = (item) =>
     item.pinned || item.verbatim_required || !!item.state_key;
   const hash = (id) =>
@@ -40,15 +42,9 @@
   function move(node, position) {
     node.style.transform = `translate(${position.x}px, ${position.y}px)`;
   }
-  function peek(item, source = false) {
-    el("garden-detail").textContent =
-      (source ? `Saved ${item.kind}` : item.state_key || item.type) +
-      " · " +
-      (source ? item.sourceRef || 'historical source' : item.segmentRef || 'historical segment') +
-      "\n" +
-      (item.preview || "(empty source)");
-    window.workspaceEditor?.inspect(item, source);
-  }
+  // Open the piece in place, beside the garden.
+  const peek = (item, source = false) =>
+    window.workspaceEditor?.inspect(item, source, true);
   function interactive(node, item, source = false) {
     node.setAttribute("tabindex", "0");
     node.setAttribute("role", "button");
@@ -169,6 +165,7 @@
         }
       }
       move(node, p);
+      node.classList.toggle("garden-current", item.id === marked);
       interactive(node, item);
       svg(
         "line",
@@ -180,7 +177,7 @@
     el("garden-anchors").textContent =
       context.segments.filter(protectedItem).length;
     el("garden-saved").textContent = history.count;
-    ledger(context, history);
+    ledger();
     el("garden-revision").textContent =
       `REVISION ${context.revision}` +
       (context.segments.length > 64 || history.count > 96
@@ -292,7 +289,7 @@
     if (!item) {
       if (replaying) {
         replaying = false;
-        el("garden-replay").textContent = "Replay recent changes";
+        el("garden-replay").textContent = "Replay";
       }
       if (live) {
         draw(live.context, live.history);
@@ -346,7 +343,7 @@
       if (token !== generation || panel.hidden || replaying) return;
       const first = !live;
       live = data;
-      ledger(data.context, data.history);
+      ledger();
       cursor = data.cursor;
       el("garden-replay").disabled = data.context.revision === 0;
       if (first || initial) {
@@ -391,90 +388,173 @@
     el("garden-phase").textContent = "Waiting for a conversation";
     el("garden-caption").textContent =
       "Start or open a context chat to watch it grow.";
-    el("garden-detail").textContent =
-      "Select a point to peek inside. Size reflects text length.";
     el("garden-revision").textContent = "Waiting for saved context";
-    ledger(null, null);
-    el("garden-replay").textContent = "Replay recent changes";
+    ledger();
+    el("garden-replay").textContent = "Replay";
     el("garden-replay").disabled = true;
     panel.classList.remove("garden-thinking");
   }
-  // Two bars on one scale: full history vs the actual current/last request.
+  // One request, split by what filled it; full history is a single reference line.
   const compact = new Intl.NumberFormat(undefined, {
     notation: "compact",
     maximumFractionDigits: 1,
   });
   const exact = (value) => Math.round(value).toLocaleString();
-  function bar(row, fixed, conversation, scale) {
-    const [first, second] = el(row).querySelectorAll(".ledger-track i");
-    first.style.width = (fixed / scale) * 100 + "%";
-    second.style.width = (conversation / scale) * 100 + "%";
-  }
-  function ledger(context, history) {
-    const comparison = live?.model_input?.comparison;
-    if (!comparison || !history?.text_bytes) {
+  const PARTS = {
+    instructions: ["Instructions", "System instructions and runtime rules, sent with every request."],
+    tools: ["Tool definitions", "Schemas for the tools the model may call, sent with every request."],
+    memory: ["Memory", "Named entries from the Memory tab."],
+    context: ["Working context", "Messages, summaries and references currently in the working context."],
+    files: ["Files", "The workspace file list and file excerpts."],
+    turn: ["Tool calls this turn", "This turn's tool calls and their results, carried until the reply is finished."],
+    reasoning: ["Carried reasoning", "Provider reasoning carried between steps. It is opaque here, so its size is a rough estimate."],
+    framing: ["Framing", "Revision notes, the protection list, reasoning pointers and message structure."],
+    unattributed: ["Not itemized", "Reported by the provider but not explained by the local count: provider-side framing and tokenizer differences."],
+  };
+  const make = (tag, className, text) => {
+    const node = document.createElement(tag);
+    if (className) node.className = className;
+    if (text != null) node.textContent = text;
+    return node;
+  };
+  const itemLabel = (key, item) =>
+    key === "turn" && ["call", "result"].includes(item.kind)
+      ? item.label + " " + item.kind
+      : item.ref
+        ? item.ref + " · " + item.label + (item.pinned ? " · pinned" : "")
+        : item.label;
+  let ledgerSignature = null;
+  function ledger() {
+    const comparison = live?.model_input?.comparison,
+      detail = comparison?.breakdown;
+    const signature = JSON.stringify(comparison || null);
+    if (signature === ledgerSignature) return;
+    ledgerSignature = signature;
+    const bar = el("breakdown-bar"),
+      rows = el("breakdown-parts"),
+      remainder = el("breakdown-remainder");
+    if (!detail) {
       for (const id of ["garden-request-delta", "garden-full-tokens", "garden-tokens-sent"])
         el(id).textContent = "—";
       el("garden-request-phase").textContent = "Next request";
-      el("garden-comparison-note").textContent = "Estimated input tokens";
-      bar("garden-row-full", 0, 0, 1);
-      bar("garden-row-sent", 0, 0, 1);
+      el("garden-comparison-note").textContent = "input tokens";
+      el("breakdown-delta-text").hidden = true;
+      remainder.hidden = true;
+      bar.replaceChildren();
+      rows.replaceChildren();
       return;
     }
-    const { full_tokens: whole, sent_tokens: sent, fixed_tokens: overhead } = comparison,
-      fixed = Math.min(overhead, sent, whole),
-      scale = Math.max(whole, sent, 1);
-    bar("garden-row-full", fixed, Math.max(0, whole - fixed), scale);
-    bar("garden-row-sent", fixed, Math.max(0, sent - fixed), scale);
+    const { full_tokens: whole, sent_tokens: sent } = comparison,
+      extra = detail.unattributed_tokens || 0;
+    const parts = [
+      ...detail.parts,
+      ...(extra > 0 ? [{ key: "unattributed", tokens: extra, items: [] }] : []),
+    ];
+    const total = parts.reduce((sum, part) => sum + part.tokens, 0) || 1;
+    const share = (tokens) => {
+      const value = (tokens / total) * 100;
+      return (value > 0 && value < 1 ? "<1" : Math.round(value)) + "%";
+    };
     el("garden-request-phase").textContent =
       { current: "Current request", last: "Last request", next: "Next request" }[comparison.phase];
-    const change = Math.round(((sent - whole) / Math.max(whole, 1)) * 100);
-    el("garden-request-delta").textContent =
-      Math.abs(change) < 1 ? "same size" : (change < 0 ? "−" : "+") + Math.abs(change) + "%";
-    el("garden-request-delta").dataset.direction = change < 0 ? "down" : "up";
-    el("garden-full-tokens").textContent = "~" + compact.format(whole);
-    el("garden-tokens-sent").textContent = (comparison.sent_reported ? "" : "~") + compact.format(sent);
-    el("garden-row-full").title =
-      `Estimated full chat and workspace/calculation history: ~${exact(whole)} input tokens, using the same instructions and tools. Private reasoning and Conclave management records are excluded. This compares context size, not cost.`;
-    el("garden-row-sent").title =
-      `Conclave's ${comparison.phase} request: ${comparison.sent_reported ? "provider reported" : "estimated"} ${exact(sent)} input tokens, including instructions, tools and continuation history.`;
+    el("garden-tokens-sent").textContent =
+      (comparison.sent_reported ? "" : "~") + compact.format(sent);
+    el("garden-tokens-sent").title = exact(sent) + " input tokens";
     el("garden-comparison-note").textContent = comparison.sent_reported
-      ? "Input tokens · Conclave reported, full history estimated"
-      : "Estimated input tokens";
+      ? "input tokens · reported by the provider"
+      : "input tokens · local estimate";
+    const open = new Set(
+      [...rows.querySelectorAll("details[open]")].map((d) => d.dataset.part),
+    );
+    bar.replaceChildren();
+    rows.replaceChildren();
+    for (const part of parts) {
+      const [name, about] = PARTS[part.key] || [part.key, ""];
+      const segment = make("i", "part-" + part.key);
+      segment.style.flexGrow = part.tokens;
+      segment.title = `${name}: ${exact(part.tokens)} tokens (${share(part.tokens)})`;
+      bar.append(segment);
+      const row = make("details", "breakdown-part"),
+        summary = make("summary");
+      row.dataset.part = part.key;
+      row.open = open.has(part.key);
+      summary.append(
+        make("i", "part-" + part.key),
+        make("span", "part-name", name),
+        make("span", "part-tokens", compact.format(part.tokens)),
+        make("span", "part-share", share(part.tokens)),
+      );
+      summary.title = exact(part.tokens) + " tokens";
+      row.append(summary, make("p", "note", about));
+      for (const item of part.items) {
+        const line = make(item.ref ? "button" : "div", "breakdown-item");
+        line.append(
+          make("span", null, itemLabel(part.key, item)),
+          make("span", "part-tokens", compact.format(item.tokens)),
+        );
+        line.title = exact(item.tokens) + " tokens";
+        if (item.ref) {
+          line.type = "button";
+          line.onclick = () =>
+            window.workspaceEditor?.inspect(
+              { ref: item.ref, state_key: item.kind === "state" ? item.label : null },
+              false,
+              true,
+            );
+        }
+        row.append(line);
+      }
+      if (part.items_omitted)
+        row.append(make("p", "note", `${part.items_omitted} smaller pieces not listed.`));
+      rows.append(row);
+    }
+    bar.setAttribute(
+      "aria-label",
+      "Request size by part: " +
+        parts.map((part) => `${(PARTS[part.key] || [part.key])[0]} ${share(part.tokens)}`).join(", "),
+    );
+    remainder.hidden = extra >= 0;
+    remainder.textContent =
+      extra < 0
+        ? `The local count is ${exact(-extra)} tokens above the reported total, so the parts are slightly overstated.`
+        : "";
+    // Compare on one basis: both sides counted locally, with the same tool results.
+    const local = comparison.sent_estimated_tokens ?? sent,
+      change = Math.round(((local - whole) / Math.max(whole, 1)) * 100);
+    el("garden-full-tokens").textContent = "~" + compact.format(whole);
+    el("garden-full-tokens").title =
+      `Estimated full chat, workspace, calculation and web history: ~${exact(whole)} input tokens, with the same instructions and tools. Private reasoning and Conclave management records are excluded. This compares context size, not cost.`;
+    el("breakdown-delta-text").hidden = false;
+    el("garden-request-delta").textContent =
+      Math.abs(change) < 1
+        ? "the same size"
+        : Math.abs(change) + "% " + (change < 0 ? "smaller" : "larger");
+    el("garden-request-delta").dataset.direction = change < 0 ? "down" : "up";
+    el("garden-request-delta").title =
+      `Local count of this request: ~${exact(local)} input tokens.`;
   }
-  function close() {
-    panel.hidden = true;
-    watch.setAttribute("aria-expanded", "false");
+  // The Workspace shows the garden with its Context tab; polling follows visibility.
+  function setVisible(value) {
+    if (panel.hidden === !value) return;
+    panel.hidden = !value;
+    watch.setAttribute("aria-expanded", String(value));
+    if (value) return void poll(true);
     generation++;
     clearTimeout(timer);
     clearAnimation();
     replaying = false;
-    el("garden-replay").textContent = "Replay recent changes";
+    el("garden-replay").textContent = "Replay";
   }
-  watch.onclick = () => {
-    if (!panel.hidden) return close();
-    window.workspaceEditor?.close();
-    panel.hidden = false;
-    watch.setAttribute("aria-expanded", "true");
-    el("garden-close").focus();
-    poll(true);
-  };
-  el("garden-close").onclick = () => {
-    close();
-    watch.focus();
-  };
-  document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && !panel.hidden) {
-      close();
-      watch.focus();
-    }
-  });
+  watch.onclick = () =>
+    panel.hidden
+      ? window.workspaceEditor?.open("context")
+      : window.workspaceEditor?.close();
   el("garden-replay").onclick = async () => {
     if (replaying) {
       generation++;
       clearAnimation();
       replaying = false;
-      el("garden-replay").textContent = "Replay recent changes";
+      el("garden-replay").textContent = "Replay";
       poll(true);
       return;
     }
@@ -495,7 +575,7 @@
     } catch {
       if (token !== generation) return;
       replaying = false;
-      el("garden-replay").textContent = "Replay recent changes";
+      el("garden-replay").textContent = "Replay";
       poll(true);
     }
   };
@@ -510,7 +590,13 @@
     }
   });
   window.contextGarden = {
-    close,
+    setVisible,
+    // Ring the piece currently open in the detail view.
+    mark: (id) => {
+      marked = id || null;
+      for (const [key, node] of nodes)
+        node.classList.toggle("garden-current", key === marked);
+    },
     setActive: (value) => {
       locallyBusy = value;
       schedule(0);

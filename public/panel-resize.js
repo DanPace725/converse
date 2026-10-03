@@ -146,15 +146,6 @@
       ),
   });
   resizer({
-    selector: "#context-garden",
-    name: "garden",
-    property: "--garden-width",
-    initial: 360,
-    min: 280,
-    max: () => Math.min(720, innerWidth - 36),
-    corner: true,
-  });
-  resizer({
     selector: "#context-panel > .sheet",
     name: "settings",
     property: "--settings-width",

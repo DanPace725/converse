@@ -134,7 +134,7 @@
         hidden
         aria-expanded="false"
         aria-controls="workspace-editor"
-        title="Open documents, context and remembered state"
+        title="Open files, context and memory"
       >
         <svg aria-hidden="true"><use href="#i-sidebar" /></svg
         ><span>Workspace</span>
@@ -145,11 +145,11 @@
         type="button"
         hidden
         aria-expanded="false"
-        aria-controls="context-garden"
-        title="Watch the context garden"
+        aria-controls="workspace-editor"
+        title="See what the model was sent"
       >
         <svg aria-hidden="true"><use href="#i-garden" /></svg
-        ><span>Context garden</span>
+        ><span id="context-watch-label">Context</span>
       </button>
       <details id="more-menu" class="menu">
         <summary class="icon-button" aria-label="More actions">
@@ -372,9 +372,6 @@
   <aside id="workspace-editor" hidden aria-label="Workspace">
     <header class="editor-head">
       <h2>Workspace</h2>
-      <button type="button" id="editor-refresh" class="link-button">
-        Refresh
-      </button>
       <button
         type="button"
         id="editor-close"
@@ -393,7 +390,7 @@
         aria-selected="true"
         aria-controls="editor-pane"
       >
-        Documents
+        Files
       </button>
       <button
         type="button"
@@ -415,17 +412,105 @@
         aria-controls="editor-pane"
         tabindex="-1"
       >
-        State
+        Memory
       </button>
     </div>
     <div id="editor-pane" role="tabpanel" aria-labelledby="tab-documents">
+      <section id="context-garden" hidden aria-label="Context garden">
+        <div class="garden-phase">
+          <span id="garden-mode">LIVE</span
+          ><span id="garden-phase">Waiting for a conversation</span>
+          <button id="garden-replay" type="button" class="link-button" disabled>
+            Replay
+          </button>
+        </div>
+        <svg
+          id="garden-scene"
+          viewBox="0 0 400 292"
+          role="group"
+          aria-label="Working context surrounded by saved source history"
+        >
+          <defs>
+            <radialGradient id="garden-wash">
+              <stop stop-color="#8aebce" stop-opacity=".13" />
+              <stop offset="1" stop-color="#8aebce" stop-opacity="0" />
+            </radialGradient>
+            <filter id="garden-glow" x="-100%" y="-100%" width="300%" height="300%">
+              <feGaussianBlur stdDeviation="3" />
+            </filter>
+          </defs>
+          <ellipse cx="200" cy="146" rx="150" ry="117" fill="url(#garden-wash)" />
+          <ellipse class="garden-orbit" cx="200" cy="146" rx="172" ry="109" />
+          <ellipse class="garden-boundary" cx="200" cy="146" rx="116" ry="83" />
+          <text class="garden-map-label" x="200" y="20" text-anchor="middle">
+            SAVED SOURCE HISTORY
+          </text>
+          <g id="garden-history"></g>
+          <g id="garden-links"></g>
+          <g id="garden-nodes"></g>
+          <g class="garden-heart">
+            <circle cx="200" cy="146" r="29" />
+            <text x="200" y="143" text-anchor="middle">WORKING</text>
+            <text x="200" y="156" text-anchor="middle">CONTEXT</text>
+          </g>
+          <text
+            id="garden-revision"
+            class="garden-map-label"
+            x="200"
+            y="279"
+            text-anchor="middle"
+          >
+            Waiting for saved context
+          </text>
+        </svg>
+        <div class="garden-legend">
+          <span class="garden-raw">● Messages</span
+          ><span class="garden-summary">● Summaries</span
+          ><span class="garden-anchor">◆ Anchors</span
+          ><span class="garden-reference">○ References</span>
+        </div>
+        <p class="garden-counts">
+          <span><strong id="garden-working">0</strong> working pieces</span
+          ><span><strong id="garden-anchors">0</strong> protected</span
+          ><span><strong id="garden-saved">0</strong> saved sources</span>
+        </p>
+        <p id="garden-caption" aria-live="polite">
+          Start or open a context chat to watch it grow.
+        </p>
+      </section>
+      <section id="request-breakdown" hidden aria-label="What was sent">
+        <div class="breakdown-head">
+          <span id="garden-request-phase">Next request</span>
+          <strong id="garden-tokens-sent">—</strong>
+          <span id="garden-comparison-note">input tokens</span>
+        </div>
+        <div id="breakdown-bar" role="img" aria-label="Request size by part"></div>
+        <div id="breakdown-parts"></div>
+        <p id="breakdown-remainder" class="note" hidden></p>
+        <p id="breakdown-baseline" class="note">
+          Full history would be <span id="garden-full-tokens">—</span
+          ><span id="breakdown-delta-text" hidden
+            >; this request is <strong id="garden-request-delta">—</strong> on
+            the same local count</span
+          >.
+        </p>
+      </section>
+      <div id="context-views" class="segmented" role="group" aria-label="Context detail" hidden>
+        <button type="button" id="context-view-pieces" data-view="pieces" aria-pressed="true">
+          Pieces
+        </button>
+        <button type="button" id="context-view-activity" data-view="activity" aria-pressed="false">
+          Activity
+        </button>
+      </div>
       <section id="editor-telemetry" hidden aria-label="Context activity">
-        <h3>Context activity</h3>
-        <p id="editor-token-summary" class="note"></p>
-        <button id="editor-token-count" type="button">Count saved request</button>
+        <h3>Next request</h3>
+        <dl id="editor-token-summary" class="facts"></dl>
+        <button id="editor-token-count" type="button">Count with provider</button>
         <p id="editor-count-status" class="note" role="status"></p>
+        <h3>Activity</h3>
         <div class="editor-toolbar">
-          <label>Activity <select id="editor-audit-kind">
+          <label>Show <select id="editor-audit-kind">
             <option value="context">Context</option><option value="all">All</option>
             <option value="workspace">Workspace</option><option value="history">Retrieval</option>
             <option value="task">Requests and turns</option><option value="calculation">Calculations</option>
@@ -453,7 +538,10 @@
       <div id="editor-items" aria-label="Workspace items"></div>
       <div id="editor-removed" hidden></div>
       <button id="editor-new-state" type="button" hidden>
-        Add remembered entry
+        Add memory entry
+      </button>
+      <button id="editor-back" type="button" class="link-button" hidden>
+        ← All pieces
       </button>
       <section id="editor-document" hidden>
         <h3 id="editor-title"></h3>
@@ -488,7 +576,7 @@
         /></label>
         <div id="editor-state-fields" hidden>
           <label
-            >State key<input
+            >Memory key<input
               id="editor-state-key"
               maxlength="80"
               autocomplete="off"
@@ -525,105 +613,6 @@
           </button>
         </div>
       </section>
-    </div>
-  </aside>
-  <aside id="context-garden" hidden aria-label="Context garden">
-    <header class="garden-header">
-      <div>
-        <span class="garden-eyebrow">A WINDOW INTO MEMORY</span>
-        <h2>Context garden</h2>
-      </div>
-      <button id="garden-close" type="button" aria-label="Close context garden">
-        ×
-      </button>
-    </header>
-    <div class="garden-phase">
-      <span id="garden-mode">LIVE</span
-      ><span id="garden-phase">Waiting for a conversation</span>
-    </div>
-    <svg
-      id="garden-scene"
-      viewBox="0 0 400 292"
-      role="group"
-      aria-label="Working context surrounded by saved source history"
-    >
-      <defs>
-        <radialGradient id="garden-wash">
-          <stop stop-color="#8aebce" stop-opacity=".13" />
-          <stop offset="1" stop-color="#8aebce" stop-opacity="0" />
-        </radialGradient>
-        <filter id="garden-glow" x="-100%" y="-100%" width="300%" height="300%">
-          <feGaussianBlur stdDeviation="3" />
-        </filter>
-      </defs>
-      <ellipse cx="200" cy="146" rx="150" ry="117" fill="url(#garden-wash)" />
-      <ellipse class="garden-orbit" cx="200" cy="146" rx="172" ry="109" />
-      <ellipse class="garden-boundary" cx="200" cy="146" rx="116" ry="83" />
-      <text class="garden-map-label" x="200" y="20" text-anchor="middle">
-        SAVED SOURCE HISTORY
-      </text>
-      <g id="garden-history"></g>
-      <g id="garden-links"></g>
-      <g id="garden-nodes"></g>
-      <g class="garden-heart">
-        <circle cx="200" cy="146" r="29" />
-        <text x="200" y="143" text-anchor="middle">WORKING</text>
-        <text x="200" y="156" text-anchor="middle">CONTEXT</text>
-      </g>
-      <text
-        id="garden-revision"
-        class="garden-map-label"
-        x="200"
-        y="279"
-        text-anchor="middle"
-      >
-        Waiting for saved context
-      </text>
-    </svg>
-    <section class="garden-ledger" aria-label="Context size comparison">
-      <div class="ledger-head">
-        <span id="garden-request-phase">Next request</span>
-        <strong id="garden-request-delta">—</strong>
-      </div>
-      <div class="ledger-row" id="garden-row-full">
-        <span class="ledger-name">Full history</span>
-        <span class="ledger-track"><i class="seg-fixed"></i><i class="seg-history"></i></span>
-        <span class="ledger-value" id="garden-full-tokens">—</span>
-      </div>
-      <div class="ledger-row" id="garden-row-sent">
-        <span class="ledger-name">Conclave</span>
-        <span class="ledger-track"><i class="seg-fixed"></i><i class="seg-working"></i></span>
-        <span class="ledger-value" id="garden-tokens-sent">—</span>
-      </div>
-      <div class="ledger-legend" aria-hidden="true">
-        <span class="key-fixed">Instructions &amp; tools</span
-        ><span class="key-history">Conversation</span>
-      </div>
-      <div class="ledger-note" id="garden-comparison-note">Estimated input tokens</div>
-    </section>
-    <div class="garden-counts">
-      <div>
-        <strong id="garden-working">0</strong><span>working pieces</span>
-      </div>
-      <div><strong id="garden-anchors">0</strong><span>protected</span></div>
-      <div><strong id="garden-saved">0</strong><span>saved sources</span></div>
-    </div>
-    <div class="garden-legend">
-      <span class="garden-raw">● Messages</span
-      ><span class="garden-summary">● Summaries</span
-      ><span class="garden-anchor">◆ Anchors</span
-      ><span class="garden-reference">○ References</span>
-    </div>
-    <p id="garden-caption" aria-live="polite">
-      Start or open a context chat to watch it grow.
-    </p>
-    <p id="garden-detail">
-      Select a point to peek inside. Size reflects text length.
-    </p>
-    <div class="garden-footer">
-      <button id="garden-replay" type="button" disabled>
-        Replay recent changes</button
-      ><span>Recorded events · no extra model calls</span>
     </div>
   </aside>
   <script src="/vendor/marked.js"></script>

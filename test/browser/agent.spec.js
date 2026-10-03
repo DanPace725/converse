@@ -98,9 +98,7 @@ test('document removal, shared help, provider counts and Claude effort are usabl
     await page.getByRole('button', { name: 'Restore notes.md', exact: true }).click();
     await expect(page.locator('#editor-items')).toContainText('notes.md');
     await page.locator('#tab-context').click();
-    await expect(page.locator('#editor-audit')).toContainText('proposed; not applied');
-    await expect(page.locator('#editor-audit')).toContainText('applied · offload');
-    await expect(page.locator('#editor-items')).toContainText('S2 · reference');
+    await page.locator('#editor-items button').filter({ hasText: 'S2 · reference' }).click();
     await page.locator('#editor-identifiers > summary').click();
     await expect(page.locator('#editor-identifiers-text')).toContainText('canonical:');
     await expect(page.locator('#editor-identifiers-text')).toContainText('Source E2');
@@ -108,6 +106,10 @@ test('document removal, shared help, provider counts and Claude effort are usabl
     await expect(page.locator('#editor-title')).toContainText('S1 · assistant');
     await expect(page.locator('#editor-preview')).toContainText('Historical background.');
     await expect(page.locator('#editor-edit')).toBeHidden();
+    await page.locator('#editor-back').click();
+    await page.locator('#context-view-activity').click();
+    await expect(page.locator('#editor-audit')).toContainText('proposed; not applied');
+    await expect(page.locator('#editor-audit')).toContainText('applied · offload');
     await page.locator('#editor-audit-earlier').click();
     await expect(page.locator('#editor-audit-status')).toContainText('Earlier saved activity');
     await expect(page.locator('#editor-audit')).not.toContainText('applied · offload');
@@ -141,6 +143,7 @@ test('document removal, shared help, provider counts and Claude effort are usabl
     await page.getByRole('button', { name: 'Restore notes.md', exact: true }).click();
     await expect(page.locator('#editor-items')).toContainText('notes.md');
     await page.locator('#tab-context').click();
+    await page.locator('#context-view-activity').click();
     await page.locator('#editor-token-count').click();
     await expect(page.locator('#editor-count-status')).toContainText('321 input tokens');
     await page.locator('#editor-close').click();
@@ -177,7 +180,7 @@ const final = response([
   },
 ]);
 
-test('context garden compares the actual request with full history without cumulative savings clutter', async ({ page }, testInfo) => {
+test('Context tab breaks the actual request into parts and compares it with full history', async ({ page }, testInfo) => {
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));
   const app = await fixture(async () => ({ ...final, usage: { input_tokens: 34587, output_tokens: 100 } }));
@@ -194,22 +197,40 @@ test('context garden compares the actual request with full history without cumul
     await expect(page.locator('#send')).toBeEnabled();
     await expect(page.locator('#context-stats')).toContainText('cumulative, all calls');
     await expect(page.locator('#context-stats')).toContainText('Latest sent 34,587 input tokens');
+    // The top-bar shortcut carries the last request's size and opens the Context tab.
+    await expect(page.locator('#context-watch-label')).toHaveText('Context · 34.6K');
     await page.locator('#context-watch').click();
-    // Two bars on one scale: estimated full history vs the actual last request.
+    await expect(page.locator('#tab-context')).toHaveAttribute('aria-selected', 'true');
+    await expect(page.locator('#context-garden')).toBeVisible();
+    // One bar for the actual last request, split by part; full history is a reference line.
     await expect(page.locator('#garden-request-phase')).toHaveText('Last request');
     await expect(page.locator('#garden-tokens-sent')).toHaveText('34.6K');
+    await expect(page.locator('#garden-tokens-sent')).toHaveAttribute('title', /34,587/);
+    await expect(page.locator('#garden-comparison-note')).toContainText('reported by the provider');
     await expect(page.locator('#garden-full-tokens')).toHaveText(/^~[\d.,]+K?$/);
-    await expect(page.locator('#garden-row-sent')).toHaveAttribute('title', /34,587/);
-    await expect(page.locator('#garden-comparison-note')).toContainText('Conclave reported, full history estimated');
-    await expect(page.locator('#garden-row-full')).toHaveAttribute('title', /Private reasoning and Conclave management records are excluded/);
-    await expect(page.locator('#garden-total')).toHaveCount(0);
+    await expect(page.locator('#garden-full-tokens')).toHaveAttribute('title', /Private reasoning and Conclave management records are excluded/);
     await expect(page.locator('#garden-request-delta')).toHaveAttribute('data-direction','down');
+    await expect(page.locator('#garden-request-delta')).toHaveText(/^\d+% smaller$/);
+    await expect(page.locator('.breakdown-part summary .part-name')).toContainText(['Instructions', 'Tool definitions', 'Working context']);
+    // Reported usage the local count cannot explain is shown, not folded into the conversation.
+    await expect(page.locator('.breakdown-part[data-part="unattributed"]')).toContainText('Not itemized');
     if (testInfo.project.name === 'mobile') {
-      const width = await page.locator('.garden-ledger').evaluate(e => ({ actual: e.scrollWidth, available: e.clientWidth }));
+      const width = await page.locator('#request-breakdown').evaluate(e => ({ actual: e.scrollWidth, available: e.clientWidth }));
       expect(width.actual).toBeLessThanOrEqual(width.available);
     }
-    await expect.poll(async()=>page.locator('#garden-row-full .ledger-track').evaluate(e=>
-      [...e.children].reduce((n,c)=>n+c.getBoundingClientRect().width,0)/e.getBoundingClientRect().width)).toBeGreaterThan(0.99);
+    await expect.poll(async()=>page.locator('#breakdown-bar').evaluate(e=>
+      [...e.children].reduce((n,c)=>n+c.getBoundingClientRect().width,0)/e.getBoundingClientRect().width)).toBeGreaterThan(0.9);
+    // A part opens to its pieces; a piece opens in place with the garden still above it.
+    const working = page.locator('.breakdown-part[data-part="context"]');
+    await working.locator('summary').click();
+    await working.locator('button.breakdown-item').first().click();
+    await expect(page.locator('#editor-title')).toHaveText(/^S\d+ · /);
+    await expect(page.locator('#context-garden')).toBeVisible();
+    await expect(page.locator('#garden-nodes .garden-current')).toHaveCount(1);
+    await expect(page.locator('#request-breakdown')).toBeHidden();
+    await page.locator('#editor-back').click();
+    await expect(page.locator('#request-breakdown')).toBeVisible();
+    await expect(working).toHaveAttribute('open', '');
     await page.screenshot({ path: testInfo.outputPath('complete-input-context.png') });
     expect(errors).toEqual([]);
   } finally { await app.close(); }
@@ -327,20 +348,18 @@ test('Workspace identifies authors, labels legacy excerpts, and opens original c
     await expect(page.locator('#editor-meta')).toContainText('Last edit by GPT · fixture');
     await expect(page.locator('#editor-preview')).toContainText('END OF ORIGINAL');
     await page.getByRole('tab', { name: 'Context', exact: true }).click();
-    const legacyItem = page.locator('#editor-items details').filter({ hasText: 'Workspace notes.md;' });
-    await legacyItem.locator('summary').click();
-    await legacyItem.getByRole('button', { name: 'Open section' }).click();
+    await page.locator('#editor-items button').filter({ hasText: 'Workspace notes.md;' }).click();
     await expect(page.locator('#editor-meta')).toContainText('Partial excerpt: first 2000 characters');
     await expect(page.locator('#editor-preview')).not.toContainText('END OF ORIGINAL');
-    const reference = page.locator('#editor-items details').filter({ hasText: 'Offloaded assistant' });
-    await reference.locator('summary').click();
-    await reference.getByRole('button', { name: 'Open section' }).click();
+    await page.locator('#editor-back').click();
+    await page.locator('#editor-items button').filter({ hasText: 'Offloaded assistant' }).click();
     await expect(page.locator('#editor-preview')).toContainText('Source excerpt (not a summary)');
     await page.locator('#editor-reference').click();
     await expect(page.locator('#editor-preview')).toContainText('END OF HISTORY');
     await expect(page.locator('#editor-meta')).toContainText('read only');
     await expect(page.locator('#editor-edit')).toBeHidden();
-    await page.getByRole('tab', { name: 'State', exact: true }).click();
+    await page.getByRole('tab', { name: 'Memory', exact: true }).click();
+    await page.locator('#editor-items button').filter({ hasText: 'budget' }).click();
     await expect(page.locator('#editor-preview')).toHaveText('Budget: 150 dollars.');
     await page.locator('#editor-history summary').click();
     await page.locator('#editor-history-items button').click();
@@ -486,9 +505,9 @@ test('desktop panel resizing persists and Context expands without a short nested
     await expect(page.locator('#workspace-open')).toBeVisible();
     await page.locator('#workspace-open').click();
     await page.locator('#tab-context').click();
-    const detail = page.locator('#editor-items details').first();
-    await detail.locator('summary').click();
-    await expect(detail.locator('p')).toContainText('END OF SECTION');
+    await page.locator('#editor-items button').first().click();
+    await expect(page.locator('#editor-preview')).toContainText('END OF SECTION');
+    await page.locator('#editor-back').click();
     expect(await page.locator('#editor-items').evaluate(el => getComputedStyle(el).maxHeight)).toBe('none');
     if (testInfo.project.name === 'mobile') {
       await expect(page.locator('#workspace-resize')).toBeHidden();
@@ -515,7 +534,7 @@ test('desktop panel resizing persists and Context expands without a short nested
       await expect(workspace).toHaveCSS('width', `${start.width + 64}px`);
       await expect(page.locator('#sidebar')).toHaveCSS('width', '330px');
       await page.locator('#tab-context').click();
-      await page.locator('#editor-items details').first().locator('summary').click();
+      await page.locator('#editor-items button').first().click();
       await page.screenshot({ path: 'docs/reports/assets/issue-10-desktop.png' });
       await page.locator('#editor-close').click();
       await page.locator('#context-panel > summary').click();
@@ -529,11 +548,6 @@ test('desktop panel resizing persists and Context expands without a short nested
       await page.locator('#settings-height-resize').press('Home');
       expect(await sheet.evaluate(el => getComputedStyle(el).getPropertyValue('--settings-height'))).toBe('');
       await page.locator('#sheet-close').click();
-      await page.locator('#context-watch').click();
-      const gardenWidth = (await page.locator('#context-garden').boundingBox()).width;
-      await page.locator('#garden-resize').press('ArrowLeft');
-      await expect(page.locator('#context-garden')).toHaveCSS('width', `${gardenWidth + 10}px`);
-      await page.locator('#garden-close').click();
       await page.locator('#workspace-open').click();
       await page.setViewportSize({ width: 1200, height: 800 });
       await expect.poll(async () => (await page.locator('main').boundingBox()).width).toBeGreaterThanOrEqual(480);
@@ -700,16 +714,7 @@ test("Workspace panel edits documents, source copies, context and state without 
       "My revision.",
     );
     await page.getByRole("tab", { name: "Context", exact: true }).click();
-    await page
-      .locator("#editor-items details")
-      .first()
-      .locator("summary")
-      .click();
-    await page
-      .locator("#editor-items details")
-      .first()
-      .getByRole("button", { name: "Open section" })
-      .click();
+    await page.locator("#editor-items button").first().click();
     await page.locator("#editor-edit").click();
     await page
       .locator("#editor-text")
@@ -723,7 +728,7 @@ test("Workspace panel edits documents, source copies, context and state without 
           (s) => s.content === "Workshop must have at most 12 people.",
         ),
     ).toBe(true);
-    await page.getByRole("tab", { name: "State", exact: true }).click();
+    await page.getByRole("tab", { name: "Memory", exact: true }).click();
     await page.locator("#editor-new-state").click();
     await page.locator("#editor-state-key").fill("venue");
     await page.locator("#editor-state-type").selectOption("question");
@@ -749,7 +754,9 @@ test("Workspace panel edits documents, source copies, context and state without 
     await page.locator('#garden-nodes [role="button"]').first().press('Enter');
     await expect(page.locator("#workspace-editor")).toBeVisible();
     await expect(page.locator("#editor-document")).toBeVisible();
-    await expect(page.locator("#context-garden")).toBeHidden();
+    // The piece opens in the Context tab; the garden stays above it.
+    await expect(page.locator("#tab-context")).toHaveAttribute("aria-selected", "true");
+    await expect(page.locator("#context-garden")).toBeVisible();
     expect(errors).toEqual([]);
   } finally {
     await app.close();
@@ -785,7 +792,6 @@ test("Workspace drafts survive close/reload and concurrent versions cannot overw
     });
     await page.reload();
     await page.locator("#workspace-open").click();
-    await page.locator("#editor-refresh").click();
     await expect(page.locator("#editor-text")).toHaveValue(
       "# Draft\nMy unsaved changes.",
     );
@@ -971,6 +977,7 @@ test('completed agents visibly retain blocked optimization errors and their requ
     expect(JSON.parse(event.content).inspection.blocked[0].reasons.map(r => r.code)).toContain('current_request');
     await page.locator('#workspace-open').click();
     await page.locator('#tab-context').click();
+    await page.locator('#context-view-activity').click();
     await expect(page.locator('#editor-audit')).toContainText('failed · tool result');
     expect(calls).toBe(2);
   } finally { await app.close(); }
