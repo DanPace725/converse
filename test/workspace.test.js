@@ -267,7 +267,7 @@ for (const provider of ["openai", "anthropic"])
         const id = service.create().conversation_id,
           h = service.harness(id);
         for (let n = 0; n < 5; n++)
-          h.addMessage("assistant", "Old draft " + n + " " + "x".repeat(10000));
+          h.addMessage("assistant", "Current context draft " + n + " " + "x".repeat(10000));
         for (let n = 0; n < 4; n++)
           h.addMessage("assistant", "Recent short item " + n);
         const input = {

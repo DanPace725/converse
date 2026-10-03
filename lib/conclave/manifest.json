@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
   "source_repository": "https://github.com/DanPace725/conclave",
-  "source_commit": "90640b66a9c8ece5a636277428e04e994363280c",
+  "source_commit": "3c8a1afd582231f5c6f2b80ad986d9e2f26f9311",
   "source_worktree_dirty": false,
-  "migrated_at": "2026-10-03T18:59:16.465Z",
+  "migrated_at": "2026-10-03T20:14:28.441Z",
   "dependencies": {
     "gpt-tokenizer": "^4.0.0",
     "htmlparser2": "^12.0.0",
@@ -80,7 +80,7 @@
     {
       "source": "src/economics.js",
       "target": "lib/conclave/economics.js",
-      "sha256": "95625ffe9703ebf670a2d438753874f7f22fdfeb33cd56d6dbb5ae2b1f572f70"
+      "sha256": "9532285b12caec87059d6a13e83d237b1844d1a6f479a4b18b7d19b3973c0e11"
     },
     {
       "source": "src/effort.js",
@@ -100,7 +100,7 @@
     {
       "source": "src/harness.js",
       "target": "lib/conclave/harness.js",
-      "sha256": "53aefb19f630d0646a3b0cbabe91b893ac269d266d101d8fe3e5a7c0986cbd66"
+      "sha256": "b41aa2576ff393c02555802d6d4122128cab0377c5e8c28c122ec8c64804d4ff"
     },
     {
       "source": "src/hosted.js",
@@ -170,7 +170,7 @@
     {
       "source": "src/resources/app-guide.md",
       "target": "lib/conclave/resources/app-guide.md",
-      "sha256": "2967fcf1ce9cee2f988e9944bfb2b8090a01bbc0905994d87f8941b9fa039a42"
+      "sha256": "48c7359e96e12ae775bdc6179476f0d53f24eb0bdec1140fb13c68fbe9a4ee36"
     },
     {
       "source": "src/resources/model-costs-2026-10-02.json",
@@ -315,7 +315,7 @@
     {
       "source": "src/resources/app-guide.md",
       "target": "public/app-guide.md",
-      "sha256": "2967fcf1ce9cee2f988e9944bfb2b8090a01bbc0905994d87f8941b9fa039a42"
+      "sha256": "48c7359e96e12ae775bdc6179476f0d53f24eb0bdec1140fb13c68fbe9a4ee36"
     },
     {
       "source": "src/resources/model-costs-2026-10-02.json",

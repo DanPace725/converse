@@ -1,0 +1,215 @@
+{
+  "basis": "Synthetic standard-rate sensitivity; not live savings or validated fidelity",
+  "pricing_date": "2026-10-02",
+  "answer_model": "claude-sonnet-5-5",
+  "assumptions": {
+    "old_tokens": 20000,
+    "retained_tokens": 20000,
+    "pointer_tokens": 200,
+    "summary_tokens": 2000,
+    "retrieval": "Fresh full source at base input rate; no extra answer call/output modeled",
+    "unchanged_prefix": "Only reusable when a previous eligible cache entry exists at this boundary",
+    "exclusions": "No price tier changes, latency, stochastic summary length, selector calls, or answer-quality differences"
+  },
+  "checks": "6 scenario assertions passed",
+  "results": [
+    {
+      "scenario": "warm prefix; four certain requests",
+      "choice": "keep",
+      "rows": [
+        {
+          "method": "keep",
+          "cost_usd": 0.032,
+          "management_usd": 0,
+          "first_input_usd": 0.008,
+          "subsequent_input_usd": 0.008,
+          "recovery_per_request_usd": 0,
+          "saving_vs_keep_usd": 0
+        },
+        {
+          "method": "pointer",
+          "cost_usd": 0.07062,
+          "management_usd": 0,
+          "first_input_usd": 0.0505,
+          "subsequent_input_usd": 0.00404,
+          "recovery_per_request_usd": 0.002,
+          "saving_vs_keep_usd": -0.03862
+        },
+        {
+          "method": "summary",
+          "cost_usd": 0.1362,
+          "management_usd": 0.06,
+          "first_input_usd": 0.055,
+          "subsequent_input_usd": 0.0044,
+          "recovery_per_request_usd": 0.002,
+          "saving_vs_keep_usd": -0.10419999999999999
+        }
+      ]
+    },
+    {
+      "scenario": "expired prefix; four certain requests",
+      "choice": "pointer",
+      "rows": [
+        {
+          "method": "keep",
+          "cost_usd": 0.124,
+          "management_usd": 0,
+          "first_input_usd": 0.1,
+          "subsequent_input_usd": 0.008,
+          "recovery_per_request_usd": 0,
+          "saving_vs_keep_usd": 0
+        },
+        {
+          "method": "pointer",
+          "cost_usd": 0.07062,
+          "management_usd": 0,
+          "first_input_usd": 0.0505,
+          "subsequent_input_usd": 0.00404,
+          "recovery_per_request_usd": 0.002,
+          "saving_vs_keep_usd": 0.05338
+        },
+        {
+          "method": "summary",
+          "cost_usd": 0.1362,
+          "management_usd": 0.06,
+          "first_input_usd": 0.055,
+          "subsequent_input_usd": 0.0044,
+          "recovery_per_request_usd": 0.002,
+          "saving_vs_keep_usd": -0.012199999999999989
+        }
+      ]
+    },
+    {
+      "scenario": "warm prefix; edit after stable 20k-token boundary",
+      "choice": "pointer",
+      "rows": [
+        {
+          "method": "keep",
+          "cost_usd": 0.032,
+          "management_usd": 0,
+          "first_input_usd": 0.008,
+          "subsequent_input_usd": 0.008,
+          "recovery_per_request_usd": 0,
+          "saving_vs_keep_usd": 0
+        },
+        {
+          "method": "pointer",
+          "cost_usd": 0.024620000000000003,
+          "management_usd": 0,
+          "first_input_usd": 0.0045000000000000005,
+          "subsequent_input_usd": 0.00404,
+          "recovery_per_request_usd": 0.002,
+          "saving_vs_keep_usd": 0.007379999999999998
+        },
+        {
+          "method": "summary",
+          "cost_usd": 0.0902,
+          "management_usd": 0.06,
+          "first_input_usd": 0.009000000000000001,
+          "subsequent_input_usd": 0.0044,
+          "recovery_per_request_usd": 0.002,
+          "saving_vs_keep_usd": -0.0582
+        }
+      ]
+    },
+    {
+      "scenario": "warm prefix; shrinking chance of continuation",
+      "choice": "keep",
+      "rows": [
+        {
+          "method": "keep",
+          "cost_usd": 0.016,
+          "management_usd": 0,
+          "first_input_usd": 0.008,
+          "subsequent_input_usd": 0.008,
+          "recovery_per_request_usd": 0,
+          "saving_vs_keep_usd": 0
+        },
+        {
+          "method": "pointer",
+          "cost_usd": 0.05854000000000001,
+          "management_usd": 0,
+          "first_input_usd": 0.0505,
+          "subsequent_input_usd": 0.00404,
+          "recovery_per_request_usd": 0.002,
+          "saving_vs_keep_usd": -0.04254000000000001
+        },
+        {
+          "method": "summary",
+          "cost_usd": 0.1234,
+          "management_usd": 0.06,
+          "first_input_usd": 0.055,
+          "subsequent_input_usd": 0.0044,
+          "recovery_per_request_usd": 0.002,
+          "saving_vs_keep_usd": -0.1074
+        }
+      ]
+    },
+    {
+      "scenario": "warm prefix; cheap summary still rebuilds cache",
+      "choice": "keep",
+      "rows": [
+        {
+          "method": "keep",
+          "cost_usd": 0.032,
+          "management_usd": 0,
+          "first_input_usd": 0.008,
+          "subsequent_input_usd": 0.008,
+          "recovery_per_request_usd": 0,
+          "saving_vs_keep_usd": 0
+        },
+        {
+          "method": "pointer",
+          "cost_usd": 0.07062,
+          "management_usd": 0,
+          "first_input_usd": 0.0505,
+          "subsequent_input_usd": 0.00404,
+          "recovery_per_request_usd": 0.002,
+          "saving_vs_keep_usd": -0.03862
+        },
+        {
+          "method": "summary",
+          "cost_usd": 0.0792,
+          "management_usd": 0.003,
+          "first_input_usd": 0.055,
+          "subsequent_input_usd": 0.0044,
+          "recovery_per_request_usd": 0.002,
+          "saving_vs_keep_usd": -0.047200000000000006
+        }
+      ]
+    },
+    {
+      "scenario": "expired prefix; source needed on every request",
+      "choice": "keep",
+      "rows": [
+        {
+          "method": "keep",
+          "cost_usd": 0.124,
+          "management_usd": 0,
+          "first_input_usd": 0.1,
+          "subsequent_input_usd": 0.008,
+          "recovery_per_request_usd": 0,
+          "saving_vs_keep_usd": 0
+        },
+        {
+          "method": "pointer",
+          "cost_usd": 0.22262,
+          "management_usd": 0,
+          "first_input_usd": 0.0505,
+          "subsequent_input_usd": 0.00404,
+          "recovery_per_request_usd": 0.04,
+          "saving_vs_keep_usd": -0.09862000000000001
+        },
+        {
+          "method": "summary",
+          "cost_usd": 0.2882,
+          "management_usd": 0.06,
+          "first_input_usd": 0.055,
+          "subsequent_input_usd": 0.0044,
+          "recovery_per_request_usd": 0.04,
+          "saving_vs_keep_usd": -0.1642
+        }
+      ]
+    }
+  ]
+}

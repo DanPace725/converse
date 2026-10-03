@@ -6,7 +6,7 @@ import { WorkspaceHarness } from '../lib/conclave/workspace.js';
 import { JevDecisionAdapter } from '../lib/conclave/jev.js';
 import { anthropicPayload } from '../lib/conclave/provider.js';
 import { projectReceipts, toolIngress, documentIngress } from '../lib/conclave/ingress.js';
-import { managementEconomics, observedCache, delegationCost } from '../lib/conclave/economics.js';
+import { observedCache, delegationCost } from '../lib/conclave/economics.js';
 import { inputSize } from '../lib/conclave/input-size.js';
 
 const toolCall = (name, n, args = {}) => ({ type: 'function_call', call_id: 'call_' + n, name, arguments: JSON.stringify(args) });
@@ -114,37 +114,6 @@ test('settled state precedes recent text; cache writes select a stable breakpoin
       { input_tokens: 20000, output_tokens: 1, cache_read_input_tokens: 19000, cache_creation_input_tokens: 0 });
     assert.equal(observedCache(store.events(id), 'anthropic', h.options.model).boundary, 'growing-tail');
     assert.equal(h.answerPayload().input[0].cache_boundary, undefined);
-  } finally { store.close(); }
-});
-
-test('economic trigger accounts for carry, selection, rewrite, retrieval and cache rebuild; missing rates stay unknown', async () => {
-  const store = new Store(undefined, { memory: true });
-  try {
-    const id = store.create(), h = new Harness(store, id, { name: 'openai' }, { model: 'gpt-6-luna', budget: 500000, recent: 1 });
-    h.addMessage('assistant', 'Background detail '.repeat(4500)); h.addMessage('user', 'Keep the current request.');
-    for (let i = 0; i < 4; i++) observed(store, id, 'answer', 'openai', 'gpt-6-luna', usage);
-    observed(store, id, 'compaction', 'openai', 'gpt-6-luna', { ...usage, input_tokens: 5, output_tokens: 1 });
-    const economics = managementEconomics(store.events(id), { provider: 'openai', model: 'gpt-6-luna', removableText: store.context(id).segments[0].content });
-    assert.equal(economics.complete, true); assert.equal(economics.due, true);
-    assert.deepEqual(Object.keys(economics.components_usd), ['carry', 'selection', 'rewrite', 'retrieval', 'cache_rebuild']);
-    assert.equal(h.attentionPlan().selected_bundle_ids.length, 0, 'below pressure threshold');
-    const result = await h.reviewContext(); assert.equal(result.status, 'offloaded');
-    assert.ok(store.context(id).segments.some(s => s.content === 'Keep the current request.'));
-    assert.equal(store.events(id).filter(e => e.kind === 'inference_request').length, 5, 'lossless operation needs no new paid call');
-    const unknown = managementEconomics(store.events(id), { provider: 'openai', model: 'unknown', removableText: 'data' });
-    assert.equal(unknown.complete, false); assert.equal(unknown.due, false); assert.equal(unknown.components_usd.carry, null);
-  } finally { store.close(); }
-});
-
-test('expensive management or heavily cached carry prevents an economic-only trigger', () => {
-  const store = new Store(undefined, { memory: true });
-  try {
-    const id = store.create();
-    for (let i = 0; i < 4; i++) observed(store, id, 'answer', 'openai', 'gpt-6-luna', { ...usage, input_tokens_details: { cached_tokens: 19900, cache_write_tokens: 0 } });
-    observed(store, id, 'compaction', 'openai', 'gpt-6-luna', { ...usage, output_tokens: 16000 });
-    const economics = managementEconomics(store.events(id), { provider: 'openai', model: 'gpt-6-luna', removableText: 'detail '.repeat(2000) });
-    assert.equal(economics.complete, true); assert.equal(economics.due, false);
-    assert.ok(economics.components_usd.rewrite > economics.components_usd.carry);
   } finally { store.close(); }
 });
 
