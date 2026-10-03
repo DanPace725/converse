@@ -1066,36 +1066,54 @@ test("browser drives real HTTP/service/storage, renders artifacts and resumes af
   }
 });
 
-test("Stop waits for the current call and prevents further steps", async ({
+for (const provider of ['openai', 'anthropic']) test(`${provider}: Stop cancels the active call and discards unfinished text`, async ({
   page,
 }) => {
   let release,
-    calls = 0;
-  const waiting = new Promise((resolve) => {
-    release = resolve;
-  });
-  const app = await fixture(async () => {
+    calls = 0, activeSignal, titles = 0;
+  const errors = []; page.on('pageerror', error => errors.push(error.message));
+  const app = await fixture(async (_payload, { signal, onDelta }) => {
     calls++;
-    await waiting;
+    activeSignal = signal;
+    onDelta('Unfinished answer that must disappear.');
+    await new Promise((resolve, reject) => {
+      release = resolve;
+      signal.addEventListener('abort', () => reject(signal.reason), { once: true });
+    });
     return response([
       call("calculate", { operation: "add", values: [1, 2] }, 1),
     ]);
-  });
+  }, { claude: true });
+  await page.route('**/api/title', route => { titles++; return route.fulfill({ json: { title: 'Stop proof' } }); });
   try {
     await openAgent(page, app.url);
+    if (provider === 'anthropic') await page.locator('#recipients [data-name="Claude"]').click();
     await page.getByLabel("Message", { exact: true }).fill("Keep calculating.");
     await page.locator("#send").click();
     await expect(page.locator("#agent-stop")).toBeEnabled();
     await expect(page.locator("#run-progress")).toContainText("Model working");
     await expect(page.locator("#context-garden")).toBeHidden();
+    await expect(page.locator('article[data-provisional="true"]')).toContainText('Unfinished answer');
+    const beforeTitles = titles;
     await page.locator("#agent-stop").click();
-    await expect(page.locator("#status")).toContainText("Stopping");
-    release();
     await expect(page.locator("#agent-status")).toContainText("stopped");
+    expect(activeSignal.aborted).toBe(true);
     expect(calls).toBe(1);
+    expect(titles).toBe(beforeTitles);
+    await expect(page.locator('#chat')).not.toContainText('Unfinished answer');
+    const id = app.service.list()[0].conversation_id;
+    const view = app.service.view(id);
+    expect(view.agent.steps).toBe(0);
+    expect(view.messages.filter(m => m.role === 'assistant')).toHaveLength(0);
+    expect(app.service.store.events(id).filter(e => e.kind === 'tool_call')).toHaveLength(0);
     await expect(page.locator("#send")).toBeEnabled();
+    await page.reload();
+    await expect(page.locator('#agent-status')).toContainText('stopped');
+    await expect(page.locator('#agent-resume')).toBeHidden();
+    expect(calls).toBe(1);
+    expect(errors).toEqual([]);
   } finally {
-    release();
+    release?.();
     await app.close();
   }
 });

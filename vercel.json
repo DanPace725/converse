@@ -3,6 +3,11 @@
   "framework": null,
   "outputDirectory": "public",
   "functions": {
+    "api/conclave.js": {
+      "maxDuration": 240,
+      "includeFiles": "public/app-guide.md",
+      "supportsCancellation": true
+    },
     "api/*.js": {
       "maxDuration": 240,
       "includeFiles": "public/app-guide.md"

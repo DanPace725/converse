@@ -6,7 +6,7 @@ Converse is a small chat app for GPT, Claude, and Gemini. Conclave is its method
 
 - **Chat:** multiple selected providers can reply to shared history. Chats are saved in this browser.
 - **Context:** GPT or Claude answers with persistent source history, a retrievable working context, and structured State. Switch models within one conversation.
-- **Agent:** GPT or Claude continues tool actions until it finishes or reaches a limit. Keep the browser tab open. Reload pauses further steps; Resume continues the saved run with its original provider, model, effort, and deadline.
+- **Agent:** GPT or Claude continues tool actions until it finishes or reaches a limit. **Stop** cancels the active model request and prevents further tools or steps. Completed actions and the audit stay saved; unfinished text is not a completed reply. A disconnected active Agent stream stops the run too; reload between steps pauses further work, and Resume continues a still-running saved run with its original provider, model, effort, and deadline.
 
 ## Workspace and tools
 

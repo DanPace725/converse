@@ -143,6 +143,7 @@ import { effortLevels } from './effort.js';
     latestView = null,
     driving = false,
     stopRequested = false;
+  let agentController = null;
   // One stable reply element for a whole context turn or agent run, so steps
   // stream into the same place instead of appearing and vanishing.
   let live = null;
@@ -177,7 +178,7 @@ import { effortLevels } from './effort.js';
   let asking = false;
   const currentId = () => conversation.context_layer?.conversation_id;
 
-  async function request(action, input) {
+  async function request(action, input, { signal } = {}) {
     const generation = sessionGeneration;
     const streaming = input && ["ask", "agent_step"].includes(action);
     const query = input
@@ -194,6 +195,7 @@ import { effortLevels } from './effort.js';
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ action, ...input, ...(streaming ? { stream: true } : {}) }),
+            ...(signal ? { signal } : {}),
           }
         : { cache: "no-store" },
     );
@@ -260,7 +262,7 @@ import { effortLevels } from './effort.js';
     const data = await response.json().catch(() => ({
       error: "Context service unavailable. Try again shortly.",
     }));
-    if (!response.ok) throw Error(data.error || "Context request failed");
+    if (!response.ok) throw Object.assign(Error(data.error || "Context request failed"), { status: response.status });
     return data;
   }
 
@@ -555,39 +557,65 @@ import { effortLevels } from './effort.js';
     if (!value && name) void autoNameConversation();
   }
 
+  async function stopRunningAgent() {
+    // The aborted step must save its terminal checkpoint and release the hosted
+    // lease before a separate Stop operation can acquire it. Never replay a step.
+    for (let attempt = 0; ; attempt++) {
+      try {
+        return await request("agent_stop", { conversation_id: currentId(), run_id: agent.run_id });
+      } catch (error) {
+        if (error.status !== 409 || attempt >= 30) throw error;
+        await new Promise(resolve => setTimeout(resolve, Math.min(1000, 100 * (attempt + 1))));
+      }
+    }
+  }
+
   async function driveAgent() {
     driving = true;
     stopRequested = false;
+    agentController = new AbortController();
     setBusy(true);
     beginLive(agent?.settings?.provider || provider.value, agent?.settings?.model || fields[providerName()].value);
     try {
       while (agent?.status === "running") {
         $("#status").textContent = stopRequested
-          ? "Stopping after the current step…"
+          ? "Stopping…"
           : `Agent running · step ${agent.steps + 1}`;
+        if (stopRequested) {
+          apply(await stopRunningAgent());
+          break;
+        }
         apply(
-          await request(stopRequested ? "agent_stop" : "agent_step", {
+          await request("agent_step", {
             conversation_id: currentId(),
             run_id: agent.run_id,
             expected_step: agent.steps,
-          }),
+          }, { signal: agentController.signal }),
         );
       }
       $("#status").textContent = "Agent " + agent.status + " · progress saved";
     } catch (error) {
-      try {
-        apply(await request("view"));
-      } catch {}
-      $("#status").textContent =
-        error.message + " Reload or resume to inspect saved progress.";
+      if (stopRequested) {
+        try {
+          apply(await stopRunningAgent());
+          $("#status").textContent = "Agent " + agent.status + " · progress saved";
+        } catch (stopError) {
+          $("#status").textContent = stopError.message + " Reload to check whether the agent stopped.";
+        }
+      } else {
+        try { apply(await request("view")); } catch {}
+        $("#status").textContent = error.message + " Reload or resume to inspect saved progress.";
+      }
     } finally {
+      const stopped = stopRequested || agent?.status === "stopped";
       driving = false;
       stopRequested = false;
+      agentController = null;
       if (liveActive()) {
         endLive();
         renderMessages();
       }
-      setBusy(false);
+      setBusy(false, { name: !stopped });
     }
   }
 
@@ -661,8 +689,12 @@ import { effortLevels } from './effort.js';
   $("#agent-stop").onclick = async () => {
     if (driving) {
       stopRequested = true;
+      agentController?.abort();
+      endLive();
+      renderMessages();
+      watchProgress(false);
       controls();
-      $("#status").textContent = "Stopping after the current step…";
+      $("#status").textContent = "Stopping…";
       return;
     }
     if (busy || !agent) return;
@@ -677,7 +709,7 @@ import { effortLevels } from './effort.js';
     } catch (error) {
       $("#status").textContent = error.message;
     } finally {
-      setBusy(false);
+      setBusy(false, { name: false });
     }
   };
 
