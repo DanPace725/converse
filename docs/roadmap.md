@@ -1,5 +1,7 @@
 # Converse roadmap
 
+> **Direction update, 2026-10-03:** the Conclave MVP gates are considered met. Next build priority is running Context/Agent on cheap and open models (an OpenAI-compatible adapter and a lite profile), then a cheap-model `ask_expert` consult, cross-conversation memory and web search. Tests guard; no new benchmark passes unless a decision depends on one. See [Conclave DIRECTION_2026-10-03.md](https://github.com/DanPace725/conclave/blob/main/docs/DIRECTION_2026-10-03.md).
+
 Revised October 2, 2026. This separates the current implementation round from later design work. Original model suggestions remain in `docs/model suggestions/` as proposals, not approved specifications.
 
 ## Completed foundation: control, documentation, and visibility
