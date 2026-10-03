@@ -1,0 +1,78 @@
+{
+  "checked_at": "2026-10-03T15:33:53.695Z",
+  "outcomes": [
+    {
+      "provider": "openai",
+      "model": "gpt-6-luna",
+      "status": "passed",
+      "native_searches": 1,
+      "citations": [
+        {
+          "url": "https://nodejs.org/learn/getting-started/introduction-to-nodejs",
+          "title": "nodejs.org"
+        },
+        {
+          "url": "https://nodejs.org/en/about/?source=post_page-----be16504e1b63----------------------",
+          "title": "nodejs.org"
+        }
+      ],
+      "evidence_scope": "search-summary",
+      "saved_characters": 1806,
+      "response_status": "completed",
+      "reported_usage": {
+        "input_tokens": 8550,
+        "input_tokens_details": {
+          "cache_write_tokens": 4440,
+          "cached_tokens": 0
+        },
+        "output_tokens": 69,
+        "output_tokens_details": {
+          "reasoning_tokens": 32
+        },
+        "total_tokens": 8619
+      },
+      "purpose": "web-search",
+      "warnings": []
+    },
+    {
+      "provider": "anthropic",
+      "model": "claude-sonnet-5-5",
+      "status": "passed",
+      "native_searches": 1,
+      "citations": [
+        {
+          "url": "https://camp.nodejs.org/en/",
+          "title": "Node.js"
+        },
+        {
+          "url": "https://nodejs.org/en/about",
+          "title": "Node.js — About Node.js®"
+        }
+      ],
+      "evidence_scope": "search-summary",
+      "saved_characters": 1208,
+      "response_status": "completed",
+      "reported_usage": {
+        "input_tokens": 12510,
+        "cache_creation_input_tokens": 9402,
+        "cache_read_input_tokens": 3102,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 9402,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 217,
+        "output_tokens_details": {
+          "thinking_tokens": 0
+        },
+        "service_tier": "standard",
+        "inference_geo": "global",
+        "server_tool_use": {
+          "web_search_requests": 1,
+          "web_fetch_requests": 0
+        }
+      },
+      "purpose": "web-search",
+      "warnings": []
+    }
+  ]
+}

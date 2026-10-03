@@ -415,7 +415,7 @@ import { effortLevels } from './effort.js';
       "GPT and Claude replies use saved context. JSON export includes original sources, revisions, Jev decisions and usage.";
     const runMetrics = agent?.metrics;
     const purposeText = Object.entries(runMetrics?.usage_by_purpose || {}).map(([purpose, usage]) =>
-      `${purpose === 'attention-selection' ? 'Jev selection' : purpose === 'compaction' ? 'Context compaction' : 'Task'}: ${usage.calls} calls, ${usage.input_tokens} input / ${usage.output_tokens} output`).join(' · ');
+      `${purpose === 'attention-selection' ? 'Jev selection' : purpose === 'compaction' ? 'Context compaction' : purpose === 'web-search' ? 'Web search' : 'Task'}: ${usage.calls} calls, ${usage.input_tokens} input / ${usage.output_tokens} output`).join(' · ');
     const notice = agentNotice;
     const toolErrors = runMetrics?.tool_errors || [];
     // Failures already shown in the transcript aren't repeated in the run notice.
