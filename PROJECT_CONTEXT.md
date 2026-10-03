@@ -4,6 +4,8 @@ Updated 2026-10-03. Mutable project state. [Usage](public/app-guide.md) · [Deve
 
 ## Current capabilities
 
+- Conclave engine authority is the Conclave repository. Providers, agents, workspaces, web tools, context controls, persistence, and shared resources migrate here with a source-commit/hash manifest; parity checks reject downstream drift. Application UI/deployment remain here. [Engine boundary](lib/conclave/VENDORED.md)
+
 - Installable browser app with responsive UI, offline shell, sanitized Markdown and LaTeX, raw Markdown copy, saved chats, automatic titles, and linked user-message revisions.
 - Chat: GPT, Claude, and Gemini share attributed history and can reply in parallel. Storage is on the device.
 - Context: GPT or Claude uses Conclave's persistent source history, editable working projection, named state, retrieval, offloading, compaction, and source lineage. Provider/model identity follows each reply and source.
@@ -22,6 +24,7 @@ Updated 2026-10-03. Mutable project state. [Usage](public/app-guide.md) · [Deve
 
 | Result | Evidence |
 |---|---|
+| Engine parity: 61 managed files match Conclave; 138 standalone and 155 Converse backend checks passed, each with one optional check skipped. All 56 desktop/mobile Agent browser checks passed. | [Migration and validation](docs/archive/2026-10-03/engine-parity.md) |
 | Native search: live GPT-6 Luna and Claude Sonnet 5.5 lookups passed using existing keys; findings and citations saved with usage. Fixture checks cover Context/Agent, source recovery, quotas, native-block preservation and Agent token guards. | [Native integration](docs/archive/2026-10-03/native-web-search.md), [live evidence](docs/archive/2026-10-03/native-search-live.json) |
 | Direct page retrieval: 48 focused checks passed, including complete text delivered to GPT/Claude Context/Agent fixtures, post-observation receipt projection, exact recovery/removal, quotas, public-address/redirect checks and deadlines. Live Node.js page response/extraction retained the footer. | [Page retrieval](docs/archive/2026-10-03/web-page-retrieval.md), [live evidence](docs/archive/2026-10-03/web-page-live.json) |
 | 11 saved conversations: 561,088 history characters → 182,864 working characters, **67.4% reduction**. | [Iteration report](docs/archive/2026-10-02/docs/reports/conclave-iteration-2026-10-02.md) |

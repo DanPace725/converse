@@ -1,0 +1,321 @@
+{
+  "schema_version": 1,
+  "source_repository": "https://github.com/DanPace725/conclave",
+  "source_commit": "7885ae6826908bd5f00a569b0bbbcb9b809f2d0e",
+  "source_worktree_dirty": false,
+  "migrated_at": "2026-10-03T17:41:48.746Z",
+  "dependencies": {
+    "gpt-tokenizer": "^4.0.0",
+    "htmlparser2": "^12.0.0",
+    "drizzle-orm": "^0.45.3",
+    "pg": "^8.23.1",
+    "@vercel/functions": "^3.9.9"
+  },
+  "files": [
+    {
+      "source": "src/access.js",
+      "target": "lib/conclave/access.js",
+      "sha256": "3664abd7ad62e53879f779788da2b0534eee8f3589f99a1c3a0d496e153d41dc"
+    },
+    {
+      "source": "src/activity.js",
+      "target": "lib/conclave/activity.js",
+      "sha256": "298f98218fc6e6189b6c627df0896a6cdac8dadedb19d5788cca38ec70dc0f2f"
+    },
+    {
+      "source": "src/agent-diagnostics.js",
+      "target": "lib/conclave/agent-diagnostics.js",
+      "sha256": "fe9eb8b92f0f3875b3e67822437fad3d20814a90976e323157f0942ef080864e"
+    },
+    {
+      "source": "src/agent.js",
+      "target": "lib/conclave/agent.js",
+      "sha256": "aa50a3cbb5244fa21e6133d7518d5b01dc27af5b9fe2dd2484615c6b58dad4e0"
+    },
+    {
+      "source": "src/arithmetic.js",
+      "target": "lib/conclave/arithmetic.js",
+      "sha256": "fb2d7c44b8c5b49c3a8ee337253779f288af83e1948ddcb35ed2c2024136d589"
+    },
+    {
+      "source": "src/attention.js",
+      "target": "lib/conclave/attention.js",
+      "sha256": "69d430ef77ff7afe9297744cc74bde35092fce16baec4b28933051fb112a37bb"
+    },
+    {
+      "source": "src/context-repository.js",
+      "target": "lib/conclave/context-repository.js",
+      "sha256": "10a7f5d948c4dc9eda7a95ffc4750c6669d8b7de7d57089b5afec4b2bdd16dac"
+    },
+    {
+      "source": "src/costs.js",
+      "target": "lib/conclave/costs.js",
+      "sha256": "a3f3e78e9bafdeb404727c96f5861afc955a3ecb0507d27f8273513b371648d0"
+    },
+    {
+      "source": "src/database.js",
+      "target": "lib/conclave/database.js",
+      "sha256": "0f8faf76033679310e041ae8d47cac625e3583015bfabb84dd9b68a326ede323"
+    },
+    {
+      "source": "src/db-schema.js",
+      "target": "lib/conclave/db-schema.js",
+      "sha256": "f9635bbec82c2b006ddb3d7cd3f9d4f39ed61e0eee9210551084973d7f871a40"
+    },
+    {
+      "source": "src/decision.js",
+      "target": "lib/conclave/decision.js",
+      "sha256": "b5ac263fff3a74e019c967d12d3fe8e066bf33a5903611ad2ae6c02b19da8444"
+    },
+    {
+      "source": "src/documents.js",
+      "target": "lib/conclave/documents.js",
+      "sha256": "12134f6154ce02ffcc21f602a8bce8351fbb85f4c3f17c4679f034b3fbd589f9"
+    },
+    {
+      "source": "src/economics.js",
+      "target": "lib/conclave/economics.js",
+      "sha256": "95625ffe9703ebf670a2d438753874f7f22fdfeb33cd56d6dbb5ae2b1f572f70"
+    },
+    {
+      "source": "src/effort.js",
+      "target": "lib/conclave/effort.js",
+      "sha256": "469b182b8d4cbae1373ca8d44b96a45c495bed2602d87bc49e80923e04ed1418"
+    },
+    {
+      "source": "src/export-name.js",
+      "target": "lib/conclave/export-name.js",
+      "sha256": "891fcd9487b1c55abc12b3029df151ee5fadaa91206eb214643e90323cbc5f54"
+    },
+    {
+      "source": "src/guide.js",
+      "target": "lib/conclave/guide.js",
+      "sha256": "99578b7f4e00249c87768d5346c35a94a0140884f822330596345044fba4e574"
+    },
+    {
+      "source": "src/harness.js",
+      "target": "lib/conclave/harness.js",
+      "sha256": "f18fc1c6cf80642b1098be69891d76cec216de93969d9bbf85fdb05cc7a334b3"
+    },
+    {
+      "source": "src/hosted.js",
+      "target": "lib/conclave/hosted.js",
+      "sha256": "572dd32d5b23419f7dd329f3c2c58d06b2bd46c710f010e36af6d2fd6412547a"
+    },
+    {
+      "source": "src/http.js",
+      "target": "lib/conclave/http.js",
+      "sha256": "9aca3dd8aad204ae4a5c62e7c8ce91be20659e57a2a34ef4df5310badd04f92d"
+    },
+    {
+      "source": "src/identity.js",
+      "target": "lib/conclave/identity.js",
+      "sha256": "fecfaa96e6a4680b67930ebe62bbf785fac4ab00b970226f963cabfe5f7ce8e2"
+    },
+    {
+      "source": "src/index.js",
+      "target": "lib/conclave/index.js",
+      "sha256": "315f729cd76bf66ea633c66b260a51269b153328d55cfd43bb7afbf30b936a75"
+    },
+    {
+      "source": "src/ingress.js",
+      "target": "lib/conclave/ingress.js",
+      "sha256": "e39e3394dffeaf30a973a58739265b5911434f732783a544e8443339c7813e60"
+    },
+    {
+      "source": "src/input-size.js",
+      "target": "lib/conclave/input-size.js",
+      "sha256": "537eeb23732778bdc169d612859f3c5998670978a619496c494f703b55b5fbdb"
+    },
+    {
+      "source": "src/jev.js",
+      "target": "lib/conclave/jev.js",
+      "sha256": "763cb8ef7f4cff4d39cbd37a10d5342f4b3d3bd932db8ccd7393a6d74593674a"
+    },
+    {
+      "source": "src/local.js",
+      "target": "lib/conclave/local.js",
+      "sha256": "0e7024b89c7e28bae56f41650af6091d944f134cbf0f80265930db0a8f4e75a0"
+    },
+    {
+      "source": "src/protection.js",
+      "target": "lib/conclave/protection.js",
+      "sha256": "67b0f4086a3e97823a98358504fcde1d0c1cda6d13e5f73abaac5237231842b9"
+    },
+    {
+      "source": "src/provider.js",
+      "target": "lib/conclave/provider.js",
+      "sha256": "b84083fcfb29a7221a680f959cc479f03c1731dfa94f2fec811fbb6ec228a47a"
+    },
+    {
+      "source": "src/reasoning.js",
+      "target": "lib/conclave/reasoning.js",
+      "sha256": "806891e2abd7b8cac9ae7a2422a2193460072b6da54e3973d6f03ee0465b82a1"
+    },
+    {
+      "source": "src/references.js",
+      "target": "lib/conclave/references.js",
+      "sha256": "9462dfcf19be32940978cf6d03f28de3fa1763838fcad856880a5692e99d466b"
+    },
+    {
+      "source": "src/request-comparison.js",
+      "target": "lib/conclave/request-comparison.js",
+      "sha256": "7700861da65f41f7c948f92eb8282e1f8f2cb1598deb89fd72c262c34d9e10b1"
+    },
+    {
+      "source": "src/resources/app-guide.md",
+      "target": "lib/conclave/resources/app-guide.md",
+      "sha256": "22431b26e5f37f776a4c154722eb759d4ebedf6914cc95eaeb63b82ec32c3189"
+    },
+    {
+      "source": "src/resources/model-costs-2026-10-02.json",
+      "target": "lib/conclave/resources/model-costs-2026-10-02.json",
+      "sha256": "db18ee23e9b11b48e31155d7dc67bee3a8f50e9d84d213cd3d2b08ae080edbbf"
+    },
+    {
+      "source": "src/response-deadline.js",
+      "target": "lib/conclave/response-deadline.js",
+      "sha256": "3802d2777f329a3eaf3e35a37b2635c1cd90712200b3db32ca889edd6e3e20c2"
+    },
+    {
+      "source": "src/server.js",
+      "target": "lib/conclave/server.js",
+      "sha256": "21d5572a525b72fe8f5debd0ffc3064e225754b16b66de4364e2a2f121ed8296"
+    },
+    {
+      "source": "src/service.js",
+      "target": "lib/conclave/service.js",
+      "sha256": "4a4f5ae94ddc05eba0c72d24f47c23f15e1ac73f6839c45b5cb7de47410a2301"
+    },
+    {
+      "source": "src/state.js",
+      "target": "lib/conclave/state.js",
+      "sha256": "6d59eee5b6330b45169eda308949e636dcb9af475221ee79344182e58baac67f"
+    },
+    {
+      "source": "src/store.js",
+      "target": "lib/conclave/store.js",
+      "sha256": "2a131dc6b4b8e3745fdba29b9c9e6629f56789a61cdeeb7ac6aa418cba14149d"
+    },
+    {
+      "source": "src/stream.js",
+      "target": "lib/conclave/stream.js",
+      "sha256": "458c35671abd10bb3180ae38573d7b8ed5d9cda74dfc9963ce0a880761ddf923"
+    },
+    {
+      "source": "src/telemetry.js",
+      "target": "lib/conclave/telemetry.js",
+      "sha256": "a49aa48c6190a28fee97b2ef0eed4c0f73ab4ffaf2946a7fbfe32b30adfbc6e5"
+    },
+    {
+      "source": "src/tool-context.js",
+      "target": "lib/conclave/tool-context.js",
+      "sha256": "cd21d9701cde948b87ab89c95c2ce6d023c199d86674919bb9f4d8e1ce1c0f21"
+    },
+    {
+      "source": "src/web-page.js",
+      "target": "lib/conclave/web-page.js",
+      "sha256": "aab4e3d98110f60b69de81ab143e07b2d0397cc0adb3837b9316e842f6f5e464"
+    },
+    {
+      "source": "src/web-search.js",
+      "target": "lib/conclave/web-search.js",
+      "sha256": "85f26895a29626163251b31766a10c8a46d914ef55cc8f946fa0e6d45cdaecd2"
+    },
+    {
+      "source": "src/workspace.js",
+      "target": "lib/conclave/workspace.js",
+      "sha256": "7f259e69b0906f943b478eb2110d451b1eb7fd86555d1570b55cdd00dbd09a4f"
+    },
+    {
+      "source": "integrations/converse/api/conclave.js",
+      "target": "api/conclave.js",
+      "sha256": "844fad09b6fad51547907b892e5114b76e7c9ee1e6cc2632d7dc580d07a25782"
+    },
+    {
+      "source": "integrations/converse/lib/access.js",
+      "target": "lib/access.js",
+      "sha256": "518fa895891e0edd32faff5d2203f44500d2036cb2686fa34c0a73d8b4717e37"
+    },
+    {
+      "source": "integrations/converse/lib/conclave-http.js",
+      "target": "lib/conclave-http.js",
+      "sha256": "6d476ca7f8df8e7cdaed766081f187e8b85d9d6cae244d5a5a26eeede6eb657f"
+    },
+    {
+      "source": "integrations/converse/lib/conclave-local.js",
+      "target": "lib/conclave-local.js",
+      "sha256": "bc70f5ed2d73d86d26e32f33cf6aa59e2f586692ec7d47bbf7c26775bda98ea3"
+    },
+    {
+      "source": "integrations/converse/lib/context-repository.js",
+      "target": "lib/context-repository.js",
+      "sha256": "68effa5a22aa8bac30c9044c9b30a57b53010b030774d10b103942efb6366713"
+    },
+    {
+      "source": "integrations/converse/lib/db-schema.js",
+      "target": "lib/db-schema.js",
+      "sha256": "a87f3db66704f744367f060617bfe47676d2f0cee6da2c29e7c8254772efd84b"
+    },
+    {
+      "source": "integrations/converse/lib/reasoning.js",
+      "target": "lib/reasoning.js",
+      "sha256": "88e3659c551eeee54f5ead2c820b20eed9b15b3684a0ed3e66b3aa24ef498ef0"
+    },
+    {
+      "source": "integrations/converse/scripts/check-engine.js",
+      "target": "scripts/check-engine.js",
+      "sha256": "81791b9c42eb96a08686b0f22f30e00b27999097a05c028d392d814b711a1939"
+    },
+    {
+      "source": "integrations/converse/scripts/lib/costs.js",
+      "target": "scripts/lib/costs.js",
+      "sha256": "e4da04d0c95bf8279411c156295de6a35e539e8fc210e6b42bf1d97b49be9c05"
+    },
+    {
+      "source": "drizzle/0000_low_true_believers.sql",
+      "target": "drizzle/0000_low_true_believers.sql",
+      "sha256": "dd41943a3995965db6b873477eb85083dab164aacbae766ca4d35b86db7b96da"
+    },
+    {
+      "source": "drizzle/0001_content_addressed_segments.sql",
+      "target": "drizzle/0001_content_addressed_segments.sql",
+      "sha256": "10c4dec1deac88d6bf2c19cf750ba7313d9bea89d1ed17656b5ee7605215926c"
+    },
+    {
+      "source": "drizzle/meta/0000_snapshot.json",
+      "target": "drizzle/meta/0000_snapshot.json",
+      "sha256": "dd1ea58ce29ca31dcf54b8e5f81d6670d21b8d0fdcd9b3f8d4afdec2d70d6714"
+    },
+    {
+      "source": "drizzle/meta/0001_snapshot.json",
+      "target": "drizzle/meta/0001_snapshot.json",
+      "sha256": "789f8dc47db70dfb823cbb8b5844c4e3a3c8eaae92e2cd4636a8afe6569d4368"
+    },
+    {
+      "source": "drizzle/meta/_journal.json",
+      "target": "drizzle/meta/_journal.json",
+      "sha256": "0a7ceab33cb83b313d460205f904aadd0e28ef1a97d7219fd37a34fca9ae3997"
+    },
+    {
+      "source": "src/effort.js",
+      "target": "public/effort.js",
+      "sha256": "469b182b8d4cbae1373ca8d44b96a45c495bed2602d87bc49e80923e04ed1418"
+    },
+    {
+      "source": "src/export-name.js",
+      "target": "public/export-name.js",
+      "sha256": "891fcd9487b1c55abc12b3029df151ee5fadaa91206eb214643e90323cbc5f54"
+    },
+    {
+      "source": "src/resources/app-guide.md",
+      "target": "public/app-guide.md",
+      "sha256": "22431b26e5f37f776a4c154722eb759d4ebedf6914cc95eaeb63b82ec32c3189"
+    },
+    {
+      "source": "src/resources/model-costs-2026-10-02.json",
+      "target": "docs/model-costs-2026-10-02.json",
+      "sha256": "db18ee23e9b11b48e31155d7dc67bee3a8f50e9d84d213cd3d2b08ae080edbbf"
+    }
+  ]
+}

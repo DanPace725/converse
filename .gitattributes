@@ -1,2 +1,18 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+# Preserve exact Conclave migration hashes across Windows/Linux checkouts.
+lib/conclave/** text eol=lf
+lib/access.js text eol=lf
+lib/reasoning.js text eol=lf
+lib/db-schema.js text eol=lf
+lib/context-repository.js text eol=lf
+lib/conclave-http.js text eol=lf
+lib/conclave-local.js text eol=lf
+api/conclave.js text eol=lf
+scripts/lib/costs.js text eol=lf
+scripts/check-engine.js text eol=lf
+public/effort.js text eol=lf
+public/export-name.js text eol=lf
+public/app-guide.md text eol=lf
+docs/model-costs-2026-10-02.json text eol=lf
+drizzle/** text eol=lf
