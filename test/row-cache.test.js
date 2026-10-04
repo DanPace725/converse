@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync, readdirSync } from "node:fs";
 import { PGlite } from "@electric-sql/pglite";
+import { vector } from '@electric-sql/pglite-pgvector';
 import { drizzle } from "drizzle-orm/pglite";
 import * as schema from "../lib/db-schema.js";
 import { Store } from "../lib/conclave/store.js";
@@ -13,7 +14,7 @@ import {
 
 const migrations = new URL("../drizzle/", import.meta.url);
 async function database() {
-  const client = new PGlite();
+  const client = new PGlite({ extensions: { vector } });
   for (const file of readdirSync(migrations)
     .filter((name) => name.endsWith(".sql"))
     .sort())

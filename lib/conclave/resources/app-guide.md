@@ -34,6 +34,8 @@ Page reading supports public HTML/text responses up to 2 MiB, with eight fetch a
 
 New Context turns and Agent runs keep one stable working projection during their tool loop. Saved edits and file versions are visible through tool receipts and inspection immediately. The model can use refresh_context to bring saved changes into its prompt; the next user turn refreshes automatically. Large continuations can trigger a logged refresh to stay within the request guard.
 
+History search can combine keyword and semantic matches to find differently worded passages. Memory selection can also use semantic relevance. Similarity does not establish truth, promote a commitment or choose a correction target. Removed/suppressed material remains excluded; original eligible passages are available through exact source retrieval.
+
 Working context can change while original source history remains preserved. Offloading leaves retrieval pointers; compaction creates shorter derived text. Protected pins, exact text, structured state, recent messages, and current task constraints are preserved by the engine's rules.
 
 Segments have stable conversation-local handles such as **S17**; retrievable source events have **E12** handles. Canonical IDs remain authoritative in storage and exports. New derived versions get new S handles; historical handles stay resolvable. Workspace's References and protection details show both. Tools accept S handles for segment targets and E handles for sources. State relations also accept **state:key** (or an existing plain key), resolved to its current canonical segment; entries created in the same batch cannot be relationship targets.

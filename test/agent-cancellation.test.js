@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { readFileSync, readdirSync } from 'node:fs';
 import { PGlite } from '@electric-sql/pglite';
+import { vector } from '@electric-sql/pglite-pgvector';
 import { drizzle } from 'drizzle-orm/pglite';
 import * as schema from '../lib/conclave/db-schema.js';
 import { Store } from '../lib/conclave/store.js';
@@ -160,7 +161,7 @@ for (const hosted of [false, true]) test(`${hosted ? 'hosted PostgreSQL' : 'loca
     let handler;
     const lifetimes = [];
     if (hosted) {
-      client = new PGlite();
+      client = new PGlite({ extensions: { vector } });
       const directory = new URL('../drizzle/', import.meta.url);
       for (const file of readdirSync(directory).filter(n => n.endsWith('.sql')).sort())
         for (const statement of readFileSync(new URL(file, directory), 'utf8').split('--> statement-breakpoint'))
