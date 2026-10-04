@@ -55,9 +55,51 @@ test('automatic memory sources, corrections, suppression and restoration are usa
   } finally { await app.close(); }
 });
 
-async function fixture(respond, { jev = false, claude = false, claudeModel = 'claude-fixture', countTokens } = {}) {
+test('capture issues persist after successful turns and a shared memory snapshot is safe to paste back', async ({page}, testInfo) => {
+  const errors = []; page.on('pageerror', error => errors.push(error.message));
+  let captures = 0;
+  const app = await fixture(async payload => {
+    if (payload.text?.format?.name === 'memory_candidates') { captures++; throw Error('OpenAI 400: unsupported reasoning fixture'); }
+    return final;
+  }, {memoryModel:true});
+  const id = app.service.create('Memory capture diagnostics').conversation_id;
+  const settings = {model:'fixture', jev:false};
+  await app.service.ask(id, {message_id:'memory_issue_first',content:'For the budget, perhaps 500 is sensible.',settings});
+  await app.service.ask(id, {message_id:'memory_issue_success',content:'Keep the budget under $400.',settings});
+  try {
+    await page.route('**/api/title', route => route.fulfill({json:{title:'Memory capture diagnostics'}}));
+    await page.goto(app.url);
+    if (testInfo.project.name === 'mobile') await page.locator('#menu').click();
+    await page.locator('#server-chats .chat-item').filter({hasText:'Memory capture diagnostics'}).click();
+    await page.locator('#workspace-open').click(); await page.locator('#tab-state').click();
+    await expect(page.locator('#editor-memory-issues-title')).toHaveText('1 memory capture issue');
+    await page.locator('#editor-memory-issues > summary').click();
+    await expect(page.locator('#editor-memory-issues-list')).toContainText('Automatic retry stopped');
+    // Exercise the real download fallback; clipboard availability varies by host.
+    await page.evaluate(() => Object.defineProperty(navigator, 'clipboard', {configurable:true,value:{writeText:async()=>{throw Error('Clipboard unavailable');}}}));
+    const download = page.waitForEvent('download'); await page.locator('#editor-memory-copy').click();
+    const artifact = await download;
+    expect(artifact.suggestedFilename()).toBe('memory-snapshot.md');
+    const text = await readFile(await artifact.path(), 'utf8');
+    const snapshot = JSON.parse(text.split('```json\n')[1].split('\n```')[0]);
+    expect(snapshot.inspection_only).toBe(true); expect(snapshot.automatic[0].authority).toBe('user_committed');
+    expect(snapshot.automatic[0].source_refs[0].event_id).toBeTruthy(); expect(snapshot.capture_issues).toHaveLength(1);
+    await app.service.ask(id, {message_id:'memory_issue_share',content:text,settings});
+    expect(app.service.view(id).memory.records).toHaveLength(1); expect(captures).toBe(1);
+    await page.reload(); await page.locator('#workspace-open').click(); await page.locator('#tab-state').click();
+    await expect(page.locator('#editor-memory-issues-title')).toHaveText('1 memory capture issue');
+    await page.locator('#editor-memory-issues > summary').click();
+    await page.screenshot({path:testInfo.outputPath('memory-capture-issues.png'),fullPage:true});
+    await page.locator('#editor-memory-issues-list button').click();
+    await expect(page.locator('#editor-preview')).toContainText('perhaps 500 is sensible');
+    expect(errors).toEqual([]);
+  } finally {await app.close();}
+});
+
+async function fixture(respond, { jev = false, claude = false, claudeModel = 'claude-fixture', countTokens, memoryModel = false } = {}) {
   const store = new Store(undefined, { memory: true });
   const service = new ConclaveService(store, {
+    memoryModel,
     availability: () => ({ openai: true, anthropic: claude, jev }),
     providerFactory: (provider = "openai") => ({ name: provider, respond, ...(countTokens ? { countTokens } : {}) }),
   });

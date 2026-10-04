@@ -180,6 +180,8 @@
     el("editor-note").hidden = detail || activity;
     el("editor-items").hidden = detail || activity;
     el("editor-new-state").hidden = tab !== "state" || detail || !view;
+    el('editor-memory-copy').hidden = tab !== 'state' || !view;
+    el('editor-memory-issues').hidden = tab !== 'state' || !view?.memory?.capture_issue_count;
     el("editor-upload-controls").hidden = tab !== "documents";
     el("editor-upload-status").hidden = tab !== "documents";
     el("editor-back").hidden = !detail;
@@ -211,12 +213,23 @@
       tab,
       view?.context.revision,
       view?.memory?.revision,
+      view?.memory?.capture_issues,
       selected?.kind,
       selected?.id,
       rows.map((i) => [i.kind, i.id, i.token, !!drafts[keyOf(i)]]),
     ]);
     if (signature === listSignature) return;
     listSignature = signature;
+    const issues = view?.memory?.capture_issues || [];
+    el('editor-memory-issues-title').textContent = `${view?.memory?.capture_issue_count || 0} memory capture issue${view?.memory?.capture_issue_count === 1 ? '' : 's'}`;
+    el('editor-memory-issues-list').replaceChildren(...issues.map(issue => {
+      const row = document.createElement('p'), button = document.createElement('button');
+      const retry = issue.retry_disposition === 'configuration-change-required' ? 'Automatic retry stopped; configuration needs attention.'
+        : issue.retry_disposition === 'attempts-exhausted' ? 'Automatic retry limit reached.' : 'Capture will retry on later activity.';
+      row.append(`${issue.status === 'pending' ? 'Pending' : 'Capture incomplete'}: ${issue.error || 'Not yet captured.'} ${retry} `);
+      button.type = 'button'; button.textContent = 'Open source ' + (view.source_refs?.[issue.source_event_id] || issue.source_event_id);
+      button.onclick = () => inspect({id:issue.source_event_id}, true, true); row.append(button); return row;
+    }));
     container.replaceChildren();
     for (const item of rows) {
       const button = document.createElement('button');
@@ -250,8 +263,7 @@
             ". References and pinned text are protected."
           : "Memory · revision " +
             view.state.revision +
-            ". Automatic entries keep their sources and correction history. Edit an entry or add a named detail." +
-            (view.memory?.capture?.status === 'failed' ? ' Capture failed: ' + view.memory.capture.error : '');
+            ". Automatic entries keep their sources and correction history. Edit an entry or add a named detail.";
   }
   function show() {
     if (!selected) {
@@ -963,6 +975,26 @@
     select(item);
     beginEdit();
     el("editor-state-key").focus();
+  };
+  el('editor-memory-copy').onclick = async () => {
+    if (!view) return;
+    const snapshot = { inspection_only: true, conversation_id: view.conversation_id,
+      memory_revision: view.memory?.revision, state_revision: view.state.revision,
+      automatic: (view.memory?.records || []).map(r => ({ memory_id:r.memory_id, kind:r.kind, content:r.content,
+        authority:r.authority, binding:r.binding, resolution:r.resolution, lifecycle:r.lifecycle, active:r.active,
+        scope:r.scope, source_refs:r.source_refs, supersedes:r.supersedes, conflicts_with:r.conflicts_with })),
+      named: view.state.entries.map(s => ({key:s.state_key, type:s.type, content:s.content, status:s.effective_status || s.status,
+        resolution:s.resolution, source_event_ids:s.source_event_ids, attribution:s.attribution})),
+      capture_issues:view.memory?.capture_issues || [], suppression_note:'Suppression stops reuse; stored history is retained.' };
+    const text = 'Memory snapshot for inspection:\n```json\n' + JSON.stringify(snapshot, null, 2) + '\n```';
+    try {
+      await navigator.clipboard.writeText(text);
+      el('editor-memory-copy').textContent = 'Copied memory snapshot';
+      setTimeout(() => { el('editor-memory-copy').textContent = 'Copy memory snapshot'; }, 2000);
+    } catch {
+      const url = URL.createObjectURL(new Blob([text], {type:'text/plain;charset=utf-8'})), link = document.createElement('a');
+      link.href = url; link.download = 'memory-snapshot.md'; link.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
   };
   el("editor-tabs").onclick = (event) => {
     const button = event.target.closest("[data-tab]");
