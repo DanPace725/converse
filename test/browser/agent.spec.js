@@ -6,6 +6,48 @@ import { ConclaveService } from "../../lib/conclave/service.js";
 import { createConclaveHandler } from "../../lib/conclave-local.js";
 import { exportFilename } from '../../public/export-name.js';
 
+test('saved chats and reload use transcripts, while Workspace loads authoritative details on demand', async ({ page }, testInfo) => {
+  const errors = []; page.on('pageerror', error => errors.push(error.message));
+  const app = await fixture(async () => final);
+  const id = app.service.create('Fast saved chat').conversation_id;
+  await app.service.ask(id, { message_id: 'fast_one', content: 'Keep this saved message.', settings: { model: 'fixture', jev: false } });
+  await app.service.saveDocument(id, { path: 'notes.md', content: '# Saved details', expected_source_event_id: null });
+  const other = app.service.create('Other saved chat').conversation_id;
+  await app.service.ask(other, { message_id: 'other_one', content: 'Second conversation.', settings: { model: 'fixture', jev: false } });
+  await app.service.saveDocument(other, { path: 'second.md', content: '# Second file', expected_source_event_id: null });
+  let completeViews = 0;
+  const viewReads = [];
+  const original = app.service.view.bind(app.service);
+  app.service.view = (...args) => { completeViews++; viewReads.push(args[0]); return original(...args); };
+  try {
+    await page.route('**/api/title', route => route.fulfill({ status: 503, json: { error: 'Naming disabled in fixture' } }));
+    await page.goto(app.url);
+    if (testInfo.project.name === 'mobile') await page.locator('#menu').click();
+    await page.locator('#server-chats .chat-item').filter({ hasText: 'Fast saved chat' }).click();
+    await expect(page.locator('#chat')).toContainText('Keep this saved message.');
+    await expect(page.locator('#context-stats')).toContainText('details load in Workspace');
+    expect(completeViews).toBe(0);
+    await page.reload();
+    await expect(page.locator('#chat')).toContainText('Keep this saved message.');
+    await expect(page.locator('#send')).toBeEnabled();
+    expect(completeViews).toBe(0);
+    await page.locator('#workspace-open').click();
+    await expect(page.locator('#editor-items')).toContainText('notes.md');
+    await page.locator('#editor-items button').filter({ hasText: 'notes.md' }).click();
+    await expect(page.locator('#editor-preview')).toContainText('Saved details');
+    expect(completeViews).toBeGreaterThan(0);
+    await page.screenshot({ path: testInfo.outputPath('saved-chat-workspace.png'), fullPage: true });
+    if (testInfo.project.name === 'desktop') {
+      const before = viewReads.length;
+      await page.locator('#server-chats .chat-item').filter({ hasText: 'Other saved chat' }).click();
+      await expect(page.locator('#editor-preview')).toContainText('Second file');
+      expect(viewReads[before]).toBe(other);
+      await expect(page.locator('#chat')).toContainText('Second conversation.');
+    }
+    expect(errors).toEqual([]);
+  } finally { await app.close(); }
+});
+
 test('automatic memory sources, corrections, suppression and restoration are usable after reload', async ({ page }, testInfo) => {
   const errors = []; page.on('pageerror', error => errors.push(error.message));
   const app = await fixture(async () => final);

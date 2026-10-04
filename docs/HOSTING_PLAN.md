@@ -4,17 +4,21 @@ Keep Neon and Vercel for the next increment. Reduce saved-conversation read work
 
 ## Findings verified in the checkout
 
-Saved Context/Agent selection in `public/conclave.js` performs a GET to `/api/conclave?conversation=...`. That invokes the complete engine view rather than a transcript-specific query:
+Before this hosting increment, saved Context/Agent selection invoked the complete engine view:
 
 1. `ContextRepository.run` queries the conversation plus audit events, all historical snapshots and missing context segments. A repeatable-read transaction preserves a consistent view.
 2. A process-local row cache fetches only appended rows on warm instances. Cold instances load the history again. The cache is bounded at 256 MiB and is an optimization, not an authoritative store.
 3. Each request reconstructs a disposable SQLite store, replays events/snapshots and rebuilds source/bundle indexes, even when row transfer is almost zero.
-4. `ConclaveService.view` creates messages, current context/state/memory, protections, audit summaries, workspace metadata and the next model request/token calculations. Repeated per-message scans are also present. This request previously calculated `modelInput` twice; this increment reuses one calculation.
-5. Opening a chat renders its transcript and adopts the complete workspace view in the browser. Browser render time has not been profiled yet.
+4. `ConclaveService.view` creates messages, current context/state/memory, protections, audit summaries, workspace metadata and the next model request/token calculations. The earlier embedding increment removed a duplicate `modelInput` calculation.
+5. Opening a chat adopted the complete workspace view in the browser.
+
+Saved selection and reload now use `action=transcript`. PostgreSQL returns only display events, readable provider summaries and the latest Agent checkpoint in a consistent transaction, without snapshots, SQLite replay or next-request calculation. Workspace fetches the complete view when opened. Messages use a shared transcript builder with linear message/link lookup; exports and mutations retain their existing full engine path. This increment requires no schema changes or backfill. [Read contract and limits](../../CLA/conclave/docs/HOSTED_READS.md).
 
 Existing connection handling already uses a module-level `pg.Pool` with `max: 5`, five-second idle timeout, 10-second connection timeout, 15-second statement timeout, and `attachDatabasePool` on Vercel. Local runtime configuration points to a pooled Neon endpoint with a `us-west-2` region hint. This does not establish the live production configuration. `vercel.json` has no explicit region; the current Vercel project region and Fluid Compute setting could not be read because the connected Vercel account lacks access to the linked project scope. The saved disposable Neon test-branch credential was rejected during migration. No hosting settings or production schema were changed.
 
 ## Offline evidence
+
+The [new matched probe](../../CLA/conclave/docs/archive/2026-10-04/hosting-transcript-profile.json) records transcript reads of 16–20 ms versus complete-view reads of 158–194 ms on the same 12-turn fixture. Responses were 66,861 versus 139,900 bytes. Cold complete reads fetched about 976 KB of canonical rows; direct transcript reads fetched about 77 KB of display rows. Warm complete reads fetched only empty delta arrays, so the new path trades additional display-row reads for less application CPU. It is used for selection/reload, not automatic progress polling. These are local PGlite results, with no Neon/Vercel network or production/billing claim.
 
 The reproducible [loading probe](../../CLA/conclave/scripts/profile-hosting.js) builds a 12-turn fixture, including request/response audit records, then compares three cold and three warm reads. [Recorded samples](../../CLA/conclave/docs/archive/2026-10-04/hosting-profile.json).
 
@@ -42,7 +46,7 @@ Refresh the disposable Neon branch credential and the Vercel project connection 
 
 Keep events/snapshots as canonical audit history. Add a rebuildable, revision-keyed PostgreSQL read model for transcript/messages and current workspace/context/memory summaries, updated in the same fenced transaction as canonical writes. Backfill by conversation and validate against complete current views. Read the latest authoritative conversation sequence/revision when serving a projection; return or rebuild only a matching projection. A stale cached view must not hide edits, suppression, Stop/Resume or access changes.
 
-Serve a small paginated transcript endpoint on saved-chat selection. Hydrate the Workspace tabs and token/request diagnostics on demand; keep complete audit/export fetching explicit. Include enough provider/model, reply/revision, attachment and Agent/busy metadata for correct initial display. Preserve existing canonical downloads and detailed inspection. Set pagination expectations for exports, search, revised messages and switching chats while a request is in flight.
+The first transcript endpoint and lazy Workspace loading are implemented without a new table. It still scans history in PostgreSQL and returns every displayed message/attachment; pagination and a materialized/indexed read model remain the next scale step. Serve a bounded first page with explicit older-message loading, and define complete Markdown export/search/revision-link behavior before changing browser transcript completeness. Preserve provider/model, reply/revision, attachment and Agent/busy metadata, canonical JSON downloads and detailed inspection. Validate sequence/revision and chat-switch races in every asynchronous detail read.
 
 Acceptance: opening a transcript fetches neither full request payloads nor historical snapshots, performs no SQLite replay or model-input tokenization, and returns a bounded first page. Large-chat p95 and transfer must improve on matched workloads. Verify existing snapshots and a fresh mutation produce matching read projections.
 
@@ -62,6 +66,8 @@ Compare the existing setup, tuned Vercel and a persistent backend on the same co
 
 ## Current delivery status
 
-Implemented locally: embedding-assisted history/memory selection, persistent pgvector schema/search, bounded lazy indexing, authority/version/suppression guards, usage/fallback diagnostics, saved-load instrumentation, and reuse of the duplicated next-request calculation. [Embedding usage/rollout](../../CLA/conclave/docs/EMBEDDINGS.md).
+Implemented: direct PostgreSQL transcript reads for saved selection/reload, lazy Workspace details, shared transcript rendering/provenance, browser Performance measures and aggregate server read diagnostics. Existing embedding retrieval/schema and bounded lazy indexing are included in the code; the pgvector migration still requires valid database access. [Embedding usage/rollout](../../CLA/conclave/docs/EMBEDDINGS.md).
 
-Planned: transcript read model/pagination, lazy Workspace diagnostics, production browser/server baseline, region/compute tuning, durable indexing jobs and any persistent-backend migration. Production deployment and database migration require valid target credentials and remain unapplied.
+Next: user checks the automatically deployed code on existing saved chats, then capture a production browser/server baseline across small/large and cold/warm opens. Browser Performance entries `saved-chat-load` and `saved-chat-render` expose fetch/parse and synchronous application time, not first paint. Enable `CONCLAVE_LOAD_DIAGNOSTICS=on` for aggregate PostgreSQL/service metrics if needed. Verify transcript, attachments/reasoning, Workspace edits, Agent Stop/Resume and complete JSON export. Confirm actual Vercel/Neon regions before tuning hosting; keep Neon and Vercel through this measurement stage.
+
+Planned after measurement: bounded pagination, materialized/indexed transcript and current Workspace reads, durable indexing jobs and any persistent-backend migration. No live hosting settings or database schema were changed by this increment. Code delivery uses commits/pushes and the existing automatic Vercel deployment; platform credential repair is not required to publish the read-path change.

@@ -185,7 +185,7 @@ import { effortLevels } from './effort.js';
       ? ""
       : "?action=" +
         action +
-        (currentId() && ["view", "export"].includes(action)
+        (currentId() && ["view", "transcript", "export"].includes(action)
           ? "&conversation=" + encodeURIComponent(currentId())
           : "");
     const response = await fetch(
@@ -351,7 +351,6 @@ import { effortLevels } from './effort.js';
   function apply(view, { preserveSettings = false } = {}) {
     if (conversation.conversation_id !== view.conversation_id) finishMessageEdit();
     latestView = view;
-    window.workspaceEditor?.adopt(view);
     agent = view.agent || null;
     const legacyAgent = agent && !agent.harness_version;
     if (!preserveSettings) {
@@ -383,6 +382,7 @@ import { effortLevels } from './effort.js';
         settings: view.settings,
       },
     };
+    window.workspaceEditor?.adopt(view);
     messages.splice(0, messages.length, ...view.messages);
     toggle.checked = true;
     if (!preserveSettings) {
@@ -400,7 +400,9 @@ import { effortLevels } from './effort.js';
         fields[providerName()].value = view.settings.model;
     }
     const metrics = view.metrics;
-    $("#context-stats").textContent =
+    $("#context-stats").textContent = view.view_kind === 'transcript'
+      ? `Revision ${view.context.revision} · Context and usage details load in Workspace`
+      :
       "Revision " +
       view.context.revision +
       " · " +
@@ -442,7 +444,8 @@ import { effortLevels } from './effort.js';
           !capabilities?.credentials?.jev ? ' · Jev: unavailable; deterministic selection' :
           ' · Jev: no call this run (selection runs under context pressure)' : '') +
         (runMetrics?.limit_adjustments ? ` · ${runMetrics.limit_adjustments} automatic limit increases` : '') +
-        (agent.stop ? ' · ' + agent.stop.message : '')
+        (agent.stop ? ' · ' + agent.stop.message : '') +
+        (view.view_kind === 'transcript' ? ' · Full run details in Workspace' : '')
       : "No agent run yet.";
     $("#agent-files").hidden = !agent?.files.length;
     $("#agent-files").textContent =
@@ -505,7 +508,7 @@ import { effortLevels } from './effort.js';
       if (!messages.length && !currentId()) toggle.checked = true;
       if (!currentId()) jev.checked = capabilities.credentials?.jev;
       await refreshList();
-      if (currentId()) apply(await request("view"));
+      if (currentId()) apply(await request("transcript"));
       controls();
     } catch (error) {
       available = false;
@@ -857,14 +860,19 @@ import { effortLevels } from './effort.js';
       return;
     }
     setBusy(true);
+    performance.mark('saved-chat-start');
     try {
       const response = await fetch(
-        "/api/conclave?conversation=" + encodeURIComponent(saved.value),
+        "/api/conclave?action=transcript&conversation=" + encodeURIComponent(saved.value),
         { cache: "no-store" },
       );
       const view = await response.json();
       if (!response.ok) throw Error(view.error);
+      performance.mark('saved-chat-response');
       apply(view);
+      performance.mark('saved-chat-rendered');
+      performance.measure('saved-chat-load', 'saved-chat-start', 'saved-chat-response');
+      performance.measure('saved-chat-render', 'saved-chat-response', 'saved-chat-rendered');
       $("#status").textContent = "Opened saved context chat";
     } catch (error) {
       $("#status").textContent = error.message;

@@ -428,6 +428,13 @@
     select(pending?.item || (tab === "documents" && items()[0]) || null);
   }
   function adopt(data) {
+    if (data?.view_kind === 'transcript') {
+      // A transcript carries no editable context. Clear the previous chat's
+      // editor, then read authoritative details only if Workspace is visible.
+      adopt(null);
+      if (!panel.hidden) refresh();
+      return;
+    }
     const changed = view?.conversation_id !== data?.conversation_id;
     if (
       !changed &&

@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
   "source_repository": "https://github.com/DanPace725/conclave",
-  "source_commit": "b26462867ff67f7a7788bff4411405e432271f2a",
+  "source_commit": "fe63094f41d2b8568be0ab80403141512ca59d4b",
   "source_worktree_dirty": false,
-  "migrated_at": "2026-10-04T16:25:11.835Z",
+  "migrated_at": "2026-10-04T17:01:06.158Z",
   "dependencies": {
     "@vercel/functions": "^3.9.9",
     "drizzle-orm": "^0.45.3",
@@ -55,7 +55,7 @@
     {
       "source": "src/context-repository.js",
       "target": "lib/conclave/context-repository.js",
-      "sha256": "c945da37a8f011d453ec0fa0a8c1e4342f087004545705167df10da9e874770b"
+      "sha256": "e907b95b168382cef0c43929b15872ac2fadfac2c393705ec6890ab905a5fee9"
     },
     {
       "source": "src/costs.js",
@@ -120,12 +120,12 @@
     {
       "source": "src/hosted.js",
       "target": "lib/conclave/hosted.js",
-      "sha256": "6a9d33428b8f684b6e114350d7b1b73a4c799a2953dc2d9151a97405993c4c9a"
+      "sha256": "34ad72cb16ab9864997ba8e97b3d349f3e1896e8bd14d8bf7c5b5d32c942a858"
     },
     {
       "source": "src/http.js",
       "target": "lib/conclave/http.js",
-      "sha256": "315bebf5e9273f135c2e3b07b1e95ac3d2996cd6671baf024c098c78a3ebc077"
+      "sha256": "576310efd894b17a5b18baab6a39c976b02a7b337efa81ec9f8ddd3e819c7fa5"
     },
     {
       "source": "src/identity.js",
@@ -190,7 +190,7 @@
     {
       "source": "src/reasoning.js",
       "target": "lib/conclave/reasoning.js",
-      "sha256": "806891e2abd7b8cac9ae7a2422a2193460072b6da54e3973d6f03ee0465b82a1"
+      "sha256": "6abd8d46a8da313e01148f8d6c20e9ca54aa94f67b119cd2c89341622258281f"
     },
     {
       "source": "src/references.js",
@@ -230,7 +230,7 @@
     {
       "source": "src/service.js",
       "target": "lib/conclave/service.js",
-      "sha256": "e38635e06c03ed1b881ec8edc40e64b65b05817f009d4fdbd9b9472ecf9632b8"
+      "sha256": "9ef19d6c0b1405e97d0b425cd867da1af9230924973747adafddbe9b537c7a8e"
     },
     {
       "source": "src/state.js",
@@ -256,6 +256,16 @@
       "source": "src/tool-context.js",
       "target": "lib/conclave/tool-context.js",
       "sha256": "cd21d9701cde948b87ab89c95c2ce6d023c199d86674919bb9f4d8e1ce1c0f21"
+    },
+    {
+      "source": "src/transcript-query.js",
+      "target": "lib/conclave/transcript-query.js",
+      "sha256": "111b7e21d143af332f92fc2dc1e23a32f2a37b1286ffbce38a9acfd038de04f9"
+    },
+    {
+      "source": "src/transcript.js",
+      "target": "lib/conclave/transcript.js",
+      "sha256": "29d783916df34fab9db39209757dbafa36cf21f5b3b07e497505ee666875fe0d"
     },
     {
       "source": "src/web-page.js",
