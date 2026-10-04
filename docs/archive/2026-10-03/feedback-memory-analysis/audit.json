@@ -1,0 +1,305 @@
+{
+  "evidence": {
+    "conversation_id": "conv_e6e1fae8-4381-4b5f-8b74-c7918972d4e9",
+    "user_turns": 24,
+    "events": 619,
+    "snapshots": 68,
+    "sonnet_document_matches_final_export": true,
+    "compaction_calls": 0,
+    "offloads": 0,
+    "answer_requests": 63,
+    "byte_guard": 256000,
+    "pressure_threshold_bytes": 192000,
+    "output_reserve": 16384,
+    "maximum_native_request_bytes": 127804,
+    "maximum_guard_input_units": 129086,
+    "shadow": {
+      "total": 24,
+      "unavailable": 22,
+      "complete": 2,
+      "maximum_elapsed_ms": 698.4423979999847,
+      "total_elapsed_ms": 9363.425657999556,
+      "available_candidate_counts": [
+        0,
+        0
+      ]
+    },
+    "reviews_with_zero_estimate": 22,
+    "capture_failures": [
+      {
+        "seq": 314,
+        "source": "New commitment: budget should be between $400 and $500",
+        "error": "OpenAI 400: Unsupported value: 'none' is not supported with the 'gpt-6.1-sol' model. Supported values are: 'low', 'medium', 'high', 'xhigh', and 'max'."
+      },
+      {
+        "seq": 334,
+        "source": "New commitment: budget should be between $400 and $500",
+        "error": "OpenAI 400: Unsupported value: 'none' is not supported with the 'gpt-6.1-sol' model. Supported values are: 'low', 'medium', 'high', 'xhigh', and 'max'."
+      },
+      {
+        "seq": 349,
+        "source": "New commitment: budget should be between $400 and $500",
+        "error": "OpenAI 400: Unsupported value: 'none' is not supported with the 'gpt-6.1-sol' model. Supported values are: 'low', 'medium', 'high', 'xhigh', and 'max'."
+      },
+      {
+        "seq": 399,
+        "source": "What happens if your try to change budget memory stuff?",
+        "error": "OpenAI 400: Unsupported value: 'none' is not supported with the 'gpt-6.1-sol' model. Supported values are: 'low', 'medium', 'high', 'xhigh', and 'max'."
+      },
+      {
+        "seq": 413,
+        "source": "What happens if your try to change budget memory stuff?",
+        "error": "OpenAI 400: Unsupported value: 'none' is not supported with the 'gpt-6.1-sol' model. Supported values are: 'low', 'medium', 'high', 'xhigh', and 'max'."
+      },
+      {
+        "seq": 428,
+        "source": "What happens if your try to change budget memory stuff?",
+        "error": "OpenAI 400: Unsupported value: 'none' is not supported with the 'gpt-6.1-sol' model. Supported values are: 'low', 'medium', 'high', 'xhigh', and 'max'."
+      }
+    ],
+    "extraction_requests": 9,
+    "extraction_responses": 3,
+    "memory_records": [
+      {
+        "id": "mem_b49b1e04-a5a6-48ee-adfd-b0950eb6997e",
+        "content": "Keep the budget under $400",
+        "kind": "commitment",
+        "authority": "user_committed",
+        "binding": true,
+        "lifecycle": "retained",
+        "resolution": "contested",
+        "source_event_id": "evt_1ee8ac1f-6068-44ad-8e66-3cf9cf9ce83b"
+      },
+      {
+        "id": "mem_6dcebaf7-f731-4df8-90aa-094ef0049bcf",
+        "content": "I actually want to make it a range, between 400 and 500",
+        "kind": "claim",
+        "authority": "user_reported",
+        "binding": false,
+        "lifecycle": "candidate",
+        "resolution": "contested",
+        "source_event_id": "evt_58f99750-190e-4bcf-b7f4-dfe914554334"
+      },
+      {
+        "id": "mem_673c69e4-b5ff-4d1d-a209-1324d58d36f8",
+        "content": "I wonder, can you remove memories?",
+        "kind": "question",
+        "authority": "user_reported",
+        "binding": false,
+        "lifecycle": "candidate",
+        "resolution": "unresolved",
+        "source_event_id": "evt_759b42f1-cbaf-49a0-915d-713ca3d2290f"
+      },
+      {
+        "id": "mem_3015b771-d56d-4868-b13b-a361897fd331",
+        "content": "Like try to get rid of the budget stuff?",
+        "kind": "question",
+        "authority": "user_reported",
+        "binding": false,
+        "lifecycle": "candidate",
+        "resolution": "unresolved",
+        "source_event_id": "evt_759b42f1-cbaf-49a0-915d-713ca3d2290f"
+      },
+      {
+        "id": "mem_4a9a0917-8c23-4ac8-9a71-dd497662496e",
+        "content": "Well I can see the automatic ledger I just don't have a great way to share it . I can copy the raw text from the workspace I guess, maybe you can parse that. This is the latest saved memories. ``` S44 · budget-new-commitment\n54 characters · New commitment: budget should be between $400 and $500\nAutomatic · commitment · Keep the budget under $400\n26 characters · Keep the budget under $400\nAutomatic · claim · I actually want to make it a range, between 400 and 500\n55 characters · I actually want to make it a range, between 400 and 500\nAutomatic · question · I wonder, can you remove memories?\n34 characters · I wonder, can you remove memories?\nAutomatic · question · Like try to get rid of the budget stuff?\n40 characters · Like try to get rid of the budget stuff?```",
+        "kind": "claim",
+        "authority": "user_reported",
+        "binding": false,
+        "lifecycle": "candidate",
+        "resolution": "contested",
+        "source_event_id": "evt_08be145f-baa9-4c11-8280-33fff9710f64"
+      }
+    ],
+    "state_retirement_call": {
+      "seq": 386,
+      "requested_status": "superseded"
+    },
+    "final_budget_state": {
+      "ref": "S44",
+      "status": "unresolved",
+      "resolution": {
+        "status": "unresolved",
+        "confidence": null,
+        "limitations": [
+          "Marked superseded because the user asked (E75) to try to get rid of the budget stuff. Exact original wording kept above; this is not a new budget decision.",
+          "Does not change the automatic memory ledger, which I cannot edit.",
+          "Source history is retained; this is retirement from active state, not erasure.",
+          "Model-proposed interpretation; user acceptance is not established."
+        ]
+      }
+    },
+    "observed_friction_patch_attempts": 7,
+    "observed_friction_patch_versions": 5,
+    "tool_errors": [
+      {
+        "seq": 266,
+        "tool": "update_state",
+        "error": "Keep binding user constraints in their exact source wording"
+      },
+      {
+        "seq": 569,
+        "tool": "workspace_patch",
+        "error": "Read every page of the current file before modifying it"
+      },
+      {
+        "seq": 580,
+        "tool": "workspace_patch",
+        "error": "Patch find text must match exactly once"
+      }
+    ]
+  },
+  "replays": {
+    "budget_revision": [
+      {
+        "input": "Keep the budget under $400",
+        "explicit_matches": [
+          {
+            "kind": "commitment",
+            "content": "Keep the budget under $400"
+          }
+        ],
+        "records": [
+          {
+            "content": "Keep the budget under $400",
+            "kind": "commitment",
+            "resolution": "reported"
+          }
+        ]
+      },
+      {
+        "input": "I actually want to make it a range, between 400 and 500",
+        "explicit_matches": [],
+        "records": [
+          {
+            "content": "Keep the budget under $400",
+            "kind": "commitment",
+            "resolution": "contested"
+          },
+          {
+            "content": "I actually want to make it a range, between 400 and 500",
+            "kind": "claim",
+            "resolution": "contested"
+          }
+        ]
+      },
+      {
+        "input": "New commitment: budget should be between $400 and $500",
+        "explicit_matches": [],
+        "records": [
+          {
+            "content": "Keep the budget under $400",
+            "kind": "commitment",
+            "resolution": "contested"
+          },
+          {
+            "content": "I actually want to make it a range, between 400 and 500",
+            "kind": "claim",
+            "resolution": "contested"
+          }
+        ]
+      }
+    ],
+    "quoted_display": [
+      {
+        "input": "Keep the budget under $400",
+        "explicit_matches": [
+          {
+            "kind": "commitment",
+            "content": "Keep the budget under $400"
+          }
+        ],
+        "records": [
+          {
+            "content": "Keep the budget under $400",
+            "kind": "commitment",
+            "resolution": "reported"
+          }
+        ]
+      },
+      {
+        "input": "Here is the memory display: ```Automatic · claim · I actually want to make it a range, between 400 and 500```",
+        "explicit_matches": [],
+        "records": [
+          {
+            "content": "Keep the budget under $400",
+            "kind": "commitment",
+            "resolution": "contested"
+          },
+          {
+            "content": "Here is the memory display: ```Automatic · claim · I actually want to make it a range, between 400 and 500```",
+            "kind": "claim",
+            "resolution": "contested"
+          }
+        ]
+      }
+    ],
+    "unrelated_revision": [
+      {
+        "input": "Keep the budget under $400",
+        "explicit_matches": [
+          {
+            "kind": "commitment",
+            "content": "Keep the budget under $400"
+          }
+        ],
+        "records": [
+          {
+            "content": "Keep the budget under $400",
+            "kind": "commitment",
+            "resolution": "reported"
+          }
+        ]
+      },
+      {
+        "input": "Keep the route wheelchair accessible",
+        "explicit_matches": [
+          {
+            "kind": "commitment",
+            "content": "Keep the route wheelchair accessible"
+          }
+        ],
+        "records": [
+          {
+            "content": "Keep the budget under $400",
+            "kind": "commitment",
+            "resolution": "reported"
+          },
+          {
+            "content": "Keep the route wheelchair accessible",
+            "kind": "commitment",
+            "resolution": "reported"
+          }
+        ]
+      },
+      {
+        "input": "Actually, I meant the document title",
+        "explicit_matches": [],
+        "records": [
+          {
+            "content": "Keep the budget under $400",
+            "kind": "commitment",
+            "resolution": "contested"
+          },
+          {
+            "content": "Keep the route wheelchair accessible",
+            "kind": "commitment",
+            "resolution": "contested"
+          },
+          {
+            "content": "Actually, I meant the document title",
+            "kind": "claim",
+            "resolution": "contested"
+          }
+        ]
+      }
+    ],
+    "retirement_authority_gate": {
+      "requested_status": "superseded",
+      "effective_status": "unresolved"
+    },
+    "extraction_reasoning": {
+      "effort": "none"
+    }
+  }
+}
