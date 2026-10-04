@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
   "source_repository": "https://github.com/DanPace725/conclave",
-  "source_commit": "68ebfb5094e6e93b90ffd396a7e967422996d2e4",
+  "source_commit": "db242bf91c74acb99405043ee42761748c18f85e",
   "source_worktree_dirty": false,
-  "migrated_at": "2026-10-04T00:37:33.576Z",
+  "migrated_at": "2026-10-04T02:46:26.588Z",
   "dependencies": {
     "gpt-tokenizer": "^4.0.0",
     "htmlparser2": "^12.0.0",
@@ -105,7 +105,7 @@
     {
       "source": "src/harness.js",
       "target": "lib/conclave/harness.js",
-      "sha256": "6405f320296c1c834529b7e88400e55d0ce93001c0c864d56e8ffc9b41a73f84"
+      "sha256": "834972a88a51c451263b846768b9f4c6e693d3e3c1cd95ca65b97afb15b303b4"
     },
     {
       "source": "src/hosted.js",
@@ -130,7 +130,7 @@
     {
       "source": "src/ingress.js",
       "target": "lib/conclave/ingress.js",
-      "sha256": "17c01daf2758ef6e686e10ad01112f85107a0fb987b3f0e8ff45b8d6994fa81d"
+      "sha256": "5274884c2fa25ffcfe92c1a4bfaaf126370816d2f6e8efee6d49f6505584d1e7"
     },
     {
       "source": "src/input-size.js",
@@ -155,12 +155,17 @@
     {
       "source": "src/memory-extractor.js",
       "target": "lib/conclave/memory-extractor.js",
-      "sha256": "a54ffd0e827bc743cfb5c008dbfac95312ed83c8be5479b1bddb3e0c67ba3091"
+      "sha256": "55b1d80cc6515860bc616bf546997cc5c285b6431ee888b66d81a033d40d4362"
+    },
+    {
+      "source": "src/memory-tools.js",
+      "target": "lib/conclave/memory-tools.js",
+      "sha256": "1c588ed4d6055295a9d337dc9b1ad3a848cb39fd08e3ca1f1cf27ff3556f8264"
     },
     {
       "source": "src/memory.js",
       "target": "lib/conclave/memory.js",
-      "sha256": "994f0226b664cd5593fbd96bb6ce2586a36c58e7a1ac89bd3439d57b75bc1e80"
+      "sha256": "10cb7b36529f631367efeb50e16dda95191d0481a61f9fa808388afb8666d9a0"
     },
     {
       "source": "src/protection.js",
@@ -190,7 +195,7 @@
     {
       "source": "src/resources/app-guide.md",
       "target": "lib/conclave/resources/app-guide.md",
-      "sha256": "04e5b12531644ff18b46f86b3d525ce4e1dcfe482c652e8e8f98afbec31f5f32"
+      "sha256": "ef451de6dfb3e8f23c1dd58d55db1cb2bd17f25a986cc1a0959c06e16f7c0cba"
     },
     {
       "source": "src/resources/model-costs-2026-10-02.json",
@@ -220,7 +225,7 @@
     {
       "source": "src/store.js",
       "target": "lib/conclave/store.js",
-      "sha256": "5ac237c9b52dc3455ca956d1eb407a50dc8e5289a1decb59ab82d0ba43e92853"
+      "sha256": "5d889b1305d6aabad98e7ca1f0a662b93a034c12ec13c8ff15fa6978c9711c42"
     },
     {
       "source": "src/stream.js",
@@ -230,7 +235,7 @@
     {
       "source": "src/telemetry.js",
       "target": "lib/conclave/telemetry.js",
-      "sha256": "a49aa48c6190a28fee97b2ef0eed4c0f73ab4ffaf2946a7fbfe32b30adfbc6e5"
+      "sha256": "9c5b9567819735d91cd3231fc350370513f2fba31907893df5d5e6398ec53c1a"
     },
     {
       "source": "src/tool-context.js",
@@ -250,7 +255,7 @@
     {
       "source": "src/workspace.js",
       "target": "lib/conclave/workspace.js",
-      "sha256": "befeeadc6b8363d260c23ed13480cc6afc1aae8cc0b019af32c647dda10133fc"
+      "sha256": "1349727872ac5a3fd8d929689feca9f1e9facf11167f02fce15623fcaacfa9e9"
     },
     {
       "source": "integrations/converse/api/conclave.js",
@@ -335,7 +340,7 @@
     {
       "source": "src/resources/app-guide.md",
       "target": "public/app-guide.md",
-      "sha256": "04e5b12531644ff18b46f86b3d525ce4e1dcfe482c652e8e8f98afbec31f5f32"
+      "sha256": "ef451de6dfb3e8f23c1dd58d55db1cb2bd17f25a986cc1a0959c06e16f7c0cba"
     },
     {
       "source": "src/resources/model-costs-2026-10-02.json",

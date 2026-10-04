@@ -297,6 +297,8 @@
           : "Source-linked " +
             (selected.kind === "state" ? "memory entry" : "context piece") +
             (selected.protected ? " · protected" : "");
+    if (selected.kind === 'state' && selected.section)
+      el('editor-meta').textContent += ` · ${selected.section.effective_status || selected.section.status} · ${selected.section.resolution?.status || 'unresolved'} · confidence unknown`;
     if (selected.kind === 'document' && selected.author) {
       const author = selected.author;
       const who = author.actor === 'human' ? 'You' :

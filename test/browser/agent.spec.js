@@ -96,6 +96,55 @@ test('capture issues persist after successful turns and a shared memory snapshot
   } finally {await app.close();}
 });
 
+test('a chat request suppresses both memory stores and verifies a batch patch after reload', async ({page}, testInfo) => {
+  const errors = []; page.on('pageerror', e => errors.push(e.message));
+  let phase = -1, id;
+  const app = await fixture(async payload => {
+    if (phase < 0) return final;
+    const n = phase++, output = payload.input.filter(i => i.type === 'function_call_output').at(-1);
+    const invoke = (name, args) => ({...final, output:[{type:'function_call',call_id:'memory-patch-' + n,name,arguments:JSON.stringify(args)}]});
+    if (n >= 2) expect(JSON.stringify(payload)).not.toContain('under $400');
+    if (n === 0) return invoke('read_memory', {offset:0,expected_memory_revision:null,expected_state_revision:null});
+    if (n === 1) {
+      const page = JSON.parse(output.output), snapshot = JSON.parse(page.content);
+      return invoke('suppress_memory', {expected_memory_revision:page.memory_revision,expected_state_revision:page.state_revision,
+        source_event_id:app.service.store.events(id).findLast(e => e.kind === 'user').id,
+        targets:[{kind:'automatic',id:snapshot.automatic[0].memory_id},{kind:'named',id:'budget'}]});
+    }
+    if (n === 2 || n === 4) return invoke('workspace_read', {path:'plan.md',offset:0});
+    if (n === 3) return invoke('workspace_patch_batch', {path:'plan.md',expected_source_event_id:JSON.parse(output.output).source_event_id,
+      patches:[{find:'Budget: 100',replace:'Budget: 150'},{find:'Guests: 12',replace:'Guests: 10'}]});
+    return {...final,output:[{type:'message',content:[{type:'output_text',text:'Memory suppression and two file changes verified.'}]}]};
+  });
+  id = app.service.create('Unified memory and patches').conversation_id;
+  await app.service.ask(id, {message_id:'memory_tools_seed',content:'Keep the budget under $400.',settings:{model:'fixture',jev:false}});
+  await app.service.remember(id, {key:'budget',type:'constraint',content:'Keep the budget under $400.'});
+  app.service.harness(id).toolResult('workspace_write', {path:'plan.md',expected_source_event_id:null,content:'# Plan\nBudget: 100\nGuests: 12\n## Access\nKeep lift access.'});
+  phase = 0;
+  try {
+    await page.route('**/api/title', route => route.fulfill({json:{title:'Unified memory and patches'}}));
+    await page.goto(app.url);
+    if (testInfo.project.name === 'mobile') await page.locator('#menu').click();
+    await page.locator('#server-chats .chat-item').filter({hasText:'Unified memory and patches'}).click();
+    await page.getByRole('textbox', {name:'Message',exact:true}).fill('Forget the budget memories. Set the plan budget to 150 and guest count to 10, preserving access.');
+    await page.locator('#send').click(); await expect(page.locator('#send')).toBeEnabled();
+    await expect(page.getByText('Memory suppression and two file changes verified.', {exact:true})).toBeVisible();
+    await page.reload(); await page.locator('#workspace-open').click(); await page.locator('#tab-state').click();
+    await page.locator('#editor-items button').filter({hasText:'Automatic · commitment'}).click();
+    await expect(page.locator('#editor-meta')).toContainText('suppressed');
+    await page.locator('#editor-back').click();
+    await page.locator('#editor-items button').filter({hasText:'· budget'}).click();
+    await expect(page.locator('#editor-meta')).toContainText('superseded');
+    await page.locator('#tab-documents').click();
+    await page.locator('#editor-items button').filter({hasText:'plan.md'}).click();
+    await expect(page.locator('#editor-preview')).toContainText('Budget: 150');
+    await expect(page.locator('#editor-preview')).toContainText('Guests: 10');
+    await expect(page.locator('#editor-preview')).toContainText('Keep lift access.');
+    expect(app.service.store.events(id).filter(e => e.kind === 'document')).toHaveLength(2);
+    expect(phase).toBe(6); expect(errors).toEqual([]);
+  } finally {await app.close();}
+});
+
 async function fixture(respond, { jev = false, claude = false, claudeModel = 'claude-fixture', countTokens, memoryModel = false } = {}) {
   const store = new Store(undefined, { memory: true });
   const service = new ConclaveService(store, {
