@@ -48,6 +48,50 @@ test('saved chats and reload use transcripts, while Workspace loads authoritativ
   } finally { await app.close(); }
 });
 
+test('Jev has a dedicated Workspace view with outcomes, exact evidence, unknown usage, paging and safe source inspection', async ({ page }, testInfo) => {
+  const errors = []; page.on('pageerror', error => errors.push(error.message));
+  let calls = 0;
+  const app = await fixture(async () => { calls++; return final; });
+  const id = app.service.create('Jev telemetry proof').conversation_id;
+  const store = app.service.store, source = app.service.harness(id).ingestText('archive.md', 'Archive includes 129 participants.');
+  for (let n = 0; n < 15; n++) store.append(id, 'retrieval_decision', '', {
+    query: 'Earlier search ' + n, outcome: 'skipped', reason: 'shortlist already fits', selected_event_ids: [source.id], baseline_event_ids: [source.id] });
+  const request = store.append(id, 'inference_request', 'retrieval-reranking', { provider: 'typesafe', payload: { model: 'jev-fixture' } });
+  store.append(id, 'inference_response', 'retrieval-reranking', { request_id: request.id, status: 'failed', error: 'Fixture timeout', elapsed_ms: 35 });
+  store.append(id, 'retrieval_decision', '', { query: '<img src=x onerror=alert(1)> participants', outcome: 'selection changed',
+    selected_event_ids: [source.id], baseline_event_ids: [], selection_source: 'bounded-model', assessment: { threshold: 0.65,
+      decisions: [{ id: source.id, category: 'useful', confidence: 0.9, uncertain: false }] },
+    candidates: [{ id: source.id, kind: 'document', excerpt: source.content, source: { title: 'archive.md', sourceRef: 'E1', offset: 0, end_offset: source.content.length } }] });
+  try {
+    await page.goto(app.url);
+    if (testInfo.project.name === 'mobile') await page.locator('#menu').click();
+    await page.locator('#server-chats .chat-item').filter({ hasText: 'Jev telemetry proof' }).click();
+    await page.locator('#workspace-open').click();
+    await page.getByRole('tab', { name: 'Jev', exact: true }).click();
+    await expect(page.locator('#editor-jev')).toBeVisible();
+    await expect(page.locator('#jev-summary')).toContainText('1 attempted · 0 completed · 1 failed');
+    await expect(page.locator('#jev-usage')).toContainText('usage unknown for 1 call');
+    await page.locator('#jev-records details').first().locator('summary').click();
+    await expect(page.locator('#jev-records')).toContainText('confidence 0.9');
+    await expect(page.locator('#jev-records')).toContainText('characters 0–34');
+    await expect(page.locator('#jev-records img')).toHaveCount(0);
+    await page.screenshot({ path: testInfo.outputPath('jev-workspace.png'), fullPage: true });
+    await page.getByRole('button', { name: 'Open archive.md', exact: true }).click();
+    await expect(page.locator('#editor-preview')).toContainText('129 participants');
+    await page.locator('#editor-back').click();
+    await expect(page.locator('#editor-jev')).toBeVisible();
+    await page.locator('#jev-earlier').click();
+    await expect(page.locator('#jev-records')).toContainText('Earlier search 0');
+    await expect(page.locator('#jev-earlier')).toBeHidden();
+    expect(calls).toBe(0); expect(errors).toEqual([]);
+    await page.reload();
+    await page.locator('#workspace-open').click();
+    await page.locator('#tab-jev').click();
+    await expect(page.locator('#jev-summary')).toContainText('1 selections changed');
+    expect(calls).toBe(0);
+  } finally { await app.close(); }
+});
+
 test('automatic memory sources, corrections, suppression and restoration are usable after reload', async ({ page }, testInfo) => {
   const errors = []; page.on('pageerror', error => errors.push(error.message));
   const app = await fixture(async () => final);

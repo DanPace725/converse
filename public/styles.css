@@ -2339,6 +2339,14 @@ button.breakdown-item:hover {
 #editor-audit details { margin: 8px 0; }
 #editor-audit summary { cursor: pointer; font-size: 13px; }
 #editor-audit p { overflow-wrap: anywhere; }
+#editor-jev h3 { font-size: 16px; margin: 12px 0; }
+#editor-jev .facts { font-size: 13px; }
+#editor-jev dd { margin: 0; }
+#jev-records details { margin: 10px 0; padding: 10px; border: 1px solid var(--border); border-radius: 8px; }
+#jev-records summary { cursor: pointer; font-size: 13px; line-height: 1.5; }
+#jev-records p, #jev-records blockquote { overflow-wrap: anywhere; }
+#jev-records blockquote { font-size: 12px; white-space: pre-wrap; margin: 8px 0; padding-left: 10px; border-left: 2px solid var(--border-strong); }
+#jev-records pre { font-size: 11px; white-space: pre-wrap; overflow-wrap: anywhere; max-height: 240px; overflow-y: auto; }
 #editor-removed button { display: block; margin: 8px 0; }
 /* Streaming replies hide actions until the text settles. */
 .is-streaming .msg-actions,

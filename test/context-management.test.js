@@ -120,7 +120,7 @@ test('settled state precedes recent text; cache writes select a stable breakpoin
 test('bounded Jev reranking recovers fixture evidence omitted by lexical top four, with deterministic fallback', async () => {
   const store = new Store(undefined, { memory: true });
   let confidence = 0.95, fail = false;
-  const provider = typedProvider(q => ({ choice: q.instructions.candidate.excerpt.includes('orchard-719') ? 'direct' : 'background', confidence }));
+  const provider = typedProvider(q => ({ choice: q.instructions.candidate.excerpt.includes('orchard-719') ? 'useful' : 'irrelevant', confidence }));
   const respond = provider.respond; provider.respond = p => { if (fail) throw Error('Fixture outage'); return respond(p); };
   try {
     const id = store.create(), adapter = new JevDecisionAdapter(provider);
@@ -150,7 +150,7 @@ test('delegated retrieval keeps tool-call receipts linked to the task request ac
   const store = new Store(undefined, { memory: true });
   let turns = 0;
   try {
-    const id = store.create(), adapter = new JevDecisionAdapter(typedProvider(q => ({ choice: q.instructions.candidate.excerpt.includes('orchard-719') ? 'direct' : 'background' })));
+    const id = store.create(), adapter = new JevDecisionAdapter(typedProvider(q => ({ choice: q.instructions.candidate.excerpt.includes('orchard-719') ? 'useful' : 'irrelevant' })));
     const provider = { name: 'openai', respond: async () => ({ status: 'completed', usage,
       output: ++turns === 1 ? [toolCall('search_history', 1, { query: 'recovery code' }), toolCall('calculate_expression', 2, { expression: '6*2' })]
         : [{ type: 'message', content: [{ type: 'output_text', text: 'Recovered the code; 12 seats.' }] }] }) };
@@ -202,7 +202,7 @@ test('delegation respects byte limits, exact model rates and invalid coverage ra
   assert.equal(delegationCost(normal, 'openai', 'unknown', 16000).allowed, false);
   assert.equal(delegationCost(normal, 'openai', 'gpt-6-luna', 1).allowed, false);
   await assert.rejects(normal.rerank([{ id: 'a', excerpt: 'data' }], 'q', async () => ({ answers: {} })), /coverage/);
-  const partial = new JevDecisionAdapter(typedProvider((q, i) => ({ choice: i === 2 ? 'direct' : 'irrelevant', confidence: i === 2 ? 0.9 : 0.35 })));
+  const partial = new JevDecisionAdapter(typedProvider((q, i) => ({ choice: i === 2 ? 'useful' : 'irrelevant', confidence: i === 2 ? 0.9 : 0.35 })));
   const candidates = ['uncertain-a', 'uncertain-b', 'direct-source'].map(id => ({ id, excerpt: id }));
   const ranked = await partial.rerank(candidates, 'query', (p) => partial.provider.respond(p));
   assert.deepEqual(ranked.ids, ['direct-source', 'uncertain-a', 'uncertain-b']);

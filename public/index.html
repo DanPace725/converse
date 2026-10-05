@@ -414,8 +414,20 @@
       >
         Memory
       </button>
+      <button type="button" role="tab" data-tab="jev" id="tab-jev"
+        aria-selected="false" aria-controls="editor-pane" tabindex="-1">Jev</button>
     </div>
     <div id="editor-pane" role="tabpanel" aria-labelledby="tab-documents">
+      <section id="editor-jev" hidden aria-label="Jev decisions">
+        <h3>Jev</h3>
+        <p id="jev-status" class="note"></p>
+        <dl id="jev-summary" class="facts"></dl>
+        <p id="jev-usage" class="note"></p>
+        <p class="note">Selection confidence measures relevance or retention. Source truth, answer quality, and savings still need verification.</p>
+        <div id="jev-records"></div>
+        <button id="jev-earlier" type="button" class="link-button" hidden>Earlier Jev activity</button>
+        <p id="jev-feedback" class="note" role="status"></p>
+      </section>
       <section id="context-garden" hidden aria-label="Context garden">
         <div class="garden-phase">
           <span id="garden-mode">LIVE</span

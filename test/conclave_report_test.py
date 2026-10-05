@@ -1,5 +1,6 @@
 """Offline audit contracts: python -m unittest discover -s test -p '*_test.py'."""
 import importlib.util
+import json
 from pathlib import Path
 import unittest
 
@@ -34,6 +35,19 @@ class AuditTest(unittest.TestCase):
         self.assertEqual(result["turns"][0]["outcome"], "stopped")
         self.assertEqual(result["audit"]["jev"]["retrieval-reranking"]["latency_ms"], 50)
         self.assertFalse(any("never" in f and "Jev" in f for f in result["flags"]))
+
+    def test_structured_fresh_observations_are_delivery_and_exact_pages_are_distinct_from_loss(self):
+        original = {"content": "x" * 3000, "offset": 100, "next_offset": None}
+        for length in (3000, 600):
+            supplied = {**original, "content": "x" * length, "next_offset": 100 + length if length < 3000 else None}
+            handoff = "Continue\nCONCLAVE_CONTINUATION_OBSERVATIONS\n" + json.dumps({"fresh_tool_results": [{"call_id": "fresh", "result": supplied}]})
+            events = [event(1, "tool_result", json.dumps(original), {"tool": "retrieve_event", "call_id": "fresh"}),
+                      event(2, "inference_request", "answer", {"payload": {"input": [{"role": "user", "content": handoff}]}})]
+            result = report.automated_audit({"events": events})["retrieval"]
+            self.assertEqual(result["fresh_large_outputs_missing_from_next_request"], [])
+            self.assertEqual(len(result["fresh_large_outputs_paged"]), int(length < 3000))
+            if length < 3000:
+                self.assertEqual(result["fresh_large_outputs_paged"][0]["next_offset"], 700)
 
     def test_fresh_retrieval_handoff_and_failed_delegation_stay_visible(self):
         es = [event(1, "tool_result", '{"content":"' + 'x' * 3000 + '"}', {"tool": "retrieve_event", "call_id": "c"}),

@@ -83,7 +83,7 @@ def automated_audit(layer):
     assessments = [e for e in retrieval if e["metadata"].get("assessment")]
     decisions = [d for e in assessments for d in e["metadata"]["assessment"].get("decisions", [])]
     repeated = Counter()
-    fresh_omissions = []
+    fresh_omissions, fresh_pages = [], []
     for pos, event in enumerate(events):
         if event["kind"] != "tool_result" or event["metadata"].get("tool") != "retrieve_event":
             continue
@@ -94,17 +94,37 @@ def automated_audit(layer):
         if following is None:
             continue
         inputs = (following["metadata"].get("payload") or {}).get("input", [])
-        if not any(i.get("type") == "function_call_output" and i.get("call_id") == event["metadata"].get("call_id") for i in inputs):
+        call_id = event["metadata"].get("call_id")
+        supplied = [parsed(i.get("output"), {}) for i in inputs if i.get("type") == "function_call_output" and i.get("call_id") == call_id]
+        for item in inputs:
+            marker = "\nCONCLAVE_CONTINUATION_OBSERVATIONS\n"
+            text = item.get("content", "")
+            if item.get("role") == "user" and isinstance(text, str) and marker in text:
+                handoff = parsed(text.partition(marker)[2], {})
+                if isinstance(handoff, dict):
+                    supplied.extend(r.get("result", {}) for r in handoff.get("fresh_tool_results", []) if isinstance(r, dict) and r.get("call_id") == call_id)
+        # Exact prefix delivery, including byte-guard pages, is an observation.
+        # A bare pointer, an empty output or the old 800-character receipt summary is not.
+        pages = [p for p in supplied if isinstance(p, dict) and isinstance(p.get("content"), str)
+                 and p["content"] and result["content"].startswith(p["content"])
+                 and p.get("offset", 0) == result.get("offset", 0)]
+        if pages:
+            delivered = max(pages, key=lambda p: len(p["content"]))
+            if len(delivered["content"]) < len(result["content"]):
+                fresh_pages.append({"receipt_seq": event["seq"], "next_request_seq": following["seq"],
+                    "supplied_characters": len(delivered["content"]), "receipt_characters": len(result["content"]),
+                    "offset": delivered.get("offset", 0), "next_offset": delivered.get("next_offset")})
+        else:
             fresh_omissions.append({"receipt_seq": event["seq"], "next_request_seq": following["seq"],
                 "source_ref": result.get("sourceRef"), "characters": len(result["content"]),
                 "handoff": any("preceding tool exchange is archived" in str(i.get("content", "")) for i in inputs)})
     for e in events:
-        if e["kind"] == "tool_call" and e["content"] in {"retrieve_event", "search_history", "retrieve_range"}:
+        if e["kind"] == "tool_call" and e["content"] in {"retrieve_event", "search_history", "search_source", "retrieve_range"}:
             args = parsed((e.get("metadata") or {}).get("arguments"), {})
             repeated[(e["content"], json.dumps(args, sort_keys=True, ensure_ascii=False))] += 1
     memory = layer.get("memory") or {}
     results = {
-        "policy": "conversation-audit-v1", "event_kinds": dict(Counter(e["kind"] for e in events)),
+        "policy": "conversation-audit-v2", "event_kinds": dict(Counter(e["kind"] for e in events)),
         "memory": {"automatic_entries": len(memory.get("entries", [])), "automatic_records": len(memory.get("records", [])),
             "named_entries": len((layer.get("state") or {}).get("entries", [])),
             "capture_status": dict(Counter(e["metadata"].get("status", "unknown") for e in captures)),
@@ -120,6 +140,8 @@ def automated_audit(layer):
             "uncertain_decisions": sum(bool(d.get("uncertain")) for d in decisions), "total_decisions": len(decisions),
             "selection_sources": dict(Counter(e["metadata"].get("selection_source", "unknown") for e in retrieval)),
             "fresh_large_outputs_missing_from_next_request": fresh_omissions,
+            "fresh_large_outputs_paged": fresh_pages,
+            "skip_reasons": dict(Counter(e["metadata"].get("reason", "unknown") for e in retrieval if e["metadata"].get("outcome") == "skipped")),
             "repeated_calls": [{"tool": t, "arguments": parsed(a), "count": n} for (t, a), n in repeated.most_common() if n > 1]},
         "embeddings": {"failures": sum(e["kind"] == "embedding_failure" for e in events),
             "reported": (layer.get("metrics") or {}).get("embeddings", {})},
@@ -663,7 +685,8 @@ def conversation_md(a):
             f"changed shortlist order: {r['changed_order']}; cache hits: {r['cache_hits']}. "
             f"Uncertain candidate assessments: {r['uncertain_decisions']}/{r['total_decisions']}. Priority confidence is not truth confidence."]
     out += ["", f"Large fresh retrievals missing their direct output in the next request: {len(r['fresh_large_outputs_missing_from_next_request'])}. "
-            "Event/request pairs are retained in analysis.json; a bounded handoff may still include an excerpt."]
+            "Event/request pairs are retained in analysis.json; structured fresh observations count as delivery.",
+            f"Fresh large outputs supplied as exact pages: {len(r['fresh_large_outputs_paged'])}. Remaining text requires paging; delivery does not establish inspection or verification."]
     for (prov, model), b in a["selection"].items():
         out.append(f"- {prov} {model or ''}: {b['calls']} calls, {b['input']:,} in / {b['output']:,} out")
     for key, label in (("jev", "Jev recommendations"), ("other", "Other proposals")):

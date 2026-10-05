@@ -85,6 +85,7 @@
   }
   function items() {
     if (!view) return [];
+    if (tab === 'jev') return [];
     return tab === "documents" ? documents() : segments(tab);
   }
   function latest(item = selected) {
@@ -177,8 +178,9 @@
     el("request-breakdown").hidden = !context || detail;
     el("context-views").hidden = !context || detail || !view;
     el("editor-telemetry").hidden = !activity || detail || !view;
-    el("editor-note").hidden = detail || activity;
-    el("editor-items").hidden = detail || activity;
+    el('editor-jev').hidden = tab !== 'jev' || detail;
+    el("editor-note").hidden = detail || activity || tab === 'jev';
+    el("editor-items").hidden = detail || activity || tab === 'jev';
     el("editor-new-state").hidden = tab !== "state" || detail || !view;
     el('editor-memory-copy').hidden = tab !== 'state' || detail || !view;
     el('editor-memory-issues').hidden = tab !== 'state' || !view?.memory?.capture_issue_count;
@@ -186,13 +188,14 @@
     el("editor-upload-status").hidden = tab !== "documents";
     el("editor-back").hidden = !detail;
     el("editor-back").textContent =
-      tab === "state" ? "← All memory" : "← All pieces";
+      tab === "state" ? "← All memory" : tab === 'jev' ? '← Jev activity' : "← All pieces";
     for (const button of el("context-views").querySelectorAll("button"))
       button.setAttribute("aria-pressed", String(button.dataset.view === contextView));
     window.contextGarden?.setVisible(!panel.hidden && context);
     window.contextGarden?.mark(context && selected ? selected.token : null);
   }
   function renderList() {
+    renderJev();
     renderTelemetry();
     renderRemoved();
     layout();
@@ -214,6 +217,7 @@
       view?.context.revision,
       view?.memory?.revision,
       view?.memory?.capture_issues,
+      view?.memory?.capture_summary,
       selected?.kind,
       selected?.id,
       rows.map((i) => [i.kind, i.id, i.token, !!drafts[keyOf(i)]]),
@@ -264,7 +268,86 @@
           : "Memory · revision " +
             view.state.revision +
             ". Automatic entries keep their sources and correction history. Edit an entry or add a named detail.";
+    if (tab === 'state' && view?.memory?.capture_summary) {
+      const capture = view.memory.capture_summary;
+      el('editor-note').textContent += ` ${capture.admitted} automatic entries admitted; ${capture.completed_empty} completed checks admitted none${capture.unknown_counts ? `; ${capture.unknown_counts} older checks have unknown counts` : ''}.`;
+    }
   }
+  let jevPage = null, jevSignature = '';
+  function renderJev() {
+    if (tab !== 'jev') return;
+    const data = view?.jev, container = el('jev-records');
+    if (!data) {
+      el('jev-status').textContent = view ? 'Jev telemetry is unavailable from this server.' : 'Open a saved conversation to inspect Jev activity.';
+      el('jev-summary').replaceChildren(); container.replaceChildren(); el('jev-usage').textContent = ''; el('jev-earlier').hidden = true;
+      return;
+    }
+    if (jevPage?.conversation !== view.conversation_id || jevPage.revision !== data.revision)
+      jevPage = { ...data, conversation: view.conversation_id };
+    const signature = JSON.stringify([view.conversation_id, data.revision, jevPage.records.length]);
+    if (signature === jevSignature) return;
+    jevSignature = signature;
+    el('jev-feedback').textContent = '';
+    el('jev-status').textContent = `${data.enabled ? 'Enabled' : 'Disabled for this conversation'} · ${data.available ? 'Provider available' : 'Provider unavailable'}. Saved activity remains inspectable.`;
+    const s = data.summary, facts = [ ['Calls', `${s.attempts} attempted · ${s.completed} completed · ${s.failed} failed · ${s.missing_responses} without a response`],
+      ['Retrieval', `${s.changed_selections} selections changed · ${s.confirmed_baselines || 0} baselines confirmed · ${s.fallbacks} fallbacks · ${s.skipped} skipped`],
+      ['Reuse', `${s.cache_hits} cached decisions`],
+      ['Latency', `${(s.known_elapsed_ms / 1000).toFixed(2)} s reported${s.unknown_latency_calls ? ` · ${s.unknown_latency_calls} unknown` : ''}`] ];
+    el('jev-summary').replaceChildren(...facts.flatMap(([label, value]) => {
+      const term = document.createElement('dt'), detail = document.createElement('dd'); term.textContent = label; detail.textContent = value; return [term, detail];
+    }));
+    el('jev-usage').textContent = `Reported usage: ${s.known_input_tokens.toLocaleString()} input / ${s.known_output_tokens.toLocaleString()} output tokens${s.unknown_usage_calls ? ` · usage unknown for ${s.unknown_usage_calls} call(s)` : ''}.`;
+    const openIds = new Set([...container.querySelectorAll('details[open]')].map(d => d.dataset.event));
+    container.replaceChildren();
+    for (const record of jevPage.records) {
+      const detail = document.createElement('details'), summary = document.createElement('summary');
+      detail.dataset.event = record.event_id; detail.open = openIds.has(record.event_id);
+      summary.textContent = `${record.purpose} · ${record.outcome}${record.cache_hit ? ' · cached' : ''}`;
+      detail.append(summary);
+      const line = text => { const p = document.createElement('p'); p.className = 'note'; p.textContent = text; detail.append(p); };
+      line(new Date(record.timestamp).toLocaleString() + ` · event ${record.seq}`);
+      if (record.query) line('Query: ' + record.query);
+      if (record.reason || record.error) line(record.error || record.reason);
+      if (record.kind === 'call') {
+        line(`${record.provider} · ${record.model || 'model unknown'} · ${record.elapsed_ms == null ? 'latency unknown' : record.elapsed_ms + ' ms'}`);
+        line(record.usage ? `Usage: ${record.usage.input_tokens ?? 'unknown'} input / ${record.usage.output_tokens ?? 'unknown'} output tokens` : 'Usage unknown');
+        if (record.answers) {
+          const raw = document.createElement('pre'); raw.textContent = JSON.stringify(record.answers, null, 2); detail.append(raw);
+        }
+      }
+      const labels = ids => ids.map(id => view.source_refs?.[id] || 'historical source').join(', ') || 'none recorded';
+      if (record.baseline?.length || record.selected?.length) line(`Baseline: ${labels(record.baseline)} → Selected: ${labels(record.selected)}`);
+      if (record.assessment?.threshold != null) line('Confidence threshold: ' + record.assessment.threshold);
+      if (record.economics) line(`Delegation gate: ${record.economics.allowed ? 'eligible' : 'skipped'} · ${record.economics.reason}. ${record.economics_basis}`);
+      for (const candidate of record.candidates || record.supplied_candidates || []) {
+        const decision = record.assessment?.decisions?.find(d => d.id === candidate.id);
+        const source = candidate.source;
+        line(`${candidate.kind || candidate.type || 'candidate'}${source ? ` · characters ${source.offset}–${source.end_offset}` : ''}${decision ? ` · ${decision.category} · confidence ${decision.confidence ?? 'unknown'}${decision.uncertain ? ' (uncertain)' : ''}` : ''}`);
+        const excerpt = document.createElement('blockquote'); excerpt.textContent = candidate.excerpt || ''; detail.append(excerpt);
+        if (candidate.id && view.source_refs?.[candidate.id]) {
+          const button = document.createElement('button'); button.type = 'button'; button.className = 'link-button';
+          button.textContent = 'Open ' + (source?.title || source?.sourceRef || view.source_refs[candidate.id]);
+          button.onclick = () => inspect({ id: candidate.id }, true, true); detail.append(button);
+        }
+      }
+      for (const entry of record.entries || []) line(`${entry.action} · priority ${entry.priority ?? 'unknown'} · ${entry.reason || ''}`);
+      container.append(detail);
+    }
+    if (!jevPage.records.length) container.textContent = 'No Jev calls or retrieval decisions recorded yet.';
+    el('jev-earlier').hidden = !jevPage.has_more;
+  }
+  el('jev-earlier').onclick = async () => {
+    const conversation = view?.conversation_id, revision = jevPage?.revision, cursor = jevPage?.before_cursor;
+    if (!conversation || !cursor) return;
+    el('jev-earlier').disabled = true;
+    try {
+      const page = await window.contextLayer.readJevAudit(cursor);
+      if (view?.conversation_id !== conversation || jevPage?.revision !== revision) return;
+      jevPage.records.push(...page.records); jevPage.before_cursor = page.before_cursor; jevPage.has_more = page.has_more;
+      renderJev();
+    } catch (error) { el('jev-feedback').textContent = error.message; }
+    finally { el('jev-earlier').disabled = false; }
+  };
   function show() {
     if (!selected) {
       el("editor-document").hidden = true;

@@ -68,6 +68,10 @@ Models should inspect telemetry when a retrieval is unexpectedly partial, a revi
 
 ## Storage and exports
 
+Workspace's **Jev** tab shows saved calls and selection outcomes separately: attempted/completed/failed calls, unknown usage, provider/model, latency, confident judgments, candidate passages and character ranges, baseline versus selected sources, cache reuse and skip/fallback reasons. Earlier activity is paged. Opening it makes no model calls. Applied attention records identify their context revision; proposals alone do not establish a change. Estimates are not measured savings.
+
+After discovering a source, models can use **search_source** to locate a passage inside that source, then **retrieve_event** with its offset/next_offset to read exact text. Claude continuation restarts preserve fresh observations before archiving already delivered results. If a byte guard shortens a passage, its next_offset identifies the omitted range. A supplied range or source pointer does not establish that a claim was verified.
+
 Context/Agent conversations persist on the server in Neon when configured, with SQLite as the local fallback. App access currently uses an app password; separate user accounts and account-wide memory are not implemented. Keys remain server-side. Chat mode is browser-local.
 
 Export Markdown preserves readable conversation text. Canonical JSON contains the full historical audit, including original content, versions, requests, tool exchanges, context snapshots, Jev records, and usage. Historical exports may include documents removed from the active workspace.

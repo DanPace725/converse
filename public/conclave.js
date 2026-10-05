@@ -934,6 +934,12 @@ import { effortLevels } from './effort.js';
       return data;
     },
     refreshView: () => request('view'),
+    readJevAudit: async (before = 0) => {
+      const response = await fetch('/api/conclave?action=jev_audit&conversation=' + encodeURIComponent(currentId()) + '&before=' + before, { cache: 'no-store' });
+      const data = await response.json();
+      if (!response.ok) throw Error(data.error || 'Could not read Jev activity');
+      return data;
+    },
     uploadDocument: async (input) => {
       if (busy || agent?.status === 'running') throw Error('Wait for the reply or stop the agent before uploading.');
       if (!enabled()) throw Error('Switch to Context or Agent mode before uploading to its workspace.');
