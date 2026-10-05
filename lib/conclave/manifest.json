@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
   "source_repository": "https://github.com/DanPace725/conclave",
-  "source_commit": "91ec005a2dbf9d1a0d9493864987ca82c6a68bbb",
+  "source_commit": "28893dee09860de339008b8c0dad3f023b16bcb7",
   "source_worktree_dirty": false,
-  "migrated_at": "2026-10-05T18:28:13.448Z",
+  "migrated_at": "2026-10-05T19:18:13.481Z",
   "dependencies": {
     "@vercel/functions": "^3.9.9",
     "drizzle-orm": "^0.45.3",
@@ -30,7 +30,7 @@
     {
       "source": "src/agent.js",
       "target": "lib/conclave/agent.js",
-      "sha256": "f9accff09854a53bb9310a491b32df7a51b87078d7ae42b51fb48973772b23b1"
+      "sha256": "9273de4a4c0380d666bcdec5af1125d394439305b0287cbd2ed1f5c39a4fe525"
     },
     {
       "source": "src/arithmetic.js",
@@ -120,7 +120,7 @@
     {
       "source": "src/harness.js",
       "target": "lib/conclave/harness.js",
-      "sha256": "d616aa5a8896db74e682418f1d09551867377f68a87f331ef3d381d4aa55a40d"
+      "sha256": "fe0b4c108d8f2b4a58aa808437f6d81b3a6383d1032a71b39cc124c339a5bbfe"
     },
     {
       "source": "src/hosted.js",
@@ -155,7 +155,7 @@
     {
       "source": "src/jev-telemetry.js",
       "target": "lib/conclave/jev-telemetry.js",
-      "sha256": "af26b9d452f4a3847037b0d5340476ab59519b5460b739dff4e88421cf918377"
+      "sha256": "1b82c4e077739a81e952e570af2acc0b96512101cd408078325db6a67aea611a"
     },
     {
       "source": "src/jev.js",
@@ -170,12 +170,12 @@
     {
       "source": "src/memory-controller.js",
       "target": "lib/conclave/memory-controller.js",
-      "sha256": "47f91fec280fa2f30bfba83d9c7dd14f5a26412aff299fb83bf35a7359786f7f"
+      "sha256": "64409d95cb31eae00809a33774f60765cdaa3f261d6402d35a14c6090009eab1"
     },
     {
       "source": "src/memory-extractor.js",
       "target": "lib/conclave/memory-extractor.js",
-      "sha256": "11f179b33d198ded02b99c2966f19d8c488cc685dfa5f2a3d7ad25a05164e5b2"
+      "sha256": "48190b02242f640ecb63758929e09597364b1ef0de8e8d342bc526ab0fc88ce3"
     },
     {
       "source": "src/memory-tools.js",
@@ -195,7 +195,7 @@
     {
       "source": "src/provider.js",
       "target": "lib/conclave/provider.js",
-      "sha256": "b84083fcfb29a7221a680f959cc479f03c1731dfa94f2fec811fbb6ec228a47a"
+      "sha256": "5666d655a3f3012ef86823bfe104754ac8dcfca3fc624b2c399811f2f154b74a"
     },
     {
       "source": "src/reasoning.js",
