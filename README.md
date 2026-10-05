@@ -25,6 +25,7 @@ With pooled `DATABASE_URL`, Context/Agent uses Neon. Without it, local developme
 - **Chat:** select recipients or use @GPT, @Claude, @Gemini. Multiple recipients reply in parallel.
 - **Context:** choose GPT or Claude for a saved conversation with retrievable history and editable context/state.
 - **Agent:** submit an objective; keep the tab open for steps. Stop/Resume operates on the saved run.
+- **Models:** hold (or right-click, or press ↓ on) a recipient name above the message box to choose that provider's model; the sidebar Models list sets the same choice.
 - **Workspace:** one panel with Files, Context and Memory tabs. In Files, upload, edit, download, remove/restore documents, or reference a filename in chat. Manual actions make no model calls. Limits: 20 active files, 100 KB/file, 500 KB active text.
 - **Context tab:** the garden map, what the last request sent split by part (each part opens to its pieces), the working pieces, and the activity report with references, protections, request counts, and saved transformations. The top-bar Context shortcut shows the last request size and opens this tab. **Memory** holds named state.
 - **About / Help:** opens the same guide available to models through `read_app_guide`.

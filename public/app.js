@@ -485,28 +485,34 @@ const starters = {
   ],
 };
 const modeIntro = {
-  chat: [
+  chat: () => [
     "Ask one model or several",
-    "Pick who replies below, or type @GPT, @Claude or @Gemini. Each model sees the whole conversation. Saved on this device.",
+    "Pick who replies below, or type @GPT, @Claude or @Gemini. Hold a name to change its model. Each model sees the whole conversation. Saved on this device.",
   ],
-  context: [
+  context: (who) => [
     "A conversation that remembers",
-    "GPT replies from a curated working context while the full history is saved on the server. Good for long threads.",
+    who +
+      " replies from a curated working context while the full history is saved on the server. Good for long threads. Hold a name below to change its model.",
   ],
-  agent: [
+  agent: (who) => [
     "Give the agent an objective",
-    "GPT works step by step with tools: calculating, writing and reading workspace files. Keep this tab open while it runs.",
+    who +
+      " works step by step with tools: calculating, writing and reading workspace files. Keep this tab open while it runs.",
   ],
 };
-function emptyState(mode = window.converseMode?.() || "chat") {
+function emptyState(
+  mode = window.converseMode?.() || "chat",
+  who = window.contextLayer?.providerName?.() || "GPT",
+) {
   const empty = document.createElement("div"),
     title = document.createElement("h2"),
     text = document.createElement("p"),
     list = document.createElement("div");
   empty.id = "empty";
   empty.dataset.mode = mode;
-  title.textContent = modeIntro[mode][0];
-  text.textContent = modeIntro[mode][1];
+  // Lets the shell redraw the intro when the answering assistant changes.
+  empty.dataset.who = mode === "chat" ? "" : who;
+  [title.textContent, text.textContent] = modeIntro[mode](who);
   list.className = "starters";
   for (const [label, prompt] of starters[mode]) {
     const button = document.createElement("button"),
@@ -528,9 +534,9 @@ function emptyState(mode = window.converseMode?.() || "chat") {
   empty.append(title, text, list);
   return empty;
 }
-function showEmpty() {
+function showEmpty(who) {
   $("#empty")?.remove();
-  appendToChat(emptyState());
+  appendToChat(emptyState(undefined, who));
 }
 $("#upload").onclick = () => $("#markdown-file").click();
 $("#remove-file").onclick = () => {

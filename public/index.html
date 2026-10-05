@@ -635,8 +635,18 @@
   <script src="/app.js" defer></script>
   <script src="/context-garden.js" defer></script>
   <dialog id="about-dialog" aria-labelledby="about-title">
-    <header><h2 id="about-title">About Converse</h2><button id="about-close" type="button">Close</button></header>
-    <div id="about-content" class="reply"></div>
+    <header>
+      <h2 id="about-title">About Converse</h2>
+      <button
+        id="about-close"
+        type="button"
+        class="icon-button"
+        aria-label="Close"
+      >
+        <svg><use href="#i-close" /></svg>
+      </button>
+    </header>
+    <div id="about-content"></div>
   </dialog>
   <script src="/about.js" defer></script>
   <script src="/conclave.js" type="module"></script>

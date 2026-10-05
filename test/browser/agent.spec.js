@@ -1076,6 +1076,53 @@ test("Claude chips and mentions route saved chat and agent runs, survive reload 
     await app.close();
   }
 });
+test("holding the Claude chip in Context picks its model, switches assistant and refreshes effort and intro", async ({
+  page,
+}) => {
+  const payloads = [];
+  const errors = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  const app = await fixture(
+    async (payload) => {
+      payloads.push(payload);
+      return { ...final, model: payload.model };
+    },
+    { claude: true, claudeModel: "claude-opus-4-6" },
+  );
+  try {
+    await page.goto(app.url);
+    await expect(page.locator("#mode-switch")).toBeVisible();
+    await expect(page.locator("#empty p")).toContainText("GPT replies");
+    await expect(page.locator("#context-reasoning option")).toHaveCount(4);
+    await page.locator('#recipients [data-name="Claude"]').click({ delay: 650 });
+    await page
+      .locator("#model-menu")
+      .getByRole("menuitemradio", { name: "claude-opus-4-6" })
+      .click();
+    await expect(page.locator("#model-menu")).toBeHidden();
+    await expect(
+      page.locator('#recipients [data-name="Claude"]'),
+    ).toHaveAttribute("aria-pressed", "true");
+    await expect(page.locator("#context-provider")).toHaveValue("anthropic");
+    await expect(page.locator("#context-reasoning option")).toHaveText([
+      "Default",
+      "Low",
+      "Medium",
+      "High",
+      "Max",
+    ]);
+    await expect(page.locator("#empty p")).toContainText("Claude replies");
+    await page.getByLabel("Message", { exact: true }).fill("Use saved context.");
+    await page.locator("#send").click();
+    await expect(
+      page.locator('article.msg[data-provider="claude"]'),
+    ).toHaveCount(1);
+    expect(payloads[0].model).toBe("claude-opus-4-6");
+    expect(errors).toEqual([]);
+  } finally {
+    await app.close();
+  }
+});
 async function openAgent(page, url) {
   await page.goto(url);
   await expect(page.locator("#mode-switch")).toBeVisible();

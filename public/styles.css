@@ -121,6 +121,10 @@
 #editor-back {
   margin: 0 0 2px -6px;
 }
+#editor-pane > details > summary,
+#editor-document > details > summary {
+  font-size: 13px;
+}
 #editor-document h3 {
   margin: 12px 0 3px;
   font-size: 16px;
@@ -140,7 +144,8 @@
 }
 .editor-toolbar button,
 .editor-save-row button,
-#editor-new-state {
+#editor-new-state,
+#editor-memory-copy {
   font-size: 12px;
   min-height: 34px;
   padding: 5px 9px;
@@ -994,6 +999,12 @@ article > .error:not(.content) {
   border-color: var(--border-strong);
   color: var(--muted);
   max-width: 100%;
+  /* Holding a chip opens its model menu instead of selecting or panning. */
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
 }
 .chip::before {
   content: "";
@@ -1010,6 +1021,13 @@ article > .error:not(.content) {
 .chip[aria-pressed="true"]::before {
   background: var(--dot);
 }
+.chip[aria-pressed="true"]:hover:not(:disabled) {
+  border-color: var(--dot);
+}
+.chip[aria-expanded="true"] {
+  color: var(--text);
+  background: var(--surface-3);
+}
 .chip small {
   color: var(--faint);
   font-size: 12px;
@@ -1018,14 +1036,75 @@ article > .error:not(.content) {
   text-overflow: ellipsis;
   max-width: 140px;
 }
-.chip[data-name="GPT"] {
+:is(.chip, #model-menu)[data-name="GPT"] {
   --dot: var(--gpt);
 }
-.chip[data-name="Claude"] {
+:is(.chip, #model-menu)[data-name="Claude"] {
   --dot: var(--claude);
 }
-.chip[data-name="Gemini"] {
+:is(.chip, #model-menu)[data-name="Gemini"] {
   --dot: var(--gemini);
+}
+/* Model menu (opens above the chip it belongs to) */
+#model-menu {
+  position: absolute;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  min-width: 200px;
+  max-width: calc(100% - 16px);
+  max-height: min(
+    340px,
+    calc(var(--app-height, 100dvh) - var(--composer-height, 190px) - 16px)
+  );
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 6px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  box-shadow: 0 -12px 40px #000a;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.menu-title {
+  flex: none;
+  padding: 4px 10px 6px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+#model-menu button {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 6px 12px 6px 10px;
+  text-align: left;
+  overflow-wrap: anywhere;
+  background: transparent;
+  border: 0;
+  color: var(--muted);
+  outline-offset: -2px;
+}
+#model-menu button::before {
+  content: "";
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+#model-menu [aria-checked="true"] {
+  color: var(--text);
+}
+#model-menu [aria-checked="true"]::before {
+  background: var(--dot);
+}
+#model-menu button:is(:hover, :focus-visible, .is-active) {
+  background: var(--surface-3);
+  color: var(--text);
 }
 #models-link {
   margin-left: auto;
@@ -1432,31 +1511,33 @@ article > .error:not(.content) {
   margin: 20px 0;
 }
 
-/* Unlock */
+/* Dialogs */
 dialog {
   background: var(--surface-2);
   color: var(--text);
   border: 1px solid var(--border-strong);
   border-radius: var(--radius-lg);
-  width: min(400px, 90vw);
-  padding: 28px;
-  text-align: center;
 }
 dialog::backdrop {
   background: #000c;
 }
-dialog form img {
+#unlock {
+  width: min(400px, 90vw);
+  padding: 28px;
+  text-align: center;
+}
+#unlock img {
   border-radius: 10px;
 }
-dialog h2 {
+#unlock h2 {
   margin: 10px 0 4px;
   font-size: 20px;
 }
-dialog input {
+#unlock input {
   margin-top: 18px;
   font-size: 16px;
 }
-dialog button {
+#unlock button {
   width: 100%;
   margin-top: 12px;
   min-height: 44px;
@@ -2219,16 +2300,41 @@ button.breakdown-item:hover {
 }
 #about-dialog {
   width: min(760px, calc(100vw - 32px));
-  max-height: calc(100dvh - 48px);
-  overflow: auto;
-  color: var(--text);
-  background: var(--panel, #17191c);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 20px;
+  max-height: calc(var(--app-height, 100dvh) - 48px);
+  padding: 0;
+  overflow: hidden;
 }
-#about-dialog::backdrop { background: #0009; }
-#about-dialog header { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+#about-dialog[open] {
+  display: flex;
+  flex-direction: column;
+}
+#about-dialog header {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 10px 10px 20px;
+  border-bottom: 1px solid var(--border);
+}
+#about-dialog header h2 {
+  margin: 0;
+  font-size: 16px;
+}
+#about-content {
+  margin: 0;
+  padding: 16px 20px 20px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  font-size: 15px;
+}
+/* The guide opens with the same title as the dialog. */
+#about-content > h1:first-child {
+  display: none;
+}
+#about-content > h1:first-child + * {
+  margin-top: 0;
+}
 #editor-telemetry { padding: 0 0 12px; border-bottom: 1px solid var(--border); margin-bottom: 12px; }
 #editor-audit details { margin: 8px 0; }
 #editor-audit summary { cursor: pointer; font-size: 13px; }

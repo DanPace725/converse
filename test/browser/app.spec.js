@@ -489,6 +489,56 @@ test("new chat keeps earlier device chats, recipients toggle and starters fill t
   );
 });
 
+test("holding a recipient opens its models; choosing one sets the model and addresses the message", async ({
+  page,
+}) => {
+  const sent = [];
+  await page.route("**/api/chat", async (r) => {
+    const { provider, model } = r.request().postDataJSON();
+    sent.push(provider + ":" + model);
+    await r.fulfill({
+      contentType: "application/x-ndjson",
+      body: '{"delta":"Hi"}\n{"done":true}\n',
+    });
+  });
+  await page.goto("/");
+  await expect(page.locator("#send")).toBeEnabled();
+  const chip = (name) => page.locator(`.chip[data-name="${name}"]`);
+  const menu = page.locator("#model-menu");
+  await expect(chip("GPT").locator("small")).toHaveText("gpt-6-astra");
+  // A hold opens the menu without toggling the recipient.
+  await chip("Claude").click({ delay: 650 });
+  await expect(menu).toBeVisible();
+  await expect(menu.getByRole("menuitemradio")).toHaveText(["claude-sonnet-5"]);
+  await expect(chip("Claude")).toHaveAttribute("aria-pressed", "false");
+  await page.keyboard.press("Escape");
+  await expect(menu).toBeHidden();
+  await chip("GPT").click({ delay: 650 });
+  await expect(
+    menu.getByRole("menuitemradio", { name: "gpt-6-astra" }),
+  ).toHaveAttribute("aria-checked", "true");
+  await menu.getByRole("menuitemradio", { name: "GPT-4o" }).click();
+  await expect(menu).toBeHidden();
+  await expect(chip("GPT").locator("small")).toHaveText("gpt-4o-2024-11-20");
+  // Keyboard: arrow into the menu, choose, and focus returns to the chip.
+  await chip("Claude").focus();
+  await page.keyboard.press("ArrowDown");
+  await expect(menu.getByRole("menuitemradio")).toBeFocused();
+  await page.keyboard.press("Enter");
+  await expect(chip("Claude")).toHaveAttribute("aria-pressed", "true");
+  await expect(chip("Claude")).toBeFocused();
+  // A short click still only toggles.
+  await chip("Claude").click();
+  await expect(menu).toBeHidden();
+  await expect(chip("Claude")).toHaveAttribute("aria-pressed", "false");
+  await page.getByLabel("Message", { exact: true }).fill("Which model?");
+  await page.locator("#send").click();
+  await expect(page.locator("article.msg[data-provider]")).toHaveCount(1);
+  expect(sent).toEqual(["GPT:gpt-4o-2024-11-20"]);
+  await page.reload();
+  await expect(chip("GPT").locator("small")).toHaveText("gpt-4o-2024-11-20");
+});
+
 test('replies keep your place: sending lifts your message and finishing does not jump', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   const long = Array.from({ length: 60 }, (_, i) => `Paragraph ${i + 1} of a long answer.`).join('\n\n');

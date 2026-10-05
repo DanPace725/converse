@@ -59,6 +59,9 @@ import { effortLevels } from './effort.js';
     controls();
     window.converseSync?.();
   };
+  // Effort levels follow the model, wherever it was picked.
+  for (const name of ["GPT", "Claude"])
+    fields[name].addEventListener("change", () => controls());
   agentMode.checked = localStorage.getItem("converse-agent-mode") === "true";
   let progressTimer = null,
     progressGeneration = 0,

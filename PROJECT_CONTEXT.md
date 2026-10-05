@@ -1,6 +1,6 @@
 # Converse project context
 
-Updated 2026-10-04. Mutable project state. [Usage](public/app-guide.md) · [Development method](docs/DEVELOPMENT_METHOD.md) · [Archive](docs/archive/README.md)
+Updated 2026-10-05. Mutable project state. [Usage](public/app-guide.md) · [Development method](docs/DEVELOPMENT_METHOD.md) · [Archive](docs/archive/README.md)
 
 ## Current capabilities
 
@@ -16,6 +16,7 @@ Updated 2026-10-04. Mutable project state. [Usage](public/app-guide.md) · [Deve
 - Conclave engine authority is the Conclave repository. Providers, agents, workspaces, web tools, context controls, persistence, and shared resources migrate here with a source-commit/hash manifest; parity checks reject downstream drift. Application UI/deployment remain here. [Engine boundary](lib/conclave/VENDORED.md)
 
 - Installable browser app with responsive UI, offline shell, sanitized Markdown and LaTeX, raw Markdown copy, saved chats, automatic titles, and linked user-message revisions.
+- Composer model menu: holding, right-clicking or arrowing from a recipient chip lists that provider's models; choosing one sets the same model as the sidebar and addresses the message to that provider (adds it in Chat, switches assistant in Context/Agent). Hold-slide-release, tap-after-hold and keyboard paths share one menu. The shared guide (`public/app-guide.md`, owned by Conclave) does not yet mention it.
 - Chat: GPT, Claude, and Gemini share attributed history and can reply in parallel. Storage is on the device.
 - Chat/Context/Agent prompts explain shared conversations across model switches: engage with earlier models' contributions and preserve authorship, clarifying identity when requested or relevant instead of routinely interrupting the discussion.
 - Context: GPT or Claude uses Conclave's persistent source history, editable working projection, named state, retrieval, offloading, compaction, and source lineage. Provider/model identity follows each reply and source.
@@ -35,6 +36,7 @@ Updated 2026-10-04. Mutable project state. [Usage](public/app-guide.md) · [Deve
 
 | Result | Evidence |
 |---|---|
+| Composer model menu and UI cleanup: mouse hold, emulated touch long-press and slide, right-click and keyboard selection checked on desktop and phone layouts. Also fixed: About/Help inheriting the unlock dialog's layout, Context/Agent intro naming GPT while Claude was selected, reasoning levels not following a model change, chip focus lost on re-render, and provider-coloured chip borders overridden after a tap. 95 desktop/mobile browser checks passed, one optional skipped; 188 backend checks passed, one live Neon check skipped. Not checked on a physical phone. | [Chat checks](test/browser/app.spec.js), [Context checks](test/browser/agent.spec.js) |
 | Hosting read increment: 74 managed files match Conclave `fe63094`; 228 source and 188 application checks passed (one optional skip each). Desktop/mobile transcript/reload/lazy Workspace, memory, reasoning, provider switching and Agent lifecycle scenarios validated; a download-link regression was fixed and checked on both layouts. Complete exports and original sources remain available. Production latency is unmeasured. | [Plan, local profile and remaining work](docs/HOSTING_PLAN.md) |
 | Embedding integration: migration parity verified for 72 managed files; syntax and 186 application checks passed, one optional live Neon test skipped. Source fixtures also cover real pgvector persistence and native OpenAI retrieval. Saved-load diagnostics and a documented read-model/hosting sequence are ready; production migration remains blocked by rejected test-branch credentials. | [Hosting plan](docs/HOSTING_PLAN.md), [embedding contracts](../CLA/conclave/docs/EMBEDDINGS.md) |
 | Unified memory controls/atomic patches/profiling: 67 managed files match Conclave `db242bf`; 218 source passes with one optional replay skipped, 186 Converse backend passes with one live Neon skip, syntax/parity and all 64 desktop/mobile browser checks passed. Hosted Context/Claude Agent fixtures cover suppression → patches → readback across service instances; browser fixtures verify status and preserved file content after reload. | [Scope and results](docs/archive/2026-10-03/memory-tools.md) |
@@ -73,4 +75,4 @@ USD figures are public-rate valuations. Trials demonstrate these workloads; broa
 - Evaluate longer search/page tasks and live model source fidelity after compaction; hosted verification, JavaScript rendering and PDF extraction remain open. Explicit cross-conversation memory with ownership and corrections; semantic quality calibration and durable indexing jobs.
 - Agent status messages that continue a run, completion checklists, isolated execution, and durable unattended workers.
 - Permanent erasure across sources, snapshots, copies, backups, and exports; multi-user identity. Neon Auth is provisioned but not connected to the app.
-- Light theme and composer model pickers. These and the larger design ideas remain proposals.
+- Light theme and the larger design ideas remain proposals.

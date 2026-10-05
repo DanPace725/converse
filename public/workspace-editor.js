@@ -180,7 +180,7 @@
     el("editor-note").hidden = detail || activity;
     el("editor-items").hidden = detail || activity;
     el("editor-new-state").hidden = tab !== "state" || detail || !view;
-    el('editor-memory-copy').hidden = tab !== 'state' || !view;
+    el('editor-memory-copy').hidden = tab !== 'state' || detail || !view;
     el('editor-memory-issues').hidden = tab !== 'state' || !view?.memory?.capture_issue_count;
     el("editor-upload-controls").hidden = tab !== "documents";
     el("editor-upload-status").hidden = tab !== "documents";

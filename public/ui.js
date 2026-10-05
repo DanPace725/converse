@@ -234,6 +234,10 @@
     ]);
     if (container.dataset.signature === signature) return;
     container.dataset.signature = signature;
+    // Rebuilding the chips must not drop keyboard focus.
+    const focused = container.contains(document.activeElement)
+      ? document.activeElement.dataset.name
+      : null;
     container.replaceChildren();
     const label = document.createElement("span");
     label.className = "label";
@@ -245,6 +249,8 @@
       chip.className = "chip";
       chip.dataset.name = name;
       chip.setAttribute("aria-pressed", String(chosen.includes(name)));
+      chip.setAttribute("aria-haspopup", "menu");
+      chip.setAttribute("aria-expanded", String(pickerFor === name));
       const model = document.createElement("small");
       model.textContent = fields[name].value;
       chip.append(name, model);
@@ -252,11 +258,22 @@
       chip.disabled = busy || !fields[name].options.length;
       if (current !== "chat" && !resumeButton.hidden)
         chip.disabled = true;
+      const hint = "Hold or right-click to choose its model";
       if (fixed) {
         chip.setAttribute("aria-disabled", "true");
-        chip.title = "Recipients come from the @mentions in your message";
-      } else chip.title = "Toggle " + name;
-      chip.onclick = () => {
+        chip.title =
+          "Recipients come from the @mentions in your message. " + hint;
+      } else chip.title = "Toggle " + name + ". " + hint;
+      chip.onclick = (event) => {
+        // The release that ends a hold leaves the menu open; a later click
+        // on a chip only dismisses it.
+        const released = performance.now() < ignoreClickUntil;
+        ignoreClickUntil = 0;
+        if (released || pickerFor) {
+          if (!released) closePicker();
+          event.stopPropagation();
+          return;
+        }
         if (fixed || busy) return;
         if (current !== "chat") {
           window.contextLayer?.selectProvider(name);
@@ -272,7 +289,173 @@
       };
       container.append(chip);
     }
+    if (focused) chipFor(focused)?.focus();
+    if (pickerFor && chipFor(pickerFor)?.disabled !== false) closePicker();
   }
+
+  // ----- Model menu: hold, right-click or arrow from a recipient chip -----
+  const recipients = $("#recipients"),
+    picker = document.createElement("div"),
+    HOLD_MS = 450;
+  let pickerFor = null,
+    press = null,
+    ignoreClickUntil = 0;
+  picker.id = "model-menu";
+  picker.setAttribute("role", "menu");
+  picker.hidden = true;
+  $("#composer").append(picker);
+  const chipFor = (name) =>
+    recipients.querySelector(`.chip[data-name="${name}"]`);
+  const itemAt = (event) =>
+    document
+      .elementFromPoint(event.clientX, event.clientY)
+      ?.closest('#model-menu [role="menuitemradio"]');
+  function openPicker(name, { focus = false } = {}) {
+    const chip = chipFor(name),
+      field = fields[name];
+    closePicker();
+    if (!chip || chip.disabled || field.disabled || !field.options.length)
+      return false;
+    for (const panel of popovers) panel.open = false;
+    const title = document.createElement("div");
+    title.className = "menu-title";
+    title.setAttribute("role", "presentation");
+    title.textContent = name + " model";
+    picker.replaceChildren(
+      title,
+      ...[...field.options].map((option) => {
+        const item = document.createElement("button");
+        item.type = "button";
+        item.tabIndex = -1;
+        item.setAttribute("role", "menuitemradio");
+        item.setAttribute("aria-checked", String(option.value === field.value));
+        item.dataset.value = option.value;
+        item.textContent = option.textContent;
+        return item;
+      }),
+    );
+    pickerFor = picker.dataset.name = name;
+    picker.setAttribute("aria-label", name + " model");
+    picker.hidden = false;
+    chip.setAttribute("aria-expanded", "true");
+    const frame = $("#composer").getBoundingClientRect(),
+      anchor = chip.getBoundingClientRect();
+    picker.style.bottom = frame.bottom - anchor.top + 6 + "px";
+    picker.style.left =
+      Math.max(
+        8,
+        Math.min(
+          anchor.left - frame.left,
+          frame.width - picker.offsetWidth - 8,
+        ),
+      ) + "px";
+    const current = picker.querySelector('[aria-checked="true"]');
+    current?.scrollIntoView({ block: "nearest" });
+    if (focus) (current || picker.querySelector("button")).focus();
+    return true;
+  }
+  function closePicker({ restore = false } = {}) {
+    if (!pickerFor) return;
+    const chip = chipFor(pickerFor);
+    // Pointer users keep their place (and their on-screen keyboard).
+    if (restore && picker.contains(document.activeElement)) chip?.focus();
+    pickerFor = null;
+    picker.hidden = true;
+    chip?.setAttribute("aria-expanded", "false");
+  }
+  function chooseModel(value) {
+    const name = pickerFor,
+      field = fields[name];
+    closePicker({ restore: true });
+    if (busy || field.disabled) return;
+    if (field.value !== value) {
+      field.value = value;
+      field.dispatchEvent(new Event("change", { bubbles: true }));
+    }
+    // Choosing someone's model also addresses the message to them.
+    if (!mentioned(box.value).length) {
+      if (mode() !== "chat") window.contextLayer?.selectProvider(name);
+      else if (!targets.includes(name))
+        targets = names.filter((n) => n === name || targets.includes(n));
+    }
+    sync();
+  }
+  const endPress = () => {
+    clearTimeout(press?.timer);
+    press = null;
+  };
+  recipients.addEventListener("pointerdown", (event) => {
+    const chip = event.target.closest(".chip");
+    endPress();
+    ignoreClickUntil = 0;
+    if (!chip || chip.disabled || event.button) return;
+    const name = chip.dataset.name;
+    press = {
+      id: event.pointerId,
+      x: event.clientX,
+      y: event.clientY,
+      held: false,
+      timer: setTimeout(() => {
+        if (openPicker(name)) press.held = true;
+        else endPress();
+      }, HOLD_MS),
+    };
+  });
+  document.addEventListener("pointermove", (event) => {
+    if (event.pointerId !== press?.id) return;
+    if (press.held) {
+      // Keep holding and slide onto a model; releasing there chooses it.
+      const over = itemAt(event);
+      for (const item of picker.querySelectorAll("button"))
+        item.classList.toggle("is-active", item === over);
+    } else if (
+      Math.hypot(event.clientX - press.x, event.clientY - press.y) > 10
+    )
+      endPress();
+  });
+  document.addEventListener("pointerup", (event) => {
+    if (event.pointerId !== press?.id) return;
+    const item = press.held && itemAt(event);
+    // Releasing on the chip itself would otherwise toggle it.
+    if (press.held && !item) ignoreClickUntil = performance.now() + 400;
+    endPress();
+    if (item) chooseModel(item.dataset.value);
+  });
+  document.addEventListener("pointercancel", (event) => {
+    if (event.pointerId === press?.id) endPress();
+  });
+  // Touch long-presses and the keyboard's menu key arrive as context menus.
+  recipients.addEventListener("contextmenu", (event) => {
+    const chip = event.target.closest(".chip");
+    if (!chip) return;
+    event.preventDefault();
+    if (pickerFor !== chip.dataset.name)
+      openPicker(chip.dataset.name, { focus: !press });
+  });
+  recipients.addEventListener("keydown", (event) => {
+    const chip = event.target.closest(".chip");
+    if (!chip || !["ArrowDown", "ArrowUp"].includes(event.key)) return;
+    event.preventDefault();
+    openPicker(chip.dataset.name, { focus: true });
+  });
+  picker.addEventListener("click", (event) => {
+    const item = event.target.closest('[role="menuitemradio"]');
+    if (item) chooseModel(item.dataset.value);
+  });
+  picker.addEventListener("keydown", (event) => {
+    const items = [...picker.querySelectorAll("button")],
+      at = items.indexOf(document.activeElement);
+    const to = {
+      ArrowDown: at + 1,
+      ArrowUp: at - 1,
+      Home: 0,
+      End: items.length - 1,
+    }[event.key];
+    if (to !== undefined) {
+      event.preventDefault();
+      items[(to + items.length) % items.length].focus();
+    } else if (event.key === "Tab") closePicker({ restore: true });
+  });
 
   // ----- Sync layout with app state -----
   const badges = {
@@ -338,8 +521,13 @@
         ? titleOf({ ...conversation, messages })
         : "New chat";
     const empty = $("#empty");
-    if (empty && empty.dataset.mode !== current && !messages.length)
-      showEmpty();
+    if (
+      empty &&
+      !messages.length &&
+      (empty.dataset.mode !== current ||
+        empty.dataset.who !== (current === "chat" ? "" : who[0]))
+    )
+      showEmpty(who[0]);
     if (!box.value) box.style.height = "";
     renderLists();
   }
@@ -428,6 +616,7 @@
     (s) => $(s),
   );
   document.addEventListener("click", (event) => {
+    if (!picker.contains(event.target)) closePicker();
     for (const panel of popovers)
       if (panel.open && !panel.contains(event.target)) panel.open = false;
     if (event.target.closest(".menu-items button"))
@@ -435,6 +624,7 @@
   });
   document.addEventListener("keydown", (event) => {
     if (event.key !== "Escape") return;
+    if (pickerFor) return closePicker({ restore: true });
     for (const panel of popovers)
       if (panel.open) {
         panel.open = false;
