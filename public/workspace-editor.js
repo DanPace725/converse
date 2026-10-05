@@ -292,6 +292,7 @@
     const s = data.summary, facts = [ ['Calls', `${s.attempts} attempted · ${s.completed} completed · ${s.failed} failed · ${s.missing_responses} without a response`],
       ['Retrieval', `${s.changed_selections} selections changed · ${s.confirmed_baselines || 0} baselines confirmed · ${s.fallbacks} fallbacks · ${s.skipped} skipped`],
       ['Reuse', `${s.cache_hits} cached decisions`],
+      ...(s.memory_shadows ? [['Memory shadow', `${s.memory_shadows} compared, not applied · ${s.memory_shadow_failures} failed${s.memory_shadow_mean_jaccard == null ? '' : ` · mean overlap ${(s.memory_shadow_mean_jaccard * 100).toFixed(0)}%`}`]] : []),
       ['Latency', `${(s.known_elapsed_ms / 1000).toFixed(2)} s reported${s.unknown_latency_calls ? ` · ${s.unknown_latency_calls} unknown` : ''}`] ];
     el('jev-summary').replaceChildren(...facts.flatMap(([label, value]) => {
       const term = document.createElement('dt'), detail = document.createElement('dd'); term.textContent = label; detail.textContent = value; return [term, detail];
@@ -318,12 +319,17 @@
       const labels = ids => ids.map(id => view.source_refs?.[id] || 'historical source').join(', ') || 'none recorded';
       if (record.baseline?.length || record.selected?.length) line(`Baseline: ${labels(record.baseline)} → Selected: ${labels(record.selected)}`);
       if (record.assessment?.threshold != null) line('Confidence threshold: ' + record.assessment.threshold);
+      if (record.kind === 'memory_shadow') {
+        const picks = list => list ? list.map(r => `¶${r.passage_id} ${r.kind}`).join(', ') || 'none' : 'unavailable';
+        line(`Task model: ${picks(record.llm_selection)} · Jev: ${picks(record.jev_selection)}`);
+        if (record.comparison) line(`${record.comparison.both} shared · ${record.comparison.kind_matches} same kind · overlap ${(record.comparison.jaccard * 100).toFixed(0)}%`);
+      }
       if (record.economics) line(`Delegation gate: ${record.economics.allowed ? 'eligible' : 'skipped'} · ${record.economics.reason}. ${record.economics_basis}`);
       for (const candidate of record.candidates || record.supplied_candidates || []) {
         const decision = record.assessment?.decisions?.find(d => d.id === candidate.id);
         const source = candidate.source;
         line(`${candidate.kind || candidate.type || 'candidate'}${source ? ` · characters ${source.offset}–${source.end_offset}` : ''}${decision ? ` · ${decision.category} · confidence ${decision.confidence ?? 'unknown'}${decision.uncertain ? ' (uncertain)' : ''}` : ''}`);
-        const excerpt = document.createElement('blockquote'); excerpt.textContent = candidate.excerpt || ''; detail.append(excerpt);
+        const excerpt = document.createElement('blockquote'); excerpt.textContent = candidate.excerpt || candidate.passage || ''; detail.append(excerpt);
         if (candidate.id && view.source_refs?.[candidate.id]) {
           const button = document.createElement('button'); button.type = 'button'; button.className = 'link-button';
           button.textContent = 'Open ' + (source?.title || source?.sourceRef || view.source_refs[candidate.id]);
