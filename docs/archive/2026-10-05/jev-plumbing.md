@@ -1,0 +1,11 @@
+# Jev memory plumbing and shareable exports
+
+The source implementation and [validation notes](../../../../CLA/conclave/docs/archive/2026-10-05/jev-plumbing/README.md) live in Conclave. The snapshot records source commit b09f012802b3661a5cea5d0cc376547f632a91ed and 80 exact managed file hashes.
+
+Jev gates on aggregate keep/skip probability while kind uncertainty remains separate. The default is task-model extraction with a Jev shadow. Set the server environment variable `CONCLAVE_MEMORY_SELECTOR=jev-hybrid` to accept confident Jev decisions and send only uncertain/oversized passages to the task model. Jev must also be enabled and available for the conversation; otherwise task-model extraction applies. Whole paragraphs are batched without source-local renumbering. Assistant quotes/citations are unresolved data, and the source/selector/model are recorded separately. Fresh quality and total-cost evaluation is still required before promoting this mode.
+
+For publication copies, authenticated requests can use `/api/conclave?action=shareable_export&conversation=ID`, or add `sanitize=1` to export/download. Canonical exports/downloads remain exact by default. Shareable exports carry a redaction receipt; original hashes/offsets cannot verify changed content. Pattern scanning cannot guarantee all secrets or personal data are absent. The Conclave evaluation generator sanitizes publication outputs automatically and its source check scans the evaluation folder.
+
+The Google Maps key was redacted from the Conclave live heat-pump export and the saved key excerpt. Both repositories' tracked JSON/JSONL/Markdown/HTML/text scans are clear for the implemented patterns. One old revision of the live export still contains the key; published history was not rewritten and no third party was contacted.
+
+Verification: Conclave 257 tests passed, one optional replay skipped; Converse 188 passed, one optional live-Neon test skipped. Both syntax checks and 80-file parity passed. One synthetic native Jev 1.13.0 format probe passed (802 reported input tokens, 146 output tokens). These checks establish plumbing and request compatibility, not selection quality, production performance or cost savings.
