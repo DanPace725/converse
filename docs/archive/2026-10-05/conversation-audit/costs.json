@@ -1,0 +1,3334 @@
+{
+  "conversations": [
+    {
+      "id": "conv_1a4df655-e9a5-4267-8549-531dd081a7d4",
+      "exported_at": "2026-10-05T17:14:57.731Z",
+      "price_date": "2026-10-02",
+      "basis": "public direct API list rates; standard paid tier; not an invoice or historical effective-rate record",
+      "calls": [
+        {
+          "request_id": "evt_0d125533-1a2b-40af-8460-41643edaa8af",
+          "seq": 9,
+          "purpose": "answer",
+          "requested_model": "gpt-6.1-sol",
+          "reported_model": "gpt-6.1-sol",
+          "status": "completed",
+          "counts": {
+            "input": 5698,
+            "output": 1015,
+            "read": 0,
+            "write": 5695,
+            "write_5m": null,
+            "write_1h": null
+          },
+          "provider": "openai",
+          "model": "gpt-6.1-sol",
+          "usd_min": 0.0243935,
+          "usd_max": 0.043712,
+          "reasons": [
+            "Short/long tier boundary unverified; range covers both"
+          ]
+        },
+        {
+          "request_id": "evt_89b45821-f6ae-40f3-83e9-b9a84d7ea5c0",
+          "seq": 22,
+          "purpose": "answer",
+          "requested_model": "claude-opus-5-5",
+          "reported_model": "claude-opus-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 13458,
+            "output": 2972,
+            "read": 0,
+            "write": 13454,
+            "write_5m": 13454,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-opus-5-5",
+          "usd_min": 0.126726,
+          "usd_max": 0.126726,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_c77d1987-5427-4e05-b132-deac281a3112",
+          "seq": 36,
+          "purpose": "answer",
+          "requested_model": "claude-opus-5-5",
+          "reported_model": "claude-opus-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 15659,
+            "output": 500,
+            "read": 7603,
+            "write": 8052,
+            "write_5m": 8052,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-opus-5-5",
+          "usd_min": 0.0517966,
+          "usd_max": 0.0517966,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_406e80f9-8fe5-4c60-8289-5aec215e1965",
+          "seq": 42,
+          "purpose": "web-search",
+          "requested_model": "claude-opus-5-5",
+          "reported_model": "claude-opus-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 29202,
+            "output": 2135,
+            "read": 12861,
+            "write": 16333,
+            "write_5m": 16333,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-opus-5-5",
+          "usd_min": 0.1269692,
+          "usd_max": 0.1269692,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_a85932be-9b4c-4c49-9f46-063bb9b9859c",
+          "seq": 51,
+          "purpose": "web-search",
+          "requested_model": "claude-opus-5-5",
+          "reported_model": "claude-opus-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 30766,
+            "output": 2210,
+            "read": 16377,
+            "write": 14381,
+            "write_5m": 14381,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-opus-5-5",
+          "usd_min": 0.11941239999999999,
+          "usd_max": 0.11941239999999999,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_759eede7-54de-45ee-b28c-499eff40825c",
+          "seq": 60,
+          "purpose": "web-search",
+          "requested_model": "claude-opus-5-5",
+          "reported_model": "claude-opus-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 30469,
+            "output": 2450,
+            "read": 15817,
+            "write": 14644,
+            "write_5m": 14644,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-opus-5-5",
+          "usd_min": 0.12541539999999998,
+          "usd_max": 0.12541539999999998,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_5acb1fe2-8d5e-4395-a85f-1d219f7e8801",
+          "seq": 67,
+          "purpose": "answer",
+          "requested_model": "claude-opus-5-5",
+          "reported_model": "claude-opus-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 19852,
+            "output": 224,
+            "read": 15655,
+            "write": 4195,
+            "write_5m": 4195,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-opus-5-5",
+          "usd_min": 0.028594,
+          "usd_max": 0.028594,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_a1a2eb6e-a2d1-4569-a1ed-35ff81e6cb4c",
+          "seq": 82,
+          "purpose": "answer",
+          "requested_model": "claude-opus-5-5",
+          "reported_model": "claude-opus-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 27180,
+            "output": 296,
+            "read": 19850,
+            "write": 7328,
+            "write_5m": 7328,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-opus-5-5",
+          "usd_min": 0.046538,
+          "usd_max": 0.046538,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_3b3e0536-12f8-4d9d-989c-2bd71d0577c2",
+          "seq": 88,
+          "purpose": "web-search",
+          "requested_model": "claude-opus-5-5",
+          "reported_model": "claude-opus-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 19858,
+            "output": 2237,
+            "read": 5936,
+            "write": 13916,
+            "write_5m": 13916,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-opus-5-5",
+          "usd_min": 0.1155312,
+          "usd_max": 0.1155312,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_37e47649-6fe3-460c-a0f3-f41739aee1c3",
+          "seq": 97,
+          "purpose": "web-search",
+          "requested_model": "claude-opus-5-5",
+          "reported_model": "claude-opus-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 20113,
+            "output": 1951,
+            "read": 5947,
+            "write": 14160,
+            "write_5m": 14160,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-opus-5-5",
+          "usd_min": 0.11103339999999999,
+          "usd_max": 0.11103339999999999,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_325e01bc-0c8a-40dc-a2c1-1f84c8543661",
+          "seq": 106,
+          "purpose": "answer",
+          "requested_model": "claude-opus-5-5",
+          "reported_model": "claude-opus-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 22028,
+            "output": 498,
+            "read": 7603,
+            "write": 14421,
+            "write_5m": 14421,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-opus-5-5",
+          "usd_min": 0.08360160000000001,
+          "usd_max": 0.08360160000000001,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_5ec77729-8631-4698-a46e-2fc51900ffce",
+          "seq": 118,
+          "purpose": "answer",
+          "requested_model": "claude-opus-5-5",
+          "reported_model": "claude-opus-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 31862,
+            "output": 2295,
+            "read": 22024,
+            "write": 9836,
+            "write_5m": 9836,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-opus-5-5",
+          "usd_min": 0.0994928,
+          "usd_max": 0.0994928,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_d8592bf0-8695-476a-9c2d-452d9530dde5",
+          "seq": 132,
+          "purpose": "answer",
+          "requested_model": "gpt-6.1-sol",
+          "reported_model": "gpt-6.1-sol",
+          "status": "completed",
+          "counts": {
+            "input": 12068,
+            "output": 731,
+            "read": 3452,
+            "write": 8613,
+            "write_5m": null,
+            "write_1h": null
+          },
+          "provider": "openai",
+          "model": "gpt-6.1-sol",
+          "usd_min": 0.0291937,
+          "usd_max": 0.0547324,
+          "reasons": [
+            "Short/long tier boundary unverified; range covers both"
+          ]
+        },
+        {
+          "request_id": "evt_2c23fcc2-15b8-488e-bd93-0a3655ce0f18",
+          "seq": 145,
+          "purpose": "answer",
+          "requested_model": "gpt-6.1-sol",
+          "reported_model": "gpt-6.1-sol",
+          "status": "completed",
+          "counts": {
+            "input": 12996,
+            "output": 2523,
+            "read": 3452,
+            "write": 9541,
+            "write_5m": null,
+            "write_1h": null
+          },
+          "provider": "openai",
+          "model": "gpt-6.1-sol",
+          "usd_min": 0.0494337,
+          "usd_max": 0.08625239999999999,
+          "reasons": [
+            "Short/long tier boundary unverified; range covers both"
+          ]
+        },
+        {
+          "request_id": "evt_0e389cae-7fe7-4c99-8829-e868f8c6e0b0",
+          "seq": 153,
+          "purpose": "answer",
+          "requested_model": "gpt-6.1-sol",
+          "reported_model": "gpt-6.1-sol",
+          "status": "completed",
+          "counts": {
+            "input": 13194,
+            "output": 24,
+            "read": 12993,
+            "write": 198,
+            "write_5m": null,
+            "write_1h": null
+          },
+          "provider": "openai",
+          "model": "gpt-6.1-sol",
+          "usd_min": 0.0020403,
+          "usd_max": 0.003960600000000001,
+          "reasons": [
+            "Short/long tier boundary unverified; range covers both"
+          ]
+        },
+        {
+          "request_id": "evt_111b2e24-1053-4eb6-980b-5676107b71e1",
+          "seq": 160,
+          "purpose": "answer",
+          "requested_model": "gpt-6.1-sol",
+          "reported_model": "gpt-6.1-sol",
+          "status": "completed",
+          "counts": {
+            "input": 15064,
+            "output": 25,
+            "read": 13191,
+            "write": 1870,
+            "write_5m": null,
+            "write_1h": null
+          },
+          "provider": "openai",
+          "model": "gpt-6.1-sol",
+          "usd_min": 0.006250100000000001,
+          "usd_max": 0.012375200000000001,
+          "reasons": [
+            "Short/long tier boundary unverified; range covers both"
+          ]
+        },
+        {
+          "request_id": "evt_3b34c746-0989-467e-8bb4-a56886503dda",
+          "seq": 167,
+          "purpose": "answer",
+          "requested_model": "gpt-6.1-sol",
+          "reported_model": "gpt-6.1-sol",
+          "status": "completed",
+          "counts": {
+            "input": 16150,
+            "output": 69,
+            "read": 15061,
+            "write": 1086,
+            "write_5m": null,
+            "write_1h": null
+          },
+          "provider": "openai",
+          "model": "gpt-6.1-sol",
+          "usd_min": 0.004917100000000001,
+          "usd_max": 0.009489200000000001,
+          "reasons": [
+            "Short/long tier boundary unverified; range covers both"
+          ]
+        },
+        {
+          "request_id": "evt_af76f703-124a-47e7-9cf7-129768ec5449",
+          "seq": 180,
+          "purpose": "answer",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 23756,
+            "output": 111,
+            "read": 0,
+            "write": 23752,
+            "write_5m": 23752,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.060498,
+          "usd_max": 0.060498,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_f33672eb-fb40-43b2-932b-a88f45c77363",
+          "seq": 191,
+          "purpose": "answer",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 24625,
+            "output": 217,
+            "read": 23752,
+            "write": 871,
+            "write_5m": 871,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.009101900000000001,
+          "usd_max": 0.009101900000000001,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_c9a28140-8869-44ff-8e2d-df0b98c18ee3",
+          "seq": 211,
+          "purpose": "answer",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 26453,
+            "output": 233,
+            "read": 7605,
+            "write": 18844,
+            "write_5m": 18844,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.050969,
+          "usd_max": 0.050969,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_180b4374-fd79-47b3-a279-a1b06a5299ce",
+          "seq": 219,
+          "purpose": "answer",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 41945,
+            "output": 670,
+            "read": 26449,
+            "write": 15494,
+            "write_5m": 15494,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.050728800000000004,
+          "usd_max": 0.050728800000000004,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_5c6de296-607d-471d-ba92-a49195d1535b",
+          "seq": 262,
+          "purpose": "answer",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 30977,
+            "output": 588,
+            "read": 7605,
+            "write": 23368,
+            "write_5m": 23368,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.065829,
+          "usd_max": 0.065829,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_f693912f-b275-4f40-9637-5a91c7276d65",
+          "seq": 274,
+          "purpose": "answer",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 48393,
+            "output": 285,
+            "read": 30973,
+            "write": 17418,
+            "write_5m": 17418,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.0525936,
+          "usd_max": 0.0525936,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_b247d456-c92e-436c-aa01-8f1745eb0cf9",
+          "seq": 285,
+          "purpose": "answer",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 31132,
+            "output": 591,
+            "read": 24347,
+            "write": 6781,
+            "write_5m": 6781,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.0277399,
+          "usd_max": 0.0277399,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_d098ef34-c235-44fa-b94f-204c68748757",
+          "seq": 298,
+          "purpose": "answer",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 44492,
+            "output": 387,
+            "read": 31128,
+            "write": 13362,
+            "write_5m": 13362,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.0435046,
+          "usd_max": 0.0435046,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_a37410ea-f681-41e8-a490-6b131ce87c43",
+          "seq": 308,
+          "purpose": "answer",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 31674,
+            "output": 583,
+            "read": 24347,
+            "write": 7323,
+            "write_5m": 7323,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.029014900000000003,
+          "usd_max": 0.029014900000000003,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_3273d8c4-d8d7-4b70-8d8c-1afb485c2901",
+          "seq": 319,
+          "purpose": "retrieval-reranking",
+          "requested_model": "jev-latest",
+          "reported_model": "jev-1.13.0",
+          "status": "missing_response",
+          "counts": {
+            "input": 1847,
+            "output": 290,
+            "read": null,
+            "write": null,
+            "write_5m": null,
+            "write_1h": null
+          },
+          "provider": "typesafe",
+          "model": "jev-latest",
+          "usd_min": 0.000077574,
+          "usd_max": 0.000077574,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_2e3df55f-c419-4ec8-ab85-eac19209d62c",
+          "seq": 323,
+          "purpose": "answer",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 44915,
+            "output": 385,
+            "read": 31670,
+            "write": 13243,
+            "write_5m": 13243,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.0432955,
+          "usd_max": 0.0432955,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_44e051a4-6857-42d5-90f1-68429b81c1b5",
+          "seq": 335,
+          "purpose": "answer",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 31892,
+            "output": 696,
+            "read": 24347,
+            "write": 7541,
+            "write_5m": 7541,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.030689900000000003,
+          "usd_max": 0.030689900000000003,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_0528da25-ebad-4c35-a599-a0fb4e685762",
+          "seq": 349,
+          "purpose": "answer",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 56882,
+            "output": 342,
+            "read": 31888,
+            "write": 24992,
+            "write_5m": 24992,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.0722816,
+          "usd_max": 0.0722816,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_fb8d703d-356d-4dee-9b14-7acdf5a6b367",
+          "seq": 356,
+          "purpose": "retrieval-reranking",
+          "requested_model": "jev-latest",
+          "reported_model": "jev-1.13.0",
+          "status": "missing_response",
+          "counts": {
+            "input": 1830,
+            "output": 288,
+            "read": null,
+            "write": null,
+            "write_5m": null,
+            "write_1h": null
+          },
+          "provider": "typesafe",
+          "model": "jev-latest",
+          "usd_min": 0.00007686,
+          "usd_max": 0.00007686,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_7aa6e498-196a-451f-ad7f-322d01f9db1a",
+          "seq": 365,
+          "purpose": "answer",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 31875,
+            "output": 599,
+            "read": 24347,
+            "write": 7524,
+            "write_5m": 7524,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.029677400000000003,
+          "usd_max": 0.029677400000000003,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_25d19402-d55a-4376-86c2-1896d6d70495",
+          "seq": 377,
+          "purpose": "answer",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 49302,
+            "output": 224,
+            "read": 31871,
+            "write": 17429,
+            "write_5m": 17429,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.0521907,
+          "usd_max": 0.0521907,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_0c7461d0-6e43-4ea6-bde5-4914debf02dd",
+          "seq": 389,
+          "purpose": "answer",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 31888,
+            "output": 603,
+            "read": 24347,
+            "write": 7537,
+            "write_5m": 7537,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.029749900000000003,
+          "usd_max": 0.029749900000000003,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_e86e7bae-7cce-4f43-9b55-ad4c59439d89",
+          "seq": 401,
+          "purpose": "answer",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 49319,
+            "output": 294,
+            "read": 31884,
+            "write": 17433,
+            "write_5m": 17433,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.0529033,
+          "usd_max": 0.0529033,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_25ac158d-d7f3-4cbb-8f00-e0b308c0c566",
+          "seq": 423,
+          "purpose": "answer",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 26997,
+            "output": 493,
+            "read": 0,
+            "write": 26993,
+            "write_5m": 26993,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.0724205,
+          "usd_max": 0.0724205,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_43db412d-012f-42cc-aaad-ddd362ae1a39",
+          "seq": 431,
+          "purpose": "retrieval-reranking",
+          "requested_model": "jev-latest",
+          "reported_model": "jev-1.13.0",
+          "status": "missing_response",
+          "counts": {
+            "input": 1664,
+            "output": 293,
+            "read": null,
+            "write": null,
+            "write_5m": null,
+            "write_1h": null
+          },
+          "provider": "typesafe",
+          "model": "jev-latest",
+          "usd_min": 0.000069888,
+          "usd_max": 0.000069888,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_328fc899-3c15-4d53-b9eb-8a622926236f",
+          "seq": 442,
+          "purpose": "answer",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 32764,
+            "output": 280,
+            "read": 26993,
+            "write": 5769,
+            "write_5m": 5769,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.0226251,
+          "usd_max": 0.0226251,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_efc6a4b6-83b6-4558-9304-61b8de832a24",
+          "seq": 452,
+          "purpose": "answer",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 41613,
+            "output": 313,
+            "read": 32762,
+            "write": 8849,
+            "write_5m": 8849,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.0318089,
+          "usd_max": 0.0318089,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_4a51a24b-89c9-4213-8668-3189723b9914",
+          "seq": 465,
+          "purpose": "answer",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 31292,
+            "output": 679,
+            "read": 7780,
+            "write": 23508,
+            "write_5m": 23508,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.067124,
+          "usd_max": 0.067124,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_4be1c719-675e-4b01-8c12-3bbf529e0506",
+          "seq": 484,
+          "purpose": "answer",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 48666,
+            "output": 390,
+            "read": 31288,
+            "write": 17376,
+            "write_5m": 17376,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.0536016,
+          "usd_max": 0.0536016,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_2f616008-eea3-4070-a7d2-5e9077b52622",
+          "seq": 499,
+          "purpose": "answer",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 31698,
+            "output": 635,
+            "read": 7780,
+            "write": 23914,
+            "write_5m": 23914,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.067699,
+          "usd_max": 0.067699,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_1be9b1c7-b023-4bf9-b824-094911414498",
+          "seq": 518,
+          "purpose": "answer",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 49161,
+            "output": 481,
+            "read": 31694,
+            "write": 17465,
+            "write_5m": 17465,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.054815300000000004,
+          "usd_max": 0.054815300000000004,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_c778e230-c4f7-4c6c-9ac8-3ea82487f237",
+          "seq": 533,
+          "purpose": "answer",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 31894,
+            "output": 651,
+            "read": 7780,
+            "write": 24110,
+            "write_5m": 24110,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.068349,
+          "usd_max": 0.068349,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_855d8111-db3c-43f8-ae11-6eaf9f0da995",
+          "seq": 550,
+          "purpose": "answer",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 49373,
+            "output": 242,
+            "read": 31890,
+            "write": 17481,
+            "write_5m": 17481,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.0525045,
+          "usd_max": 0.0525045,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_3c62ba35-38e9-439e-987e-b36eb1d438aa",
+          "seq": 566,
+          "purpose": "answer",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 31967,
+            "output": 632,
+            "read": 7780,
+            "write": 24183,
+            "write_5m": 24183,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.0683415,
+          "usd_max": 0.0683415,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_b7f2fc3d-b43f-4f22-8c98-2a0a01fef9ef",
+          "seq": 583,
+          "purpose": "answer",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 49427,
+            "output": 347,
+            "read": 31963,
+            "write": 17462,
+            "write_5m": 17462,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.053521599999999996,
+          "usd_max": 0.053521599999999996,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_608ba039-be34-4156-881e-3f2d82a23b21",
+          "seq": 589,
+          "purpose": "retrieval-reranking",
+          "requested_model": "jev-latest",
+          "reported_model": "jev-1.13.0",
+          "status": "missing_response",
+          "counts": {
+            "input": 1882,
+            "output": 285,
+            "read": null,
+            "write": null,
+            "write_5m": null,
+            "write_1h": null
+          },
+          "provider": "typesafe",
+          "model": "jev-latest",
+          "usd_min": 0.00007904400000000001,
+          "usd_max": 0.00007904400000000001,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_fcc0ec77-e23b-46fb-8f47-dc2c1f675efb",
+          "seq": 597,
+          "purpose": "retrieval-reranking",
+          "requested_model": "jev-latest",
+          "reported_model": "jev-1.13.0",
+          "status": "missing_response",
+          "counts": {
+            "input": 1791,
+            "output": 289,
+            "read": null,
+            "write": null,
+            "write_5m": null,
+            "write_1h": null
+          },
+          "provider": "typesafe",
+          "model": "jev-latest",
+          "usd_min": 0.000075222,
+          "usd_max": 0.000075222,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_ef2ac2e7-fa4c-4354-b976-e76ffc18d8f4",
+          "seq": 606,
+          "purpose": "answer",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 32128,
+            "output": 469,
+            "read": 7780,
+            "write": 24344,
+            "write_5m": 24344,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.067114,
+          "usd_max": 0.067114,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_8a05b6d1-afbf-4df9-bc28-936d7e2ee110",
+          "seq": 625,
+          "purpose": "answer",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 44133,
+            "output": 369,
+            "read": 32124,
+            "write": 12007,
+            "write_5m": 12007,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.0401363,
+          "usd_max": 0.0401363,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_e2a158b2-26bb-44ac-8109-4970b4936d79",
+          "seq": 640,
+          "purpose": "answer",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 32243,
+            "output": 639,
+            "read": 24919,
+            "write": 7320,
+            "write_5m": 7320,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.029681799999999998,
+          "usd_max": 0.029681799999999998,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_15726fe9-afe3-476a-bb60-9f32e6182b07",
+          "seq": 657,
+          "purpose": "answer",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 49710,
+            "output": 287,
+            "read": 32239,
+            "write": 17469,
+            "write_5m": 17469,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.0529943,
+          "usd_max": 0.0529943,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_ce5f82f2-74c8-4f85-bb34-a4806cf0b59a",
+          "seq": 663,
+          "purpose": "retrieval-reranking",
+          "requested_model": "jev-latest",
+          "reported_model": "jev-1.13.0",
+          "status": "missing_response",
+          "counts": {
+            "input": 1676,
+            "output": 292,
+            "read": null,
+            "write": null,
+            "write_5m": null,
+            "write_1h": null
+          },
+          "provider": "typesafe",
+          "model": "jev-latest",
+          "usd_min": 0.00007039200000000001,
+          "usd_max": 0.00007039200000000001,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_57e47c03-1e24-45b7-99e5-51b27816b75c",
+          "seq": 668,
+          "purpose": "retrieval-reranking",
+          "requested_model": "jev-latest",
+          "reported_model": "jev-1.13.0",
+          "status": "missing_response",
+          "counts": {
+            "input": 1760,
+            "output": 295,
+            "read": null,
+            "write": null,
+            "write_5m": null,
+            "write_1h": null
+          },
+          "provider": "typesafe",
+          "model": "jev-latest",
+          "usd_min": 0.00007392,
+          "usd_max": 0.00007392,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_f9b0595a-0cdd-4b2c-a9e8-991d8ab75d77",
+          "seq": 679,
+          "purpose": "answer",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 32299,
+            "output": 674,
+            "read": 24919,
+            "write": 7376,
+            "write_5m": 7376,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.0301718,
+          "usd_max": 0.0301718,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_c0baf8c6-adc9-4d9e-b0d3-fa6257d5eee9",
+          "seq": 696,
+          "purpose": "answer",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 49801,
+            "output": 277,
+            "read": 32295,
+            "write": 17504,
+            "write_5m": 17504,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.052993,
+          "usd_max": 0.052993,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_3eb9c8b7-693e-43c7-9c1a-08e8c29d9766",
+          "seq": 714,
+          "purpose": "answer",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 32161,
+            "output": 585,
+            "read": 24919,
+            "write": 7238,
+            "write_5m": 7238,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.0289368,
+          "usd_max": 0.0289368,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_83837234-71e4-47d1-b15a-a74c76a00fad",
+          "seq": 723,
+          "purpose": "retrieval-reranking",
+          "requested_model": "jev-latest",
+          "reported_model": "jev-1.13.0",
+          "status": "missing_response",
+          "counts": {
+            "input": 1541,
+            "output": 296,
+            "read": null,
+            "write": null,
+            "write_5m": null,
+            "write_1h": null
+          },
+          "provider": "typesafe",
+          "model": "jev-latest",
+          "usd_min": 0.00006472200000000001,
+          "usd_max": 0.00006472200000000001,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_b9536d16-84b7-4707-90a2-6ec75523a315",
+          "seq": 739,
+          "purpose": "answer",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 45341,
+            "output": 291,
+            "read": 32157,
+            "write": 13182,
+            "write_5m": 13182,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.0423004,
+          "usd_max": 0.0423004,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_61714490-3b0c-4327-a417-a3b36150ed8e",
+          "seq": 754,
+          "purpose": "answer",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 32112,
+            "output": 523,
+            "read": 24919,
+            "write": 7189,
+            "write_5m": 7189,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.0281943,
+          "usd_max": 0.0281943,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_e2f8f429-5016-41d4-9708-9b2c72e30033",
+          "seq": 769,
+          "purpose": "answer",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 48997,
+            "output": 336,
+            "read": 32108,
+            "write": 16887,
+            "write_5m": 16887,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.0520031,
+          "usd_max": 0.0520031,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_3d915130-7f09-4f23-8632-e10f6b2a14ba",
+          "seq": 779,
+          "purpose": "retrieval-reranking",
+          "requested_model": "jev-latest",
+          "reported_model": "jev-1.13.0",
+          "status": "missing_response",
+          "counts": {
+            "input": 1620,
+            "output": 290,
+            "read": null,
+            "write": null,
+            "write_5m": null,
+            "write_1h": null
+          },
+          "provider": "typesafe",
+          "model": "jev-latest",
+          "usd_min": 0.00006804,
+          "usd_max": 0.00006804,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_a089e824-3b45-4199-a252-2390ba5c1920",
+          "seq": 788,
+          "purpose": "answer",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 32315,
+            "output": 490,
+            "read": 24919,
+            "write": 7392,
+            "write_5m": 7392,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.0283718,
+          "usd_max": 0.0283718,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_1abf1e5d-c1f4-41b6-9519-61f2541173e0",
+          "seq": 796,
+          "purpose": "retrieval-reranking",
+          "requested_model": "jev-latest",
+          "reported_model": "jev-1.13.0",
+          "status": "missing_response",
+          "counts": {
+            "input": 1788,
+            "output": 292,
+            "read": null,
+            "write": null,
+            "write_5m": null,
+            "write_1h": null
+          },
+          "provider": "typesafe",
+          "model": "jev-latest",
+          "usd_min": 0.000075096,
+          "usd_max": 0.000075096,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_920dd637-4189-4a10-a75a-ed6540a5b8d1",
+          "seq": 801,
+          "purpose": "retrieval-reranking",
+          "requested_model": "jev-latest",
+          "reported_model": "jev-1.13.0",
+          "status": "missing_response",
+          "counts": {
+            "input": 1721,
+            "output": 292,
+            "read": null,
+            "write": null,
+            "write_5m": null,
+            "write_1h": null
+          },
+          "provider": "typesafe",
+          "model": "jev-latest",
+          "usd_min": 0.00007228200000000001,
+          "usd_max": 0.00007228200000000001,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_4af3c2f3-008f-4671-bb75-be680b68a707",
+          "seq": 810,
+          "purpose": "answer",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 43297,
+            "output": 362,
+            "read": 32311,
+            "write": 10984,
+            "write_5m": 10984,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.037546199999999995,
+          "usd_max": 0.037546199999999995,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_b4181bf0-5bb7-4018-afc0-3a4e6a630f63",
+          "seq": 823,
+          "purpose": "answer",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 32139,
+            "output": 599,
+            "read": 24919,
+            "write": 7216,
+            "write_5m": 7216,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.0290218,
+          "usd_max": 0.0290218,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_2c28aa3d-bdb0-4eb2-ab7f-066bad2b3f86",
+          "seq": 842,
+          "purpose": "answer",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 49566,
+            "output": 238,
+            "read": 32135,
+            "write": 17429,
+            "write_5m": 17429,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.0523835,
+          "usd_max": 0.0523835,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_9dd216a5-0278-4c3b-a5e5-0f2721017c8a",
+          "seq": 848,
+          "purpose": "retrieval-reranking",
+          "requested_model": "jev-latest",
+          "reported_model": "jev-1.13.0",
+          "status": "missing_response",
+          "counts": {
+            "input": 1520,
+            "output": 295,
+            "read": null,
+            "write": null,
+            "write_5m": null,
+            "write_1h": null
+          },
+          "provider": "typesafe",
+          "model": "jev-latest",
+          "usd_min": 0.00006384,
+          "usd_max": 0.00006384,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_ac701d4e-6df8-4d44-b1e1-325de4a395ef",
+          "seq": 853,
+          "purpose": "retrieval-reranking",
+          "requested_model": "jev-latest",
+          "reported_model": "jev-1.13.0",
+          "status": "missing_response",
+          "counts": {
+            "input": 1681,
+            "output": 294,
+            "read": null,
+            "write": null,
+            "write_5m": null,
+            "write_1h": null
+          },
+          "provider": "typesafe",
+          "model": "jev-latest",
+          "usd_min": 0.000070602,
+          "usd_max": 0.000070602,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_43a1d620-6478-4ad2-8d3c-c87984aa64b4",
+          "seq": 862,
+          "purpose": "answer",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": null,
+          "status": "missing_response",
+          "counts": null,
+          "model": "claude-sonnet-5-5",
+          "provider": "anthropic",
+          "usd_min": null,
+          "usd_max": null,
+          "reasons": [
+            "Missing reported input/output usage"
+          ]
+        },
+        {
+          "request_id": "evt_849f0c4a-8727-4198-8c28-4c590e68256c",
+          "seq": 876,
+          "purpose": "answer",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 27104,
+            "output": 498,
+            "read": 0,
+            "write": 27100,
+            "write_5m": 27100,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.072738,
+          "usd_max": 0.072738,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_642f3866-2544-4af6-ba09-6bc22f03eaae",
+          "seq": 881,
+          "purpose": "retrieval-reranking",
+          "requested_model": "jev-latest",
+          "reported_model": "jev-1.13.0",
+          "status": "missing_response",
+          "counts": {
+            "input": 1809,
+            "output": 290,
+            "read": null,
+            "write": null,
+            "write_5m": null,
+            "write_1h": null
+          },
+          "provider": "typesafe",
+          "model": "jev-latest",
+          "usd_min": 0.00007597800000000001,
+          "usd_max": 0.00007597800000000001,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_24871be3-1fb2-4e5c-ad17-18a972338f88",
+          "seq": 895,
+          "purpose": "answer",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 39655,
+            "output": 442,
+            "read": 27100,
+            "write": 12553,
+            "write_5m": 12553,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.0412265,
+          "usd_max": 0.0412265,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_a5c94f8e-18df-45d8-abb6-b98aefc49b6d",
+          "seq": 910,
+          "purpose": "answer",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 30846,
+            "output": 384,
+            "read": 7780,
+            "write": 23062,
+            "write_5m": 23062,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.063059,
+          "usd_max": 0.063059,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_cb062e43-1ebc-467b-af50-8d68f95ca7ae",
+          "seq": 925,
+          "purpose": "answer",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 40432,
+            "output": 346,
+            "read": 30842,
+            "write": 9588,
+            "write_5m": 9588,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.033602400000000004,
+          "usd_max": 0.033602400000000004,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_80189bcc-fc58-4f0f-a657-feca73f4fa42",
+          "seq": 935,
+          "purpose": "retrieval-reranking",
+          "requested_model": "jev-latest",
+          "reported_model": "jev-1.13.0",
+          "status": "missing_response",
+          "counts": {
+            "input": 1665,
+            "output": 292,
+            "read": null,
+            "write": null,
+            "write_5m": null,
+            "write_1h": null
+          },
+          "provider": "typesafe",
+          "model": "jev-latest",
+          "usd_min": 0.00006993,
+          "usd_max": 0.00006993,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_96fde06d-f160-4184-96e1-888df33d6bc7",
+          "seq": 944,
+          "purpose": "answer",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 31913,
+            "output": 654,
+            "read": 7780,
+            "write": 24129,
+            "write_5m": 24129,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.0684265,
+          "usd_max": 0.0684265,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_fd37e1e2-11eb-4201-83b5-c2434ac7bdac",
+          "seq": 961,
+          "purpose": "answer",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 46252,
+            "output": 325,
+            "read": 31909,
+            "write": 14341,
+            "write_5m": 14341,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.0454883,
+          "usd_max": 0.0454883,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_458e283a-3b5a-455c-8660-640bcf0fd19b",
+          "seq": 972,
+          "purpose": "retrieval-reranking",
+          "requested_model": "jev-latest",
+          "reported_model": "jev-1.13.0",
+          "status": "missing_response",
+          "counts": {
+            "input": 1710,
+            "output": 290,
+            "read": null,
+            "write": null,
+            "write_5m": null,
+            "write_1h": null
+          },
+          "provider": "typesafe",
+          "model": "jev-latest",
+          "usd_min": 0.00007182000000000001,
+          "usd_max": 0.00007182000000000001,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_60464cc4-36f0-48fe-8ebd-ddf208dc131c",
+          "seq": 983,
+          "purpose": "answer",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 31907,
+            "output": 650,
+            "read": 7780,
+            "write": 24123,
+            "write_5m": 24123,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.0683715,
+          "usd_max": 0.0683715,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_4ed604a0-91c0-4d4c-a4c4-fa8b45b3b151",
+          "seq": 1002,
+          "purpose": "answer",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 49385,
+            "output": 2645,
+            "read": 31903,
+            "write": 17480,
+            "write_5m": 17480,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.07653460000000001,
+          "usd_max": 0.07653460000000001,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_7e114abb-f370-4eee-956d-00cf6c54bc3d",
+          "seq": 1010,
+          "purpose": "retrieval-reranking",
+          "requested_model": "jev-latest",
+          "reported_model": null,
+          "status": "missing_response",
+          "counts": null,
+          "model": "jev-latest",
+          "provider": "typesafe",
+          "usd_min": null,
+          "usd_max": null,
+          "reasons": [
+            "Missing reported input/output usage"
+          ]
+        },
+        {
+          "request_id": "evt_852c24df-54dd-442c-9715-3cd055d488ba",
+          "seq": 1020,
+          "purpose": "answer",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 31654,
+            "output": 549,
+            "read": 7780,
+            "write": 23870,
+            "write_5m": 23870,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.066729,
+          "usd_max": 0.066729,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_403fc149-2a5b-4c88-a7ad-055fe87b1a9a",
+          "seq": 1037,
+          "purpose": "answer",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 44782,
+            "output": 363,
+            "read": 31650,
+            "write": 13130,
+            "write_5m": 13130,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.042789,
+          "usd_max": 0.042789,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_34243406-919e-477a-aa14-a6bd81ea71cb",
+          "seq": 1054,
+          "purpose": "answer",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 32324,
+            "output": 697,
+            "read": 25313,
+            "write": 7007,
+            "write_5m": 7007,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.029558099999999997,
+          "usd_max": 0.029558099999999997,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_65e9b008-b088-4de8-8912-3d44fd78aac9",
+          "seq": 1073,
+          "purpose": "answer",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 51113,
+            "output": 2712,
+            "read": 32320,
+            "write": 18791,
+            "write_5m": 18791,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.0805655,
+          "usd_max": 0.0805655,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_8a889912-f1c7-499a-9bf4-8e9bb06e3a2a",
+          "seq": 1100,
+          "purpose": "answer",
+          "requested_model": "gpt-6.1-sol",
+          "reported_model": "gpt-6.1-sol",
+          "status": "completed",
+          "counts": {
+            "input": 17944,
+            "output": 24,
+            "read": 0,
+            "write": 17941,
+            "write_5m": null,
+            "write_1h": null
+          },
+          "provider": "openai",
+          "model": "gpt-6.1-sol",
+          "usd_min": 0.0450985,
+          "usd_max": 0.090077,
+          "reasons": [
+            "Short/long tier boundary unverified; range covers both"
+          ]
+        },
+        {
+          "request_id": "evt_d8a53538-a075-4f94-a5c8-cb6c3272eb84",
+          "seq": 1107,
+          "purpose": "answer",
+          "requested_model": "gpt-6.1-sol",
+          "reported_model": "gpt-6.1-sol",
+          "status": "completed",
+          "counts": {
+            "input": 18246,
+            "output": 24,
+            "read": 17941,
+            "write": 302,
+            "write_5m": null,
+            "write_1h": null
+          },
+          "provider": "openai",
+          "model": "gpt-6.1-sol",
+          "usd_min": 0.0027951000000000004,
+          "usd_max": 0.005470200000000001,
+          "reasons": [
+            "Short/long tier boundary unverified; range covers both"
+          ]
+        },
+        {
+          "request_id": "evt_1a68b9e6-d7f6-44f2-822a-b8228a73966d",
+          "seq": 1112,
+          "purpose": "retrieval-reranking",
+          "requested_model": "jev-latest",
+          "reported_model": "jev-1.13.0",
+          "status": "missing_response",
+          "counts": {
+            "input": 1402,
+            "output": 297,
+            "read": null,
+            "write": null,
+            "write_5m": null,
+            "write_1h": null
+          },
+          "provider": "typesafe",
+          "model": "jev-latest",
+          "usd_min": 0.000058884,
+          "usd_max": 0.000058884,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_6b98a4d7-c8b3-4d11-a157-0fcc08d4ddfc",
+          "seq": 1118,
+          "purpose": "answer",
+          "requested_model": "gpt-6.1-sol",
+          "reported_model": "gpt-6.1-sol",
+          "status": "completed",
+          "counts": {
+            "input": 19344,
+            "output": 30,
+            "read": 18243,
+            "write": 1098,
+            "write_5m": null,
+            "write_1h": null
+          },
+          "provider": "openai",
+          "model": "gpt-6.1-sol",
+          "usd_min": 0.0048753,
+          "usd_max": 0.0096006,
+          "reasons": [
+            "Short/long tier boundary unverified; range covers both"
+          ]
+        },
+        {
+          "request_id": "evt_6516f37e-e809-444d-bafb-0fca6e5420a4",
+          "seq": 1125,
+          "purpose": "answer",
+          "requested_model": "gpt-6.1-sol",
+          "reported_model": "gpt-6.1-sol",
+          "status": "completed",
+          "counts": {
+            "input": 22090,
+            "output": 26,
+            "read": 19341,
+            "write": 2746,
+            "write_5m": null,
+            "write_1h": null
+          },
+          "provider": "openai",
+          "model": "gpt-6.1-sol",
+          "usd_min": 0.0090651,
+          "usd_max": 0.0180002,
+          "reasons": [
+            "Short/long tier boundary unverified; range covers both"
+          ]
+        },
+        {
+          "request_id": "evt_50a04393-5108-4e24-9fdc-da34bb7827ac",
+          "seq": 1132,
+          "purpose": "answer",
+          "requested_model": "gpt-6.1-sol",
+          "reported_model": "gpt-6.1-sol",
+          "status": "completed",
+          "counts": {
+            "input": 22515,
+            "output": 31,
+            "read": 22087,
+            "write": 425,
+            "write_5m": null,
+            "write_1h": null
+          },
+          "provider": "openai",
+          "model": "gpt-6.1-sol",
+          "usd_min": 0.0035872000000000005,
+          "usd_max": 0.0070194,
+          "reasons": [
+            "Short/long tier boundary unverified; range covers both"
+          ]
+        },
+        {
+          "request_id": "evt_de9c8cc7-c9d6-42a3-afa4-ec6d8ba00fa0",
+          "seq": 1139,
+          "purpose": "answer",
+          "requested_model": "gpt-6.1-sol",
+          "reported_model": "gpt-6.1-sol",
+          "status": "completed",
+          "counts": {
+            "input": 23795,
+            "output": 123,
+            "read": 22512,
+            "write": 1280,
+            "write_5m": null,
+            "write_1h": null
+          },
+          "provider": "openai",
+          "model": "gpt-6.1-sol",
+          "usd_min": 0.006687200000000001,
+          "usd_max": 0.0127594,
+          "reasons": [
+            "Short/long tier boundary unverified; range covers both"
+          ]
+        },
+        {
+          "request_id": "evt_075e6445-7007-466d-b348-64daf65f4d57",
+          "seq": 1146,
+          "purpose": "answer",
+          "requested_model": "gpt-6.1-sol",
+          "reported_model": "gpt-6.1-sol",
+          "status": "completed",
+          "counts": {
+            "input": 27835,
+            "output": 666,
+            "read": 23792,
+            "write": 4040,
+            "write_5m": null,
+            "write_1h": null
+          },
+          "provider": "openai",
+          "model": "gpt-6.1-sol",
+          "usd_min": 0.0191452,
+          "usd_max": 0.0349604,
+          "reasons": [
+            "Short/long tier boundary unverified; range covers both"
+          ]
+        },
+        {
+          "request_id": "evt_06c86bc5-c923-4271-a780-c95647323e91",
+          "seq": 1156,
+          "purpose": "answer",
+          "requested_model": "gpt-6.1-sol",
+          "reported_model": "gpt-6.1-sol",
+          "status": "completed",
+          "counts": {
+            "input": 25006,
+            "output": 234,
+            "read": 23792,
+            "write": 1211,
+            "write_5m": null,
+            "write_1h": null
+          },
+          "provider": "openai",
+          "model": "gpt-6.1-sol",
+          "usd_min": 0.0077527,
+          "usd_max": 0.014335400000000002,
+          "reasons": [
+            "Short/long tier boundary unverified; range covers both"
+          ]
+        },
+        {
+          "request_id": "evt_87304f4f-49b3-4ac9-91a9-afe2fd25b4ff",
+          "seq": 1166,
+          "purpose": "answer",
+          "requested_model": "gpt-6.1-sol",
+          "reported_model": "gpt-6.1-sol",
+          "status": "completed",
+          "counts": {
+            "input": 25299,
+            "output": 2376,
+            "read": 25003,
+            "write": 293,
+            "write_5m": null,
+            "write_1h": null
+          },
+          "provider": "openai",
+          "model": "gpt-6.1-sol",
+          "usd_min": 0.0269988,
+          "usd_max": 0.0421176,
+          "reasons": [
+            "Short/long tier boundary unverified; range covers both"
+          ]
+        },
+        {
+          "request_id": "evt_6ef24972-a099-4ed9-8f44-03026d2a8578",
+          "seq": 1183,
+          "purpose": "answer",
+          "requested_model": "gpt-6.1-sol",
+          "reported_model": "gpt-6.1-sol",
+          "status": "completed",
+          "counts": {
+            "input": 25488,
+            "output": 28,
+            "read": 25296,
+            "write": 189,
+            "write_5m": null,
+            "write_1h": null
+          },
+          "provider": "openai",
+          "model": "gpt-6.1-sol",
+          "usd_min": 0.0032881000000000004,
+          "usd_max": 0.0064362,
+          "reasons": [
+            "Short/long tier boundary unverified; range covers both"
+          ]
+        },
+        {
+          "request_id": "evt_5611f9c4-87e5-4ccb-8ff5-3ed9b3b7eca6",
+          "seq": 1195,
+          "purpose": "answer",
+          "requested_model": "gpt-6.1-sol",
+          "reported_model": "gpt-6.1-sol",
+          "status": "completed",
+          "counts": {
+            "input": 27411,
+            "output": 29,
+            "read": 25485,
+            "write": 1923,
+            "write_5m": null,
+            "write_1h": null
+          },
+          "provider": "openai",
+          "model": "gpt-6.1-sol",
+          "usd_min": 0.007652,
+          "usd_max": 0.015159,
+          "reasons": [
+            "Short/long tier boundary unverified; range covers both"
+          ]
+        },
+        {
+          "request_id": "evt_b5dd02ba-428b-4727-a897-4f0e4facba51",
+          "seq": 1207,
+          "purpose": "answer",
+          "requested_model": "gpt-6.1-sol",
+          "reported_model": "gpt-6.1-sol",
+          "status": "completed",
+          "counts": {
+            "input": 28279,
+            "output": 296,
+            "read": 27408,
+            "write": 868,
+            "write_5m": null,
+            "write_1h": null
+          },
+          "provider": "openai",
+          "model": "gpt-6.1-sol",
+          "usd_min": 0.0078768,
+          "usd_max": 0.014273600000000001,
+          "reasons": [
+            "Short/long tier boundary unverified; range covers both"
+          ]
+        },
+        {
+          "request_id": "evt_9f0edce9-8ecb-4a0a-a7d5-c5df16b34801",
+          "seq": 1225,
+          "purpose": "answer",
+          "requested_model": "gpt-6-luna",
+          "reported_model": "gpt-6-luna",
+          "status": "completed",
+          "counts": {
+            "input": 20520,
+            "output": 22,
+            "read": 0,
+            "write": 20517,
+            "write_5m": null,
+            "write_1h": null
+          },
+          "provider": "openai",
+          "model": "gpt-6-luna",
+          "usd_min": 0.002575925,
+          "usd_max": 0.00514635,
+          "reasons": [
+            "Short/long tier boundary unverified; range covers both"
+          ]
+        },
+        {
+          "request_id": "evt_a9b87b0b-7dac-4a3a-8858-bdc36ce8118b",
+          "seq": 1232,
+          "purpose": "answer",
+          "requested_model": "gpt-6-luna",
+          "reported_model": "gpt-6-luna",
+          "status": "completed",
+          "counts": {
+            "input": 24875,
+            "output": 434,
+            "read": 20517,
+            "write": 4355,
+            "write_5m": null,
+            "write_1h": null
+          },
+          "provider": "openai",
+          "model": "gpt-6-luna",
+          "usd_min": 0.000966845,
+          "usd_max": 0.00182519,
+          "reasons": [
+            "Short/long tier boundary unverified; range covers both"
+          ]
+        },
+        {
+          "request_id": "evt_c6cca957-30d6-4917-91ba-f5fe45fe9b02",
+          "seq": 1240,
+          "purpose": "answer",
+          "requested_model": "gpt-6-luna",
+          "reported_model": "gpt-6-luna",
+          "status": "completed",
+          "counts": {
+            "input": 26653,
+            "output": 566,
+            "read": 24872,
+            "write": 1778,
+            "write_5m": null,
+            "write_1h": null
+          },
+          "provider": "openai",
+          "model": "gpt-6-luna",
+          "usd_min": 0.00075427,
+          "usd_max": 0.00136704,
+          "reasons": [
+            "Short/long tier boundary unverified; range covers both"
+          ]
+        },
+        {
+          "request_id": "evt_13e46e31-98e9-4909-b467-b4ff69c35f8c",
+          "seq": 1248,
+          "purpose": "answer",
+          "requested_model": "gpt-6-luna",
+          "reported_model": "gpt-6-luna",
+          "status": "completed",
+          "counts": {
+            "input": 27319,
+            "output": 14,
+            "read": 26650,
+            "write": 666,
+            "write_5m": null,
+            "write_1h": null
+          },
+          "provider": "openai",
+          "model": "gpt-6-luna",
+          "usd_min": 0.00035705000000000003,
+          "usd_max": 0.0007106,
+          "reasons": [
+            "Short/long tier boundary unverified; range covers both"
+          ]
+        },
+        {
+          "request_id": "evt_ba9381e3-9eec-45a5-ab01-418c98b66119",
+          "seq": 1260,
+          "purpose": "answer",
+          "requested_model": "gpt-6-luna",
+          "reported_model": "gpt-6-luna",
+          "status": "completed",
+          "counts": {
+            "input": 18790,
+            "output": 28,
+            "read": 3561,
+            "write": 15226,
+            "write_5m": null,
+            "write_1h": null
+          },
+          "provider": "openai",
+          "model": "gpt-6-luna",
+          "usd_min": 0.00195316,
+          "usd_max": 0.0038993199999999995,
+          "reasons": [
+            "Short/long tier boundary unverified; range covers both"
+          ]
+        },
+        {
+          "request_id": "evt_00fcc236-83e7-48cf-94a5-c7e6c5c51a98",
+          "seq": 1268,
+          "purpose": "answer",
+          "requested_model": "gpt-6-luna",
+          "reported_model": "gpt-6-luna",
+          "status": "completed",
+          "counts": {
+            "input": 19311,
+            "output": 29,
+            "read": 3561,
+            "write": 15747,
+            "write_5m": null,
+            "write_1h": null
+          },
+          "provider": "openai",
+          "model": "gpt-6-luna",
+          "usd_min": 0.002018785,
+          "usd_max": 0.0040303199999999996,
+          "reasons": [
+            "Short/long tier boundary unverified; range covers both"
+          ]
+        },
+        {
+          "request_id": "evt_655eb708-5e76-423e-8672-9ca4e715717a",
+          "seq": 1276,
+          "purpose": "answer",
+          "requested_model": "gpt-6-luna",
+          "reported_model": "gpt-6-luna",
+          "status": "completed",
+          "counts": {
+            "input": 20179,
+            "output": 189,
+            "read": 19308,
+            "write": 868,
+            "write_5m": null,
+            "write_1h": null
+          },
+          "provider": "openai",
+          "model": "gpt-6-luna",
+          "usd_min": 0.00039638000000000005,
+          "usd_max": 0.0007455100000000001,
+          "reasons": [
+            "Short/long tier boundary unverified; range covers both"
+          ]
+        },
+        {
+          "request_id": "evt_0c630ec9-0541-46b0-9e0c-faa2cb57bf73",
+          "seq": 15,
+          "purpose": "title (separately logged)",
+          "requested_model": "gpt-6.1-sol",
+          "provider_basis": "inferred from exact requested model in dated catalog; title event actor is application",
+          "reported_model": "gpt-6.1-sol",
+          "status": "completed",
+          "counts": {
+            "input": 1064,
+            "output": 14,
+            "read": 0,
+            "write": 1061,
+            "write_5m": null,
+            "write_1h": null
+          },
+          "provider": "openai",
+          "model": "gpt-6.1-sol",
+          "usd_min": 0.0027985,
+          "usd_max": 0.005527,
+          "reasons": [
+            "Short/long tier boundary unverified; range covers both"
+          ]
+        }
+      ],
+      "priced_calls": 107,
+      "unpriced_calls": 2,
+      "known_usd_min": 3.883712509000001,
+      "known_usd_max": 4.1148233240000005,
+      "record_format": "canonical context events; normalized inference usage",
+      "purpose": {
+        "answer": {
+          "calls": 85,
+          "priced_calls": 84,
+          "unpriced_calls": 1,
+          "known_usd_min": 3.2813383150000006,
+          "known_usd_max": 3.5097206300000003
+        },
+        "web-search": {
+          "calls": 5,
+          "priced_calls": 5,
+          "unpriced_calls": 0,
+          "known_usd_min": 0.5983615999999999,
+          "known_usd_max": 0.5983615999999999
+        },
+        "retrieval-reranking": {
+          "calls": 18,
+          "priced_calls": 17,
+          "unpriced_calls": 1,
+          "known_usd_min": 0.001214094,
+          "known_usd_max": 0.001214094
+        },
+        "title (separately logged)": {
+          "calls": 1,
+          "priced_calls": 1,
+          "unpriced_calls": 0,
+          "known_usd_min": 0.0027985,
+          "known_usd_max": 0.005527
+        }
+      },
+      "context": {
+        "history_characters": 364169,
+        "working_characters": 20431,
+        "reduction_fraction": 0.9438969269762116
+      },
+      "complete": false
+    },
+    {
+      "id": "conv_3f9bab5b-e1c2-45ba-baec-486138868f86",
+      "exported_at": "2026-10-05T17:15:21.185Z",
+      "price_date": "2026-10-02",
+      "basis": "public direct API list rates; standard paid tier; not an invoice or historical effective-rate record",
+      "calls": [
+        {
+          "request_id": "evt_31e02320-5938-494c-94cb-5c7fc3615b9a",
+          "seq": 7,
+          "purpose": "answer",
+          "requested_model": "gpt-6.1-sol",
+          "reported_model": "gpt-6.1-sol",
+          "status": "completed",
+          "counts": {
+            "input": 3641,
+            "output": 51,
+            "read": 3452,
+            "write": 186,
+            "write_5m": null,
+            "write_1h": null
+          },
+          "provider": "openai",
+          "model": "gpt-6.1-sol",
+          "usd_min": 0.0013262,
+          "usd_max": 0.0023974,
+          "reasons": [
+            "Short/long tier boundary unverified; range covers both"
+          ]
+        },
+        {
+          "request_id": "evt_17ad23e8-1d56-4c63-acc4-aa3d0e8332a8",
+          "seq": 12,
+          "purpose": "web-search",
+          "requested_model": "gpt-6.1-sol",
+          "reported_model": "gpt-6.1-sol",
+          "status": "completed",
+          "counts": {
+            "input": 12949,
+            "output": 530,
+            "read": 0,
+            "write": 4452,
+            "write_5m": null,
+            "write_1h": null
+          },
+          "provider": "openai",
+          "model": "gpt-6.1-sol",
+          "usd_min": 0.033424,
+          "usd_max": 0.064198,
+          "reasons": [
+            "Short/long tier boundary unverified; range covers both"
+          ]
+        },
+        {
+          "request_id": "evt_3f6f2b4d-5962-4125-b3ab-e5ba868574fa",
+          "seq": 18,
+          "purpose": "answer",
+          "requested_model": "gpt-6.1-sol",
+          "reported_model": "gpt-6.1-sol",
+          "status": "completed",
+          "counts": {
+            "input": 4436,
+            "output": 33,
+            "read": 3638,
+            "write": 795,
+            "write_5m": null,
+            "write_1h": null
+          },
+          "provider": "openai",
+          "model": "gpt-6.1-sol",
+          "usd_min": 0.0026873,
+          "usd_max": 0.0052096,
+          "reasons": [
+            "Short/long tier boundary unverified; range covers both"
+          ]
+        },
+        {
+          "request_id": "evt_7a3a701b-a65a-4bda-bfe0-fcfd73b6abbf",
+          "seq": 30,
+          "purpose": "answer",
+          "requested_model": "gpt-6.1-sol",
+          "reported_model": "gpt-6.1-sol",
+          "status": "completed",
+          "counts": {
+            "input": 43102,
+            "output": 43,
+            "read": 4433,
+            "write": 38666,
+            "write_5m": null,
+            "write_1h": null
+          },
+          "provider": "openai",
+          "model": "gpt-6.1-sol",
+          "usd_min": 0.0975443,
+          "usd_max": 0.1948736,
+          "reasons": [
+            "Short/long tier boundary unverified; range covers both"
+          ]
+        },
+        {
+          "request_id": "evt_375e802e-962b-4f7a-89d5-d10e05a6d674",
+          "seq": 41,
+          "purpose": "answer",
+          "requested_model": "gpt-6.1-sol",
+          "reported_model": "gpt-6.1-sol",
+          "status": "completed",
+          "counts": {
+            "input": 8279,
+            "output": 503,
+            "read": 4433,
+            "write": 3843,
+            "write_5m": null,
+            "write_1h": null
+          },
+          "provider": "openai",
+          "model": "gpt-6.1-sol",
+          "usd_min": 0.0150868,
+          "usd_max": 0.0276586,
+          "reasons": [
+            "Short/long tier boundary unverified; range covers both"
+          ]
+        },
+        {
+          "request_id": "evt_362126ec-3d8f-421a-991b-cf213f105618",
+          "seq": 54,
+          "purpose": "answer",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 10589,
+            "output": 245,
+            "read": 0,
+            "write": 10585,
+            "write_5m": 10585,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.0289205,
+          "usd_max": 0.0289205,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_77834c24-f2b6-48d4-8370-74c0961383d1",
+          "seq": 60,
+          "purpose": "web-search",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 13528,
+            "output": 1237,
+            "read": 3092,
+            "write": 10430,
+            "write_5m": 10430,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.0390754,
+          "usd_max": 0.0390754,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_bb332ee5-579c-4cc1-8351-8a242885dd50",
+          "seq": 68,
+          "purpose": "web-search",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 12473,
+            "output": 1048,
+            "read": 6097,
+            "write": 6370,
+            "write_5m": 6370,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.027636400000000002,
+          "usd_max": 0.027636400000000002,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_c705ae5a-033e-4f52-bf39-41c8d5c4d086",
+          "seq": 75,
+          "purpose": "answer",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 13472,
+            "output": 139,
+            "read": 10585,
+            "write": 2885,
+            "write_5m": 2885,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.0107235,
+          "usd_max": 0.0107235,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_8b82ff6e-efd7-408f-92f9-0f52d59001b4",
+          "seq": 86,
+          "purpose": "answer",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 19363,
+            "output": 1006,
+            "read": 13470,
+            "write": 5891,
+            "write_5m": 5891,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.0274855,
+          "usd_max": 0.0274855,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_2e31d579-2598-4a3f-acfb-b3c2d0b66f69",
+          "seq": 99,
+          "purpose": "answer",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 13693,
+            "output": 216,
+            "read": 7605,
+            "write": 6084,
+            "write_5m": 6084,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.018899,
+          "usd_max": 0.018899,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_cc618f65-4af3-43ac-9ed4-54dfad8f7727",
+          "seq": 105,
+          "purpose": "web-search",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 20087,
+            "output": 1461,
+            "read": 6090,
+            "write": 13991,
+            "write_5m": 13991,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.0508175,
+          "usd_max": 0.0508175,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_8eac341f-eed9-4c28-8925-bc57ac07fe4d",
+          "seq": 113,
+          "purpose": "web-search",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 13631,
+            "output": 1492,
+            "read": 6091,
+            "write": 7534,
+            "write_5m": 7534,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.034985199999999994,
+          "usd_max": 0.034985199999999994,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_deaa9c43-e7b2-4531-80a9-abd2cff1989e",
+          "seq": 119,
+          "purpose": "answer",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 16443,
+            "output": 291,
+            "read": 13689,
+            "write": 2752,
+            "write_5m": 2752,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.0125318,
+          "usd_max": 0.0125318,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_f5ecd293-85e1-4f23-b0bd-decbe238f5ff",
+          "seq": 138,
+          "purpose": "answer",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 67663,
+            "output": 2158,
+            "read": 16441,
+            "write": 51220,
+            "write_5m": 51220,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.1529222,
+          "usd_max": 0.1529222,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_0d363240-d98d-453c-a16e-2a10c1bf7d90",
+          "seq": 151,
+          "purpose": "answer",
+          "requested_model": "claude-sonnet-5-5",
+          "reported_model": "claude-sonnet-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 17348,
+            "output": 1958,
+            "read": 7605,
+            "write": 9739,
+            "write_5m": 9739,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-sonnet-5-5",
+          "usd_min": 0.0454565,
+          "usd_max": 0.0454565,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_16122e1f-d51e-4619-bc13-4172dd07a3ce",
+          "seq": 164,
+          "purpose": "answer",
+          "requested_model": "gpt-6.1-sol",
+          "reported_model": "gpt-6.1-sol",
+          "status": "completed",
+          "counts": {
+            "input": 10495,
+            "output": 60,
+            "read": 3452,
+            "write": 7040,
+            "write_5m": null,
+            "write_1h": null
+          },
+          "provider": "openai",
+          "model": "gpt-6.1-sol",
+          "usd_min": 0.0185512,
+          "usd_max": 0.0368024,
+          "reasons": [
+            "Short/long tier boundary unverified; range covers both"
+          ]
+        },
+        {
+          "request_id": "evt_38a76417-e02e-4439-886a-bad5c416d029",
+          "seq": 169,
+          "purpose": "answer",
+          "requested_model": "gpt-6.1-sol",
+          "reported_model": "gpt-6.1-sol",
+          "status": "completed",
+          "counts": {
+            "input": 10591,
+            "output": 881,
+            "read": 10492,
+            "write": 96,
+            "write_5m": null,
+            "write_1h": null
+          },
+          "provider": "openai",
+          "model": "gpt-6.1-sol",
+          "usd_min": 0.0101052,
+          "usd_max": 0.0158054,
+          "reasons": [
+            "Short/long tier boundary unverified; range covers both"
+          ]
+        },
+        {
+          "request_id": "evt_2297aa78-41ac-4754-8e8d-6c136b3fedfb",
+          "seq": 181,
+          "purpose": "answer",
+          "requested_model": "claude-opus-5-5",
+          "reported_model": "claude-opus-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 20362,
+            "output": 2646,
+            "read": 0,
+            "write": 20358,
+            "write_5m": 20358,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-opus-5-5",
+          "usd_min": 0.154726,
+          "usd_max": 0.154726,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_e6038198-725c-4560-88a0-0bec7408cee6",
+          "seq": 194,
+          "purpose": "answer",
+          "requested_model": "claude-opus-5-5",
+          "reported_model": "claude-opus-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 21924,
+            "output": 233,
+            "read": 7603,
+            "write": 14317,
+            "write_5m": 14317,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-opus-5-5",
+          "usd_min": 0.0777816,
+          "usd_max": 0.0777816,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_da56d3fa-085d-4d51-8208-841e6cc009e6",
+          "seq": 200,
+          "purpose": "web-search",
+          "requested_model": "claude-opus-5-5",
+          "reported_model": "claude-opus-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 20175,
+            "output": 2065,
+            "read": 3006,
+            "write": 17163,
+            "write_5m": 17163,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-opus-5-5",
+          "usd_min": 0.1277402,
+          "usd_max": 0.1277402,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_d189cf85-0c71-4c74-828c-dabd89bd50b4",
+          "seq": 209,
+          "purpose": "web-search",
+          "requested_model": "claude-opus-5-5",
+          "reported_model": "claude-opus-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 22176,
+            "output": 2747,
+            "read": 5937,
+            "write": 16233,
+            "write_5m": 16233,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-opus-5-5",
+          "usd_min": 0.1373164,
+          "usd_max": 0.1373164,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_b9ede985-8b5e-4973-a7f0-4ddd14ec8b1f",
+          "seq": 216,
+          "purpose": "answer",
+          "requested_model": "claude-opus-5-5",
+          "reported_model": "claude-opus-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 24521,
+            "output": 211,
+            "read": 21920,
+            "write": 2599,
+            "write_5m": 2599,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-opus-5-5",
+          "usd_min": 0.021607,
+          "usd_max": 0.021607,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_1de99324-a479-4a53-b36c-100f5a2e21c2",
+          "seq": 223,
+          "purpose": "answer",
+          "requested_model": "claude-opus-5-5",
+          "reported_model": "claude-opus-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 26583,
+            "output": 201,
+            "read": 24519,
+            "write": 2062,
+            "write_5m": 2062,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-opus-5-5",
+          "usd_min": 0.0192418,
+          "usd_max": 0.0192418,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_3aa858e6-eae6-4ad8-9e72-89d15d9737bd",
+          "seq": 230,
+          "purpose": "answer",
+          "requested_model": "claude-opus-5-5",
+          "reported_model": "claude-opus-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 28682,
+            "output": 201,
+            "read": 26581,
+            "write": 2099,
+            "write_5m": 2099,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-opus-5-5",
+          "usd_min": 0.0198392,
+          "usd_max": 0.0198392,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_c42be910-3494-4936-a14b-b954f10f0571",
+          "seq": 237,
+          "purpose": "answer",
+          "requested_model": "claude-opus-5-5",
+          "reported_model": "claude-opus-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 30822,
+            "output": 163,
+            "read": 28680,
+            "write": 2140,
+            "write_5m": 2140,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-opus-5-5",
+          "usd_min": 0.019704,
+          "usd_max": 0.019704,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_76f7aaf4-fdfa-4863-8b80-c2812750f95e",
+          "seq": 243,
+          "purpose": "web-search",
+          "requested_model": "claude-opus-5-5",
+          "reported_model": "claude-opus-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 20624,
+            "output": 2384,
+            "read": 5937,
+            "write": 14681,
+            "write_5m": 14681,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-opus-5-5",
+          "usd_min": 0.1222964,
+          "usd_max": 0.1222964,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_964ca6df-50dc-41e2-908b-79fc0ea4b77e",
+          "seq": 250,
+          "purpose": "answer",
+          "requested_model": "claude-opus-5-5",
+          "reported_model": "claude-opus-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 32189,
+            "output": 103,
+            "read": 30820,
+            "write": 1367,
+            "write_5m": 1367,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-opus-5-5",
+          "usd_min": 0.015067,
+          "usd_max": 0.015067,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_b94ce477-0351-4be2-bf4b-b7276dbcad32",
+          "seq": 255,
+          "purpose": "answer",
+          "requested_model": "claude-opus-5-5",
+          "reported_model": "claude-opus-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 33206,
+            "output": 103,
+            "read": 32187,
+            "write": 1017,
+            "write_5m": 1017,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-opus-5-5",
+          "usd_min": 0.0135904,
+          "usd_max": 0.0135904,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_06736120-786f-439e-85af-222060c172bb",
+          "seq": 260,
+          "purpose": "answer",
+          "requested_model": "claude-opus-5-5",
+          "reported_model": "claude-opus-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 34196,
+            "output": 2600,
+            "read": 33204,
+            "write": 990,
+            "write_5m": 990,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-opus-5-5",
+          "usd_min": 0.0635988,
+          "usd_max": 0.0635988,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_9964cc3a-3fce-4bb6-a0b0-edcbdb409f07",
+          "seq": 273,
+          "purpose": "answer",
+          "requested_model": "claude-opus-5-5",
+          "reported_model": "claude-opus-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 25987,
+            "output": 232,
+            "read": 7603,
+            "write": 18380,
+            "write_5m": 18380,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-opus-5-5",
+          "usd_min": 0.0980766,
+          "usd_max": 0.0980766,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_e212b6f2-9fc5-4f1c-8e12-9d104d419a55",
+          "seq": 279,
+          "purpose": "answer",
+          "requested_model": "claude-opus-5-5",
+          "reported_model": "claude-opus-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 26497,
+            "output": 4554,
+            "read": 25983,
+            "write": 512,
+            "write_5m": 512,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-opus-5-5",
+          "usd_min": 0.0988446,
+          "usd_max": 0.0988446,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_ac642783-0398-4153-bbc3-9c776e1ac11f",
+          "seq": 285,
+          "purpose": "answer",
+          "requested_model": "claude-opus-5-5",
+          "reported_model": "claude-opus-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 31314,
+            "output": 3121,
+            "read": 26495,
+            "write": 4817,
+            "write_5m": 4817,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-opus-5-5",
+          "usd_min": 0.091812,
+          "usd_max": 0.091812,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_f3b4b436-25b8-4d8e-b21f-858ae777bc34",
+          "seq": 292,
+          "purpose": "answer",
+          "requested_model": "claude-opus-5-5",
+          "reported_model": "claude-opus-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 34894,
+            "output": 755,
+            "read": 31312,
+            "write": 3580,
+            "write_5m": 3580,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-opus-5-5",
+          "usd_min": 0.039270400000000004,
+          "usd_max": 0.039270400000000004,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_078618af-06fa-41ff-94f2-ef7a5b8b9d48",
+          "seq": 298,
+          "purpose": "answer",
+          "requested_model": "claude-opus-5-5",
+          "reported_model": "claude-opus-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 35796,
+            "output": 168,
+            "read": 34892,
+            "write": 902,
+            "write_5m": 902,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-opus-5-5",
+          "usd_min": 0.014856400000000002,
+          "usd_max": 0.014856400000000002,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_c16b31c6-685c-4c83-ac76-9b72539f392c",
+          "seq": 304,
+          "purpose": "answer",
+          "requested_model": "claude-opus-5-5",
+          "reported_model": "claude-opus-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 37152,
+            "output": 118,
+            "read": 35794,
+            "write": 1356,
+            "write_5m": 1356,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-opus-5-5",
+          "usd_min": 0.0163068,
+          "usd_max": 0.0163068,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_99abcc7f-32cc-4092-94cf-e3c09273da8b",
+          "seq": 310,
+          "purpose": "answer",
+          "requested_model": "claude-opus-5-5",
+          "reported_model": "claude-opus-5-5",
+          "status": "completed",
+          "counts": {
+            "input": 38380,
+            "output": 1132,
+            "read": 37150,
+            "write": 1228,
+            "write_5m": 1228,
+            "write_1h": 0
+          },
+          "provider": "anthropic",
+          "model": "claude-opus-5-5",
+          "usd_min": 0.036218,
+          "usd_max": 0.036218,
+          "reasons": []
+        },
+        {
+          "request_id": "evt_4904bffb-83e6-41ba-a285-881d9883e83f",
+          "seq": 322,
+          "purpose": "answer",
+          "requested_model": "gpt-6.1-sol",
+          "reported_model": "gpt-6.1-sol",
+          "status": "completed",
+          "counts": {
+            "input": 20203,
+            "output": 37,
+            "read": 3452,
+            "write": 16748,
+            "write_5m": null,
+            "write_1h": null
+          },
+          "provider": "openai",
+          "model": "gpt-6.1-sol",
+          "usd_min": 0.042591199999999996,
+          "usd_max": 0.0849974,
+          "reasons": [
+            "Short/long tier boundary unverified; range covers both"
+          ]
+        },
+        {
+          "request_id": "evt_8fbdd020-3768-4c8d-9b80-666268cdf516",
+          "seq": 327,
+          "purpose": "web-search",
+          "requested_model": "gpt-6.1-sol",
+          "reported_model": "gpt-6.1-sol",
+          "status": "completed",
+          "counts": {
+            "input": 21299,
+            "output": 1310,
+            "read": 0,
+            "write": 4438,
+            "write_5m": null,
+            "write_1h": null
+          },
+          "provider": "openai",
+          "model": "gpt-6.1-sol",
+          "usd_min": 0.057917,
+          "usd_max": 0.109284,
+          "reasons": [
+            "Short/long tier boundary unverified; range covers both"
+          ]
+        },
+        {
+          "request_id": "evt_fe297d60-2ddd-4a48-9221-825e5071a76b",
+          "seq": 333,
+          "purpose": "answer",
+          "requested_model": "gpt-6.1-sol",
+          "reported_model": "gpt-6.1-sol",
+          "status": "completed",
+          "counts": {
+            "input": 20861,
+            "output": 34,
+            "read": 20200,
+            "write": 658,
+            "write_5m": null,
+            "write_1h": null
+          },
+          "provider": "openai",
+          "model": "gpt-6.1-sol",
+          "usd_min": 0.004011,
+          "usd_max": 0.007852,
+          "reasons": [
+            "Short/long tier boundary unverified; range covers both"
+          ]
+        },
+        {
+          "request_id": "evt_a4d48173-43b3-4e8a-a578-651c8c2da0b3",
+          "seq": 345,
+          "purpose": "answer",
+          "requested_model": "gpt-6.1-sol",
+          "reported_model": "gpt-6.1-sol",
+          "status": "completed",
+          "counts": {
+            "input": 46866,
+            "output": 807,
+            "read": 20858,
+            "write": 26005,
+            "write_5m": null,
+            "write_1h": null
+          },
+          "provider": "openai",
+          "model": "gpt-6.1-sol",
+          "usd_min": 0.0751743,
+          "usd_max": 0.14631360000000002,
+          "reasons": [
+            "Short/long tier boundary unverified; range covers both"
+          ]
+        },
+        {
+          "request_id": "evt_d7ca1470-8a32-47ef-a596-5732886e5bea",
+          "seq": 47,
+          "purpose": "title (separately logged)",
+          "requested_model": "gpt-6.1-sol",
+          "provider_basis": "inferred from exact requested model in dated catalog; title event actor is application",
+          "reported_model": "gpt-6.1-sol",
+          "status": "completed",
+          "counts": {
+            "input": 314,
+            "output": 10,
+            "read": 0,
+            "write": 0,
+            "write_5m": null,
+            "write_1h": null
+          },
+          "provider": "openai",
+          "model": "gpt-6.1-sol",
+          "usd_min": 0.000728,
+          "usd_max": 0.001406,
+          "reasons": [
+            "Short/long tier boundary unverified; range covers both"
+          ]
+        }
+      ],
+      "priced_calls": 42,
+      "unpriced_calls": 0,
+      "known_usd_min": 1.9964936,
+      "known_usd_max": 2.3341451,
+      "record_format": "canonical context events; normalized inference usage",
+      "purpose": {
+        "answer": {
+          "calls": 32,
+          "priced_calls": 32,
+          "unpriced_calls": 0,
+          "known_usd_min": 1.3645570999999999,
+          "known_usd_max": 1.6193895999999999
+        },
+        "web-search": {
+          "calls": 9,
+          "priced_calls": 9,
+          "unpriced_calls": 0,
+          "known_usd_min": 0.6312085,
+          "known_usd_max": 0.7133495000000001
+        },
+        "title (separately logged)": {
+          "calls": 1,
+          "priced_calls": 1,
+          "unpriced_calls": 0,
+          "known_usd_min": 0.000728,
+          "known_usd_max": 0.001406
+        }
+      },
+      "context": {
+        "history_characters": 685468,
+        "working_characters": 47787,
+        "reduction_fraction": 0.9302855859062713
+      },
+      "complete": false
+    }
+  ]
+}

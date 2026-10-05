@@ -4,6 +4,8 @@ Updated 2026-10-05. Mutable project state. [Usage](public/app-guide.md) · [Deve
 
 ## Current capabilities
 
+- Canonical JSON export avoids duplicate inspection/history decoding and uses compact HTTP JSON. Offline replay of the supplied Pain audit improved 28.424 → 1.468 seconds with exact event/snapshot fidelity; production download time remains unmeasured. The automated report now distinguishes Jev reranking, automatic/named memory, embedding fallback, shadow failures and fresh-evidence handoffs. [Audit, weaknesses and repair priorities](docs/archive/2026-10-05/conversation-audit/README.md)
+
 - Embedding-assisted Context/Agent history and automatic-memory activation: OpenAI vectors with persistent Neon pgvector search, bounded lazy indexing, keyword/semantic fusion, version/removal/suppression gates and explicit native usage/fallback. No embedding calls on saved-chat opening or manual edits. Implementation/migration and native smoke passed locally; code is included in deployment, while the production pgvector migration remains unverified after the disposable Neon test credential was rejected. [Contracts](../CLA/conclave/docs/EMBEDDINGS.md)
 - Hosting efficiency: saved selection/reload uses a direct PostgreSQL transcript query with no SQLite replay, snapshot transfer or next-request calculation; Workspace loads full details when opened. Shared transcript lookup is linear. Browser Performance measures and optional aggregate server diagnostics support production profiling. Local 12-turn reads took 16–20 ms versus 158–194 ms for full views; no production claim. No new migration needed. [Plan, limits and evidence](docs/HOSTING_PLAN.md)
 

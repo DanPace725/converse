@@ -11,7 +11,8 @@ newly added exports into Processed/. The lead measure is how much smaller the
 working context is than the full append-only conversation; cost follows. Everything is recalculated from the exports on every run, so
 improvements to this script apply to old conversations too.
 
-Use --dir to point at a different conversations folder.
+Use --dir to point at a different conversations folder. For read-only automation,
+use --files, --output-dir, --json and --skip-costs; --files preserves originals.
 """
 import argparse
 import json
@@ -19,6 +20,7 @@ import shutil
 import sys
 import subprocess
 import re
+import os
 from collections import Counter, defaultdict
 from datetime import datetime
 from pathlib import Path
@@ -34,11 +36,125 @@ APPEND_KINDS = {"user", "assistant", "document", "reasoning"}
 SOURCE_OVERHEAD_BYTES = 250
 COMPACTION_TRIGGER = 0.75
 CONVERSATION_KINDS = {"user", "assistant"}
+MANAGEMENT_PURPOSES = {"attention-selection", "compaction", "retrieval-reranking", "ingress-classification", "memory-extraction"}
+
+
+def parsed(value, default=None):
+    if isinstance(value, str):
+        try:
+            return json.loads(value)
+        except ValueError:
+            return default
+    return value if value is not None else default
+
+
+def automated_audit(layer):
+    """Evidence-only diagnostics. No quality or savings inferred from priorities."""
+    events = layer["events"]
+    requests = {e["id"]: e for e in events if e["kind"] == "inference_request"}
+    responses = {e["metadata"].get("request_id"): e for e in events if e["kind"] == "inference_response"}
+    jev = defaultdict(lambda: {"attempts": 0, "responses": 0, "input": 0, "output": 0, "latency_ms": 0})
+    ratios, cache_reads, cache_writes, cache_known = [], 0, 0, 0
+    for rid, request in requests.items():
+        md = request.get("metadata") or {}
+        response = responses.get(rid)
+        rm = (response or {}).get("metadata") or {}
+        usage = rm.get("usage") or {}
+        if md.get("provider") == "typesafe" or str((md.get("payload") or {}).get("model", "")).startswith("jev"):
+            bucket = jev[request["content"]]
+            bucket["attempts"] += 1
+            bucket["responses"] += int(response is not None)
+            bucket["input"] += usage.get("input_tokens") or 0
+            bucket["output"] += usage.get("output_tokens") or 0
+            bucket["latency_ms"] += rm.get("elapsed_ms") or rm.get("latency_ms") or 0
+        if request["content"] == "answer" and usage:
+            local = (md.get("input_size") or {}).get("tokenizer_tokens")
+            if local and usage.get("input_tokens") is not None:
+                ratios.append(usage["input_tokens"] / local)
+            read = usage.get("cache_read_input_tokens", (usage.get("input_tokens_details") or {}).get("cached_tokens"))
+            write = usage.get("cache_creation_input_tokens", (usage.get("input_tokens_details") or {}).get("cache_write_tokens"))
+            cache_reads += read or 0
+            cache_writes += write or 0
+            cache_known += int(read is not None)
+    captures = [e for e in events if e["kind"] == "memory_capture"]
+    activations = [e for e in events if e["kind"] == "memory_activation"]
+    economics = [e for e in events if e["kind"] == "context_economics"]
+    retrieval = [e for e in events if e["kind"] == "retrieval_decision"]
+    assessments = [e for e in retrieval if e["metadata"].get("assessment")]
+    decisions = [d for e in assessments for d in e["metadata"]["assessment"].get("decisions", [])]
+    repeated = Counter()
+    fresh_omissions = []
+    for pos, event in enumerate(events):
+        if event["kind"] != "tool_result" or event["metadata"].get("tool") != "retrieve_event":
+            continue
+        result = parsed(event.get("content"), {})
+        if not isinstance(result, dict) or not isinstance(result.get("content"), str) or len(result["content"]) <= 2000:
+            continue
+        following = next((e for e in events[pos + 1:] if e["kind"] == "inference_request" and e["content"] == "answer"), None)
+        if following is None:
+            continue
+        inputs = (following["metadata"].get("payload") or {}).get("input", [])
+        if not any(i.get("type") == "function_call_output" and i.get("call_id") == event["metadata"].get("call_id") for i in inputs):
+            fresh_omissions.append({"receipt_seq": event["seq"], "next_request_seq": following["seq"],
+                "source_ref": result.get("sourceRef"), "characters": len(result["content"]),
+                "handoff": any("preceding tool exchange is archived" in str(i.get("content", "")) for i in inputs)})
+    for e in events:
+        if e["kind"] == "tool_call" and e["content"] in {"retrieve_event", "search_history", "retrieve_range"}:
+            args = parsed((e.get("metadata") or {}).get("arguments"), {})
+            repeated[(e["content"], json.dumps(args, sort_keys=True, ensure_ascii=False))] += 1
+    memory = layer.get("memory") or {}
+    results = {
+        "policy": "conversation-audit-v1", "event_kinds": dict(Counter(e["kind"] for e in events)),
+        "memory": {"automatic_entries": len(memory.get("entries", [])), "automatic_records": len(memory.get("records", [])),
+            "named_entries": len((layer.get("state") or {}).get("entries", [])),
+            "capture_status": dict(Counter(e["metadata"].get("status", "unknown") for e in captures)),
+            "capture_elapsed_ms": sum(e["metadata"].get("elapsed_ms") or 0 for e in captures),
+            "activation_calls": len(activations), "empty_activations": sum(not e["metadata"].get("memory_ids") for e in activations),
+            "capture_issues": memory.get("capture_issue_count", 0),
+            "extraction_attempts": sum(e["content"] == "memory-extraction" for e in requests.values())},
+        "jev": dict(jev),
+        "retrieval": {"evaluations": len(retrieval), "assessed": len(assessments),
+            "fallbacks": sum(bool(e["metadata"]["assessment"].get("fallback")) for e in assessments),
+            "changed_order": sum(e["metadata"].get("baseline_event_ids") != e["metadata"].get("selected_event_ids") for e in retrieval),
+            "cache_hits": sum(bool(e["metadata"].get("cache_hit")) for e in retrieval),
+            "uncertain_decisions": sum(bool(d.get("uncertain")) for d in decisions), "total_decisions": len(decisions),
+            "selection_sources": dict(Counter(e["metadata"].get("selection_source", "unknown") for e in retrieval)),
+            "fresh_large_outputs_missing_from_next_request": fresh_omissions,
+            "repeated_calls": [{"tool": t, "arguments": parsed(a), "count": n} for (t, a), n in repeated.most_common() if n > 1]},
+        "embeddings": {"failures": sum(e["kind"] == "embedding_failure" for e in events),
+            "reported": (layer.get("metrics") or {}).get("embeddings", {})},
+        "economics": {"evaluations": len(economics),
+            "status": dict(Counter(e["metadata"].get("evaluation_status", "unknown") for e in economics)),
+            "failed_stages": dict(Counter((e["metadata"].get("profile") or {}).get("failed_stage") or "unknown" for e in economics if e["metadata"].get("evaluation_status") == "unavailable")),
+            "elapsed_ms": sum(e["metadata"].get("elapsed_ms") or 0 for e in economics),
+            "review_results": dict(Counter(e["metadata"].get("result", "unknown") for e in events if e["kind"] == "context_review")),
+            "reconciliations": sum(e["kind"] == "context_cost_reconciliation" for e in events),
+            "comparable_reconciliations": sum(bool(e["metadata"].get("comparable")) for e in events if e["kind"] == "context_cost_reconciliation")},
+        "request_counts": {"reported_to_local_ratio_min": min(ratios, default=None), "reported_to_local_ratio_max": max(ratios, default=None),
+            "cache_read_tokens": cache_reads, "cache_write_tokens": cache_writes, "cache_read_known_calls": cache_known},
+        "record_sizes": {"compact_utf8_bytes_by_section": {k: jbytes(v) for k, v in layer.items()},
+            "note": "Serialized audit size, not transmitted model input or token savings."},
+    }
+    findings = []
+    if captures and not memory.get("entries"):
+        findings.append({"code": "empty-automatic-memory", "text": "Capture completed without automatic entries; named state is a separate store. Empty capture is not proof of failed extraction."})
+    if results["embeddings"]["failures"]:
+        findings.append({"code": "embedding-fallback", "text": f"{results['embeddings']['failures']} embedding failures; semantic retrieval is not demonstrated."})
+    if assessments and not results["retrieval"]["changed_order"]:
+        findings.append({"code": "jev-no-observed-order-change", "text": "Paid reranking produced no logged change from the deterministic shortlist; quality benefit is unmeasured."})
+    if results["economics"]["status"].get("unavailable"):
+        findings.append({"code": "shadow-unavailable", "text": "Some shadow evaluations exceeded allowances or were unavailable; fail-open answers do not demonstrate working cost optimization."})
+    if any(n >= 3 for n in repeated.values()):
+        findings.append({"code": "repeated-retrieval", "text": "Identical retrieval arguments occurred at least three times. Inspect per-turn requests to distinguish necessary revisits from loops."})
+    if fresh_omissions:
+        findings.append({"code": "fresh-retrieval-handoff", "text": f"{len(fresh_omissions)} newly retrieved large outputs lack their direct tool output in the next answer request. Handoff excerpts are not equivalent to complete source delivery."})
+    results["findings"] = findings
+    return results
 
 
 def jbytes(value):
     """UTF-8 bytes of a value once JSON-serialized, matching how request units are counted."""
-    return len(json.dumps(value, ensure_ascii=False).encode("utf-8"))
+    return len(json.dumps(value, ensure_ascii=False, separators=(",", ":")).encode("utf-8"))
 
 
 def usage_numbers(usage, native_anthropic=False):
@@ -140,6 +256,7 @@ def analyze(data):
 
     turns, turn_by_user = [], {}
     calls = []                      # every request with its usage
+    call_by_id = {}
     by_purpose = defaultdict(lambda: Counter())
     by_model = defaultdict(lambda: Counter())
     selection_models = defaultdict(lambda: Counter())
@@ -161,6 +278,7 @@ def analyze(data):
     peak_pressure = 0.0
     budget = None
     recoveries = restarts = tool_projections = 0
+    title_calls = 0
 
     for e in events:
         kind, md = e["kind"], e.get("metadata") or {}
@@ -196,19 +314,22 @@ def analyze(data):
 
         elif kind == "inference_request":
             units = md.get("estimated_input_units") or 0
-            if md.get("input_budget"):
+            if content == "answer" and md.get("input_budget"):
                 pressure = (units + (md.get("output_reserve") or 0)) / md["input_budget"]
                 if pressure > peak_pressure:
                     peak_pressure, budget = pressure, md["input_budget"]
-            first = ((md.get("payload") or {}).get("input") or [{}])[0]
-            proj = first.get("content") if isinstance(first, dict) else None
-            proj_bytes = jbytes(proj) if isinstance(proj, str) and proj.startswith("Working context") else None
+            # Memory can precede context; settled prefix and recent tail are separate messages.
+            projections = [i.get("content") for i in (md.get("payload") or {}).get("input", [])
+                           if isinstance(i, dict) and isinstance(i.get("content"), str)
+                           and i["content"].startswith(("Working context:", "Recent context tail:"))]
+            proj_bytes = sum(jbytes(p) for p in projections) if projections else None
             calls.append({"id": e["id"], "purpose": content, "provider": md.get("provider"), "units": units,
                           "proj_bytes": proj_bytes, "hist_bytes": hist_bytes,
-                          "turn": turns[-1] if turns else None, "usage": None, "model": None})
+                          "turn": turn_by_user.get(md.get("user_event_id")) or (turns[-1] if turns else None), "usage": None, "model": None})
+            call_by_id[e["id"]] = calls[-1]
 
         elif kind == "inference_response":
-            req = next((c for c in reversed(calls) if c["id"] == md.get("request_id")), None)
+            req = call_by_id.get(md.get("request_id"))
             nums = usage_numbers(md.get("usage"))
             if req is None or nums is None:
                 continue
@@ -228,6 +349,7 @@ def analyze(data):
                 pending_compaction = True
 
         elif kind == "conversation_title":
+            title_calls += 1
             nums = usage_numbers(md.get("usage"), native_anthropic="cache_read_input_tokens" in (md.get("usage") or {}))
             if nums:
                 by_purpose["title"].update(calls=1, input=nums[0], output=nums[1], cached=nums[2], reasoning=nums[3])
@@ -261,6 +383,13 @@ def analyze(data):
             if req is not None and req["content"] == "compaction":
                 compaction["call_failed"] += 1
 
+        elif kind == "agent_checkpoint" and (md.get("state") or {}).get("status") == "stopped":
+            turn = turn_by_user.get(md["state"].get("user_event_id"))
+            if turn is not None:
+                turn["outcome"] = "stopped"
+                turn["ctx_chars"] = snapshot_chars.get(current_revision)
+                turn["hist_chars"] = hist_chars
+
         elif kind == "tool_call":
             tools[content] += 1
             if content == "update_state":
@@ -268,7 +397,7 @@ def analyze(data):
 
         elif kind == "tool_result" and md.get("tool") == "update_state":
             try:
-                err = json.loads(content).get("error")
+                err = parsed(content, {}).get("error")
             except (ValueError, AttributeError):
                 err = None
             if err:
@@ -294,8 +423,8 @@ def analyze(data):
     totals = Counter()
     for bucket in by_purpose.values():
         totals.update(bucket)
-    mgmt_in = sum(b["input"] for p, b in by_purpose.items() if p not in ("answer", "title"))
-    mgmt_out = sum(b["output"] for p, b in by_purpose.items() if p not in ("answer", "title"))
+    mgmt_in = sum(b["input"] for p, b in by_purpose.items() if p in MANAGEMENT_PURPOSES)
+    mgmt_out = sum(b["output"] for p, b in by_purpose.items() if p in MANAGEMENT_PURPOSES)
 
     # ---- estimated savings vs. append mode (same request, full history instead of working context)
     actual = full = 0
@@ -331,7 +460,7 @@ def analyze(data):
         "turns": turns,
         "turns_ok": sum(t["outcome"] == "ok" for t in turns),
         "turns_failed": sum(t["outcome"] == "FAILED" for t in turns),
-        "calls": len(calls),
+        "calls": len(calls) + title_calls, "inference_calls": len(calls), "title_calls": title_calls,
         "latency_s": (metrics.get("latency_ms") or 0) / 1000,
         "settings": settings,
         "by_purpose": dict(by_purpose),
@@ -363,7 +492,8 @@ def analyze(data):
         "failures": failures, "tools": tools,
         "documents": sum(1 for e in events if e["kind"] == "document"),
     })
-    a["flags"] = review_flags(a)
+    a["audit"] = automated_audit(layer)
+    a["flags"] = review_flags(a) + [f["text"] for f in a["audit"]["findings"]]
     return a
 
 
@@ -373,8 +503,8 @@ def review_flags(a):
         flags.append(f"Layered requests were larger than append mode would have sent (est. {fmt_pct(a['gross_pct'], True)}); "
                      "working-context overhead outweighed what it removed.")
     elif a["net_pct"] is not None and a["net_pct"] < 0:
-        flags.append(f"Context management cost more than it saved: est. gross {fmt_pct(a['gross_pct'], True)}, "
-                     f"net {fmt_pct(a['net_pct'], True)} vs. append mode.")
+        flags.append(f"The rough offline input proxy is negative after management input: gross {fmt_pct(a['gross_pct'], True)}, "
+                     f"net {fmt_pct(a['net_pct'], True)}. This is not measured cost or token savings.")
     if a["turns_failed"]:
         flags.append(f"{a['turns_failed']} of {len(a['turns'])} turns failed (see Failures).")
     unanswered = sum(t["outcome"] == "no answer" for t in a["turns"])
@@ -382,13 +512,9 @@ def review_flags(a):
         flags.append(f"{unanswered} user message(s) have no recorded answer or failure (interrupted or resubmitted?).")
     if not a["usage_complete"]:
         flags.append("Usage is incomplete in this export; token totals are lower bounds.")
-    if a["jev_turns"] and not a["selection_calls"]:
-        if a["peak_pressure"] >= COMPACTION_TRIGGER:
-            flags.append(f"Jev was enabled but never called, even though requests reached {a['peak_pressure']:.0%} "
-                         f"of budget (context management normally starts at {COMPACTION_TRIGGER:.0%}).")
-        else:
-            flags.append(f"Jev was enabled but never needed (peak request reached {a['peak_pressure']:.0%} of budget; "
-                         f"selection only runs near {COMPACTION_TRIGGER:.0%}).")
+    if a["jev_turns"] and not a["audit"]["jev"]:
+        flags.append(f"Jev was enabled with no recorded calls (peak answer request reached {a['peak_pressure']:.0%} of the byte guard). "
+                     "Transient tool-output pressure is separate from selection eligibility; benefit remains unmeasured.")
     if a["state_errors"]:
         n = sum(a["state_errors"].values())
         flags.append(f"{n} of {a['state_calls']} update_state calls were rejected "
@@ -398,7 +524,7 @@ def review_flags(a):
         flags.append(f"{paid_waste} paid compaction call(s) were discarded or rejected.")
     if a["peak_pressure"] > 0.9:
         flags.append(f"Peak request used {a['peak_pressure']:.0%} of the byte budget.")
-    if len(a["turns"]) >= 5 and not a["state_entries"] and not a["pins"]:
+    if len(a["turns"]) >= 5 and not a["state_entries"] and not a["pins"] and not a["audit"]["memory"]["automatic_entries"]:
         flags.append("No named state or pins in a multi-turn conversation; everything relies on unprotected context.")
     if a["gated"] and a["proposals"]["jev"]:
         total = sum(a["proposals"]["jev"].values())
@@ -473,7 +599,7 @@ def conversation_md(a):
             "context, so it is larger than the working-context figures above.", ""]
     out += table(["Measure", "Value"], [
         ["Turns (ok / failed / total)", f"{a['turns_ok']} / {a['turns_failed']} / {len(a['turns'])}"],
-        ["API calls", f"{a['calls']:,}"],
+        ["API dispatches (including separately logged titles)", f"{a['calls']:,}"],
         ["Tokens in / out", f"{t['input']:,} / {t['output']:,}" + ("" if a["usage_complete"] else " (incomplete)")],
         ["Cached input (already included above)", f"{t['cached']:,} ({pct(t['cached'], t['input']):.0f}%)"],
         ["Context-management share of input", fmt_pct(a["mgmt_share"])],
@@ -485,12 +611,12 @@ def conversation_md(a):
          f"{a['peak_pressure']:.0%} of {a['budget']:,}" if a["budget"] else "n/a"],
     ], ["---", "---:"])
 
-    out += ["", "### Tokens by purpose", "", "Answer = the reply loop; everything else is context management.", ""]
-    out += table(["Purpose", "Calls", "Input", "Output", "Cached in", "Reasoning out"],
+    out += ["", "### Tokens by purpose", "", "Answer = the reply loop. Web search and title generation are separate from context management.", ""]
+    out += table(["Purpose", "Responses with usage", "Input", "Output", "Cached in", "Reasoning out"],
                  [[p, b["calls"], f"{b['input']:,}", f"{b['output']:,}", f"{b['cached']:,}", f"{b['reasoning']:,}"]
                   for p, b in sorted(a["by_purpose"].items(), key=lambda kv: -kv[1]["input"])])
     out += ["", "### Tokens by provider and model", ""]
-    out += table(["Provider", "Model", "Calls", "Input", "Output"],
+    out += table(["Provider", "Model", "Responses with usage", "Input", "Output"],
                  [[p or "?", m or "?", b["calls"], f"{b['input']:,}", f"{b['output']:,}"]
                   for (p, m), b in sorted(a["by_model"].items(), key=lambda kv: -kv[1]["input"])], ["---", "---"] + ["---:"] * 3)
 
@@ -528,6 +654,16 @@ def conversation_md(a):
 
     out += ["", "## Selector / Jev", "",
             f"- Jev enabled on {a['jev_turns']} of {len(a['turns'])} turns; selection calls: {a['selection_calls']}"]
+    audit = a["audit"]
+    out += ["", "All Jev purposes (attempts include failed/unanswered calls):", ""]
+    out += table(["Purpose", "Attempts", "Responses", "Input", "Output"],
+                 [[p, v["attempts"], v["responses"], v["input"], v["output"]] for p, v in audit["jev"].items()])
+    r = audit["retrieval"]
+    out += ["", f"Retrieval decisions: {r['evaluations']}; assessed: {r['assessed']}; fallback: {r['fallbacks']}; "
+            f"changed shortlist order: {r['changed_order']}; cache hits: {r['cache_hits']}. "
+            f"Uncertain candidate assessments: {r['uncertain_decisions']}/{r['total_decisions']}. Priority confidence is not truth confidence."]
+    out += ["", f"Large fresh retrievals missing their direct output in the next request: {len(r['fresh_large_outputs_missing_from_next_request'])}. "
+            "Event/request pairs are retained in analysis.json; a bounded handoff may still include an excerpt."]
     for (prov, model), b in a["selection"].items():
         out.append(f"- {prov} {model or ''}: {b['calls']} calls, {b['input']:,} in / {b['output']:,} out")
     for key, label in (("jev", "Jev recommendations"), ("other", "Other proposals")):
@@ -538,6 +674,17 @@ def conversation_md(a):
     if a["decision_rejections"]:
         out.append(f"- Selector rejections/fallbacks: {len(a['decision_rejections'])}")
 
+    m, ec = audit["memory"], audit["economics"]
+    out += ["", "## Automatic memory and controller health", "",
+            f"Automatic entries: {m['automatic_entries']}; named state: {m['named_entries']}; paid extraction attempts: {m['extraction_attempts']}. "
+            f"Empty activations: {m['empty_activations']}/{m['activation_calls']}; capture statuses: {m['capture_status']}. "
+            "Capture completion alone does not imply useful knowledge was saved.", "",
+            f"Embedding failures: {audit['embeddings']['failures']}; reported embedding usage: {audit['embeddings']['reported']}.", "",
+            f"Shadow evaluations: {ec['status']}; failed stages: {ec['failed_stages']}; elapsed {ec['elapsed_ms']/1000:.3f}s. "
+            f"Local review results: {ec['review_results']}. Comparable reconciliations: {ec['comparable_reconciliations']}/{ec['reconciliations']}. "
+            "Shadow choices do not enact cost optimization.", "", "### Repeated retrieval arguments", ""]
+    out += table(["Tool", "Count", "Arguments"], [[x['tool'], x['count'], short(json.dumps(x['arguments'], ensure_ascii=False), 180)]
+                  for x in r['repeated_calls'][:15]], ["---", "---:", "---"])
     out += ["", "## Failures", ""]
     if a["failures"]:
         grouped = Counter((kind, short(msg, 160)) for kind, msg in a["failures"])
@@ -559,8 +706,9 @@ METHOD_NOTE = (
     "do not account for prompt-cache discounts: each answer request's working-context "
     "message is replaced by the append-mode history (user, assistant, document and reasoning events, "
     f"plus ~{SOURCE_OVERHEAD_BYTES} bytes of source header each), keeping instructions, tools and tool "
-    "exchanges fixed, then converted to tokens using that request's own bytes-per-token ratio. Net subtracts "
-    "all context-management input (selection, compaction). It says nothing about answer quality; fidelity "
+    "exchanges fixed, then converted to tokens using that request's own bytes-per-token ratio. This ratio "
+    "is a rough proxy, not a tokenizer replay or matched baseline. Net subtracts "
+    "context-management input (selection, compaction, reranking, classification, memory extraction), not web search. It says nothing about answer quality; fidelity "
     "still needs a human read."
 )
 
@@ -672,20 +820,28 @@ def master_md(reports, generated):
 def main():
     parser = argparse.ArgumentParser(description="Build Markdown reports from Converse/Conclave exports.")
     parser.add_argument("--dir", default=str(DEFAULT_DIR), help=f"conversations folder (default: {DEFAULT_DIR})")
+    parser.add_argument("--files", nargs="+", help="Analyze only these exports; implies --no-move")
+    parser.add_argument("--output-dir", help="Write reports to this directory instead of the conversations folder")
+    parser.add_argument("--no-move", action="store_true", help="Preserve original export paths")
+    parser.add_argument("--json", action="store_true", help="Write structured audit results to analysis.json")
+    parser.add_argument("--skip-costs", action="store_true", help="Skip the separate shared cost-report batch")
     args = parser.parse_args()
     sys.stdout.reconfigure(encoding="utf-8")
 
     base = Path(args.dir)
-    processed, report_dir = base / "Processed", base / REPORT_DIR_NAME
+    output_base = Path(args.output_dir) if args.output_dir else base
+    output_base.mkdir(parents=True, exist_ok=True)
+    processed, report_dir = base / "Processed", output_base / REPORT_DIR_NAME
     if not base.is_dir():
         sys.exit(f"Conversations folder not found: {base}")
-    processed.mkdir(exist_ok=True)
+    if not args.no_move and not args.files:
+        processed.mkdir(exist_ok=True)
     report_dir.mkdir(exist_ok=True)
 
-    new_files = sorted(base.glob("*.json"))
+    new_files = [Path(p).resolve() for p in args.files] if args.files else sorted(base.glob("*.json"))
     latest = {}
     recognized_files = []
-    for path in sorted(processed.glob("*.json")) + new_files:
+    for path in ([] if args.files else sorted(processed.glob("*.json"))) + new_files:
         try:
             data = json.loads(path.read_text(encoding="utf-8"))
         except (OSError, ValueError) as err:
@@ -717,17 +873,25 @@ def main():
               f"  flags {len(a['flags'])}")
 
     generated = datetime.now()
-    master = base / MASTER_NAME
+    master = output_base / MASTER_NAME
     master.write_text(master_md(reports, generated), encoding="utf-8")
+    if args.json:
+        machine = {"schema_version": "conversation-audit-v1", "generated_at": generated.isoformat(),
+                   "conversations": [{"conversation_id": a["id"], "title": a["title"], "turns": a["turns"],
+                       "usage_complete": a["usage_complete"], "by_purpose": a["by_purpose"], "flags": a["flags"],
+                       "audit": a["audit"]} for a in reports]}
+        (output_base / "analysis.json").write_text(json.dumps(machine, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
     # All USD arithmetic lives in the shared JavaScript analyzer; this helper
     # retains its context-placement and quality reports without a second price engine.
     cost_script = Path(__file__).resolve().parent / "report-costs.js"
-    subprocess.run(["node", str(cost_script), str(base)], check=True)
-    with master.open("a", encoding="utf-8") as output:
-        output.write("\n\nCurrent rate valuation and per-call coverage: [Shared cost report](cost-reports/index.md). Export snapshot trends: [JSON](cost-reports/costs.json).\n")
+    if not args.skip_costs:
+        subprocess.run(["node", str(cost_script), str(base)], check=True)
+        with master.open("a", encoding="utf-8") as output:
+            cost_link = os.path.relpath(base / 'cost-reports/index.md', output_base).replace('\\', '/')
+            output.write(f"\n\nDated rate valuation and per-call coverage: [Shared cost report]({cost_link}).\n")
 
-    for path in recognized_files:
+    for path in ([] if args.no_move or args.files else recognized_files):
         # Preserve older exports even when their original download names collide.
         data = json.loads(path.read_text(encoding="utf-8"))
         stamp = re.sub(r"[^a-zA-Z0-9_-]", "-", data.get("exported_at") or generated.isoformat())
@@ -741,7 +905,7 @@ def main():
 
     print(f"\n{len(reports)} conversation reports in {report_dir}")
     print(f"Master report: {master}")
-    if recognized_files:
+    if recognized_files and not (args.no_move or args.files):
         print(f"Moved {len(recognized_files)} new export(s) to {processed}")
 
 

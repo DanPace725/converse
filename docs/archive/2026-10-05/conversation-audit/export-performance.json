@@ -1,0 +1,63 @@
+{
+  "basis": "offline Windows replay; exact canonical event and snapshot comparison; production unmeasured",
+  "before": [
+    {
+      "path": "../../converse/docs/conversations/Pain, Gender, and Cultural Endurance Norms_2026-10-05T17-14-57-731Z.json",
+      "source_bytes": 66994357,
+      "download_bytes": 60498206,
+      "events": 1283,
+      "snapshots": 38,
+      "history_reads": 85,
+      "history_decodes": 85,
+      "hydrate_ms": 934.0258999999999,
+      "build_ms": 27282.023500000003,
+      "serialize_ms": 207.882999999998,
+      "total_ms": 28423.932399999998,
+      "fidelity": true
+    },
+    {
+      "path": "../../converse/docs/conversations/Timeline for Mapping the Human Brain_2026-10-05T17-15-21-185Z.json",
+      "source_bytes": 12074104,
+      "download_bytes": 10460707,
+      "events": 350,
+      "snapshots": 35,
+      "history_reads": 77,
+      "history_decodes": 77,
+      "hydrate_ms": 188.74049999999988,
+      "build_ms": 3450.043700000002,
+      "serialize_ms": 40.76440000000002,
+      "total_ms": 3679.548600000002,
+      "fidelity": true
+    }
+  ],
+  "after": [
+    {
+      "path": "../../converse/docs/conversations/Pain, Gender, and Cultural Endurance Norms_2026-10-05T17-14-57-731Z.json",
+      "source_bytes": 66994357,
+      "download_bytes": 60498206,
+      "events": 1283,
+      "snapshots": 38,
+      "history_reads": 43,
+      "history_decodes": 1,
+      "hydrate_ms": 943.8154,
+      "build_ms": 336.8606,
+      "serialize_ms": 187.05770000000007,
+      "total_ms": 1467.7337,
+      "fidelity": true
+    },
+    {
+      "path": "../../converse/docs/conversations/Timeline for Mapping the Human Brain_2026-10-05T17-15-21-185Z.json",
+      "source_bytes": 12074104,
+      "download_bytes": 10460707,
+      "events": 350,
+      "snapshots": 35,
+      "history_reads": 39,
+      "history_decodes": 1,
+      "hydrate_ms": 152.20969999999988,
+      "build_ms": 124.22119999999995,
+      "serialize_ms": 38.920900000000074,
+      "total_ms": 315.3517999999999,
+      "fidelity": true
+    }
+  ]
+}
