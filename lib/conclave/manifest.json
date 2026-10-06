@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
   "source_repository": "https://github.com/DanPace725/conclave",
-  "source_commit": "b09f012802b3661a5cea5d0cc376547f632a91ed",
+  "source_commit": "a55c7df902741295b5f79a2d7ea1106ac1a626da",
   "source_worktree_dirty": false,
-  "migrated_at": "2026-10-05T23:35:44.618Z",
+  "migrated_at": "2026-10-06T03:16:49.620Z",
   "dependencies": {
     "@vercel/functions": "^3.9.9",
     "drizzle-orm": "^0.45.3",
@@ -95,7 +95,7 @@
     {
       "source": "src/effort.js",
       "target": "lib/conclave/effort.js",
-      "sha256": "469b182b8d4cbae1373ca8d44b96a45c495bed2602d87bc49e80923e04ed1418"
+      "sha256": "00535b6c2fb0f93608fe90f5308555afcecdb63b5d9d510027b62d9bcb43e8ac"
     },
     {
       "source": "src/embedding-store.js",
@@ -175,7 +175,7 @@
     {
       "source": "src/memory-controller.js",
       "target": "lib/conclave/memory-controller.js",
-      "sha256": "33c1b0108be36cdabe288b975d9c5dc52da5126dbbfb82ec68777b7bcbeabd1f"
+      "sha256": "cbaa0a9e8ed0247f0625fa526f72d2f45d4f3ab9245292de3dd192cc42a71deb"
     },
     {
       "source": "src/memory-evaluation.js",
@@ -185,7 +185,12 @@
     {
       "source": "src/memory-extractor.js",
       "target": "lib/conclave/memory-extractor.js",
-      "sha256": "51495e22736ec98fb50efc467843a9008b4613675713d5a3512d69bc1de306c1"
+      "sha256": "df9b1a50aa61f9d04af6fb46e54a0515829bde683b90a19c5900caa5e42eadd2"
+    },
+    {
+      "source": "src/memory-scope.js",
+      "target": "lib/conclave/memory-scope.js",
+      "sha256": "ffe728605f516b1d8412efad6ac99cb71386ca4d12f9de5f7150e15d47399efd"
     },
     {
       "source": "src/memory-selection.js",
@@ -200,7 +205,7 @@
     {
       "source": "src/memory.js",
       "target": "lib/conclave/memory.js",
-      "sha256": "611fd5efdc65087359ad390fbf28545d255db115e09dae23a92a960c373f7de0"
+      "sha256": "17fd9d2fc4a658ae8fa08f8b05701f67e85078a084e00473fa343b3c753ff5bb"
     },
     {
       "source": "src/protection.js",
@@ -395,7 +400,7 @@
     {
       "source": "src/effort.js",
       "target": "public/effort.js",
-      "sha256": "469b182b8d4cbae1373ca8d44b96a45c495bed2602d87bc49e80923e04ed1418"
+      "sha256": "00535b6c2fb0f93608fe90f5308555afcecdb63b5d9d510027b62d9bcb43e8ac"
     },
     {
       "source": "src/export-name.js",
