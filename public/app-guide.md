@@ -78,7 +78,7 @@ Workspace's **Jev** tab shows saved calls and selection outcomes separately: att
 
 After discovering a source, models can use **search_source** to locate a passage inside that source, then **retrieve_event** with its offset/next_offset to read exact text. Claude continuation restarts preserve fresh observations before archiving already delivered results. If a byte guard shortens a passage, its next_offset identifies the omitted range. A supplied range or source pointer does not establish that a claim was verified.
 
-Context/Agent conversations persist on the server in Neon when configured, with SQLite as the local fallback. App access currently uses an app password; separate user accounts and account-wide memory are not implemented. Keys remain server-side. Chat mode is browser-local.
+Context/Agent conversations persist on the server in Neon when configured, with SQLite as the local fallback. App access uses an app password or, when configured, Google sign-in. With Google sign-in each saved Context/Agent conversation belongs to the account that created it and other accounts cannot open it; account-wide memory is not implemented. Keys remain server-side. Chat mode is browser-local.
 
 Export Markdown preserves readable conversation text. Canonical JSON contains the full historical audit, including original content, versions, requests, tool exchanges, context snapshots, Jev records, and usage. Historical exports may include documents removed from the active workspace.
 

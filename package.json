@@ -12,6 +12,7 @@
     "check": "node scripts/check.js",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "node --env-file-if-exists=.env scripts/migrate.js",
+    "db:claim": "node --env-file-if-exists=.env scripts/claim-conversations.js",
     "test:neon": "node --env-file=.env.neon-test --test test/neon.test.js",
     "test:browser": "playwright test",
     "test:agent:browser": "playwright test --config=playwright.agent.config.js",

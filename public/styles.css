@@ -722,6 +722,57 @@ main {
   background: var(--surface-3);
 }
 
+/* Pull to refresh: a chip that follows a downward drag from the top of the chat. */
+#pull-refresh {
+  position: absolute;
+  top: calc(max(10px, env(safe-area-inset-top)) + 46px);
+  left: 50%;
+  z-index: 5;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  margin-left: -18px;
+  border: 1px solid var(--border-strong);
+  border-radius: 50%;
+  background: var(--surface-2);
+  color: var(--muted);
+  box-shadow: 0 6px 18px #0008;
+  pointer-events: none;
+  opacity: var(--show, 0);
+  transform: translateY(var(--pull, 0px));
+  transition:
+    opacity 0.2s,
+    transform 0.2s;
+}
+#pull-refresh[data-state="pull"],
+#pull-refresh[data-state="ready"] {
+  transition: none;
+}
+#pull-refresh[data-state="ready"],
+#pull-refresh[data-state="refreshing"] {
+  color: var(--accent);
+}
+#pull-refresh svg {
+  transform: rotate(var(--turn, 0deg));
+}
+#pull-refresh[data-state="refreshing"] svg {
+  animation: pull-spin 0.8s linear infinite;
+}
+@keyframes pull-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  #pull-refresh {
+    transition: none;
+  }
+  #pull-refresh[data-state="refreshing"] svg {
+    animation: none;
+  }
+}
+
 /* Conversation */
 #chat {
   flex: 1;

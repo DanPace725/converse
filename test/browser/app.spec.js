@@ -313,6 +313,50 @@ test("expired session opens unlock and network failure is recoverable", async ({
   await expect(page.locator("#unlock-form button")).toBeEnabled();
 });
 
+test("Google sign-in replaces the password form, reports a refused account and signs out", async ({
+  page,
+}) => {
+  let signedIn = false;
+  await page.route("**/api/models", (r) =>
+    r.fulfill(
+      signedIn
+        ? { json: catalog }
+        : { status: 401, json: { error: "Sign in to continue." } },
+    ),
+  );
+  await page.route("**/api/session", (r) => {
+    const method = r.request().method();
+    // The app follows the returned address; the refused return stands in for Google.
+    if (method === "POST") return r.fulfill({ json: { url: "/?signin=denied" } });
+    if (method === "DELETE") signedIn = false;
+    return r.fulfill({
+      json: {
+        sign_in: "google",
+        user: signedIn ? { email: "ada@example.com" } : null,
+      },
+    });
+  });
+  await page.goto("/");
+  await expect(page.locator("#google-sign-in")).toBeVisible();
+  await expect(page.locator("#unlock-form")).toBeHidden();
+  await page.locator("#google-sign-in").click();
+  await expect(page.locator("#unlock-error")).toContainText(
+    "does not have access",
+  );
+  await expect(page).toHaveURL(/\/$/);
+  await expect(page.locator("#google-sign-in")).toBeEnabled();
+  signedIn = true;
+  await page.reload();
+  await expect(page.locator("#status")).toHaveText("Ready");
+  await expect(page.locator("#unlock")).not.toBeVisible();
+  await openMenu(page);
+  await expect(page.locator("#sign-out")).toHaveText(
+    "Sign out (ada@example.com)",
+  );
+  await page.locator("#sign-out").click();
+  await expect(page.locator("#google-sign-in")).toBeVisible();
+});
+
 test("touch Enter inserts a newline and the composer follows viewport height", async ({
   page,
 }, testInfo) => {
@@ -332,6 +376,93 @@ test("touch Enter inserts a newline and the composer follows viewport height", a
         visualViewport.height + 1,
     ),
   ).toBe(true);
+});
+
+// Synthetic single-finger drag on the conversation; `release` lifts the finger.
+async function drag(page, distance, { release = true } = {}) {
+  await page.evaluate(
+    ([distance, release]) => {
+      const chat = document.querySelector("#chat");
+      const { left, top, width } = chat.getBoundingClientRect();
+      const fire = (type, y) => {
+        const touch = new Touch({
+          identifier: 1,
+          target: chat,
+          clientX: left + width / 2,
+          clientY: top + 20 + y,
+        });
+        chat.dispatchEvent(
+          new TouchEvent(type, {
+            bubbles: true,
+            cancelable: true,
+            touches: type === "touchend" ? [] : [touch],
+            changedTouches: [touch],
+          }),
+        );
+      };
+      fire("touchstart", 0);
+      for (let step = 1; step <= 8; step++)
+        fire("touchmove", (distance * step) / 8);
+      if (release) fire("touchend", distance);
+    },
+    [distance, release],
+  );
+}
+test("pulling down at the top refreshes in place and Reload app reloads the page", async ({
+  page,
+}, testInfo) => {
+  let modelRequests = 0;
+  await page.route("**/api/models", (r) => {
+    modelRequests++;
+    return r.fulfill({ json: catalog });
+  });
+  await page.goto("/");
+  await expect(page.locator("#status")).toHaveText("Ready");
+  await page.evaluate(() => (window.loadedOnce = true));
+  const box = page.getByLabel("Message", { exact: true });
+  await box.fill("Unsent draft");
+  const chip = page.locator("#pull-refresh");
+  const loaded = modelRequests;
+  if (testInfo.project.name === "mobile") {
+    // A short pull, and a pull that starts below the top, do nothing.
+    await drag(page, 80);
+    await expect(chip).toHaveAttribute("data-state", "");
+    await page.evaluate(() => {
+      const filler = document.createElement("div");
+      filler.id = "filler";
+      filler.style.height = "3000px";
+      document.querySelector("#chat").prepend(filler);
+      document.querySelector("#chat").scrollTop = 400;
+    });
+    await drag(page, 300);
+    await expect(chip).toHaveAttribute("data-state", "");
+    await page.evaluate(() => document.querySelector("#filler").remove());
+    expect(modelRequests).toBe(loaded);
+
+    await drag(page, 300, { release: false });
+    await expect(chip).toHaveAttribute("data-state", "ready");
+    await expect(chip).toHaveCSS("opacity", "1");
+    await page.evaluate(() =>
+      document
+        .querySelector("#chat")
+        .dispatchEvent(new TouchEvent("touchend", { bubbles: true })),
+    );
+    await expect(chip).toHaveAttribute("data-state", "refreshing");
+    await expect(chip).toHaveAttribute("data-state", "");
+    await expect(chip).toHaveCSS("opacity", "0");
+    await expect(page.locator("#status")).toHaveText("Ready");
+    expect(modelRequests).toBe(loaded + 1);
+    await expect(box).toHaveValue("Unsent draft");
+    expect(await page.evaluate(() => window.loadedOnce)).toBe(true);
+  }
+  await openMenu(page);
+  await Promise.all([
+    page.waitForEvent("load"),
+    page.locator("#reload-app").click(),
+  ]);
+  await expect(page.locator("#status")).toHaveText("Ready");
+  expect(await page.evaluate(() => window.loadedOnce)).toBeUndefined();
+  expect(modelRequests).toBeGreaterThan(loaded);
 });
 
 test.describe("installed app shell", () => {

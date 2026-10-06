@@ -115,8 +115,30 @@ function rememberModels() {
   } catch {}
 }
 let sessionGeneration = 0;
+// Which sign-in the server expects, asked when the dialog first has to open.
+let signInMode;
 function unlock() {
-  if (!$("#unlock").open) $("#unlock").showModal();
+  signInMode ||= fetch("/api/session", { cache: "no-store" })
+    .then((r) => r.json())
+    .then((d) => (d.sign_in === "google" ? "google" : "password"))
+    .catch(() => {
+      signInMode = undefined;
+      return "password";
+    });
+  signInMode.then((mode) => {
+    $("#unlock-form").hidden = mode === "google";
+    $("#unlock-google").hidden = mode !== "google";
+    if (!$("#unlock").open) $("#unlock").showModal();
+  });
+}
+async function refreshAccount() {
+  try {
+    const { user } = await (
+      await fetch("/api/session", { cache: "no-store" })
+    ).json();
+    $("#sign-out").hidden = !user;
+    if (user) $("#sign-out").textContent = `Sign out (${user.email})`;
+  } catch {}
 }
 function nearBottom() {
   const c = $("#chat");
@@ -289,7 +311,10 @@ async function loadModels() {
       }
       $("#status").textContent = "Ready";
       $("#send").disabled = false;
-      window.contextLayer?.refresh();
+      const context = window.contextLayer?.refresh();
+      refreshAccount();
+      // Resolves once the chat list and open conversation have reloaded too.
+      return context;
     })
     .catch((e) => {
       if (generation !== sessionGeneration) return;
@@ -1041,6 +1066,48 @@ $("#unlock-form").onsubmit = async (e) => {
     button.disabled = false;
   }
 };
+$("#google-sign-in").onclick = async () => {
+  const button = $("#google-sign-in");
+  button.disabled = true;
+  $("#unlock-error").textContent = "";
+  try {
+    const r = await fetch("/api/session", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ provider: "google" }),
+    });
+    const data = await r.json();
+    // The button stays disabled while the browser leaves for Google.
+    if (r.ok && data.url) return location.assign(data.url);
+    $("#unlock-error").textContent =
+      data.error || "Could not start Google sign-in.";
+  } catch {
+    $("#unlock-error").textContent =
+      "Could not connect. Check your connection and try again.";
+  }
+  button.disabled = false;
+};
+window.addEventListener(
+  "pageshow",
+  () => ($("#google-sign-in").disabled = false),
+);
+$("#reload-app").onclick = () => {
+  if (busy && !confirm("A reply is still in progress. Reload anyway?")) return;
+  location.reload();
+};
+$("#sign-out").onclick = async () => {
+  await fetch("/api/session", { method: "DELETE" }).catch(() => {});
+  location.reload();
+};
+const signInOutcome = new URLSearchParams(location.search).get("signin");
+if (signInOutcome) {
+  history.replaceState(null, "", location.pathname);
+  $("#unlock-error").textContent =
+    signInOutcome === "denied"
+      ? "This Google account does not have access to Converse."
+      : "Google sign-in did not complete. Try again.";
+  unlock();
+}
 $("#new-chat").onclick = () => {
   if (busy) return;
   if (

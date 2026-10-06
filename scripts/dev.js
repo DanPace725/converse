@@ -59,5 +59,5 @@ http
     }
   })
   .listen(Number(process.env.PORT || 3211), "127.0.0.1", () =>
-    console.log("Converse: http://127.0.0.1:" + (process.env.PORT || 3211)),
+    console.log("Converse: http://localhost:" + (process.env.PORT || 3211)),
   );

@@ -43,6 +43,9 @@
     <symbol id="i-close" viewBox="0 0 24 24">
       <path d="M6 6l12 12M18 6 6 18" />
     </symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24">
+      <path d="M23 4v6h-6M20.5 15a9 9 0 1 1-2.1-9.4L23 10" />
+    </symbol>
     <symbol id="i-sidebar" viewBox="0 0 24 24">
       <rect x="3.5" y="4.5" width="17" height="15" rx="2.5" />
       <path d="M9.5 4.5v15" />
@@ -95,9 +98,9 @@
     </details>
   </nav>
   <dialog id="unlock">
+    <img src="/icon-192.png" alt="" width="40" height="40" />
+    <h2>Open Converse</h2>
     <form id="unlock-form">
-      <img src="/icon-192.png" alt="" width="40" height="40" />
-      <h2>Open Converse</h2>
       <p class="note">Enter your app access password.</p>
       <input
         id="password"
@@ -106,8 +109,12 @@
         aria-label="Access password"
         required
       /><button>Unlock</button>
-      <p id="unlock-error" role="status"></p>
     </form>
+    <div id="unlock-google" hidden>
+      <p class="note">Sign in with your Google account.</p>
+      <button type="button" id="google-sign-in">Continue with Google</button>
+    </div>
+    <p id="unlock-error" role="status"></p>
   </dialog>
   <main>
     <header class="topbar">
@@ -159,7 +166,9 @@
           <button id="export" type="button" disabled>Export Markdown</button
           ><button id="export-json" type="button">Export JSON</button
           ><button type="button" id="install" hidden>Install app</button>
+          <button id="reload-app" type="button">Reload app</button>
           <button id="about-open" type="button">About / Help</button>
+          <button id="sign-out" type="button" hidden>Sign out</button>
           <details id="workspace-panel" hidden>
             <summary id="workspace-label">Workspace files</summary>
             <div id="workspace-downloads"></div>
@@ -167,6 +176,9 @@
         </div>
       </details>
     </header>
+    <div id="pull-refresh" data-state="" aria-hidden="true">
+      <svg class="icon"><use href="#i-refresh" /></svg>
+    </div>
     <div id="chat" aria-live="polite">
       <div id="empty"></div>
     </div>
@@ -684,6 +696,7 @@
   <script src="/reasoning.js" defer></script>
   <script src="/image-upload.js" defer></script>
   <script src="/app.js" defer></script>
+  <script src="/pull-refresh.js" defer></script>
   <script src="/memory-graph.js" defer></script>
   <script src="/context-garden.js" defer></script>
   <dialog id="about-dialog" aria-labelledby="about-title">
