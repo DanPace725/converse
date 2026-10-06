@@ -292,6 +292,7 @@
     const s = data.summary, facts = [ ['Calls', `${s.attempts} attempted · ${s.completed} completed · ${s.failed} failed · ${s.missing_responses} without a response`],
       ['Retrieval', `${s.changed_selections} selections changed · ${s.confirmed_baselines || 0} baselines confirmed · ${s.fallbacks} fallbacks · ${s.skipped} skipped`],
       ['Reuse', `${s.cache_hits} cached decisions`],
+      ...(s.memory_jev_selections ? [['Jev memory', `${s.memory_jev_applied || 0} captures applied · ${s.memory_comparisons || 0} optional task-model comparisons · ${s.memory_comparison_failures || 0} comparison failures`]] : []),
       ...(s.memory_shadows ? [['Memory shadow', `${s.memory_shadows} compared, not applied · ${s.memory_shadow_failures} failed${s.memory_shadow_mean_jaccard == null ? '' : ` · mean overlap ${(s.memory_shadow_mean_jaccard * 100).toFixed(0)}%`}`]] : []),
       ['Latency', `${(s.known_elapsed_ms / 1000).toFixed(2)} s reported${s.unknown_latency_calls ? ` · ${s.unknown_latency_calls} unknown` : ''}`] ];
     el('jev-summary').replaceChildren(...facts.flatMap(([label, value]) => {
@@ -319,11 +320,12 @@
       const labels = ids => ids.map(id => view.source_refs?.[id] || 'historical source').join(', ') || 'none recorded';
       if (record.baseline?.length || record.selected?.length) line(`Baseline: ${labels(record.baseline)} → Selected: ${labels(record.selected)}`);
       if (record.assessment?.threshold != null) line('Confidence threshold: ' + record.assessment.threshold);
-      if (record.kind === 'memory_shadow') {
+      if (record.kind === 'memory_shadow' || record.kind === 'memory_comparison') {
         const picks = list => list ? list.map(r => `¶${r.passage_id} ${r.kind}`).join(', ') || 'none' : 'unavailable';
         line(`Task model: ${picks(record.llm_selection)} · Jev: ${picks(record.jev_selection)}`);
         if (record.comparison) line(`${record.comparison.both} shared · ${record.comparison.kind_matches} same kind · overlap ${(record.comparison.jaccard * 100).toFixed(0)}%`);
       }
+      if (record.deferred_passage_ids?.length) line('Uncertain or oversized passages left for review: ' + record.deferred_passage_ids.map(id => `¶${id}`).join(', '));
       if (record.economics) line(`Delegation gate: ${record.economics.allowed ? 'eligible' : 'skipped'} · ${record.economics.reason}. ${record.economics_basis}`);
       for (const candidate of record.candidates || record.supplied_candidates || []) {
         const decision = record.assessment?.decisions?.find(d => d.id === candidate.id);

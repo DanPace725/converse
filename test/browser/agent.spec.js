@@ -92,6 +92,31 @@ test('Jev has a dedicated Workspace view with outcomes, exact evidence, unknown 
   } finally { await app.close(); }
 });
 
+test('Jev memory view distinguishes applied selections from optional model comparisons without making calls', async ({ page }, testInfo) => {
+  let calls = 0; const errors = []; page.on('pageerror', e => errors.push(e.message));
+  const app = await fixture(async () => { calls++; return final; });
+  const id = app.service.create('Active Jev memory proof').conversation_id;
+  const store = app.service.store;
+  const jev = { records: [{ passage_id: 0, kind: 'claim' }] }, llm = { records: [{ passage_id: 2, kind: 'question' }] };
+  store.append(id, 'memory_selection', '', { selector: 'jev', jev, deferred_passage_ids: [1] });
+  store.append(id, 'memory_selection_applied', '', { selector: 'jev', revision: 1, records: jev.records });
+  store.append(id, 'memory_comparison', '', { active_selector: 'jev', applied: false, jev, llm, comparison: { both: 0, kind_matches: 0, jaccard: 0 } });
+  try {
+    await page.goto(app.url);
+    if (testInfo.project.name === 'mobile') await page.locator('#menu').click();
+    await page.locator('#server-chats .chat-item').filter({ hasText: 'Active Jev memory proof' }).click();
+    await page.locator('#workspace-open').click(); await page.locator('#tab-jev').click();
+    await expect(page.locator('#jev-summary')).toContainText('1 captures applied · 1 optional task-model comparisons');
+    await page.locator('#jev-records details').first().locator('summary').click();
+    await expect(page.locator('#jev-records')).toContainText('Task model: ¶2 question · Jev: ¶0 claim');
+    await page.locator('#jev-records details').last().locator('summary').click();
+    await expect(page.locator('#jev-records')).toContainText('Uncertain or oversized passages left for review: ¶1');
+    await page.reload(); await page.locator('#workspace-open').click(); await page.locator('#tab-jev').click();
+    await expect(page.locator('#jev-summary')).toContainText('1 captures applied');
+    expect(calls).toBe(0); expect(errors).toEqual([]);
+  } finally { await app.close(); }
+});
+
 test('automatic memory sources, corrections, suppression and restoration are usable after reload', async ({ page }, testInfo) => {
   const errors = []; page.on('pageerror', error => errors.push(error.message));
   const app = await fixture(async () => final);
@@ -147,7 +172,7 @@ test('capture issues persist after successful turns and a shared memory snapshot
   const app = await fixture(async payload => {
     if (payload.text?.format?.name === 'memory_candidates') { captures++; throw Error('OpenAI 400: unsupported reasoning fixture'); }
     return final;
-  }, {memoryModel:true});
+  }, {memoryModel:true, memorySelector:'task-model'});
   const id = app.service.create('Memory capture diagnostics').conversation_id;
   const settings = {model:'fixture', jev:false};
   await app.service.ask(id, {message_id:'memory_issue_first',content:'For the budget, perhaps 500 is sensible.',settings});
@@ -231,10 +256,11 @@ test('a chat request suppresses both memory stores and verifies a batch patch af
   } finally {await app.close();}
 });
 
-async function fixture(respond, { jev = false, claude = false, claudeModel = 'claude-fixture', countTokens, memoryModel = false } = {}) {
+async function fixture(respond, { jev = false, claude = false, claudeModel = 'claude-fixture', countTokens, memoryModel = false, memorySelector } = {}) {
   const store = new Store(undefined, { memory: true });
   const service = new ConclaveService(store, {
     memoryModel,
+    ...(memorySelector ? { memorySelector } : {}),
     availability: () => ({ openai: true, anthropic: claude, jev }),
     providerFactory: (provider = "openai") => ({ name: provider, respond, ...(countTokens ? { countTokens } : {}) }),
   });
