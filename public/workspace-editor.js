@@ -78,7 +78,7 @@
   }
   function memoryItem(r, historical = false) {
     return { kind: 'memory', id: r.memory_id, token: r.memory_id,
-      title: `Automatic · ${r.kind} · ${r.content.slice(0, 55)}`,
+      title: `Automatic · ${r.kind} · ${r.memory_id.slice(0, 12)} · ${r.content.slice(0, 55)}`,
       content: r.content, historical, protected: ['suppressed', 'invalidated', 'superseded'].includes(r.lifecycle),
       section: { ...r, id: r.memory_id, type: r.kind, source_event_ids: r.source_refs.map(s => s.event_id), parent_bundle_ids: [],
         relations: { supersedes: r.supersedes || [] } } };
@@ -218,6 +218,7 @@
       view?.memory?.revision,
       view?.memory?.capture_issues,
       view?.memory?.capture_summary,
+      view?.memory?.suppression_proposals,
       selected?.kind,
       selected?.id,
       rows.map((i) => [i.kind, i.id, i.token, !!drafts[keyOf(i)]]),
@@ -235,6 +236,29 @@
       button.onclick = () => inspect({id:issue.source_event_id}, true, true); row.append(button); return row;
     }));
     container.replaceChildren();
+    if (tab === 'state') for (const proposal of view?.memory?.suppression_proposals || []) {
+      if (proposal.applied) continue;
+      const details = document.createElement('details'), summary = document.createElement('summary');
+      summary.textContent = `Proposed cleanup: ${proposal.key} · ${proposal.targets.length} entries`; details.append(summary);
+      for (const target of proposal.targets) {
+        const line = document.createElement('p'); line.textContent = `${target.id} · ${target.snippet}`; details.append(line);
+      }
+      const approve = document.createElement('button'); approve.type = 'button';
+      approve.textContent = proposal.targets.length === 1 ? 'Suppress this entry' : `Suppress these ${proposal.targets.length} entries`;
+      approve.disabled = busy || saving;
+      approve.onclick = async () => {
+        if (busy || saving) return;
+        saving = true; approve.disabled = true; syncControls();
+        try {
+          view = await window.contextLayer.saveEdit('approve_memory_suppression', { proposal_key: proposal.key,
+            proposal_event_id: proposal.event_id, expected_memory_revision: view.memory.revision, expected_revision: view.context.revision });
+          listSignature = ''; renderList(); show();
+          el('editor-feedback').textContent = 'Approved entries suppressed · original history retained · no model call.';
+        } catch (error) { await refresh(); el('editor-feedback').textContent = error.message; }
+        finally { saving = false; approve.disabled = busy; syncControls(); }
+      };
+      details.append(approve); container.append(details);
+    }
     for (const item of rows) {
       const button = document.createElement('button');
       button.type = 'button';
@@ -292,6 +316,7 @@
     const s = data.summary, facts = [ ['Calls', `${s.attempts} attempted · ${s.completed} completed · ${s.failed} failed · ${s.missing_responses} without a response`],
       ['Retrieval', `${s.changed_selections} selections changed · ${s.confirmed_baselines || 0} baselines confirmed · ${s.fallbacks} fallbacks · ${s.skipped} skipped`],
       ['Reuse', `${s.cache_hits} cached decisions`],
+      ['Local checks', `${s.capture_checks || 0} captures considered · ${s.capture_without_calls || 0} without calls · ${s.local_reviews || 0} context reviews`],
       ...(s.memory_jev_selections ? [['Jev memory', `${s.memory_jev_applied || 0} captures applied · ${s.memory_comparisons || 0} optional task-model comparisons · ${s.memory_comparison_failures || 0} comparison failures`]] : []),
       ...(s.memory_shadows ? [['Memory shadow', `${s.memory_shadows} compared, not applied · ${s.memory_shadow_failures} failed${s.memory_shadow_mean_jaccard == null ? '' : ` · mean overlap ${(s.memory_shadow_mean_jaccard * 100).toFixed(0)}%`}`]] : []),
       ['Latency', `${(s.known_elapsed_ms / 1000).toFixed(2)} s reported${s.unknown_latency_calls ? ` · ${s.unknown_latency_calls} unknown` : ''}`] ];
@@ -371,6 +396,7 @@
     el('editor-memory-suppress').hidden = !automatic || selected.historical || ['invalidated', 'superseded'].includes(selected.section?.lifecycle);
     el('editor-memory-suppress').textContent = selected.section?.lifecycle === 'suppressed' ? 'Use this again' : "Don't use this";
     el('editor-memory-note').hidden = !automatic;
+    el('editor-memory-note').textContent = 'Suppression excludes this memory and its source passages from model lookup. History and exports retain the original. Editing records your correction without a model call.';
     el('editor-memory-sources').hidden = !automatic;
     el('editor-memory-sources').replaceChildren(...(automatic ? selected.section.source_refs.map(ref => {
       const button = document.createElement('button'); button.type = 'button';
@@ -390,6 +416,8 @@
             (selected.protected ? " · protected" : "");
     if (selected.kind === 'state' && selected.section)
       el('editor-meta').textContent += ` · ${selected.section.effective_status || selected.section.status} · ${selected.section.resolution?.status || 'unresolved'} · confidence unknown`;
+    if (automatic) el('editor-meta').textContent += ` · ${selected.id} · ${selected.section.lifecycle} · ${selected.section.projection_tier || 'archive'} in last projection`;
+    if (automatic && selected.section.retention) el('editor-memory-note').textContent += ` Retention: ${selected.section.retention.reason}; ${selected.section.retention.interpretation ? 'controller inference' : 'human action'}.`;
     if (selected.kind === 'document' && selected.author) {
       const author = selected.author;
       const who = author.actor === 'human' ? 'You' :

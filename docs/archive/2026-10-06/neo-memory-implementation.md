@@ -1,0 +1,17 @@
+# Neo memory changes in Converse
+
+Conclave source `7d0ab7932e73453795b9b7c125bc45809d57ac41` has been migrated with 82-file parity. [Engine behavior and evidence](../../../../CLA/conclave/docs/archive/2026-10-06/neo-memory-implementation.md) implements the policy findings from the [conversation review](neo-memory-review.md).
+
+Substantive discussion can now reach Jev without research reads. A harmless quotation no longer blocks its surrounding human paragraph from optional unresolved capture. Completed/partial source checks, explicit commitment authority and cancellation remain intact. Direct selection is capped at two calls; receipts report passages not assessed. Historical missing captures are not backfilled automatically.
+
+Meaningful lexical/semantic admission selects full records, capped pointers or an archive outside the request. Named evidence/questions participate too; operative state and dependencies remain protected. Acknowledgments carry a bounded recent human query. `retrieve_memory` reads one current record. Retention/engagement metadata affects retrieval priority, never truth or authorization. Native semantic thresholds and answer quality remain uncalibrated.
+
+Workspace now shows stable automatic-memory IDs, lifecycle and last projection tier. Cleanup proposals display the same exact IDs/snippets as model tools. A manual approval sends `approve_memory_suppression` with proposal identity and current revisions; it suppresses only the unchanged saved set and makes no inference call. Model reads omit suppressed proposal snippets. The Jev view distinguishes local eligibility/capture/context checks from actual calls.
+
+The token display now labels its scoped **chat + task-tool baseline** and shows both baseline/current local counts, separately from provider-reported input. Its disclosure identifies excluded memory/context management, retrieval and reasoning. Existing historical usage is not recalculated as provider billing. Service-worker shell v38 refreshes the affected UI assets.
+
+Saved-state replay: the 23:05 vector-store query admits zero of the seven early critique memories previously injected (6,917 bytes); this excludes that automatic-memory block, not every historical mention of critiques. The 10:22 human paragraph offers one complete candidate passage. Thirteen of the twenty-three human turns meet the discussion heuristic. These are offline policy results, not live Jev selections, output-quality measurements or cost savings.
+
+Validation: Conclave 285 passes / one optional skip; Converse 190 passes / one optional live-Neon skip; syntax and 82-file parity pass. Twelve relevant desktop/mobile scenarios passed, including saved-chat loading, automatic-memory correction/suppression/restoration, Jev distinctions, approved cleanup, unified memory suppression and token-display scope. The changed cleanup and token assertions were rechecked on both layouts. No native provider inference was made. The Windows sandbox's OS-temp atomic-rename errors were resolved using checkout-local test temp directories; Edge fixtures used approved browser-launch permissions.
+
+Remaining evaluation: test fresh substantive discussions in the hosted app; compare useful retained ideas, missed captures, native management/embedding usage and answer quality. Calibrate multilingual/relevance heuristics and cosine tiers. More advanced relationship learning, automatic consolidation and durable indexing workers remain proposals; Neon schema and hosting settings are unchanged by this increment.

@@ -434,7 +434,7 @@
       rows = el("breakdown-parts"),
       remainder = el("breakdown-remainder");
     if (!detail) {
-      for (const id of ["garden-request-delta", "garden-full-tokens", "garden-tokens-sent"])
+      for (const id of ["garden-request-delta", "garden-full-tokens", "garden-local-request", "garden-tokens-sent"])
         el(id).textContent = "—";
       el("garden-request-phase").textContent = "Next request";
       el("garden-comparison-note").textContent = "input tokens";
@@ -519,12 +519,13 @@
       extra < 0
         ? `The local count is ${exact(-extra)} tokens above the reported total, so the parts are slightly overstated.`
         : "";
-    // Compare on one basis: both sides counted locally, with the same tool results.
+    // Compare the current request with a scoped counterfactual on one local basis.
     const local = comparison.sent_estimated_tokens ?? sent,
       change = Math.round(((local - whole) / Math.max(whole, 1)) * 100);
     el("garden-full-tokens").textContent = "~" + compact.format(whole);
+    el("garden-local-request").textContent = `; current request: ~${compact.format(local)} local tokens`;
     el("garden-full-tokens").title =
-      `Estimated full chat, workspace, calculation and web history: ~${exact(whole)} input tokens, with the same instructions and tools. Private reasoning and Conclave management records are excluded. This compares context size, not cost.`;
+      `Scoped chat/task-tool baseline: ~${exact(whole)} local tokens, with the same instructions and tool definitions. Memory reads, memory/context management, context retrieval and private reasoning are excluded. Provider-reported input uses a separate count. This compares context size, not cost.`;
     el("breakdown-delta-text").hidden = false;
     el("garden-request-delta").textContent =
       Math.abs(change) < 1

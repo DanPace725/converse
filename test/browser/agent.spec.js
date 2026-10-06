@@ -92,6 +92,31 @@ test('Jev has a dedicated Workspace view with outcomes, exact evidence, unknown 
   } finally { await app.close(); }
 });
 
+test('saved cleanup proposals show stable IDs and require a manual approval without extra inference', async ({ page }, testInfo) => {
+  let calls = 0;
+  const app = await fixture(async () => { calls++; return final; });
+  const id = app.service.create('Reviewable memory cleanup').conversation_id;
+  await app.service.ask(id, { message_id: 'cleanup_seed', content: 'Keep the budget under $400.', settings: { model: 'fixture', jev: false } });
+  const view = app.service.view(id), record = view.memory.records[0];
+  const h = app.service.harness(id, view.settings);
+  h.toolResult('propose_memory_suppression', { key: 'budget_cleanup', expected_memory_revision: view.memory.revision,
+    expected_state_revision: view.context.revision, targets: [{ kind: 'automatic', id: record.memory_id }] });
+  const before = calls;
+  try {
+    await page.goto(app.url);
+    if (testInfo.project.name === 'mobile') await page.locator('#menu').click();
+    await page.locator('#server-chats .chat-item').filter({ hasText: 'Reviewable memory cleanup' }).click();
+    await page.locator('#workspace-open').click();
+    await page.locator('[data-tab="state"]').click();
+    await page.locator('#editor-items summary').filter({ hasText: 'budget_cleanup' }).click();
+    await expect(page.locator('#editor-items')).toContainText(record.memory_id);
+    await page.getByRole('button', { name: 'Suppress this entry', exact: true }).click();
+    await expect(page.locator('#editor-feedback')).toContainText('Approved entries suppressed');
+    expect(app.service.view(id).memory.records[0].lifecycle).toBe('suppressed');
+    expect(calls).toBe(before);
+  } finally { await app.close(); }
+});
+
 test('Jev memory view distinguishes applied selections from optional model comparisons without making calls', async ({ page }, testInfo) => {
   let calls = 0; const errors = []; page.on('pageerror', e => errors.push(e.message));
   const app = await fixture(async () => { calls++; return final; });
@@ -432,7 +457,7 @@ const final = response([
   },
 ]);
 
-test('Context tab breaks the actual request into parts and compares it with full history', async ({ page }, testInfo) => {
+test('Context tab breaks the actual request into parts and compares it with a scoped local baseline', async ({ page }, testInfo) => {
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));
   const app = await fixture(async () => ({ ...final, usage: { input_tokens: 34587, output_tokens: 100 } }));
@@ -460,8 +485,10 @@ test('Context tab breaks the actual request into parts and compares it with full
     await expect(page.locator('#garden-tokens-sent')).toHaveAttribute('title', /34,587/);
     await expect(page.locator('#garden-comparison-note')).toContainText('reported by the provider');
     await expect(page.locator('#garden-full-tokens')).toHaveText(/^~[\d.,]+K?$/);
-    await expect(page.locator('#garden-full-tokens')).toHaveAttribute('title', /Private reasoning and Conclave management records are excluded/);
+    await expect(page.locator('#garden-full-tokens')).toHaveAttribute('title', /Memory reads, memory\/context management, context retrieval and private reasoning are excluded/);
     await expect(page.locator('#garden-request-delta')).toHaveAttribute('data-direction','down');
+    await expect(page.locator('#breakdown-baseline')).toContainText('Chat + task-tool baseline:');
+    await expect(page.locator('#garden-local-request')).toContainText('current request:');
     await expect(page.locator('#garden-request-delta')).toHaveText(/^\d+% smaller$/);
     await expect(page.locator('.breakdown-part summary .part-name')).toContainText(['Instructions', 'Tool definitions', 'Working context']);
     // Reported usage the local count cannot explain is shown, not folded into the conversation.
