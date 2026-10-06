@@ -4,6 +4,8 @@ import { readFile } from "node:fs/promises";
 import { Store, segment } from "../../lib/conclave/store.js";
 import { ConclaveService } from "../../lib/conclave/service.js";
 import { createConclaveHandler } from "../../lib/conclave-local.js";
+import { SQLiteEmbeddingStore } from "../../lib/conclave/embedding-store.js";
+import { retrievalCatalog } from "../../lib/conclave/semantic-retrieval.js";
 import { exportFilename } from '../../public/export-name.js';
 
 test('saved chats and reload use transcripts, while Workspace loads authoritative details on demand', async ({ page }, testInfo) => {
@@ -158,6 +160,15 @@ test('memory garden defaults to a zoomable graph with sources, recorded connecti
     kind: n === 0 ? 'question' : 'claim', lifecycle: 'retained', supersedes: [], conflicts_with: [], depends_on: n === 0 ? ['garden_01'] : [],
     scope: { ...original.scope, topic_id: 'garden_topic', topic_name: 'Venue planning' } }));
   app.service.store.append(id, 'memory_delta', '', { records, changes: [] });
+  // Similarity is read from stored vectors, so seed the index directly: two
+  // alike questions, a named detail near one memory, and a pair that already
+  // has a recorded dependency. The rest stay unindexed.
+  const lean = (base, own, weight) => Array.from({ length: 1536 }, (_, i) => i === base ? weight : i === own ? Math.sqrt(1 - weight ** 2) : 0);
+  const vectors = { 'Retained question 2 about the venue.': lean(10, 11, 1), 'Retained question 3 about the venue.': lean(10, 12, .9),
+    'Keep the access requirement.': lean(20, 21, 1), 'Use an accessible venue.': lean(20, 22, .8), 'Review the venue decision.': lean(20, 23, .6) };
+  await new SQLiteEmbeddingStore(app.service.store).put(id, retrievalCatalog(app.service.store, id).items
+    .filter(r => r.kind === 'memory' && vectors[r.content]).map(r => ({ ...r, vector: vectors[r.content] })));
+  app.service.embeddingEnabled = true; // After seeding: this scenario never embeds.
   const empty = app.service.create('Empty garden proof').conversation_id;
   const before = calls;
   try {
@@ -175,16 +186,27 @@ test('memory garden defaults to a zoomable graph with sources, recorded connecti
     const openNode = async node => { await node.focus(); await node.press('Enter'); };
     await expect(page.locator('#memory-scene [role="button"]')).toHaveCount(17);
     await expect(page.locator('#memory-scene .memory-edge-depends_on')).toHaveCount(1);
+    // Dotted similarity lines are separate from recorded links, which win a shared pair.
+    const alike = page.locator('#memory-scene .memory-edge-semantic');
+    await expect(alike).toHaveCount(2);
+    await expect(page.locator('#memory-graph-status')).toContainText('17 memories · 1 connection · 2 similar');
+    await expect(alike.first()).not.toHaveAttribute('marker-end', /arrow/);
+    await page.locator('#memory-similar').uncheck();
+    await expect(alike).toHaveCount(0);
+    await expect(page.locator('#memory-graph-status')).not.toContainText('similar');
+    await page.locator('#memory-similar').check();
+    await expect(alike).toHaveCount(2);
     await expect(scene).toHaveClass(/memory-far/);
     await page.screenshot({ path: testInfo.outputPath('memory-garden.png'), fullPage: true });
-    const whole = await scale();
-    for (let n = 0; n < 3; n++) await page.locator('#memory-zoom-in').click();
-    await expect.poll(scale).toBeGreaterThan(whole * 2.7);
+    // Layout starts from each memory's own ID, so the fitted scale varies by run.
+    const whole = await scale(), steps = Math.max(3, Math.ceil(Math.log(0.8 / whole) / Math.log(1.4))), near = whole * 1.4 ** steps * 0.99;
+    for (let n = 0; n < steps; n++) await page.locator('#memory-zoom-in').click();
+    await expect.poll(scale).toBeGreaterThan(near);
     await expect(scene).not.toHaveClass(/memory-far/);
     const box = await scene.boundingBox(), origin = await shift();
     await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
     await page.mouse.wheel(0, 300);
-    await expect.poll(scale).toBeLessThan(whole * 2.7);
+    await expect.poll(scale).toBeLessThan(near);
     await page.mouse.down(); await page.mouse.move(box.x + box.width / 2 - 60, box.y + box.height / 2 + 40, { steps: 4 }); await page.mouse.up();
     expect(await shift()).not.toBe(origin);
     await page.locator('#memory-fit').click();
@@ -209,6 +231,8 @@ test('memory garden defaults to a zoomable graph with sources, recorded connecti
     await expect(page.locator('#editor-edit')).toBeHidden();
     await page.locator('#editor-back').click();
     await expect(scene.getByRole('button', { name: /commitment:.*\$500/ })).toBeFocused();
+    // Walking a connection moved the camera; Fit clears the band beside the zoom controls.
+    await page.locator('#memory-fit').click();
     await scene.click({ position: { x: 6, y: 6 } });
     await expect(page.locator('#memory-focus')).toBeHidden();
     // A second press on the selected memory opens it.
@@ -238,7 +262,14 @@ test('memory garden defaults to a zoomable graph with sources, recorded connecti
     await page.locator('#memory-focus-links button').filter({ hasText: 'Depends on:' }).click();
     await expect(page.locator('#memory-scene [data-memory-id="garden_01"]')).toBeFocused();
     await expect(page.locator('#memory-focus-text')).toHaveText('Keep the access requirement.');
+    await expect(page.locator('#memory-focus-links')).toContainText('Similar (80%): Use an accessible venue.');
+    await expect(page.locator('#memory-focus-links')).not.toContainText('Similar (60%)');
+    await page.locator('#memory-scene [data-memory-id="garden_02"]').focus();
+    await expect(page.locator('#memory-scene .memory-edge-semantic.memory-edge-lit')).toHaveCount(1);
     await page.screenshot({ path: testInfo.outputPath('memory-topic.png'), fullPage: true });
+    await page.locator('#memory-focus-links button').filter({ hasText: 'Similar (90%)' }).click();
+    await expect(page.locator('#memory-scene [data-memory-id="garden_03"]')).toBeFocused();
+    await expect(page.locator('#memory-focus-text')).toHaveText('Retained question 3 about the venue.');
     const visited = new Set();
     for (const key of ['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp']) {
       await page.keyboard.press(key);
@@ -261,8 +292,10 @@ test('memory garden defaults to a zoomable graph with sources, recorded connecti
     await expect(page.locator('#memory-graph-status')).toContainText('No saved memories yet');
     await expect(page.locator('#memory-scene [role="button"]')).toHaveCount(0);
     await expect(page.locator('#memory-canvas')).toBeHidden();
+    await expect(page.locator('#memory-similar')).toBeHidden();
     await expect(page.locator('#memory-topic')).toHaveValue('');
     expect(app.service.view(empty).memory.records).toHaveLength(0);
+    expect(app.service.store.events(id).some(e => e.kind.startsWith('embedding_'))).toBe(false);
     expect(calls).toBe(before); expect(errors).toEqual([]);
   } finally { await app.close(); }
 });

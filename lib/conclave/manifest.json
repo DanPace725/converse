@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
   "source_repository": "https://github.com/DanPace725/conclave",
-  "source_commit": "69e42c7fdc735bc1ef5d1f604f1b89d6e8eb3070",
+  "source_commit": "432723a13031e45170f2ff51a585a389ed774138",
   "source_worktree_dirty": false,
-  "migrated_at": "2026-10-06T15:48:31.858Z",
+  "migrated_at": "2026-10-06T16:25:45.653Z",
   "dependencies": {
     "@vercel/functions": "^3.9.9",
     "drizzle-orm": "^0.45.3",
@@ -100,7 +100,7 @@
     {
       "source": "src/embedding-store.js",
       "target": "lib/conclave/embedding-store.js",
-      "sha256": "2bd4b6ad5cd56e74b33d1cd77aeceedad7d37e977f11a73cc450bdeb7a27cecf"
+      "sha256": "9bafbf6cadfa7051d96a58f3be836684616708c7e7b3db0d18daf6348a5b36b8"
     },
     {
       "source": "src/embeddings.js",
@@ -130,12 +130,12 @@
     {
       "source": "src/hosted.js",
       "target": "lib/conclave/hosted.js",
-      "sha256": "3cb994cc46e5049275e46f98e58f055a41778c2c5efa492b03ef003629dbdb9e"
+      "sha256": "3fa0888e8beb574eb8c4b3c2647c1ccebedb23e8306135609dc7aa3426cccd86"
     },
     {
       "source": "src/http.js",
       "target": "lib/conclave/http.js",
-      "sha256": "fa6f22c5931d6bf5512116cf7b19069c8a085d51fa7db02a44797e59c553b551"
+      "sha256": "1dc7226e11141af76e81cabf6cda1e7aac10f69b1cbc4fa1067ffee62f9064a2"
     },
     {
       "source": "src/identity.js",
@@ -245,7 +245,7 @@
     {
       "source": "src/resources/app-guide.md",
       "target": "lib/conclave/resources/app-guide.md",
-      "sha256": "29de8132c44685d97bcbd18ee928916d1c7b543bedcf862df634da1314432c82"
+      "sha256": "6fa7c01c4ea02b4971fa07e603385f44c585f2b1e8b8a4759c522a586c5736bb"
     },
     {
       "source": "src/resources/model-costs-2026-10-02.json",
@@ -265,7 +265,7 @@
     {
       "source": "src/semantic-retrieval.js",
       "target": "lib/conclave/semantic-retrieval.js",
-      "sha256": "15c2e94e649a88c8b0381caf31ee44dde0dd20db063f2a877a461b835dbe1556"
+      "sha256": "332ad9dbc0fc26acb53165ad6a03e9c4ad37eda9513465fab699af66d3e8821a"
     },
     {
       "source": "src/server.js",
@@ -275,7 +275,7 @@
     {
       "source": "src/service.js",
       "target": "lib/conclave/service.js",
-      "sha256": "36b1dbe2a98a20d12359d25113a13be8d15dac5606bf408c1b2caf09154ba181"
+      "sha256": "b11ac581f2bce2ea38fe3e0cd7264f3b69a6cc1a88b78cded21d440f6659829a"
     },
     {
       "source": "src/state.js",
@@ -420,7 +420,7 @@
     {
       "source": "src/resources/app-guide.md",
       "target": "public/app-guide.md",
-      "sha256": "29de8132c44685d97bcbd18ee928916d1c7b543bedcf862df634da1314432c82"
+      "sha256": "6fa7c01c4ea02b4971fa07e603385f44c585f2b1e8b8a4759c522a586c5736bb"
     },
     {
       "source": "src/resources/model-costs-2026-10-02.json",

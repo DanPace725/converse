@@ -40,7 +40,7 @@ Page reading supports public HTML/text responses up to 2 MiB, with eight fetch a
 
 New Context turns and Agent runs keep one stable working projection during their tool loop. Saved edits and file versions are visible through tool receipts and inspection immediately. The model can use refresh_context to bring saved changes into its prompt; the next user turn refreshes automatically. Large continuations can trigger a logged refresh to stay within the request guard.
 
-History search can combine keyword and semantic matches to find differently worded passages. Memory selection can also use semantic relevance. Similarity does not establish truth, promote a commitment or choose a correction target. Removed/suppressed material remains excluded; original eligible passages are available through exact source retrieval.
+History search can combine keyword and semantic matches to find differently worded passages. Memory selection can also use semantic relevance. Similarity does not establish truth, promote a commitment or choose a correction target. The Memory graph can draw dotted lines between memories with similar meaning, from the same stored index; these are a reading aid, not recorded relationships, and never change what an assistant is given. Removed/suppressed material remains excluded; original eligible passages are available through exact source retrieval.
 
 Working context can change while original source history remains preserved. Offloading leaves retrieval pointers; compaction creates shorter derived text. Protected pins, exact text, structured state, recent messages, and current task constraints are preserved by the engine's rules.
 

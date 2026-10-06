@@ -1,5 +1,6 @@
-// A zoomable map of saved memories. Only recorded relationships become edges;
-// topic beds explain why unlinked memories sit together.
+// A zoomable map of saved memories. Recorded relationships are its edges and
+// topic beds explain why unlinked memories sit together; dotted lines for
+// similar meaning are a separate reading aid and never shape the map.
 (() => {
   const el = (id) => document.getElementById(id),
     ns = "http://www.w3.org/2000/svg";
@@ -26,7 +27,10 @@
     pointing = false,
     moved = false,
     armed = null,
-    glyph = 0;
+    glyph = 0,
+    similar = { links: [] },
+    similarFor = "",
+    similarRequest = 0;
   const placed = new Map(),
     drawn = new Map(),
     pointers = new Map(),
@@ -141,6 +145,40 @@
               }[e.label],
         target: e.from.key === key ? e.to : e.from,
       }));
+  }
+  // Semantic neighbours from the engine's embedding index. A recorded
+  // relationship between the same two memories takes its place.
+  function likeness(all, recorded) {
+    if (!el("memory-similar").checked) return [];
+    const byId = new Map(all.map((n) => [n.record.id || n.id, n])),
+      pair = (a, b) => [a.key, b.key].sort().join("|"),
+      joined = new Set(recorded.map((e) => pair(e.from, e.to)));
+    return (similar.links || []).flatMap((link) => {
+      const from = byId.get(link.from),
+        to = byId.get(link.to);
+      return !from || !to || from === to || joined.has(pair(from, to))
+        ? []
+        : [{ from, to, type: "semantic", similarity: link.similarity }];
+    });
+  }
+  // Similarity is read from vectors the engine already holds, so asking makes
+  // no model call. A lookup that fails or is switched off draws no lines.
+  async function loadSimilar(conversation) {
+    const request = ++similarRequest;
+    let next = { links: [] };
+    try {
+      const response = await fetch(
+        "/api/conclave?action=memory_links&conversation=" +
+          encodeURIComponent(conversation),
+        { cache: "no-store" },
+      );
+      if (response.ok) next = await response.json();
+    } catch {}
+    if (request !== similarRequest || data?.conversation_id !== conversation)
+      return;
+    if (JSON.stringify(next) === JSON.stringify(similar)) return;
+    similar = next;
+    draw();
   }
   const tier = (node) =>
     node.tier === "full" ? "full" : node.tier === "stub" ? "pointer" : "saved";
@@ -467,7 +505,16 @@
     el("memory-focus-meta").textContent =
       `${node.kind === "named" ? node.id : node.kind} · ${node.status} · ${node.tier === "archive" ? "not" : tier(node)} in last projection`;
     el("memory-focus-text").textContent = clean(node.content);
-    const links = related(node.key);
+    const all = nodes(),
+      links = [
+        ...related(node.key),
+        ...likeness(all, edges(all))
+          .filter((e) => e.from.key === node.key || e.to.key === node.key)
+          .map((e) => ({
+            label: `Similar (${Math.round(e.similarity * 100)}%)`,
+            target: e.from.key === node.key ? e.to : e.from,
+          })),
+      ];
     el("memory-focus-links").hidden = !links.length;
     el("memory-focus-links").replaceChildren(
       ...links.map((link) => {
@@ -536,9 +583,11 @@
       all.filter((n) => placed.has(n.key) || shown.includes(n)),
       connections,
     );
-    const visible = connections.filter(
-      (e) => shown.includes(e.from) && shown.includes(e.to),
-    );
+    // Similar pairs are drawn beneath recorded ones and never move a memory.
+    const visible = [...likeness(all, connections), ...connections].filter(
+        (e) => shown.includes(e.from) && shown.includes(e.to),
+      ),
+      alike = visible.filter((e) => e.type === "semantic").length;
     const held = [...drawn].find(
       ([, group]) => group === document.activeElement,
     )?.[0];
@@ -597,8 +646,9 @@
         "path",
         {
           class: "memory-edge memory-edge-" + edge.type,
-          "marker-end":
-            edge.type === "conflicts_with" ? "" : "url(#memory-arrow)",
+          "marker-end": ["conflicts_with", "semantic"].includes(edge.type)
+            ? ""
+            : "url(#memory-arrow)",
         },
         stage,
       );
@@ -606,7 +656,9 @@
         "title",
         {},
         path,
-        `${short(edge.from.content, 65)} → ${edge.label.toLowerCase()} → ${short(edge.to.content, 65)}`,
+        edge.type === "semantic"
+          ? `${short(edge.from.content, 65)} ↔ similar meaning, ${Math.round(edge.similarity * 100)}% ↔ ${short(edge.to.content, 65)}`
+          : `${short(edge.from.content, 65)} → ${edge.label.toLowerCase()} → ${short(edge.to.content, 65)}`,
       );
       return {
         edge,
@@ -745,9 +797,13 @@
       ? "No saved memories yet. Add a detail below, or continue the conversation."
       : !shown.length
         ? "No memories in this view. Try another topic or include earlier versions."
-        : `${shown.length} ${shown.length === 1 ? "memory" : "memories"} · ${visible.length} ${visible.length === 1 ? "connection" : "connections"}. Drag to move, scroll or pinch to zoom, and select a memory to follow its connections.`;
-    el("memory-topic").disabled = disabled;
-    el("memory-history").disabled = disabled;
+        : `${shown.length} ${shown.length === 1 ? "memory" : "memories"} · ${visible.length - alike} ${visible.length - alike === 1 ? "connection" : "connections"}${alike ? ` · ${alike} similar` : ""}. Drag to move, scroll or pinch to zoom, and select a memory to follow its connections.`;
+    // The switch appears once the index holds something to compare.
+    el("memory-similar").parentElement.hidden = !similar.indexed;
+    el("memory-similar").parentElement.title =
+      `Dotted lines join memories with similar meaning, from stored embeddings (${similar.indexed || 0} of ${similar.memories || 0} compared). They are not recorded relationships and are not given to assistants.`;
+    for (const id of ["memory-topic", "memory-history", "memory-similar"])
+      el(id).disabled = disabled;
     if (fitted) frame(shown);
     else paint();
     drawn.get(held)?.focus({ preventScroll: true });
@@ -756,6 +812,7 @@
     fitted = true;
     draw();
   };
+  el("memory-similar").onchange = draw;
   el("memory-zoom-in").onclick = () => zoom(1.4, undefined, undefined, true);
   el("memory-zoom-out").onclick = () =>
     zoom(1 / 1.4, undefined, undefined, true);
@@ -852,9 +909,16 @@
         placed.clear();
         selected = null;
         fitted = true;
+        similar = { links: [] };
       }
       data = latest;
       const next = JSON.stringify([latest?.conversation_id, nodes()]);
+      // Indexing happens during turns, so look again when the index moves.
+      const index = next + (latest?.embedding_health?.event_id || "");
+      if (latest?.conversation_id && index !== similarFor) {
+        similarFor = index;
+        loadSimilar(latest.conversation_id);
+      }
       if (next === signature) return;
       signature = next;
       draw();
@@ -873,8 +937,8 @@
       disabled = value;
       for (const group of drawn.values())
         group.setAttribute("aria-disabled", String(value));
-      el("memory-topic").disabled = value;
-      el("memory-history").disabled = value;
+      for (const id of ["memory-topic", "memory-history", "memory-similar"])
+        el(id).disabled = value;
       el("memory-focus-open").disabled = value;
     },
   };

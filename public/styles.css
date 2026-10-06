@@ -102,8 +102,8 @@
 }
 .memory-filters label:first-child { flex: 1; min-width: 0; }
 .memory-filters select { max-width: 100%; width: 100%; font-size: 12px; }
-.memory-filters label:last-child { display: flex; align-items: center; gap: 5px; min-height: 36px; }
-#memory-history { width: 16px; height: 16px; min-height: 16px; padding: 0; margin: 0; flex: 0 0 16px; }
+.memory-filters label:not(:first-child) { display: flex; align-items: center; gap: 5px; min-height: 36px; }
+#memory-history, #memory-similar { width: 16px; height: 16px; min-height: 16px; padding: 0; margin: 0; flex: 0 0 16px; }
 #memory-graph-status { font-size: 12px; margin: 10px 4px 0; }
 #memory-canvas { position: relative; margin-top: 8px; border: 1px solid #263a31; border-radius: var(--radius); overflow: hidden; }
 #memory-scene { width: 100%; height: clamp(300px, 52vh, 680px); display: block; cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; }
@@ -156,6 +156,9 @@
 .memory-edge-conflicts_with { stroke: var(--danger); stroke-dasharray: 4 4; }
 .memory-edge-supersedes { stroke: #d5b2f2; }
 .memory-edge-supports { stroke: var(--ok); }
+/* Similar meaning, from embeddings: dots, so it never reads as a recorded link. */
+.memory-edge-semantic { stroke: #7fa3c7; stroke-width: 2; stroke-dasharray: 0.01 6; stroke-linecap: round; opacity: .7; }
+.memory-edge-semantic.memory-edge-lit { stroke: var(--accent); stroke-width: 2.8; }
 .memory-legend { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 11px; color: var(--muted); margin: 0 6px; }
 .memory-legend span:nth-last-child(-n + 2) { flex-basis: 100%; }
 #editor-memory-proposals { margin-bottom: 10px; }

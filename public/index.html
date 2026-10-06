@@ -561,6 +561,7 @@
         <div class="memory-filters editor-toolbar">
           <label>Topic <select id="memory-topic" aria-label="Memory topic"><option value="">All topics</option></select></label>
           <label><input id="memory-history" type="checkbox"> Earlier versions</label>
+          <label hidden><input id="memory-similar" type="checkbox" checked> Similarity</label>
         </div>
         <p id="memory-graph-status" class="note" role="status"></p>
         <div id="memory-canvas" hidden>
@@ -583,7 +584,7 @@
           <span class="memory-commitment">● Commitment</span><span class="memory-preference">● Preference</span>
           <span class="memory-claim">● Claim</span><span class="memory-question">● Question</span><span class="memory-named">◆ Named detail</span>
           <span>◎ Full · ○ Pointer (last projection) · muted: suppressed / obsolete</span>
-          <span>→ Depends on / replaces / supports · dashed: conflicts</span>
+          <span>→ Depends on / replaces / supports · dashed: conflicts · dotted: similar meaning</span>
         </div>
       </section>
       <div id="editor-memory-proposals" hidden></div>
