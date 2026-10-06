@@ -47,7 +47,7 @@
         path: f.path,
         author: f.source_attribution,
       })),
-      ...(view?.attachments || []).map((f) => ({
+      ...(view?.attachments || []).filter(f => !window.imageUploads.isImage(f)).map((f) => ({
         kind: "source",
         id: f.source_event_id,
         title: f.name + " (original)",

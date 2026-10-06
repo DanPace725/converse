@@ -270,6 +270,7 @@ import { effortLevels } from './effort.js';
   }
 
   function controls() {
+    window.imageUploads.mode(enabled());
     for (const input of panel.querySelectorAll("input, select, button"))
       input.disabled = busy;
     jev.disabled = busy || !capabilities?.credentials?.jev;
@@ -415,7 +416,7 @@ import { effortLevels } from './effort.js';
       " input / " +
       (metrics.output_tokens ?? "unknown") +
       " output tokens (cumulative, all calls)" +
-      (view.model_input ? ` · Next context ~${view.model_input.next.estimated_tokens.toLocaleString()} input tokens` : "") +
+      (view.model_input ? ` · Next context ~${view.model_input.next.estimated_tokens.toLocaleString()} input tokens${view.model_input.next.image_count && view.model_input.next.provider_count == null ? " (includes uncalibrated image reserve)" : ""}` : "") +
       (view.model_input?.latest?.input_tokens != null ? ` · Latest sent ${view.model_input.latest.input_tokens.toLocaleString()} input tokens` : "");
     $("#context-note").textContent =
       view.backup_warning ||
@@ -630,7 +631,7 @@ import { effortLevels } from './effort.js';
     const content = $("textarea").value.trim();
     if (!content && !attachment) {
       $("#status").textContent =
-        "Enter an objective or attach a Markdown document.";
+        "Enter an objective or attach a Markdown file or image.";
       return;
     }
     setBusy(true);
@@ -660,7 +661,7 @@ import { effortLevels } from './effort.js';
           message_id: user.message_id,
           revises_message_id: user.revises_message_id,
           content:
-            content || "Use the attached document as the agent objective.",
+            content || (window.imageUploads.isImage(attachment) ? "Inspect the attached image and describe what you see." : "Use the attached document as the agent objective."),
           attachments: attachment ? [attachment] : [],
           settings,
           limits,
@@ -807,8 +808,7 @@ import { effortLevels } from './effort.js';
       ) {
         $("textarea").value = submitted.content;
         attachment = submitted.document;
-        $("#attachment").hidden = !attachment;
-        if (attachment) $("#filename").textContent = attachment.name;
+        refreshAttachment();
       }
       $("#status").textContent = error.message;
     } finally {

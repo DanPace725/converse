@@ -10,6 +10,10 @@ Converse is a small chat app for GPT, Claude, and Gemini. Conclave is its method
 
 ## Workspace and tools
 
+In Context and Agent, the composer paperclip accepts one JPEG/PNG image or Markdown file per message. Images up to 10 MB are resized in the browser to at most 2048 pixels and 512 KB; the thumbnail shows the exact saved model image. GPT and Claude receive native pixels. Images remain available after reload and for follow-up questions; older images can be inspected with **view_image**. Models see one image at a time. Ordinary Chat and Workspace text uploads retain their existing behavior. Image/model support still depends on the selected provider model.
+
+Canonical JSON exports retain the saved image bytes and source hashes. Normal transcript loads fetch thumbnails separately through the authenticated image endpoint. Local token displays exclude encoded pixels and add an uncalibrated image reserve; provider counts and reported input usage include native images. Images are conversation sources, not automatically extracted image memories.
+
 The Workspace panel has three tabs: Files, Context, and Memory. **Files** holds Markdown/plain-text uploads and model-created text files. Upload saves a file without sending a message or making a model call. Reference in chat adds its filename to your draft. Limits are 20 active files, 100 KB per file, and 500 KB total active text. Editing an original composer attachment creates a workspace copy. Manual saves do not call a model.
 
 Users can **Remove** a document and **Restore** it later. Removal excludes its source versions from ordinary model retrieval and removes context sections linked to them. Previous messages can still contain quotes or summaries. Original content, snapshots, and tool-result copies remain in historical audit records and canonical JSON exports. Removal is not permanent erasure. Downloaded exports cannot be recalled. Models cannot remove or restore documents. Stop a running task before changing documents.

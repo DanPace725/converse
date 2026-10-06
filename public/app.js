@@ -26,6 +26,8 @@ function messageRecord(data) {
   };
 }
 function attachmentText(a) {
+  if (!a) return '';
+  if (window.imageUploads.isImage(a)) return `\n\n[Image attached: ${a.name}; ${a.width} × ${a.height}; SHA-256 ${a.sha256}]`;
   // A fence longer than any run in the document cannot be closed by its contents.
   const fence = "`".repeat(
     Math.max(3, ...[...a.content.matchAll(/`+/g)].map((m) => m[0].length + 1)),
@@ -47,16 +49,13 @@ function attachmentText(a) {
     "\n:::end-attachment"
   );
 }
-function messageText(m) {
+function messageText(m, includeImages = true) {
   return (
     m.content +
     (m.attachment_ids || [])
-      .map((id) =>
-        attachmentText(
-          conversation.attachments.find((a) => a.attachment_id === id),
-        ),
-      )
-      .join("")
+      .map(id => conversation.attachments.find(a => a.attachment_id === id))
+      .filter(a => a && (includeImages || !window.imageUploads.isImage(a)))
+      .map(attachmentText).join("")
   );
 }
 const names = ["GPT", "Claude", "Gemini"],
@@ -70,7 +69,11 @@ let targets = ["GPT"],
 let editingMessage = null, editReturnDraft = null;
 function refreshAttachment() {
   $('#attachment').hidden = !attachment;
-  if (attachment) $('#filename').textContent = attachment.name;
+  if (attachment) $('#filename').textContent = attachment.name + (window.imageUploads.isImage(attachment) ? ` · ${attachment.width} × ${attachment.height}` : '');
+  const preview = $('#attachment-preview');
+  const src = window.imageUploads.url(attachment, window.contextLayer?.currentId());
+  preview.hidden = !src; if (src) preview.src = src; else preview.removeAttribute('src');
+  $('#attachment .file-icon').hidden = !!src;
 }
 function finishMessageEdit(restore = false) {
   if (restore && editReturnDraft) {
@@ -428,7 +431,11 @@ function add(who, text, model = "", error = false, message = null) {
   if (text === "Thinking…") {
     p.innerHTML =
       '<span class="typing" role="img" aria-label="Thinking"><i></i><i></i><i></i></span>';
-  } else showText(p, text);
+  } else showText(p, user && message ? messageText(message, false) : text);
+  if (user && message) for (const id of message.attachment_ids || []) {
+    const image = window.imageUploads.card(conversation.attachments.find(a => a.attachment_id === id), window.contextLayer?.currentId());
+    if (image) p.append(image);
+  }
   if (user) {
     const bubble = document.createElement("div");
     bubble.className = "bubble";
@@ -538,7 +545,7 @@ function showEmpty(who) {
   $("#empty")?.remove();
   appendToChat(emptyState(undefined, who));
 }
-$("#upload").onclick = () => $("#markdown-file").click();
+$("#upload").onclick = () => { window.imageUploads.mode(!!window.contextLayer?.enabled()); $("#markdown-file").click(); };
 $("#remove-file").onclick = () => {
   attachment = null;
   $("#attachment").hidden = true;
@@ -550,6 +557,14 @@ $("#markdown-file").onchange = async () => {
   readingFile = true;
   $("#upload").disabled = true;
   try {
+    if (/\.(png|jpe?g)$/i.test(file.name) || file.type.startsWith('image/')) {
+      if (!window.contextLayer?.enabled()) throw Error('Switch to Context or Agent to attach an image.');
+      attachment = await window.imageUploads.prepare(file);
+      refreshAttachment();
+      $('#status').textContent = `Image ready for the model · ${attachment.width} × ${attachment.height}. Add a message, then Send.`;
+      $('textarea').focus();
+      return;
+    }
     if (!/\.(md|markdown)$/i.test(file.name))
       throw Error("Choose a .md or .markdown file.");
     if (file.size > 200000)
@@ -569,8 +584,7 @@ $("#markdown-file").onchange = async () => {
         .map((b) => b.toString(16).padStart(2, "0"))
         .join(""),
     };
-    $("#filename").textContent = file.name;
-    $("#attachment").hidden = false;
+    refreshAttachment();
     $("#status").textContent =
       "File attached. Add a message or mentions, then Send.";
     $("textarea").focus();
@@ -585,6 +599,7 @@ $("#markdown-file").onchange = async () => {
 $("#composer").onsubmit = async (e) => {
   e.preventDefault();
   if (busy || readingFile) return;
+  if (window.imageUploads.isImage(attachment) && !window.contextLayer?.enabled()) { $('#status').textContent = 'Switch to Context or Agent to send this image.'; return; }
   const draft = $("textarea").value.trim();
   if (!draft && !attachment) return;
   const text = draft;

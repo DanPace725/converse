@@ -1,0 +1,41 @@
+[
+  {
+    "provider": "openai",
+    "model": "gpt-6-luna",
+    "answer": "A yellow square is centered on a solid blue background.",
+    "passed": true,
+    "usage": {
+      "input_tokens": 4223,
+      "input_tokens_details": {
+        "cache_write_tokens": 4220,
+        "cached_tokens": 0
+      },
+      "output_tokens": 15,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 4238
+    }
+  },
+  {
+    "provider": "anthropic",
+    "model": "claude-sonnet-5-5",
+    "answer": "The image shows a solid yellow square on a plain dark blue background. The square sits left of center and toward the top.",
+    "passed": true,
+    "usage": {
+      "input_tokens": 8873,
+      "cache_creation_input_tokens": 8869,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 8869,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "output_tokens": 36,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "service_tier": "standard",
+      "inference_geo": "global"
+    }
+  }
+]

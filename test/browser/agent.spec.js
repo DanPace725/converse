@@ -545,6 +545,81 @@ const final = response([
   },
 ]);
 
+test('Context image upload previews, sends pixels, reloads, follows up and edits saved images', async ({ page }, testInfo) => {
+  const errors = []; page.on('pageerror', e => errors.push(e.message));
+  let calls = 0;
+  const app = await fixture(async payload => {
+    calls++;
+    const images = payload.input.flatMap(i => Array.isArray(i.content) ? i.content.filter(p => p.type === 'input_image') : []);
+    expect(images).toHaveLength(1); expect(images[0].image_url).toMatch(/^data:image\/png;base64,/);
+    return final;
+  });
+  try {
+    await page.route('**/api/title', route => route.fulfill({ status: 503, json: { error: 'Naming disabled in fixture' } }));
+    await page.goto(app.url);
+    await page.getByRole('radio', { name: 'Chat', exact: true }).check();
+    const png = await page.evaluate(() => { const c = document.createElement('canvas'); c.width = 2600; c.height = 1200; const x = c.getContext('2d'); x.fillStyle = '#114488'; x.fillRect(0,0,2600,1200); x.fillStyle = '#ffcc44'; x.fillRect(500,200,800,600); return c.toDataURL('image/png').split(',')[1]; });
+    await page.locator('#markdown-file').setInputFiles({ name: 'diagram.png', mimeType: 'image/png', buffer: Buffer.from(png, 'base64') });
+    await expect(page.locator('#status')).toContainText('Switch to Context or Agent');
+    await expect(page.locator('#attachment')).toBeHidden();
+    await page.getByRole('radio', { name: 'Context', exact: true }).check();
+    await page.locator('#markdown-file').setInputFiles({ name: 'diagram.png', mimeType: 'image/png', buffer: Buffer.from(png, 'base64') });
+    await expect(page.locator('#attachment-preview')).toBeVisible();
+    await expect(page.locator('#filename')).toContainText('2048 × 945');
+    expect(calls).toBe(0);
+    await page.getByRole('textbox', { name: 'Message', exact: true }).fill('Describe the attached diagram.'); await page.locator('#send').click();
+    await expect(page.locator('#send')).toBeEnabled();
+    await expect(page.locator('#chat .image-attachment img')).toHaveCount(1);
+    await expect.poll(() => page.locator('#chat .image-attachment img').evaluate(img => img.naturalWidth)).toBe(2048);
+    const id = await page.evaluate(() => window.contextLayer.currentId());
+    expect(app.service.view(id).attachments[0].data).toBeUndefined(); expect(calls).toBe(1);
+    await page.screenshot({ path: testInfo.outputPath('context-image.png'), fullPage: true });
+    await page.reload();
+    await expect.poll(() => page.locator('#chat .image-attachment img').evaluate(img => img.naturalWidth)).toBe(2048);
+    await page.getByRole('textbox', { name: 'Message', exact: true }).fill('What color is the smaller rectangle?'); await page.locator('#send').click();
+    await expect(page.locator('#send')).toBeEnabled(); expect(calls).toBe(2);
+    await page.locator('.edit-message').first().click(); await expect(page.locator('#attachment-preview')).toBeVisible();
+    await page.getByRole('textbox', { name: 'Message', exact: true }).fill('Describe the shape instead.'); await page.locator('#send').click();
+    await expect(page.locator('#send')).toBeEnabled(); expect(calls).toBe(3);
+    await expect(page.locator('#chat .image-attachment img')).toHaveCount(2);
+    expect(errors).toEqual([]);
+  } finally { await app.close(); }
+});
+
+test('Agent JPEG upload persists through paused reload and Resume', async ({ page }, testInfo) => {
+  const errors = []; page.on('pageerror', e => errors.push(e.message)); let calls = 0;
+  const app = await fixture(async payload => {
+    calls++; expect(JSON.stringify(payload)).toContain('data:image/jpeg;base64,'); return final;
+  });
+  const id = app.service.create('Image Agent').conversation_id;
+  try {
+    await page.route('**/api/title', route => route.fulfill({ status: 503, json: { error: 'Naming disabled in fixture' } }));
+    await page.goto(app.url);
+    if (testInfo.project.name === 'mobile') await page.locator('#menu').click();
+    await page.locator('#server-chats .chat-item').filter({ hasText: 'Image Agent' }).click();
+    await page.getByRole('radio', { name: 'Agent', exact: true }).check();
+    const jpeg = await page.evaluate(() => { const c = document.createElement('canvas'); c.width = 400; c.height = 300; c.getContext('2d').fillRect(0,0,400,300); return c.toDataURL('image/jpeg').split(',')[1]; });
+    await page.locator('#markdown-file').setInputFiles({ name: 'photo.jpg', mimeType: 'image/jpeg', buffer: Buffer.from(jpeg, 'base64') });
+    await expect(page.locator('#attachment-preview')).toBeVisible();
+    // Save the objective through the UI, then pause before the first step.
+    let firstStep;
+    await page.route('**/api/conclave', async route => {
+      const body = route.request().postDataJSON();
+      if (body?.action === 'agent_step' && !firstStep) { firstStep = true; return route.fulfill({ status: 503, json: { error: 'Paused fixture step; reload to resume.' } }); }
+      return route.continue();
+    });
+    await page.getByRole('textbox', { name: 'Message', exact: true }).fill('Inspect this photograph.'); await page.locator('#send').click();
+    await expect(page.locator('#status')).toContainText('Paused fixture step'); expect(calls).toBe(0);
+    await page.reload();
+    await expect(page.locator('#agent-resume')).toBeVisible();
+    await expect.poll(() => page.locator('#chat .image-attachment img').evaluate(img => img.naturalWidth)).toBe(400);
+    await page.locator('#agent-resume').click();
+    await expect(page.locator('#agent-status')).toContainText('completed'); expect(calls).toBe(1);
+    await page.screenshot({ path: testInfo.outputPath('agent-image.png'), fullPage: true });
+    expect(errors).toEqual([]);
+  } finally { await app.close(); }
+});
+
 test('Context tab breaks the actual request into parts and compares it with a scoped local baseline', async ({ page }, testInfo) => {
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));

@@ -405,6 +405,7 @@
     tools: ["Tool definitions", "Schemas for the tools the model may call, sent with every request."],
     memory: ["Memory", "Selected automatic memories and named entries from the Memory tab."],
     context: ["Working context", "Messages, summaries and references currently in the working context."],
+    images: ["Image reserve", "An uncalibrated allowance per image. Pixels are excluded from the local text tokenizer; provider counts and usage include native image input."],
     files: ["Files", "The workspace file list and file excerpts."],
     turn: ["Tool calls this turn", "This turn's tool calls and their results, carried until the reply is finished."],
     reasoning: ["Carried reasoning", "Provider reasoning carried between steps. It is opaque here, so its size is a rough estimate."],
@@ -526,7 +527,12 @@
     el("garden-local-request").textContent = `; current request: ~${compact.format(local)} local tokens`;
     el("garden-full-tokens").title =
       `Scoped chat/task-tool baseline: ~${exact(whole)} local tokens, with the same instructions and tool definitions. Memory reads, memory/context management, context retrieval and private reasoning are excluded. Provider-reported input uses a separate count. This compares context size, not cost.`;
-    el("breakdown-delta-text").hidden = false;
+    el("breakdown-delta-text").hidden = !!comparison.image_accounting;
+    if (comparison.image_accounting) {
+      const reserve = comparison.breakdown.image_reserve_tokens || 0;
+      el("garden-local-request").textContent = `; current request: ~${compact.format(local - reserve)} text/framing tokens${reserve ? " + " + compact.format(reserve) + " image reserve (uncalibrated)" : ""}`;
+      el("garden-full-tokens").title = comparison.image_accounting;
+    }
     el("garden-request-delta").textContent =
       Math.abs(change) < 1
         ? "the same size"
