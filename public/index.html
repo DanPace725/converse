@@ -563,17 +563,27 @@
           <label><input id="memory-history" type="checkbox"> Earlier versions</label>
         </div>
         <p id="memory-graph-status" class="note" role="status"></p>
-        <svg id="memory-scene" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 200" role="group" aria-label="Saved memories and their recorded connections"></svg>
+        <div id="memory-canvas" hidden>
+          <svg id="memory-scene" xmlns="http://www.w3.org/2000/svg" role="group" aria-label="Saved memories and their recorded connections. Arrow keys move between memories, Enter opens one, plus and minus zoom."></svg>
+          <div class="memory-zoom">
+            <button id="memory-zoom-out" type="button" aria-label="Zoom out" title="Zoom out">−</button>
+            <button id="memory-zoom-in" type="button" aria-label="Zoom in" title="Zoom in">+</button>
+            <button id="memory-fit" type="button" title="Show the whole map">Fit</button>
+          </div>
+          <div id="memory-focus" hidden>
+            <div class="memory-focus-head">
+              <p id="memory-focus-meta" class="note"></p>
+              <button id="memory-focus-open" type="button">Open</button>
+            </div>
+            <p id="memory-focus-text"></p>
+            <div id="memory-focus-links" class="editor-toolbar" aria-label="Connections of the selected memory"></div>
+          </div>
+        </div>
         <div class="memory-legend">
           <span class="memory-commitment">● Commitment</span><span class="memory-preference">● Preference</span>
           <span class="memory-claim">● Claim</span><span class="memory-question">● Question</span><span class="memory-named">◆ Named detail</span>
           <span>◎ Full · ○ Pointer (last projection) · muted: suppressed / obsolete</span>
           <span>→ Depends on / replaces / supports · dashed: conflicts</span>
-        </div>
-        <div class="editor-toolbar memory-paging">
-          <button id="memory-previous" type="button">Previous</button>
-          <span id="memory-page" class="note"></span>
-          <button id="memory-next" type="button">Next</button>
         </div>
       </section>
       <div id="editor-memory-proposals" hidden></div>

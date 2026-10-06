@@ -1,14 +1,39 @@
-// A read-only map of saved relationships. Layout proximity never creates an edge.
+// A zoomable map of saved memories. Only recorded relationships become edges;
+// topic beds explain why unlinked memories sit together.
 (() => {
   const el = (id) => document.getElementById(id),
     ns = "http://www.w3.org/2000/svg";
-  const pageSize = 12;
+  // One memory with its label, in map units, and the camera's zoom range.
+  const cell = { w: 172, h: 122, left: -84, right: 84, top: -40, bottom: 86 },
+    bedMargin = 24,
+    squash = cell.h / cell.w,
+    range = { min: 0.12, max: 2.5, readable: 0.72, captioned: 0.4 };
+  const scene = el("memory-scene"),
+    calm = matchMedia("(prefers-reduced-motion: reduce)");
   let data = null,
     onMemory,
     onState,
-    page = 0,
     signature = "",
-    disabled = false;
+    disabled = false,
+    shown = [],
+    lines = [],
+    topicLabels = [],
+    stage = null,
+    selected = null,
+    // The camera follows the whole map until the reader moves it.
+    fitted = true,
+    flight = 0,
+    pointing = false,
+    moved = false,
+    armed = null,
+    glyph = 0;
+  const placed = new Map(),
+    drawn = new Map(),
+    pointers = new Map(),
+    view = { x: 0, y: 0, k: 1 },
+    // Where the camera is heading; rapid steps build on it, not on mid-flight.
+    goal = { x: 0, y: 0, k: 1 },
+    size = { w: 0, h: 0 };
   const clean = (text) =>
     String(text || "")
       .replace(/\s+/g, " ")
@@ -17,6 +42,14 @@
     clean(text).length > length
       ? clean(text).slice(0, length - 1) + "…"
       : clean(text);
+  const clamp = (value, low, high) => Math.max(low, Math.min(high, value));
+  // Stable per-memory scatter, so the same record starts in the same place.
+  function hash(text) {
+    let h = 2166136261;
+    for (let i = 0; i < text.length; i++)
+      h = Math.imul(h ^ text.charCodeAt(i), 16777619);
+    return (h >>> 0) / 4294967296;
+  }
   function svg(tag, attrs, parent, text) {
     const node = document.createElementNS(ns, tag);
     for (const [key, value] of Object.entries(attrs || {}))
@@ -93,10 +126,388 @@
     }
     return result;
   }
+  function related(key) {
+    return edges(nodes())
+      .filter((e) => e.from.key === key || e.to.key === key)
+      .map((e) => ({
+        label:
+          e.from.key === key
+            ? e.label
+            : {
+                Replaces: "Replaced by",
+                "Depends on": "Required by",
+                Supports: "Supported by",
+                "Conflicts with": "Conflicts with",
+              }[e.label],
+        target: e.from.key === key ? e.to : e.from,
+      }));
+  }
+  const tier = (node) =>
+    node.tier === "full" ? "full" : node.tier === "stub" ? "pointer" : "saved";
   function open(node) {
     if (disabled) return;
     (node.kind === "named" ? onState : onMemory)?.(node.id);
   }
+
+  // Layout. Linked memories pull together, each topic gathers into its own
+  // bed, and nothing overlaps. Settled memories keep their place; only new
+  // arrivals disturb the map.
+  function settle(list, links) {
+    const fresh = list.filter((n) => !placed.has(n.key)).length;
+    if (!fresh) return;
+    const topics = [...new Set(list.map((n) => n.topic))];
+    topics.forEach((topic, t) => {
+      const members = list.filter((n) => n.topic === topic),
+        known = members
+          .filter((n) => placed.has(n.key))
+          .map((n) => placed.get(n.key)),
+        reach = Math.sqrt(t) * 300,
+        spread = Math.sqrt(members.length);
+      const centre = known.length
+        ? {
+            x: known.reduce((sum, p) => sum + p.x, 0) / known.length,
+            y: known.reduce((sum, p) => sum + p.y, 0) / known.length,
+          }
+        : { x: Math.cos(t * 2.4) * reach, y: Math.sin(t * 2.4) * reach };
+      for (const n of members)
+        if (!placed.has(n.key))
+          placed.set(n.key, {
+            x: centre.x + (hash(n.key) - 0.5) * cell.w * spread,
+            y: centre.y + (hash(n.key + "/") - 0.5) * cell.h * spread,
+          });
+    });
+    const points = list.map((n) => ({
+        ...placed.get(n.key),
+        t: topics.indexOf(n.topic),
+        key: n.key,
+      })),
+      index = new Map(points.map((p) => [p.key, p])),
+      springs = links
+        .map((e) => [index.get(e.from.key), index.get(e.to.key)])
+        .filter(([a, b]) => a && b),
+      ticks = clamp(Math.round(3e7 / points.length ** 2), 60, 320),
+      warmth = fresh === points.length ? 1 : 0.35,
+      // Beds gather into the canvas's shape: a tall panel gets a tall map.
+      lean = 1.6 * (size.w ? clamp(size.h / size.w, 0.7, 1.6) : 1.2);
+    // Each bed's centre and the room it claims, its name included.
+    const survey = () => {
+      const beds = topics.map(() => ({
+        x: 0,
+        y: 0,
+        n: 0,
+        left: Infinity,
+        right: -Infinity,
+        top: Infinity,
+        bottom: -Infinity,
+      }));
+      for (const p of points) {
+        const bed = beds[p.t];
+        bed.x += p.x;
+        bed.y += p.y;
+        bed.n++;
+        bed.left = Math.min(bed.left, p.x + cell.left - bedMargin);
+        bed.right = Math.max(bed.right, p.x + cell.right + bedMargin);
+        bed.top = Math.min(bed.top, p.y + cell.top - bedMargin - 50);
+        bed.bottom = Math.max(bed.bottom, p.y + cell.bottom + bedMargin);
+      }
+      for (const bed of beds) {
+        bed.x /= bed.n;
+        bed.y /= bed.n;
+      }
+      return beds;
+    };
+    // The last passes only separate, so the result is free of overlaps.
+    for (let tick = 0; tick < ticks + 12; tick++) {
+      const heat = warmth * Math.max(0, 1 - tick / ticks);
+      let beds = survey();
+      for (const p of points) {
+        const bed = beds[p.t];
+        p.x += ((bed.x - p.x) * 0.16 - bed.x * 0.06 * lean) * heat;
+        p.y += ((bed.y - p.y) * 0.16 - (bed.y * 0.06) / lean) * heat;
+      }
+      for (const [a, b] of springs) {
+        const dx = b.x - a.x,
+          dy = b.y - a.y,
+          d = Math.hypot(dx, dy) || 1,
+          pull = ((d - 190) / d) * (a.t === b.t ? 0.1 : 0.03) * heat;
+        a.x += dx * pull;
+        a.y += dy * pull;
+        b.x -= dx * pull;
+        b.y -= dy * pull;
+      }
+      // Memories collide as ellipses, so they slide into a compact bed.
+      for (let i = 0; i < points.length; i++)
+        for (let j = i + 1; j < points.length; j++) {
+          const a = points[i],
+            b = points[j],
+            dx = (b.x - a.x) * squash,
+            dy = b.y - a.y,
+            d = Math.hypot(dx, dy);
+          if (d >= cell.h) continue;
+          const push = (cell.h - d) / 2,
+            ux = (d ? dx / d : Math.cos(i + j)) * push,
+            uy = (d ? dy / d : Math.sin(i + j)) * push;
+          a.x -= ux / squash;
+          a.y -= uy;
+          b.x += ux / squash;
+          b.y += uy;
+        }
+      beds = survey();
+      for (let i = 0; i < beds.length; i++)
+        for (let j = i + 1; j < beds.length; j++) {
+          const a = beds[i],
+            b = beds[j],
+            ox = Math.min(a.right, b.right) - Math.max(a.left, b.left),
+            oy = Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top);
+          if (ox <= 0 || oy <= 0) continue;
+          const across = ox < oy,
+            shift =
+              ((across ? ox : oy) / 2) *
+              ((across ? b.x - a.x : b.y - a.y) < 0 ? -1 : 1);
+          for (const p of points) {
+            const side = p.t === i ? -shift : p.t === j ? shift : 0;
+            if (across) p.x += side;
+            else p.y += side;
+          }
+          for (const [bed, side] of [
+            [a, -shift],
+            [b, shift],
+          ])
+            for (const edge of across
+              ? ["x", "left", "right"]
+              : ["y", "top", "bottom"])
+              bed[edge] += side;
+        }
+    }
+    for (const p of points)
+      placed.set(p.key, { x: Math.round(p.x), y: Math.round(p.y) });
+  }
+  // A rounded outline around a bed's memories.
+  function outline(members, pad) {
+    const points = members
+      .flatMap((n) => {
+        const p = placed.get(n.key);
+        return [
+          [p.x + cell.left, p.y + cell.top],
+          [p.x + cell.right, p.y + cell.top],
+          [p.x + cell.left, p.y + cell.bottom],
+          [p.x + cell.right, p.y + cell.bottom],
+        ];
+      })
+      .sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+    const turn = (o, a, b) =>
+      (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
+    const half = (list) => {
+      const side = [];
+      for (const p of list) {
+        while (side.length > 1 && turn(side.at(-2), side.at(-1), p) <= 0)
+          side.pop();
+        side.push(p);
+      }
+      side.pop();
+      return side;
+    };
+    const ring = [...half(points), ...half([...points].reverse())];
+    const sides = ring.map((p, i) => {
+      const q = ring[(i + 1) % ring.length],
+        length = Math.hypot(q[0] - p[0], q[1] - p[1]),
+        nx = ((q[1] - p[1]) / length) * pad,
+        ny = ((p[0] - q[0]) / length) * pad;
+      return [p[0] + nx, p[1] + ny, q[0] + nx, q[1] + ny];
+    });
+    const corner = `A ${pad} ${pad} 0 0 1`;
+    return (
+      sides
+        .map(
+          ([x1, y1, x2, y2], i) =>
+            `${i ? corner : "M"} ${x1} ${y1} L ${x2} ${y2}`,
+        )
+        .join(" ") + ` ${corner} ${sides[0][0]} ${sides[0][1]} Z`
+    );
+  }
+
+  // Camera.
+  function paint() {
+    stage?.setAttribute(
+      "transform",
+      `translate(${view.x} ${view.y}) scale(${view.k})`,
+    );
+    scene.classList.toggle("memory-far", view.k < range.readable);
+    scene.classList.toggle("memory-distant", view.k < range.captioned);
+    scene.style.setProperty("--memory-inverse", 1 / view.k);
+    // Topic names stay legible at any zoom, and so do the seeds: far out,
+    // where labels are hidden, each seed grows into the room its label left.
+    for (const label of topicLabels)
+      label.style.fontSize = clamp(13 / view.k, 13, 37) + "px";
+    const next = clamp(0.6 / view.k, 1, 2.4);
+    if (next !== glyph) {
+      glyph = next;
+      scene.style.setProperty("--memory-glyph", glyph);
+      for (const { path, a, b } of lines) {
+        const dx = b.x - a.x,
+          dy = b.y - a.y,
+          length = Math.hypot(dx, dy),
+          ux = dx / length,
+          uy = dy / length,
+          inset = Math.min(27 * glyph, length * 0.4),
+          bend = Math.min(26, length * 0.12);
+        path.setAttribute(
+          "d",
+          `M ${a.x + ux * inset} ${a.y + uy * inset} Q ${(a.x + b.x) / 2 + uy * bend} ${(a.y + b.y) / 2 - ux * bend} ${b.x - ux * inset} ${b.y - uy * inset}`,
+        );
+      }
+    }
+    el("memory-zoom-in").disabled = goal.k >= range.max;
+    el("memory-zoom-out").disabled = goal.k <= range.min;
+  }
+  function move(next, animate) {
+    cancelAnimationFrame(flight);
+    Object.assign(goal, next);
+    if (!animate || calm.matches) {
+      Object.assign(view, next);
+      return paint();
+    }
+    const from = { ...view },
+      start = performance.now();
+    const step = (now) => {
+      const t = Math.min(1, (now - start) / 220),
+        ease = 1 - (1 - t) ** 3;
+      for (const axis of ["x", "y", "k"])
+        view[axis] = from[axis] + (goal[axis] - from[axis]) * ease;
+      paint();
+      if (t < 1) flight = requestAnimationFrame(step);
+    };
+    flight = requestAnimationFrame(step);
+  }
+  // The zoom controls cover the head of the canvas and the card its foot.
+  function clearing() {
+    const card = el("memory-focus").offsetHeight;
+    return { top: 44, bottom: size.h - (card ? card + 16 : 0) };
+  }
+  function frame(list, animate) {
+    if (!size.w || !list.length) return paint();
+    const room = clearing(),
+      at = list.map((n) => placed.get(n.key)),
+      left = Math.min(...at.map((p) => p.x)) + cell.left - 40,
+      right = Math.max(...at.map((p) => p.x)) + cell.right + 40,
+      top = Math.min(...at.map((p) => p.y)) + cell.top - 64,
+      bottom = Math.max(...at.map((p) => p.y)) + cell.bottom + 30,
+      k = clamp(
+        Math.min(
+          size.w / (right - left),
+          (room.bottom - room.top) / (bottom - top),
+        ),
+        range.min,
+        1.15,
+      );
+    move(
+      {
+        k,
+        x: size.w / 2 - (k * (left + right)) / 2,
+        y: (room.top + room.bottom) / 2 - (k * (top + bottom)) / 2,
+      },
+      animate,
+    );
+  }
+  function zoom(factor, x = size.w / 2, y = size.h / 2, animate = false) {
+    const k = clamp(goal.k * factor, range.min, range.max),
+      ratio = k / goal.k;
+    fitted = false;
+    move(
+      { k, x: x - (x - goal.x) * ratio, y: y - (y - goal.y) * ratio },
+      animate,
+    );
+  }
+  // Bring a memory into view without changing the zoom.
+  function reveal(node) {
+    const p = placed.get(node.key);
+    if (!p || !size.w) return;
+    const x = goal.x + goal.k * p.x,
+      y = goal.y + goal.k * (p.y + 27),
+      room = clearing(),
+      inset = 30;
+    if (
+      x > inset &&
+      x < size.w - inset &&
+      y > room.top + inset &&
+      y < room.bottom - inset
+    )
+      return;
+    fitted = false;
+    move(
+      {
+        k: goal.k,
+        x: size.w / 2 - goal.k * p.x,
+        y: (room.top + room.bottom) / 2 - goal.k * (p.y + 27),
+      },
+      true,
+    );
+  }
+
+  // Selection lights a memory's recorded connections and fills the card.
+  function mark() {
+    const near = new Set([selected]);
+    for (const { edge, path } of lines) {
+      const lit = edge.from.key === selected || edge.to.key === selected;
+      path.classList.toggle("memory-edge-lit", lit);
+      if (lit) near.add(edge.from.key).add(edge.to.key);
+    }
+    scene.classList.toggle("memory-focused", near.size > 1);
+    const stop = drawn.has(selected) ? selected : shown[0]?.key;
+    for (const [key, group] of drawn) {
+      group.classList.toggle("memory-selected", key === selected);
+      group.classList.toggle("memory-near", near.has(key));
+      group.setAttribute("tabindex", key === stop ? 0 : -1);
+    }
+  }
+  function card() {
+    const node = shown.find((n) => n.key === selected);
+    el("memory-focus").hidden = !node;
+    if (!node) return;
+    el("memory-focus-meta").textContent =
+      `${node.kind === "named" ? node.id : node.kind} · ${node.status} · ${node.tier === "archive" ? "not" : tier(node)} in last projection`;
+    el("memory-focus-text").textContent = clean(node.content);
+    const links = related(node.key);
+    el("memory-focus-links").hidden = !links.length;
+    el("memory-focus-links").replaceChildren(
+      ...links.map((link) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.textContent = `${link.label}: ${short(link.target.content, 60)}`;
+        button.title = link.target.id + " · " + link.target.status;
+        // Walk to a neighbour on the map; one outside this view opens instead.
+        button.onclick = () =>
+          drawn.has(link.target.key)
+            ? drawn.get(link.target.key).focus({ preventScroll: true })
+            : open(link.target);
+        return button;
+      }),
+    );
+    el("memory-focus-open").disabled = disabled;
+  }
+  function select(node) {
+    selected = node?.key ?? null;
+    mark();
+    card();
+    if (node) reveal(node);
+  }
+  // The nearest memory in the direction of an arrow key.
+  function toward(node, dx, dy) {
+    const from = placed.get(node.key);
+    let best = null,
+      score = Infinity;
+    for (const other of shown) {
+      if (other === node) continue;
+      const p = placed.get(other.key),
+        along = (p.x - from.x) * dx + (p.y - from.y) * dy,
+        across = Math.abs((p.x - from.x) * dy - (p.y - from.y) * dx);
+      if (along <= 0 || along + across * 2 >= score) continue;
+      best = other;
+      score = along + across * 2;
+    }
+    return best;
+  }
+
   function draw() {
     const all = nodes(),
       topicSelect = el("memory-topic"),
@@ -107,62 +518,32 @@
       ...[...topics].map(([key, label]) => new Option(label, key)),
     );
     topicSelect.value = topics.has(oldTopic) ? oldTopic : "";
-    const filtered = all.filter(
-      (n) =>
-        (!topicSelect.value || n.topic === topicSelect.value) &&
-        (el("memory-history").checked || n.status !== "superseded"),
-    );
-    // Keep topic groups stable across polling, corrections and page changes.
-    filtered.sort(
-      (a, b) => a.topic.localeCompare(b.topic) || a.key.localeCompare(b.key),
-    );
-    page = Math.max(
-      0,
-      Math.min(page, Math.ceil(filtered.length / pageSize) - 1),
-    );
-    const shown = filtered.slice(page * pageSize, (page + 1) * pageSize),
-      positions = new Map(),
-      groups = [];
-    let y = 14;
-    for (const topic of new Set(shown.map((n) => n.topic))) {
-      const group = shown.filter((n) => n.topic === topic),
-        start = y;
-      y += 36;
-      group.forEach((node, index) =>
-        positions.set(node.key, {
-          x: index % 2 ? 292 : 108,
-          y: y + Math.floor(index / 2) * 118 + 27,
-        }),
+    // Keep reading order stable across polling and corrections.
+    shown = all
+      .filter(
+        (n) =>
+          (!topicSelect.value || n.topic === topicSelect.value) &&
+          (el("memory-history").checked || n.status !== "superseded"),
+      )
+      .sort(
+        (a, b) => a.topic.localeCompare(b.topic) || a.key.localeCompare(b.key),
       );
-      y += Math.ceil(group.length / 2) * 118;
-      groups.push({ start, height: y - start, name: group[0].topicName });
-      y += 12;
-    }
-    const scene = el("memory-scene");
+    const keys = new Set(all.map((n) => n.key)),
+      connections = edges(all);
+    for (const key of placed.keys()) if (!keys.has(key)) placed.delete(key);
+    // Memories hidden by a filter still hold their ground.
+    settle(
+      all.filter((n) => placed.has(n.key) || shown.includes(n)),
+      connections,
+    );
+    const visible = connections.filter(
+      (e) => shown.includes(e.from) && shown.includes(e.to),
+    );
+    const held = [...drawn].find(
+      ([, group]) => group === document.activeElement,
+    )?.[0];
     scene.replaceChildren();
-    scene.hidden = !shown.length;
-    scene.setAttribute("viewBox", `0 0 400 ${Math.max(160, y)}`);
-    for (const group of groups) {
-      svg(
-        "rect",
-        {
-          x: 6,
-          y: group.start,
-          width: 388,
-          height: group.height,
-          rx: 28,
-          class: "memory-bed",
-        },
-        scene,
-      );
-      const title = svg(
-        "text",
-        { x: 22, y: group.start + 25, class: "memory-topic-label" },
-        scene,
-        short(group.name, 43),
-      );
-      svg("title", {}, title, group.name);
-    }
+    drawn.clear();
     const defs = svg("defs", {}, scene),
       marker = svg(
         "marker",
@@ -178,26 +559,48 @@
         defs,
       );
     svg("path", { d: "M 0 0 L 10 5 L 0 10 z", fill: "#8da9a0" }, marker);
-    const connections = edges(all),
-      visible = connections.filter(
-        (e) => positions.has(e.from.key) && positions.has(e.to.key),
+    stage = svg("g", { id: "memory-stage" }, scene);
+    topicLabels = [];
+    for (const topic of new Set(shown.map((n) => n.topic))) {
+      const members = shown.filter((n) => n.topic === topic),
+        at = members.map((n) => placed.get(n.key)),
+        left = Math.min(...at.map((p) => p.x)),
+        right = Math.max(...at.map((p) => p.x));
+      svg("path", { d: outline(members, 14), class: "memory-bed" }, stage);
+      // A name is cut to its bed's width, so it never runs into a neighbour.
+      const title = svg(
+        "text",
+        {
+          x: (left + right) / 2,
+          y: Math.min(...at.map((p) => p.y)) + cell.top - 24,
+          "text-anchor": "middle",
+          class: "memory-topic-label",
+        },
+        stage,
+        short(
+          members[0].topicName,
+          clamp(Math.floor((right - left + cell.w) / 19), 12, 43),
+        ),
       );
-    for (const edge of visible) {
-      const a = positions.get(edge.from.key),
-        b = positions.get(edge.to.key);
-      const dx = b.x - a.x,
-        dy = b.y - a.y,
-        length = Math.hypot(dx, dy),
-        inset = 25;
+      svg("title", {}, title, members[0].topicName + "\nSelect to zoom here.");
+      title.onclick = () => {
+        if (moved) return;
+        fitted = false;
+        frame(members, true);
+      };
+      topicLabels.push(title);
+    }
+    // paint() routes each edge, since its ends follow the seed size.
+    glyph = 0;
+    lines = visible.map((edge) => {
       const path = svg(
         "path",
         {
-          d: `M ${a.x + (dx / length) * inset} ${a.y + (dy / length) * inset} Q 200 ${(a.y + b.y) / 2 - 28} ${b.x - (dx / length) * inset} ${b.y - (dy / length) * inset}`,
           class: "memory-edge memory-edge-" + edge.type,
           "marker-end":
             edge.type === "conflicts_with" ? "" : "url(#memory-arrow)",
         },
-        scene,
+        stage,
       );
       svg(
         "title",
@@ -205,9 +608,15 @@
         path,
         `${short(edge.from.content, 65)} → ${edge.label.toLowerCase()} → ${short(edge.to.content, 65)}`,
       );
-    }
+      return {
+        edge,
+        path,
+        a: placed.get(edge.from.key),
+        b: placed.get(edge.to.key),
+      };
+    });
     for (const node of shown) {
-      const p = positions.get(node.key),
+      const p = placed.get(node.key),
         inactive = ["suppressed", "superseded", "invalidated"].includes(
           node.status,
         );
@@ -216,41 +625,42 @@
         {
           transform: `translate(${p.x} ${p.y})`,
           class: `memory-node memory-${node.kind}${inactive ? " memory-inactive" : ""}`,
-          tabindex: disabled ? -1 : 0,
           role: "button",
           "aria-disabled": String(disabled),
           "data-memory-id": node.id,
           "data-memory-kind": node.kind,
           "aria-label": `${node.kind === "named" ? node.id : node.kind}: ${clean(node.content)} · ${node.status} · ${node.tier} in last projection`,
         },
-        scene,
+        stage,
       );
       svg(
         "title",
         {},
         group,
-        `${node.id}\n${node.content}\n${node.status} · ${node.tier} in last projection\nOpen to inspect sources and connections.`,
+        `${node.id}\n${node.content}\n${node.status} · ${node.tier} in last projection\nSelect to follow connections; select again to open.`,
       );
       svg(
         "rect",
         {
-          x: -86,
-          y: -24,
-          width: 172,
-          height: 111,
+          x: cell.left,
+          y: -26,
+          width: cell.right - cell.left,
+          height: 110,
           rx: 14,
           class: "memory-hit",
         },
         group,
       );
+      const seed = svg("g", { class: "memory-glyph" }, group);
+      svg("circle", { r: 31, class: "memory-halo" }, seed);
       if (node.tier === "full")
-        svg("circle", { r: 25, class: "memory-active-ring" }, group);
+        svg("circle", { r: 25, class: "memory-active-ring" }, seed);
       svg(
         node.kind === "named" ? "path" : "circle",
         node.kind === "named"
           ? { d: "M 0 -18 L 18 0 L 0 18 L -18 0 Z", class: "memory-seed" }
           : { r: 18, class: "memory-seed" },
-        group,
+        seed,
       );
       if (node.tier === "stub") group.classList.add("memory-pointer");
       svg(
@@ -259,7 +669,7 @@
           d: "M 0 9 L 0 -6 M 0 0 Q -13 0 -9 -8 Q 0 -9 0 0 M 0 -3 Q 12 -4 9 -12 Q 0 -12 0 -3",
           class: "memory-sprout",
         },
-        group,
+        seed,
       );
       const label = clean(node.content),
         first = label.slice(0, 23),
@@ -280,110 +690,192 @@
       );
       svg(
         "text",
+        { "text-anchor": "middle", class: "memory-caption" },
+        group,
+        short(label, 13),
+      );
+      svg(
+        "text",
         { y: 76, "text-anchor": "middle", class: "memory-status" },
         group,
         inactive
           ? node.status
           : node.kind === "named"
             ? short(node.id, 24)
-            : `${node.kind} · ${node.tier === "full" ? "full" : node.tier === "stub" ? "pointer" : "saved"}`,
+            : `${node.kind} · ${tier(node)}`,
       );
-      group.onclick = () => open(node);
-      group.onkeydown = (event) => {
-        if (["Enter", " "].includes(event.key)) {
-          event.preventDefault();
-          open(node);
-        }
+      // Keyboard focus selects. A press selects on release, so the card
+      // never appears under a held pointer; a second press opens the memory.
+      group.onfocus = () => {
+        if (!pointing && selected !== node.key) select(node);
       };
+      group.onpointerdown = () => (armed = selected);
+      group.onclick = () => {
+        if (moved) return;
+        if (armed === node.key) open(node);
+        else select(node);
+        armed = null;
+      };
+      group.onkeydown = (event) => {
+        const step = {
+          ArrowLeft: [-1, 0],
+          ArrowRight: [1, 0],
+          ArrowUp: [0, -1],
+          ArrowDown: [0, 1],
+        }[event.key];
+        if (["Enter", " "].includes(event.key)) open(node);
+        else if (step)
+          drawn.get(toward(node, ...step)?.key)?.focus({ preventScroll: true });
+        else if (["+", "="].includes(event.key))
+          zoom(1.4, undefined, undefined, true);
+        else if (event.key === "-") zoom(1 / 1.4, undefined, undefined, true);
+        else if (event.key === "0") {
+          fitted = true;
+          frame(shown, true);
+        } else return;
+        event.preventDefault();
+      };
+      drawn.set(node.key, group);
     }
+    el("memory-canvas").hidden = !shown.length;
+    if (!drawn.has(selected)) selected = null;
+    mark();
+    card();
     el("memory-graph-status").textContent = !all.length
       ? "No saved memories yet. Add a detail below, or continue the conversation."
       : !shown.length
         ? "No memories in this view. Try another topic or include earlier versions."
-        : `${filtered.length} memories · ${visible.length} ${visible.length === 1 ? "connection" : "connections"} shown. Select a memory for sources and all connections.`;
-    el("memory-page").textContent = filtered.length
-      ? `${page * pageSize + 1}–${Math.min(filtered.length, (page + 1) * pageSize)} of ${filtered.length}`
-      : "0 memories";
-    el("memory-previous").disabled = disabled || page === 0;
-    el("memory-next").disabled =
-      disabled || (page + 1) * pageSize >= filtered.length;
+        : `${shown.length} ${shown.length === 1 ? "memory" : "memories"} · ${visible.length} ${visible.length === 1 ? "connection" : "connections"}. Drag to move, scroll or pinch to zoom, and select a memory to follow its connections.`;
     el("memory-topic").disabled = disabled;
     el("memory-history").disabled = disabled;
+    if (fitted) frame(shown);
+    else paint();
+    drawn.get(held)?.focus({ preventScroll: true });
   }
   el("memory-topic").onchange = el("memory-history").onchange = () => {
-    page = 0;
+    fitted = true;
     draw();
   };
-  function turnPage(change, focus) {
-    page += change;
-    draw();
-    el(focus).focus({ preventScroll: true });
-    el("memory-graph").scrollIntoView({ block: "start" });
-  }
-  el("memory-previous").onclick = () => turnPage(-1, "memory-next");
-  el("memory-next").onclick = () => turnPage(1, "memory-previous");
+  el("memory-zoom-in").onclick = () => zoom(1.4, undefined, undefined, true);
+  el("memory-zoom-out").onclick = () =>
+    zoom(1 / 1.4, undefined, undefined, true);
+  el("memory-fit").onclick = () => {
+    fitted = true;
+    frame(shown, true);
+  };
+  el("memory-focus-open").onclick = () => {
+    const node = shown.find((n) => n.key === selected);
+    if (node) open(node);
+  };
+
+  // Drag pans, the wheel and a two-finger pinch zoom around the pointer.
+  const spot = (event) => {
+    const box = scene.getBoundingClientRect();
+    return { x: event.clientX - box.left, y: event.clientY - box.top };
+  };
+  scene.addEventListener(
+    "wheel",
+    (event) => {
+      event.preventDefault();
+      const at = spot(event);
+      zoom(
+        Math.exp(-event.deltaY * (event.ctrlKey ? 0.01 : 0.0015)),
+        at.x,
+        at.y,
+      );
+    },
+    { passive: false },
+  );
+  scene.addEventListener("pointerdown", (event) => {
+    if (event.button) return;
+    if (!pointers.size) moved = false;
+    pointing = true;
+    pointers.set(event.pointerId, spot(event));
+  });
+  scene.addEventListener("pointermove", (event) => {
+    const last = pointers.get(event.pointerId);
+    if (!last) return;
+    const now = spot(event);
+    if (
+      !moved &&
+      pointers.size === 1 &&
+      Math.hypot(now.x - last.x, now.y - last.y) < 5
+    )
+      return;
+    if (!moved) scene.setPointerCapture(event.pointerId);
+    moved = true;
+    fitted = false;
+    scene.classList.add("memory-panning");
+    const other = [...pointers].find(([id]) => id !== event.pointerId)?.[1],
+      drift = other ? 2 : 1;
+    if (other)
+      zoom(
+        (Math.hypot(now.x - other.x, now.y - other.y) || 1) /
+          (Math.hypot(last.x - other.x, last.y - other.y) || 1),
+        (now.x + other.x) / 2,
+        (now.y + other.y) / 2,
+      );
+    move({
+      k: goal.k,
+      x: goal.x + (now.x - last.x) / drift,
+      y: goal.y + (now.y - last.y) / drift,
+    });
+    pointers.set(event.pointerId, now);
+  });
+  // A press can end anywhere, so its release is heard on the window.
+  for (const type of ["pointerup", "pointercancel"])
+    addEventListener(type, (event) => {
+      pointers.delete(event.pointerId);
+      if (pointers.size) return;
+      pointing = false;
+      scene.classList.remove("memory-panning");
+    });
+  scene.addEventListener("click", (event) => {
+    if (!moved && !event.target.closest(".memory-node, .memory-topic-label"))
+      select(null);
+  });
+  new ResizeObserver(([entry]) => {
+    const { width, height } = entry.contentRect;
+    if (!width || (width === size.w && height === size.h)) return;
+    size.w = width;
+    size.h = height;
+    if (fitted) frame(shown);
+  }).observe(scene);
+
   window.memoryGraph = {
-    render(view, memory, state) {
+    render(latest, memory, state) {
       onMemory = memory;
       onState = state;
-      if (data?.conversation_id !== view?.conversation_id) {
-        page = 0;
+      if (data?.conversation_id !== latest?.conversation_id) {
         el("memory-topic").value = "";
         el("memory-history").checked = false;
+        placed.clear();
+        selected = null;
+        fitted = true;
       }
-      data = view;
-      const next = JSON.stringify([view?.conversation_id, nodes()]);
+      data = latest;
+      const next = JSON.stringify([latest?.conversation_id, nodes()]);
       if (next === signature) return;
       signature = next;
       draw();
     },
     connections(kind, id) {
-      const key = (kind === "state" ? "state:" : "memory:") + id;
-      return edges(nodes())
-        .filter((e) => e.from.key === key || e.to.key === key)
-        .map((e) => ({
-          label:
-            e.from.key === key
-              ? e.label
-              : {
-                  Replaces: "Replaced by",
-                  "Depends on": "Required by",
-                  Supports: "Supported by",
-                  "Conflicts with": "Conflicts with",
-                }[e.label],
-          target: e.from.key === key ? e.to : e.from,
-        }));
+      return related((kind === "state" ? "state:" : "memory:") + id);
     },
     open,
     focus(kind, id) {
-      const node = [
-        ...el("memory-scene").querySelectorAll("[data-memory-id]"),
-      ].find(
-        (n) =>
-          n.dataset.memoryId === id &&
-          (kind === "state"
-            ? n.dataset.memoryKind === "named"
-            : n.dataset.memoryKind !== "named"),
-      );
-      (node || el("memory-topic")).focus();
+      (
+        drawn.get((kind === "state" ? "state:" : "memory:") + id) ||
+        el("memory-topic")
+      ).focus();
     },
     setDisabled(value) {
       disabled = value;
-      for (const node of el("memory-scene").querySelectorAll(
-        '[role="button"]',
-      )) {
-        node.setAttribute("aria-disabled", String(value));
-        node.setAttribute("tabindex", value ? "-1" : "0");
-      }
+      for (const group of drawn.values())
+        group.setAttribute("aria-disabled", String(value));
       el("memory-topic").disabled = value;
       el("memory-history").disabled = value;
-      const count = nodes().filter(
-        (n) =>
-          (!el("memory-topic").value || n.topic === el("memory-topic").value) &&
-          (el("memory-history").checked || n.status !== "superseded"),
-      ).length;
-      el("memory-previous").disabled = value || page === 0;
-      el("memory-next").disabled = value || (page + 1) * pageSize >= count;
+      el("memory-focus-open").disabled = value;
     },
   };
 })();

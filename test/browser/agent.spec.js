@@ -143,7 +143,7 @@ test('Jev memory view distinguishes applied selections from optional model compa
   } finally { await app.close(); }
 });
 
-test('memory garden defaults to graph with sources, recorded connections, topics and bounded pages', async ({ page }, testInfo) => {
+test('memory garden defaults to a zoomable graph with sources, recorded connections, topics and selection', async ({ page }, testInfo) => {
   let calls = 0; const errors = []; page.on('pageerror', e => errors.push(e.message));
   const app = await fixture(async () => { calls++; return final; });
   const id = app.service.create('Memory garden proof').conversation_id;
@@ -169,46 +169,85 @@ test('memory garden defaults to graph with sources, recorded connections, topics
     await expect(page.locator('#memory-views [data-view="graph"]')).toHaveAttribute('aria-pressed', 'true');
     await expect(page.locator('#memory-graph')).toBeVisible();
     await expect(page.locator('#editor-items')).toBeHidden();
-    await expect(page.locator('#memory-scene [role="button"]')).toHaveCount(12);
+    // Every memory is on one map: zoomed out it shows shape, closer it shows labels.
+    const scene = page.locator('#memory-scene'), scale = () => page.locator('#memory-stage').evaluate(g => +g.getAttribute('transform').match(/scale\(([\d.]+)\)/)[1]);
+    const shift = () => page.locator('#memory-stage').evaluate(g => g.getAttribute('transform').match(/translate\(([^)]+)\)/)[1]);
+    const openNode = async node => { await node.focus(); await node.press('Enter'); };
+    await expect(page.locator('#memory-scene [role="button"]')).toHaveCount(17);
+    await expect(page.locator('#memory-scene .memory-edge-depends_on')).toHaveCount(1);
+    await expect(scene).toHaveClass(/memory-far/);
+    await page.screenshot({ path: testInfo.outputPath('memory-garden.png'), fullPage: true });
+    const whole = await scale();
+    for (let n = 0; n < 3; n++) await page.locator('#memory-zoom-in').click();
+    await expect.poll(scale).toBeGreaterThan(whole * 2.7);
+    await expect(scene).not.toHaveClass(/memory-far/);
+    const box = await scene.boundingBox(), origin = await shift();
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+    await page.mouse.wheel(0, 300);
+    await expect.poll(scale).toBeLessThan(whole * 2.7);
+    await page.mouse.down(); await page.mouse.move(box.x + box.width / 2 - 60, box.y + box.height / 2 + 40, { steps: 4 }); await page.mouse.up();
+    expect(await shift()).not.toBe(origin);
+    await page.locator('#memory-fit').click();
+    await expect.poll(scale).toBeCloseTo(whole, 2);
     await page.locator('#memory-topic').selectOption('conversation');
-    await expect(page.locator('#memory-scene')).toContainText(/keep it below \$700\./i);
-    await expect(page.locator('#memory-scene')).not.toContainText(/keep it below \$500\./i);
+    await expect(scene).toContainText(/keep it below \$700\./i);
+    await expect(scene).not.toContainText(/keep it below \$500\./i);
     await page.locator('#memory-history').check();
     await expect(page.locator('#memory-scene .memory-edge-supersedes')).toHaveCount(1);
+    // Selecting a memory shows it beside the map; its connections walk the map.
+    const budget = scene.getByRole('button', { name: /commitment:.*\$700/ });
+    await budget.click();
+    await expect(budget).toHaveClass(/memory-selected/);
+    await expect(page.locator('#memory-focus-text')).toHaveText(/keep it below \$700\./i);
+    await expect(page.locator('#memory-scene .memory-edge-lit')).toHaveCount(1);
     await page.screenshot({ path: testInfo.outputPath('memory-corrections.png'), fullPage: true });
-    const budget = page.locator('#memory-scene').getByRole('button', { name: /commitment:.*\$700/ });
-    await budget.focus(); await budget.press('Enter');
-    await expect(page.locator('#editor-preview')).toContainText('$700');
-    await page.locator('#editor-memory-connections button').filter({ hasText: 'Replaces:' }).click();
+    await page.locator('#memory-focus-links button').filter({ hasText: 'Replaces:' }).click();
+    await expect(scene.getByRole('button', { name: /commitment:.*\$500/ })).toBeFocused();
+    await expect(page.locator('#memory-focus-text')).toHaveText(/keep it below \$500\./i);
+    await page.locator('#memory-focus-open').click();
     await expect(page.locator('#editor-preview')).toContainText('$500');
     await expect(page.locator('#editor-edit')).toBeHidden();
     await page.locator('#editor-back').click();
-    await budget.click();
+    await expect(scene.getByRole('button', { name: /commitment:.*\$500/ })).toBeFocused();
+    await scene.click({ position: { x: 6, y: 6 } });
+    await expect(page.locator('#memory-focus')).toBeHidden();
+    // A second press on the selected memory opens it.
+    await budget.click(); await budget.click();
+    await expect(page.locator('#editor-preview')).toContainText('$700');
+    await page.locator('#editor-memory-connections button').filter({ hasText: 'Replaces:' }).click();
+    await expect(page.locator('#editor-preview')).toContainText('$500');
+    await page.locator('#editor-back').click();
+    await openNode(budget);
     await page.locator('#editor-memory-suppress').click();
     await expect(page.locator('#editor-meta')).toContainText('suppressed');
     await page.locator('#editor-back').click();
     await expect(budget).toHaveClass(/memory-inactive/);
-    await budget.click(); await page.locator('#editor-memory-suppress').click();
+    await openNode(budget); await page.locator('#editor-memory-suppress').click();
     await expect(page.locator('#editor-meta')).toContainText('retained');
     await page.locator('#editor-memory-sources button').click();
     await expect(page.locator('#editor-preview')).toContainText('Correction: keep it below $700.');
     await page.locator('#editor-back').click();
     await page.locator('#memory-topic').selectOption('named');
-    await page.locator('#memory-scene').getByRole('button', { name: /venue: Use an accessible venue/ }).click();
+    await openNode(scene.getByRole('button', { name: /venue: Use an accessible venue/ }));
     await expect(page.locator('#editor-preview')).toHaveText('Use an accessible venue.');
     await page.locator('#editor-back').click();
     await page.locator('#memory-topic').selectOption('garden_topic');
+    await expect(page.locator('#memory-scene [role="button"]')).toHaveCount(14);
     await expect(page.locator('#memory-scene .memory-edge-depends_on')).toHaveCount(1);
     await page.locator('#memory-scene [data-memory-id="garden_00"]').click();
-    await page.locator('#editor-memory-connections button').filter({ hasText: 'Depends on:' }).click();
-    await expect(page.locator('#editor-preview')).toHaveText('Keep the access requirement.');
+    await page.locator('#memory-focus-links button').filter({ hasText: 'Depends on:' }).click();
+    await expect(page.locator('#memory-scene [data-memory-id="garden_01"]')).toBeFocused();
+    await expect(page.locator('#memory-focus-text')).toHaveText('Keep the access requirement.');
+    await page.screenshot({ path: testInfo.outputPath('memory-topic.png'), fullPage: true });
+    const visited = new Set();
+    for (const key of ['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp']) {
+      await page.keyboard.press(key);
+      visited.add(await page.evaluate(() => document.activeElement.dataset.memoryId));
+    }
+    expect(visited.size).toBeGreaterThan(1);
+    await page.keyboard.press('Enter');
+    await expect(page.locator('#editor-preview')).toContainText(/venue|access requirement/);
     await page.locator('#editor-back').click();
-    await page.locator('#memory-next').click();
-    await expect(page.locator('#memory-page')).toHaveText('13–14 of 14');
-    await expect(page.locator('#memory-scene [role="button"]')).toHaveCount(2);
-    await page.locator('#memory-previous').click();
-    await expect(page.locator('#memory-page')).toHaveText('1–12 of 14');
-    await page.screenshot({ path: testInfo.outputPath('memory-garden.png'), fullPage: true });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
     await page.locator('#memory-views [data-view="list"]').click();
     await expect(page.locator('#editor-items')).toContainText('Retained question 13');
@@ -221,6 +260,7 @@ test('memory garden defaults to graph with sources, recorded connections, topics
     await page.locator('#workspace-open').click(); await page.locator('#tab-state').click();
     await expect(page.locator('#memory-graph-status')).toContainText('No saved memories yet');
     await expect(page.locator('#memory-scene [role="button"]')).toHaveCount(0);
+    await expect(page.locator('#memory-canvas')).toBeHidden();
     await expect(page.locator('#memory-topic')).toHaveValue('');
     expect(app.service.view(empty).memory.records).toHaveLength(0);
     expect(calls).toBe(before); expect(errors).toEqual([]);
