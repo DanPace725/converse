@@ -552,6 +552,30 @@
         <summary id="editor-memory-issues-title"></summary>
         <div id="editor-memory-issues-list" class="note"></div>
       </details>
+      <div id="memory-views" class="editor-toolbar" hidden aria-label="Memory view">
+        <button type="button" data-view="graph" aria-pressed="true">Graph</button>
+        <button type="button" data-view="list" aria-pressed="false">List</button>
+      </div>
+      <section id="memory-graph" hidden aria-label="Memory garden">
+        <div class="memory-filters editor-toolbar">
+          <label>Topic <select id="memory-topic" aria-label="Memory topic"><option value="">All topics</option></select></label>
+          <label><input id="memory-history" type="checkbox"> Earlier versions</label>
+        </div>
+        <p id="memory-graph-status" class="note" role="status"></p>
+        <svg id="memory-scene" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 200" role="group" aria-label="Saved memories and their recorded connections"></svg>
+        <div class="memory-legend">
+          <span class="memory-commitment">● Commitment</span><span class="memory-preference">● Preference</span>
+          <span class="memory-claim">● Claim</span><span class="memory-question">● Question</span><span class="memory-named">◆ Named detail</span>
+          <span>◎ Full · ○ Pointer (last projection) · muted: suppressed / obsolete</span>
+          <span>→ Depends on / replaces / supports · dashed: conflicts</span>
+        </div>
+        <div class="editor-toolbar memory-paging">
+          <button id="memory-previous" type="button">Previous</button>
+          <span id="memory-page" class="note"></span>
+          <button id="memory-next" type="button">Next</button>
+        </div>
+      </section>
+      <div id="editor-memory-proposals" hidden></div>
       <div id="editor-items" aria-label="Workspace items"></div>
       <div id="editor-removed" hidden></div>
       <button id="editor-new-state" type="button" hidden>
@@ -589,6 +613,7 @@
         <p id="editor-removal-note" class="note" hidden>Removal is reversible. Previous replies and historical JSON exports can still contain this document.</p>
         <p id="editor-memory-note" class="note" hidden>Suppression excludes this memory and its source passages from model lookup. History and exports retain the original. Editing records your correction without a model call.</p>
         <div id="editor-memory-sources" class="editor-toolbar" hidden></div>
+        <div id="editor-memory-connections" class="editor-toolbar" hidden aria-label="Memory connections"></div>
         <label id="editor-memory-kind-row" hidden>Memory kind<select id="editor-memory-kind">
           <option value="commitment">User commitment</option><option value="preference">Tentative preference</option>
           <option value="claim">Unresolved report</option><option value="question">Open question</option>
@@ -646,6 +671,7 @@
   <script src="/math.js"></script>
   <script src="/reasoning.js" defer></script>
   <script src="/app.js" defer></script>
+  <script src="/memory-graph.js" defer></script>
   <script src="/context-garden.js" defer></script>
   <dialog id="about-dialog" aria-labelledby="about-title">
     <header>

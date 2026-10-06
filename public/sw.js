@@ -1,4 +1,4 @@
-const CACHE = "converse-shell-v38";
+const CACHE = "converse-shell-v39";
 const SHELL = [
   '/reasoning.js',
   "/",
@@ -11,6 +11,7 @@ const SHELL = [
   "/about.js",
   "/app-guide.md",
   "/workspace-editor.js",
+  "/memory-graph.js",
   "/ui.js",
   "/panel-resize.js",
   "/context-garden.js",

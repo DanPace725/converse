@@ -83,6 +83,61 @@
 #editor-note {
   margin: 2px 0 12px;
 }
+/* Saved-memory garden: stable topic beds, with recorded edges only. */
+#memory-views [aria-pressed="true"] {
+  background: var(--surface-3);
+  border-color: var(--accent);
+}
+#memory-graph {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: radial-gradient(ellipse at top, #1c302a, var(--surface) 75%);
+  padding: 10px 8px;
+  margin-bottom: 14px;
+}
+.memory-filters {
+  align-items: center;
+  font-size: 12px;
+  margin: 0 2px;
+}
+.memory-filters label:first-child { flex: 1; min-width: 0; }
+.memory-filters select { max-width: 100%; width: 100%; font-size: 12px; }
+.memory-filters label:last-child { display: flex; align-items: center; gap: 5px; min-height: 36px; }
+#memory-history { width: 16px; height: 16px; min-height: 16px; padding: 0; margin: 0; flex: 0 0 16px; }
+#memory-graph-status { font-size: 12px; margin: 10px 4px 0; }
+#memory-scene { width: 100%; height: auto; display: block; overflow: visible; }
+.memory-bed { fill: #17251f; fill-opacity: .65; stroke: #334b40; }
+.memory-topic-label { fill: #b7c9be; font: 13px system-ui, sans-serif; }
+.memory-node { cursor: pointer; outline: none; }
+.memory-hit { fill: transparent; stroke: transparent; }
+.memory-node:hover .memory-hit, .memory-node:focus .memory-hit { fill: #263a31; stroke: var(--accent); }
+.memory-node[aria-disabled="true"] { cursor: wait; }
+.memory-seed { fill: currentColor; stroke: currentColor; stroke-width: 1.5; }
+.memory-commitment { color: #83dec2; }
+.memory-preference { color: #d5b2f2; }
+.memory-claim { color: #9bcfff; }
+.memory-question { color: #ecc88c; }
+.memory-named { color: #edab86; }
+.memory-sprout { fill: none; stroke: #17312a; stroke-width: 1.7; stroke-linecap: round; }
+.memory-active-ring { fill: none; stroke: currentColor; stroke-width: 2; opacity: .85; }
+.memory-pointer .memory-seed { fill: #1c302a; }
+.memory-pointer .memory-sprout { stroke: currentColor; }
+.memory-inactive .memory-seed, .memory-inactive .memory-sprout { opacity: .35; }
+.memory-inactive .memory-label { fill: var(--muted); }
+.memory-label { fill: var(--text); font: 13px system-ui, sans-serif; pointer-events: none; }
+.memory-status { fill: #aebeb5; font: 11px system-ui, sans-serif; pointer-events: none; }
+.memory-edge { fill: none; stroke: #8da9a0; stroke-width: 1.5; opacity: .65; pointer-events: stroke; }
+.memory-edge-conflicts_with { stroke: var(--danger); stroke-dasharray: 4 4; }
+.memory-edge-supersedes { stroke: #d5b2f2; }
+.memory-edge-supports { stroke: var(--ok); }
+.memory-legend { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 11px; color: var(--muted); margin: 0 6px; }
+.memory-legend span:nth-last-child(-n + 2) { flex-basis: 100%; }
+.memory-paging { align-items: center; justify-content: space-between; margin: 12px 4px 0; }
+.memory-paging .note { margin: 0; font-size: 12px; }
+#editor-memory-proposals { margin-bottom: 10px; }
+#editor-memory-proposals summary { font-size: 13px; }
+#editor-memory-proposals p { overflow-wrap: anywhere; font-size: 12px; }
+#editor-memory-connections button { text-align: left; overflow-wrap: anywhere; }
 #editor-items {
   display: grid;
   gap: 5px;

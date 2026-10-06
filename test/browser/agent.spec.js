@@ -108,8 +108,9 @@ test('saved cleanup proposals show stable IDs and require a manual approval with
     await page.locator('#server-chats .chat-item').filter({ hasText: 'Reviewable memory cleanup' }).click();
     await page.locator('#workspace-open').click();
     await page.locator('[data-tab="state"]').click();
-    await page.locator('#editor-items summary').filter({ hasText: 'budget_cleanup' }).click();
-    await expect(page.locator('#editor-items')).toContainText(record.memory_id);
+    await expect(page.locator('#memory-graph')).toBeVisible();
+    await page.locator('#editor-memory-proposals summary').filter({ hasText: 'budget_cleanup' }).click();
+    await expect(page.locator('#editor-memory-proposals')).toContainText(record.memory_id);
     await page.getByRole('button', { name: 'Suppress this entry', exact: true }).click();
     await expect(page.locator('#editor-feedback')).toContainText('Approved entries suppressed');
     expect(app.service.view(id).memory.records[0].lifecycle).toBe('suppressed');
@@ -142,6 +143,90 @@ test('Jev memory view distinguishes applied selections from optional model compa
   } finally { await app.close(); }
 });
 
+test('memory garden defaults to graph with sources, recorded connections, topics and bounded pages', async ({ page }, testInfo) => {
+  let calls = 0; const errors = []; page.on('pageerror', e => errors.push(e.message));
+  const app = await fixture(async () => { calls++; return final; });
+  const id = app.service.create('Memory garden proof').conversation_id;
+  await app.service.ask(id, { message_id: 'garden_seed', content: 'Keep it below $500. Only use staff with clearance if children attend.', settings: { model: 'fixture', jev: false } });
+  await app.service.ask(id, { message_id: 'garden_correction', content: 'Correction: keep it below $700.', settings: { model: 'fixture', jev: false } });
+  await app.service.remember(id, { key: 'venue', type: 'constraint', content: 'Use an accessible venue.' });
+  const original = app.service.view(id).memory.records[0];
+  // Persist a larger topic and explicit edges to exercise bounded navigation,
+  // rather than paying for optional memory extraction in a browser fixture.
+  const records = Array.from({ length: 14 }, (_, n) => ({ ...structuredClone(original), memory_id: 'garden_' + String(n).padStart(2, '0'),
+    content: n === 0 ? 'Review the venue decision.' : n === 1 ? 'Keep the access requirement.' : `Retained question ${n} about the venue.`,
+    kind: n === 0 ? 'question' : 'claim', lifecycle: 'retained', supersedes: [], conflicts_with: [], depends_on: n === 0 ? ['garden_01'] : [],
+    scope: { ...original.scope, topic_id: 'garden_topic', topic_name: 'Venue planning' } }));
+  app.service.store.append(id, 'memory_delta', '', { records, changes: [] });
+  const empty = app.service.create('Empty garden proof').conversation_id;
+  const before = calls;
+  try {
+    await page.route('**/api/title', route => route.fulfill({ status: 503, json: { error: 'Naming disabled in fixture' } }));
+    await page.goto(app.url);
+    if (testInfo.project.name === 'mobile') await page.locator('#menu').click();
+    await page.locator('#server-chats .chat-item').filter({ hasText: 'Memory garden proof' }).click();
+    await page.locator('#workspace-open').click(); await page.locator('#tab-state').click();
+    await expect(page.locator('#memory-views [data-view="graph"]')).toHaveAttribute('aria-pressed', 'true');
+    await expect(page.locator('#memory-graph')).toBeVisible();
+    await expect(page.locator('#editor-items')).toBeHidden();
+    await expect(page.locator('#memory-scene [role="button"]')).toHaveCount(12);
+    await page.locator('#memory-topic').selectOption('conversation');
+    await expect(page.locator('#memory-scene')).toContainText(/keep it below \$700\./i);
+    await expect(page.locator('#memory-scene')).not.toContainText(/keep it below \$500\./i);
+    await page.locator('#memory-history').check();
+    await expect(page.locator('#memory-scene .memory-edge-supersedes')).toHaveCount(1);
+    await page.screenshot({ path: testInfo.outputPath('memory-corrections.png'), fullPage: true });
+    const budget = page.locator('#memory-scene').getByRole('button', { name: /commitment:.*\$700/ });
+    await budget.focus(); await budget.press('Enter');
+    await expect(page.locator('#editor-preview')).toContainText('$700');
+    await page.locator('#editor-memory-connections button').filter({ hasText: 'Replaces:' }).click();
+    await expect(page.locator('#editor-preview')).toContainText('$500');
+    await expect(page.locator('#editor-edit')).toBeHidden();
+    await page.locator('#editor-back').click();
+    await budget.click();
+    await page.locator('#editor-memory-suppress').click();
+    await expect(page.locator('#editor-meta')).toContainText('suppressed');
+    await page.locator('#editor-back').click();
+    await expect(budget).toHaveClass(/memory-inactive/);
+    await budget.click(); await page.locator('#editor-memory-suppress').click();
+    await expect(page.locator('#editor-meta')).toContainText('retained');
+    await page.locator('#editor-memory-sources button').click();
+    await expect(page.locator('#editor-preview')).toContainText('Correction: keep it below $700.');
+    await page.locator('#editor-back').click();
+    await page.locator('#memory-topic').selectOption('named');
+    await page.locator('#memory-scene').getByRole('button', { name: /venue: Use an accessible venue/ }).click();
+    await expect(page.locator('#editor-preview')).toHaveText('Use an accessible venue.');
+    await page.locator('#editor-back').click();
+    await page.locator('#memory-topic').selectOption('garden_topic');
+    await expect(page.locator('#memory-scene .memory-edge-depends_on')).toHaveCount(1);
+    await page.locator('#memory-scene [data-memory-id="garden_00"]').click();
+    await page.locator('#editor-memory-connections button').filter({ hasText: 'Depends on:' }).click();
+    await expect(page.locator('#editor-preview')).toHaveText('Keep the access requirement.');
+    await page.locator('#editor-back').click();
+    await page.locator('#memory-next').click();
+    await expect(page.locator('#memory-page')).toHaveText('13–14 of 14');
+    await expect(page.locator('#memory-scene [role="button"]')).toHaveCount(2);
+    await page.locator('#memory-previous').click();
+    await expect(page.locator('#memory-page')).toHaveText('1–12 of 14');
+    await page.screenshot({ path: testInfo.outputPath('memory-garden.png'), fullPage: true });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+    await page.locator('#memory-views [data-view="list"]').click();
+    await expect(page.locator('#editor-items')).toContainText('Retained question 13');
+    await expect(page.locator('#memory-graph')).toBeHidden();
+    await page.reload(); await page.locator('#workspace-open').click(); await page.locator('#tab-state').click();
+    await expect(page.locator('#memory-views [data-view="graph"]')).toHaveAttribute('aria-pressed', 'true');
+    await page.locator('#editor-close').click();
+    if (testInfo.project.name === 'mobile') await page.locator('#menu').click();
+    await page.locator('#server-chats .chat-item').filter({ hasText: 'Empty garden proof' }).click();
+    await page.locator('#workspace-open').click(); await page.locator('#tab-state').click();
+    await expect(page.locator('#memory-graph-status')).toContainText('No saved memories yet');
+    await expect(page.locator('#memory-scene [role="button"]')).toHaveCount(0);
+    await expect(page.locator('#memory-topic')).toHaveValue('');
+    expect(app.service.view(empty).memory.records).toHaveLength(0);
+    expect(calls).toBe(before); expect(errors).toEqual([]);
+  } finally { await app.close(); }
+});
+
 test('automatic memory sources, corrections, suppression and restoration are usable after reload', async ({ page }, testInfo) => {
   const errors = []; page.on('pageerror', error => errors.push(error.message));
   const app = await fixture(async () => final);
@@ -155,6 +240,7 @@ test('automatic memory sources, corrections, suppression and restoration are usa
     await page.locator('#server-chats .chat-item').filter({ hasText: 'Automatic memory proof' }).click();
     await page.locator('#workspace-open').click();
     await page.locator('#tab-state').click();
+    await page.locator('#memory-views [data-view="list"]').click();
     await expect(page.locator('#editor-items')).toContainText('clearance if children');
     await page.locator('#editor-items button').filter({ hasText: '$700' }).click();
     await expect(page.locator('#editor-meta')).toContainText('Your instruction');
@@ -175,6 +261,7 @@ test('automatic memory sources, corrections, suppression and restoration are usa
     await page.reload();
     await page.locator('#workspace-open').click();
     await page.locator('#tab-state').click();
+    await page.locator('#memory-views [data-view="list"]').click();
     await page.locator('#editor-items button').filter({ hasText: '$800' }).click();
     await expect(page.locator('#editor-memory-suppress')).toHaveText('Use this again');
     await page.locator('#editor-memory-suppress').click();
@@ -266,6 +353,7 @@ test('a chat request suppresses both memory stores and verifies a batch patch af
     await page.locator('#send').click(); await expect(page.locator('#send')).toBeEnabled();
     await expect(page.getByText('Memory suppression and two file changes verified.', {exact:true})).toBeVisible();
     await page.reload(); await page.locator('#workspace-open').click(); await page.locator('#tab-state').click();
+    await page.locator('#memory-views [data-view="list"]').click();
     await page.locator('#editor-items button').filter({hasText:'Automatic · commitment'}).click();
     await expect(page.locator('#editor-meta')).toContainText('suppressed');
     await page.locator('#editor-back').click();
@@ -638,6 +726,7 @@ test('Workspace identifies authors, labels legacy excerpts, and opens original c
     await expect(page.locator('#editor-meta')).toContainText('read only');
     await expect(page.locator('#editor-edit')).toBeHidden();
     await page.getByRole('tab', { name: 'Memory', exact: true }).click();
+    await page.locator('#memory-views [data-view="list"]').click();
     await page.locator('#editor-items button').filter({ hasText: 'budget' }).click();
     await expect(page.locator('#editor-preview')).toHaveText('Budget: 150 dollars.');
     await page.locator('#editor-history summary').click();

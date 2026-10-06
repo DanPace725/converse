@@ -4,6 +4,8 @@ Updated 2026-10-06. Mutable project state. [Usage](public/app-guide.md) · [Deve
 
 ## Current capabilities
 
+- Memory opens as a garden graph with a List toggle, saved-topic grouping, 12-node pages and optional earlier versions. Automatic and named entries open the existing inspector; recorded replacement/dependency/conflict/support links are navigable there, with source/edit/suppression controls preserved. No new inference, schema or engine changes. Fourteen relevant desktop/mobile scenarios, syntax and 82-file parity passed locally; unpublished. [UI behavior and validation](docs/archive/2026-10-06/memory-garden.md)
+
 - Memory v7 now offers bounded substantive discussion to Jev, admits quoted human paragraphs as unresolved data, and separates full memories, capped pointers and archive across automatic/named stores. Single-record retrieval, deduplicated human engagement and exact approved cleanup sets preserve authority/source checks. Workspace shows stable IDs and scoped local baseline/current token counts. Source `7d0ab79`: 285 passes / one skip; Converse: 190 passes / one skip; twelve desktop/mobile scenarios and 82-file parity passed. Live semantic quality/cost remain uncalibrated. [Implementation and validation](docs/archive/2026-10-06/neo-memory-implementation.md)
 
 - Active Jev selects optional memory directly in Context/Agent by default. Task-model comparison is optional/off; no automatic model fallback. Workspace distinguishes applied captures, uncertainty and comparisons. Explicit/manual memory controls remain available. Source: 272 passes; Converse: 190 passes, each one optional skip; eight desktop/mobile browser checks and 81-file parity passed. [Behavior and source/native evidence](docs/archive/2026-10-05/jev-active-memory.md)

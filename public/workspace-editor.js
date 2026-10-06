@@ -5,6 +5,7 @@
   let view = null,
     tab = "documents",
     contextView = "pieces",
+    memoryView = "graph",
     selected = null,
     editing = false,
     preview = false,
@@ -137,9 +138,10 @@
     const blocked =
       busy || saving || !view || view.busy || view.agent?.status === "running";
     for (const field of panel.querySelectorAll(
-      "textarea, input, select, #editor-items button, #editor-tabs button, #editor-history button, #editor-reference, #editor-edit, #editor-discard, #editor-latest, #editor-new-state, #editor-back, #context-views button, .breakdown-item",
+      "textarea, input, select, #editor-items button, #editor-memory-proposals button, #memory-views button, #editor-memory-connections button, #editor-tabs button, #editor-history button, #editor-reference, #editor-edit, #editor-discard, #editor-latest, #editor-new-state, #editor-back, #context-views button, .breakdown-item",
     ))
       field.disabled = saving;
+    window.memoryGraph?.setDisabled(saving);
     el("editor-state-key").disabled = saving || !selected?.newEntry;
     el("editor-save").disabled = blocked || stale();
     el('editor-memory-suppress').disabled = blocked || editing;
@@ -180,7 +182,12 @@
     el("editor-telemetry").hidden = !activity || detail || !view;
     el('editor-jev').hidden = tab !== 'jev' || detail;
     el("editor-note").hidden = detail || activity || tab === 'jev';
-    el("editor-items").hidden = detail || activity || tab === 'jev';
+    el("editor-items").hidden = detail || activity || tab === 'jev' || (tab === 'state' && memoryView === 'graph');
+    el('memory-views').hidden = tab !== 'state' || detail || !view;
+    el('memory-graph').hidden = tab !== 'state' || detail || !view || memoryView !== 'graph';
+    el('editor-memory-proposals').hidden = tab !== 'state' || detail || !view;
+    for (const button of el('memory-views').querySelectorAll('button'))
+      button.setAttribute('aria-pressed', String(button.dataset.view === memoryView));
     el("editor-new-state").hidden = tab !== "state" || detail || !view;
     el('editor-memory-copy').hidden = tab !== 'state' || detail || !view;
     el('editor-memory-issues').hidden = tab !== 'state' || !view?.memory?.capture_issue_count;
@@ -201,6 +208,13 @@
     layout();
     const container = el("editor-items");
     const rows = items();
+    if (tab === 'state') window.memoryGraph?.render(view, (id) => {
+      const record = view?.memory?.records.find(r => r.memory_id === id);
+      if (record) select(memoryItem(record));
+    }, (id) => {
+      const item = segments('state').find(item => item.kind === 'state' && item.id === id);
+      if (item) select(item);
+    });
     for (const d of Object.values(drafts).filter(
       (d) =>
         d.conversation === view?.conversation_id &&
@@ -214,6 +228,7 @@
     const signature = JSON.stringify([
       view?.conversation_id,
       tab,
+      memoryView,
       view?.context.revision,
       view?.memory?.revision,
       view?.memory?.capture_issues,
@@ -236,6 +251,8 @@
       button.onclick = () => inspect({id:issue.source_event_id}, true, true); row.append(button); return row;
     }));
     container.replaceChildren();
+    const proposals = el('editor-memory-proposals');
+    proposals.replaceChildren();
     if (tab === 'state') for (const proposal of view?.memory?.suppression_proposals || []) {
       if (proposal.applied) continue;
       const details = document.createElement('details'), summary = document.createElement('summary');
@@ -257,7 +274,7 @@
         } catch (error) { await refresh(); el('editor-feedback').textContent = error.message; }
         finally { saving = false; approve.disabled = busy; syncControls(); }
       };
-      details.append(approve); container.append(details);
+      details.append(approve); proposals.append(details);
     }
     for (const item of rows) {
       const button = document.createElement('button');
@@ -289,10 +306,11 @@
           ? "Working context · revision " +
             view.context.revision +
             ". References and pinned text are protected."
+          : memoryView === 'graph' ? 'Saved memories and named details. Select a memory to inspect or edit it.'
           : "Memory · revision " +
             view.state.revision +
             ". Automatic entries keep their sources and correction history. Edit an entry or add a named detail.";
-    if (tab === 'state' && view?.memory?.capture_summary) {
+    if (tab === 'state' && memoryView === 'list' && view?.memory?.capture_summary) {
       const capture = view.memory.capture_summary;
       el('editor-note').textContent += ` ${capture.admitted} automatic entries admitted; ${capture.completed_empty} completed checks admitted none${capture.unknown_counts ? `; ${capture.unknown_counts} older checks have unknown counts` : ''}.`;
     }
@@ -403,6 +421,16 @@
       button.textContent = 'Open source ' + (view.source_refs?.[ref.event_id] || ref.event_id);
       button.onclick = () => inspect({ id: ref.event_id }, true, true); return button;
     }) : []));
+    const connections = ['memory', 'state'].includes(selected.kind)
+      ? window.memoryGraph?.connections(selected.kind, selected.id) || [] : [];
+    el('editor-memory-connections').hidden = !connections.length;
+    el('editor-memory-connections').replaceChildren(...connections.map(connection => {
+      const button = document.createElement('button'); button.type = 'button';
+      button.textContent = `${connection.label}: ${connection.target.content.slice(0, 65)}`;
+      button.title = connection.target.id + ' · ' + connection.target.status;
+      button.onclick = () => window.memoryGraph.open(connection.target);
+      return button;
+    }));
     el("editor-title").textContent = selected.title;
     el("editor-meta").textContent = selected.historical
       ? "Saved historical text · read only"
@@ -808,9 +836,19 @@
   el("editor-back").onclick = () => {
     const from = selected;
     select(null);
+    if (tab === 'state' && memoryView === 'graph') {
+      window.memoryGraph?.focus(from?.kind, from?.id);
+      return;
+    }
     [...el("editor-items").querySelectorAll("button")]
       .find((button) => button.dataset.item === from?.id)
       ?.focus();
+  };
+  el('memory-views').onclick = event => {
+    const button = event.target.closest('[data-view]');
+    if (!button || saving) return;
+    memoryView = button.dataset.view;
+    renderList(); syncControls();
   };
   el("context-views").onclick = (event) => {
     const button = event.target.closest("[data-view]");
