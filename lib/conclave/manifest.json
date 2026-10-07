@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
   "source_repository": "https://github.com/DanPace725/conclave",
-  "source_commit": "43beaef2f860cde1447e50180a44e0bbb5a0d173",
+  "source_commit": "2210157bddfe9785dfbbc455e5fff95a147da736",
   "source_worktree_dirty": false,
-  "migrated_at": "2026-10-07T04:56:36.887Z",
+  "migrated_at": "2026-10-07T12:57:22.435Z",
   "dependencies": {
     "@vercel/functions": "^3.9.9",
     "drizzle-orm": "^0.45.3",
@@ -133,6 +133,11 @@
       "sha256": "99578b7f4e00249c87768d5346c35a94a0140884f822330596345044fba4e574"
     },
     {
+      "source": "src/handoffs.js",
+      "target": "lib/conclave/handoffs.js",
+      "sha256": "d44cf9b35cb7c5a4f3b2d1e85e6f53296f2474c9253fc6fb0542b20eae06dfed"
+    },
+    {
       "source": "src/harness.js",
       "target": "lib/conclave/harness.js",
       "sha256": "42237f94b9480c7a6b8657e3bb8965764a5e2464498cc929848c3a3f56945a15"
@@ -160,7 +165,7 @@
     {
       "source": "src/index.js",
       "target": "lib/conclave/index.js",
-      "sha256": "b1a36d0ff6c3c473be3ee7567878c6babc6c24e7090ab5e4f5066e51410df3ee"
+      "sha256": "790ca2fc92c2ea3cc2ac2daa2e62d3dbe3da04e930bcbeb1d46c59b4159be3ec"
     },
     {
       "source": "src/ingress.js",

@@ -1,8 +1,10 @@
 # Converse project context
 
-Updated 2026-10-06. Mutable project state. [Usage](public/app-guide.md) · [Development method](docs/DEVELOPMENT_METHOD.md) · [Archive](docs/archive/README.md)
+Updated 2026-10-07. Mutable project state. [Usage](public/app-guide.md) · [Development method](docs/DEVELOPMENT_METHOD.md) · [Archive](docs/archive/README.md)
 
 ## Current capabilities
+
+- Explicit handoff library synchronized on `codex/conclave-handoffs` from Conclave `2210157`: append-only named packets, immutable versions, retry deduplication, revision guards and focused context retrieval. The local MCP launcher/SDK and user connection examples stay in Conclave's separate package; Converse has no browser handoff UI or hosted MCP endpoint yet. 92-file parity, syntax and 203 app passes / one optional skip verified. Local branches only, not pushed/deployed. [User checklist](../CLA/conclave/docs/HANDOFF_SETUP.md) · [Migration evidence](docs/archive/2026-10-07/handoff-engine-migration.md)
 
 - Experimental Auto reasoning on `dev/decisions-reasoning`: choose Auto in Context/Agent settings to let OpenAI Decisions select a supported GPT/Claude effort before each answer or Agent step. Uses the account's OpenAI key and bounded text context; uncertain/failed selection, unknown models and images use provider defaults. Manual settings bypass it. Usage, selection and fallbacks persist in audit/transcript; Stop and Agent limits cover the classifier. 329 source / 203 app tests passed (one optional skip each), 91-file parity, six focused desktop/mobile browser checks. Two real Context replies completed with None/High applied; task quality and optimality remain unmeasured. Local dev branch only, not pushed/deployed. [Behavior and evidence](docs/archive/2026-10-06/auto-reasoning.md)
 
