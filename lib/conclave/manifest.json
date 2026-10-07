@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
   "source_repository": "https://github.com/DanPace725/conclave",
-  "source_commit": "43b580a45fcb4fc4331b2b3b7d3af50e5d2f75ea",
+  "source_commit": "43beaef2f860cde1447e50180a44e0bbb5a0d173",
   "source_worktree_dirty": false,
-  "migrated_at": "2026-10-07T04:18:50.772Z",
+  "migrated_at": "2026-10-07T04:56:36.887Z",
   "dependencies": {
     "@vercel/functions": "^3.9.9",
     "drizzle-orm": "^0.45.3",
@@ -30,7 +30,7 @@
     {
       "source": "src/agent.js",
       "target": "lib/conclave/agent.js",
-      "sha256": "dfb04146eeb42a9b6e4f65385b773d7fd9a8fb8014212d5ffd58ef8ab59dc0b9"
+      "sha256": "b594aa324c61abdd7c908bba5e136f4e83a3d93817742be50a7a5ca201d36740"
     },
     {
       "source": "src/arithmetic.js",
@@ -41,6 +41,11 @@
       "source": "src/attention.js",
       "target": "lib/conclave/attention.js",
       "sha256": "69d430ef77ff7afe9297744cc74bde35092fce16baec4b28933051fb112a37bb"
+    },
+    {
+      "source": "src/auto-reasoning.js",
+      "target": "lib/conclave/auto-reasoning.js",
+      "sha256": "88e26cefdf12cd47d96697f12330c0ea94ef0dcbf9d386fc19ccf65bb0fd6eec"
     },
     {
       "source": "src/cache-trace.js",
@@ -100,7 +105,7 @@
     {
       "source": "src/effort.js",
       "target": "lib/conclave/effort.js",
-      "sha256": "00535b6c2fb0f93608fe90f5308555afcecdb63b5d9d510027b62d9bcb43e8ac"
+      "sha256": "fb5578ad26e786fc8cd53d44418382d7124330f2a01a661cd9405e7aac984020"
     },
     {
       "source": "src/embedding-store.js",
@@ -130,7 +135,7 @@
     {
       "source": "src/harness.js",
       "target": "lib/conclave/harness.js",
-      "sha256": "c49e17f1212442c27cdd240795047e0498894ba4626d97952786cd41e4f83efc"
+      "sha256": "42237f94b9480c7a6b8657e3bb8965764a5e2464498cc929848c3a3f56945a15"
     },
     {
       "source": "src/hosted.js",
@@ -230,7 +235,7 @@
     {
       "source": "src/provider.js",
       "target": "lib/conclave/provider.js",
-      "sha256": "d8a65340d0877c1e52feaa0d289b76e7a9df8de8f323b2d0e93d21a826393a88"
+      "sha256": "d309b1e2cf2692dfd3bd42a1e38664e9051e25d80eb58846c6f9cd6a0068ef45"
     },
     {
       "source": "src/reasoning.js",
@@ -250,7 +255,7 @@
     {
       "source": "src/resources/app-guide.md",
       "target": "lib/conclave/resources/app-guide.md",
-      "sha256": "90764a854dec444b5e82e0fd540a37162d2b7c4ce0a9e37995d975eee8e96534"
+      "sha256": "148a6a9ba4fa23225607442743824f498674605cf6bb50cbef1afff89f3f907b"
     },
     {
       "source": "src/resources/model-costs-2026-10-02.json",
@@ -285,7 +290,7 @@
     {
       "source": "src/service.js",
       "target": "lib/conclave/service.js",
-      "sha256": "eaae7e9f344eeb0f0191097d92ccf2fd0063af320cc296c5d55bfee49efa0cb2"
+      "sha256": "daf95e3495bdf775c4455e047254c2536d5db646746149e90cbebf70d130b669"
     },
     {
       "source": "src/state.js",
@@ -305,7 +310,7 @@
     {
       "source": "src/telemetry.js",
       "target": "lib/conclave/telemetry.js",
-      "sha256": "9c5b9567819735d91cd3231fc350370513f2fba31907893df5d5e6398ec53c1a"
+      "sha256": "1a011627403e95eb0815715a7f74d8dfc69fbc62fbc333b08f7bc1c54ebefd54"
     },
     {
       "source": "src/tool-context.js",
@@ -315,12 +320,12 @@
     {
       "source": "src/transcript-query.js",
       "target": "lib/conclave/transcript-query.js",
-      "sha256": "bf2aca35b2118c3e1f8d3f05f81b9d7992209fb778d5b61ca899c141849896ef"
+      "sha256": "b28327020e6302fad6ecace6544e4405c1aa0e18378e4d02a093d60cf8e52d61"
     },
     {
       "source": "src/transcript.js",
       "target": "lib/conclave/transcript.js",
-      "sha256": "8a1f45fb716233457830b740b67258f9583ded457ddcbf9a6a04306bf290b7b7"
+      "sha256": "7b2da752521b88279d515dc0ca495b70c872654b19bc7122164b86f1acd00e99"
     },
     {
       "source": "src/web-page.js",
@@ -445,7 +450,7 @@
     {
       "source": "src/effort.js",
       "target": "public/effort.js",
-      "sha256": "00535b6c2fb0f93608fe90f5308555afcecdb63b5d9d510027b62d9bcb43e8ac"
+      "sha256": "fb5578ad26e786fc8cd53d44418382d7124330f2a01a661cd9405e7aac984020"
     },
     {
       "source": "src/export-name.js",
@@ -455,7 +460,7 @@
     {
       "source": "src/resources/app-guide.md",
       "target": "public/app-guide.md",
-      "sha256": "90764a854dec444b5e82e0fd540a37162d2b7c4ce0a9e37995d975eee8e96534"
+      "sha256": "148a6a9ba4fa23225607442743824f498674605cf6bb50cbef1afff89f3f907b"
     },
     {
       "source": "src/resources/model-costs-2026-10-02.json",

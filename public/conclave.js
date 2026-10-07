@@ -14,6 +14,7 @@ import { effortLevels } from './effort.js';
   reasoning.onchange = () => {
     efforts[provider.value] = reasoning.value;
     localStorage.setItem('converse-effort-' + provider.value, reasoning.value);
+    controls();
   };
   const limitMode = $('#agent-limit-mode');
   // Kept by reference: the notice moves into the chat and re-renders detach it.
@@ -109,6 +110,8 @@ import { effortLevels } from './effort.js';
             event?.kind === "inference_request"
               ? event.label === "attention-selection"
                 ? "Jev selecting context"
+                : event.label === 'reasoning-selection'
+                  ? 'Selecting reasoning effort'
                 : event.label === "compaction"
                   ? "Managing context"
                   : "Model working"
@@ -211,7 +214,8 @@ import { effortLevels } from './effort.js';
         if (complete) return;
         if (data.type === "start") {
           const turn = beginLive(data.provider, data.model);
-          turn.article.querySelector(".msg-head small").textContent = data.model || "";
+          turn.article.querySelector(".msg-head small").textContent = (data.model || "") +
+            (data.reasoning_selection ? ' · Auto → ' + data.reasoning_selection.selected : '');
           // Text written beside a tool call narrates that step: it moves into
           // the thought trail rather than staying in (or vanishing from) the answer.
           turn.stream?.stop();
@@ -274,20 +278,27 @@ import { effortLevels } from './effort.js';
     for (const input of panel.querySelectorAll("input, select, button"))
       input.disabled = busy;
     jev.disabled = busy || !capabilities?.credentials?.jev;
-    const levels = effortLevels(provider.value, fields[providerName()].value);
+    const supported = effortLevels(provider.value, fields[providerName()].value);
+    const levels = supported.length > 1 ? ['auto', ...supported] : supported;
     if (effortProvider !== provider.value || [...reasoning.options].map(o => o.value).join() !== levels.join()) {
       effortProvider = provider.value;
       reasoning.replaceChildren(...levels.map(value => new Option(value[0].toUpperCase() + value.slice(1), value)));
     }
     reasoning.value = levels.includes(efforts[provider.value]) ? efforts[provider.value] : levels[0];
     reasoning.disabled = busy || levels.length === 1;
+    $('#auto-reasoning-note').hidden = reasoning.value !== 'auto';
+    $('#auto-reasoning-note').textContent = capabilities?.credentials?.openai
+      ? 'Auto uses your OpenAI key to choose effort for each reply or agent step from text context. The choice and usage are saved in the audit.'
+      : 'Auto needs an OpenAI key. Until one is available, replies use the model default.';
     for (const id of ['agent-minutes', 'agent-steps', 'agent-tokens'])
       $('#' + id).disabled = busy || limitMode.value === 'adaptive';
     $('#agent-limit-note').textContent = limitMode.value === 'adaptive'
       ? 'Automatic testing grows time, steps and total-token allowances as needed, up to 60 minutes, 200 steps and 2,000,000 tokens including the next-call reserve. The model can finish earlier; Stop is always available.'
       : 'Fixed limits stop at the first guard reached. Max steps is a ceiling, not a target. The total allowance reserves conservative UTF-8 input units plus output tokens before each call.';
     reasoning.title =
-      provider.value === "anthropic"
+      reasoning.value === 'auto'
+        ? 'Auto uses OpenAI Decisions to select effort before each reply or agent step. Requires your OpenAI key; otherwise uses the model default.'
+        : provider.value === "anthropic"
         ? "Anthropic effort; levels depend on the selected Claude model. Default uses the provider default."
         : "";
     $("#workspace-open").hidden = !available || !enabled();
@@ -418,12 +429,15 @@ import { effortLevels } from './effort.js';
       " output tokens (cumulative, all calls)" +
       (view.model_input ? ` · Next context ~${view.model_input.next.estimated_tokens.toLocaleString()} input tokens${view.model_input.next.image_count && view.model_input.next.provider_count == null ? " (includes uncalibrated image reserve)" : ""}` : "") +
       (view.model_input?.latest?.input_tokens != null ? ` · Latest sent ${view.model_input.latest.input_tokens.toLocaleString()} input tokens` : "");
+    const selection = view.messages.findLast(m => m.role === 'assistant')?.reasoning_selection;
+    if (selection) $('#context-stats').textContent += ` · Auto reasoning → ${selection.selected}` +
+      (selection.reason === 'selected' ? '' : ` (${selection.reason.replaceAll('_', ' ')})`);
     $("#context-note").textContent =
       view.backup_warning ||
       "GPT and Claude replies use saved context. JSON export includes original sources, revisions, Jev decisions and usage.";
     const runMetrics = agent?.metrics;
     const purposeText = Object.entries(runMetrics?.usage_by_purpose || {}).map(([purpose, usage]) =>
-      `${purpose === 'attention-selection' ? 'Jev selection' : purpose === 'compaction' ? 'Context compaction' : purpose === 'web-search' ? 'Web search' : 'Task'}: ${usage.calls} calls, ${usage.input_tokens} input / ${usage.output_tokens} output`).join(' · ');
+      `${purpose === 'reasoning-selection' ? 'Reasoning selection' : purpose === 'attention-selection' ? 'Jev selection' : purpose === 'compaction' ? 'Context compaction' : purpose === 'web-search' ? 'Web search' : 'Task'}: ${usage.calls} calls, ${usage.input_tokens} input / ${usage.output_tokens} output`).join(' · ');
     const notice = agentNotice;
     const toolErrors = runMetrics?.tool_errors || [];
     // Failures already shown in the transcript aren't repeated in the run notice.

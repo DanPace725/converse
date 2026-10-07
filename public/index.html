@@ -343,6 +343,7 @@
                 >
                 <label
                   >Reasoning<select id="context-reasoning">
+                    <option value="auto">Auto</option>
                     <option value="none">None</option>
                     <option value="low" selected>Low</option>
                     <option value="medium">Medium</option>
@@ -354,6 +355,7 @@
                   selection</label
                 >
               </div>
+              <p class="note" id="auto-reasoning-note" hidden></p>
               <p class="note" id="context-note">
                 GPT and Claude replies use saved context. JSON export includes
                 the full audit record.
