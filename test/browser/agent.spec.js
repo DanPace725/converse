@@ -442,13 +442,13 @@ test('a chat request suppresses both memory stores and verifies a batch patch af
   } finally {await app.close();}
 });
 
-async function fixture(respond, { jev = false, claude = false, claudeModel = 'claude-fixture', countTokens, memoryModel = false, memorySelector } = {}) {
+async function fixture(respond, { jev = false, claude = false, claudeModel = 'claude-fixture', gptModel = 'fixture', decide, countTokens, memoryModel = false, memorySelector } = {}) {
   const store = new Store(undefined, { memory: true });
   const service = new ConclaveService(store, {
     memoryModel,
     ...(memorySelector ? { memorySelector } : {}),
     availability: () => ({ openai: true, anthropic: claude, jev }),
-    providerFactory: (provider = "openai") => ({ name: provider, respond, ...(countTokens ? { countTokens } : {}) }),
+    providerFactory: (provider = "openai") => ({ name: provider, respond, ...(decide ? { decide } : {}), ...(countTokens ? { countTokens } : {}) }),
   });
   const handler = await createConclaveHandler({ service });
   const server = createServer(async (req, res) => {
@@ -460,7 +460,7 @@ async function fixture(respond, { jev = false, claude = false, claudeModel = 'cl
         JSON.stringify(
           path === "/api/models"
             ? {
-                GPT: { models: ["fixture"] },
+                GPT: { models: [gptModel] },
                 Claude: { models: claude ? [claudeModel] : [] },
                 Gemini: { models: [] },
               }
@@ -1459,7 +1459,7 @@ test("holding the Claude chip in Context picks its model, switches assistant and
     await page.goto(app.url);
     await expect(page.locator("#mode-switch")).toBeVisible();
     await expect(page.locator("#empty p")).toContainText("GPT replies");
-    await expect(page.locator("#context-reasoning option")).toHaveCount(4);
+    await expect(page.locator("#context-reasoning option")).toHaveCount(5);
     await page.locator('#recipients [data-name="Claude"]').click({ delay: 650 });
     await page
       .locator("#model-menu")
@@ -1471,6 +1471,7 @@ test("holding the Claude chip in Context picks its model, switches assistant and
     ).toHaveAttribute("aria-pressed", "true");
     await expect(page.locator("#context-provider")).toHaveValue("anthropic");
     await expect(page.locator("#context-reasoning option")).toHaveText([
+      "Auto",
       "Default",
       "Low",
       "Medium",
@@ -1496,6 +1497,46 @@ async function openAgent(page, url) {
   await expect(page.locator("#agent-mode")).toBeChecked();
   await expect(page.locator("#send")).toHaveText("Run agent");
 }
+
+test('Auto reasoning selects supported effort, shows the result and survives reload in Context and Agent', async ({ page }, testInfo) => {
+  const selected = [], decisions = [], errors = [];
+  page.on('pageerror', e => errors.push(e.message));
+  const app = await fixture(async payload => { selected.push(payload.reasoning?.effort); return { ...final, model: payload.model }; }, {
+    gptModel: 'gpt-6-luna', decide: async payload => {
+      decisions.push(payload);
+      return { model: 'gpt-6-luna', status: 'completed', output: [], usage: { input_tokens: 100, output_tokens: 0 },
+        answers: [{ type: 'choice', name: 'reasoning_effort', choice: 'high', confidence: 0.9,
+          probabilities: payload.questions[0].choices.map(c => ({ value: c.value, probability: c.value === 'high' ? 1 : 0 })) }] };
+    },
+  });
+  try {
+    await page.goto(app.url);
+    await expect(page.locator('#mode-switch')).toBeVisible();
+    await page.locator('#context-panel > summary').click();
+    await page.locator('#context-reasoning').selectOption('auto');
+    await expect(page.locator('#auto-reasoning-note')).toContainText('your OpenAI key');
+    await page.getByRole('button', { name: 'Close settings', exact: true }).click();
+    await page.getByLabel('Message', { exact: true }).fill('Diagnose the conflicting constraints.');
+    await page.locator('#send').click();
+    await expect(page.locator('#context-stats')).toContainText('Auto reasoning → high');
+    expect(decisions).toHaveLength(1); expect(selected).toEqual(['high']);
+    await page.reload();
+    await expect(page.locator('#send')).toBeEnabled();
+    await expect(page.locator('#context-reasoning')).toHaveValue('auto');
+    await expect(page.locator('#context-stats')).toContainText('Auto reasoning → high');
+    expect(decisions).toHaveLength(1);
+    await page.getByRole('radio', { name: 'Agent' }).check();
+    await page.getByLabel('Message', { exact: true }).fill('Complete this second task.');
+    await page.locator('#send').click();
+    await expect(page.locator('#context-stats')).toContainText('Auto reasoning → high');
+    await expect(page.locator('#send')).toBeEnabled();
+    expect(decisions).toHaveLength(2); expect(selected).toEqual(['high', 'high']);
+    await page.locator('#context-panel > summary').click();
+    await expect(page.locator('#context-reasoning')).toHaveValue('auto');
+    await page.screenshot({ path: testInfo.outputPath('auto-reasoning.png'), fullPage: true });
+    expect(errors).toEqual([]);
+  } finally { await app.close(); }
+});
 
 test('fixed token guard explains its reserve beside the composer and automatic testing needs no numeric limits', async ({page}, testInfo) => {
   let calls = 0;
