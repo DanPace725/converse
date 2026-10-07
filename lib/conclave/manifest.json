@@ -1,15 +1,18 @@
 {
   "schema_version": 1,
   "source_repository": "https://github.com/DanPace725/conclave",
-  "source_commit": "2210157bddfe9785dfbbc455e5fff95a147da736",
+  "source_commit": "ad40284a846a2d4c9be7500fb975ce3f11b080d3",
   "source_worktree_dirty": false,
-  "migrated_at": "2026-10-07T12:57:22.435Z",
+  "migrated_at": "2026-10-07T13:32:35.356Z",
   "dependencies": {
+    "@modelcontextprotocol/sdk": "1.32.1",
     "@vercel/functions": "^3.9.9",
     "drizzle-orm": "^0.45.3",
+    "express": "5.2.1",
     "gpt-tokenizer": "^4.0.0",
     "htmlparser2": "^12.0.0",
-    "pg": "^8.23.1"
+    "pg": "^8.23.1",
+    "zod": "3.25.76"
   },
   "files": [
     {
@@ -85,7 +88,7 @@
     {
       "source": "src/db-schema.js",
       "target": "lib/conclave/db-schema.js",
-      "sha256": "09e889c334263ae85c391d82d72a56d19daf4a1f06e83c2f101b6f590eef5062"
+      "sha256": "156936c2ef1b7c60a0010740911adf7be8c65568db0ee271c9812d039ecf55a2"
     },
     {
       "source": "src/decision.js",
@@ -131,6 +134,26 @@
       "source": "src/guide.js",
       "target": "lib/conclave/guide.js",
       "sha256": "99578b7f4e00249c87768d5346c35a94a0140884f822330596345044fba4e574"
+    },
+    {
+      "source": "src/handoff-hosted.js",
+      "target": "lib/conclave/handoff-hosted.js",
+      "sha256": "f41412e266160ad04f466809db341be91982302e70ce11ba752f58a56bc1db96"
+    },
+    {
+      "source": "src/handoff-mcp-server.js",
+      "target": "lib/conclave/handoff-mcp-server.js",
+      "sha256": "0bafce89d0890b1796e27e6aab9843d87fdd8407265c48868d412f28f0e3be55"
+    },
+    {
+      "source": "src/handoff-oauth.js",
+      "target": "lib/conclave/handoff-oauth.js",
+      "sha256": "31790397d2a368e3b10b8b79abde6aa78a57a8fa94fdaef06bfc6f8682a35ca3"
+    },
+    {
+      "source": "src/handoff-repository.js",
+      "target": "lib/conclave/handoff-repository.js",
+      "sha256": "f850fb799a8929609e2075b91546a2d93eb3d0989f5f702c59f169e394135847"
     },
     {
       "source": "src/handoffs.js",
@@ -358,6 +381,11 @@
       "sha256": "4a1622b0d55c40d18fe57ae3720ceab079eb79f176f689d1804e527a179e0cb1"
     },
     {
+      "source": "integrations/converse/api/mcp.js",
+      "target": "api/mcp.js",
+      "sha256": "f9f46dd8ddba28e3bd06e882e0a83497ba752608850582b341a61d9394761333"
+    },
+    {
       "source": "integrations/converse/lib/access.js",
       "target": "lib/access.js",
       "sha256": "518fa895891e0edd32faff5d2203f44500d2036cb2686fa34c0a73d8b4717e37"
@@ -423,6 +451,11 @@
       "sha256": "3bd3234083dd06dc827c4ede11794343b49a423f0bb80297461cb04e7f813acd"
     },
     {
+      "source": "drizzle/0005_handoff_mcp.sql",
+      "target": "drizzle/0005_handoff_mcp.sql",
+      "sha256": "6c70ddb93b1b1e7cbceb8e6cafe12032b292018877f225441b739052431859e8"
+    },
+    {
       "source": "drizzle/meta/0000_snapshot.json",
       "target": "drizzle/meta/0000_snapshot.json",
       "sha256": "dd1ea58ce29ca31dcf54b8e5f81d6670d21b8d0fdcd9b3f8d4afdec2d70d6714"
@@ -448,9 +481,14 @@
       "sha256": "2eebb3206e5c8323df2c418fbc40b42f6ed0a1af7e4d9c93a63af13d92f3ec95"
     },
     {
+      "source": "drizzle/meta/0005_snapshot.json",
+      "target": "drizzle/meta/0005_snapshot.json",
+      "sha256": "c671c12be1cc3409004f57cf72977033e4108cdb223c839fb596922deed9fa3c"
+    },
+    {
       "source": "drizzle/meta/_journal.json",
       "target": "drizzle/meta/_journal.json",
-      "sha256": "8a55649bb8d94b56e0693819c4dc04466c36aa1c1ca7f0bd6f1f3b5ccc622511"
+      "sha256": "dd49dc4c04136859ee50a98a8e2b420aaa83c2eceff8990ad1cf6642fd981e22"
     },
     {
       "source": "src/effort.js",
