@@ -82,7 +82,7 @@ For local use, edit `.env` in the application folder. For the hosted app, open t
 | --- | --- |
 | `NEON_AUTH_BASE_URL` | The Auth base URL for that Neon branch, copied from Neon or pulled by the CLI. Keep its full path, often ending in `/auth`; do not append `/callback/google`. |
 | `SESSION_SECRET` | A long random secret, at least 32 characters. This switches Converse to Google sign-in. |
-| `ALLOWED_EMAILS` | Full Google account emails allowed into Converse, separated by commas; for example `you@example.com,friend@example.com`. |
+| `ALLOWED_EMAILS` | Full Google account emails allowed into Converse, separated by commas; for example `you@example.com,friend@example.com`. Add `*` to [admit any Google account](#let-other-people-sign-in). |
 | `DATABASE_URL` | The **pooled** database connection for that same branch. This stores Context/Agent conversations. |
 
 Keep your existing model API keys. `DATABASE_URL_UNPOOLED` is needed locally for migration and claiming old conversations. `NEON_AUTH_JWKS_URL` may be pulled by Neon, but the current sign-in relay does not use it.
@@ -167,6 +167,18 @@ Once on, a person's Chat, Context and Agent requests spend only the keys that pe
 - Changing `KEY_ENCRYPTION_SECRET` makes every saved key unreadable. The dialog says so, and each person enters theirs again. A secret shorter than 32 characters stops key use with an error instead of falling back to the deployment's keys.
 - Context and Agent use OpenAI and Anthropic keys; Chat also uses Gemini. Semantic history search needs an OpenAI key. Jev needs a Jev key or the shared allowance.
 - `ALLOWED_EMAILS` still decides who can sign in. Password and local access have no account and keep using the environment keys.
+
+### Let other people sign in
+
+To invite particular people, add their Google addresses to `ALLOWED_EMAILS`. To admit anyone with a Google account, set it to `*`, alone or alongside addresses. Either way they bring their own keys; only `SHARED_KEY_EMAILS` uses yours.
+
+The `*` works only while `KEY_ENCRYPTION_SECRET` is set. Without it the wildcard admits nobody, so an open deployment cannot spend its own provider keys on visitors; listed addresses keep working.
+
+Before opening it:
+
+- In Google Cloud Console, open **Google Auth Platform → Audience** and publish the app (**In production**). While it is in testing, only the listed test users can complete sign-in. Converse asks for basic identity only. [Google: OAuth app states](https://developers.google.com/identity/protocols/oauth2/production-readiness/overview)
+- Environment changes need a redeploy on Vercel.
+- There are no per-person limits yet. Everyone admitted stores conversations in your Neon database and runs requests on your Vercel functions, at your cost.
 
 ## Database
 

@@ -25,7 +25,7 @@
 
 ## Limits
 
-- Sign-in is still restricted to `ALLOWED_EMAILS`. Opening access to others is a separate step, and there are no per-user request or storage limits yet.
+- Sign-in follows `ALLOWED_EMAILS`. `*` there admits any verified Google account (Conclave `1f16530`), and only while `KEY_ENCRYPTION_SECRET` is set; `test/access.test.js` covers both. There are no per-user request or storage limits yet.
 - Changing `KEY_ENCRYPTION_SECRET` makes every saved key unreadable; each person enters theirs again.
 - Semantic history search uses the user's OpenAI key, so someone with only an Anthropic key has keyword search only. Jev works for a user only with their own Jev key or the shared allowance.
 - Keys are held in server memory for the length of a request and added to the process's redaction set.
