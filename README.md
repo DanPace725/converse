@@ -12,7 +12,7 @@ Converse is a chat app where GPT, Claude and Gemini can all take part in the sam
 
 ## Try it
 
-Open [converse-cyan.vercel.app](https://converse-cyan.vercel.app) and sign in with a Google account. The first time, it asks for an API key from OpenAI, Anthropic or Google: add at least one under **API keys** and start chatting. Your conversations are billed to your own key.
+Open [converse-cyan.vercel.app](https://converse-cyan.vercel.app) and sign in with a Google account, or with a code sent to your email if Google sign-in gives you trouble. The first time, it asks for an API key from OpenAI, Anthropic or Google: add at least one under **API keys** and start chatting. Your conversations are billed to your own key.
 
 <img src="docs/images/splash.png" alt="The Converse sign-in page" width="640" />
 
@@ -65,7 +65,7 @@ Put your keys in `.env`, then open http://localhost:3211. On Windows PowerShell,
 | `OPENAI_API_KEY` | Turns on GPT, web search with GPT, and meaning-based history search. |
 | `ANTHROPIC_API_KEY` | Turns on Claude and web search with Claude. |
 | `GEMINI_API_KEY` | Turns on Gemini in Chat mode. |
-| `JEV_API_KEY` | Optional. Turns on Jev, a helper that advises on what to keep in a long conversation's working copy. |
+| `JEV_API_KEY` | Optional. Turns on Jev, a helper that advises on what to keep in a long conversation's working copy. Without it, a small model from the same provider does that job on the same key: Luna for GPT conversations, Haiku for Claude ones. |
 | `CONCLAVE_DATA_DIR` | Where Context and Agent conversations are saved on your machine. Without it they go to a `CLA/conclave/.conclave` folder beside the checkout. |
 
 Run locally, there is no sign-in and Context and Agent conversations are saved in a SQLite file on your machine.
@@ -75,6 +75,7 @@ Run locally, there is no sign-in and Context and Agent conversations are saved i
 Converse deploys to [Vercel](https://vercel.com) with a [Neon](https://neon.com) Postgres database, and no build step. A hosted copy can offer:
 
 - **Google sign-in**, limited to addresses you list or open to any Google account.
+- **Email-code sign-in** as a fallback, for anyone Google sign-in does not work for. It needs email sign-in enabled in Neon and an email provider configured.
 - **Personal API keys**, so each person brings their own and nobody spends yours.
 
 The [hosted setup guide](docs/HOSTED_CONTEXT.md) walks through both. There are no per-person usage limits yet, so everyone you admit uses your database and hosting.

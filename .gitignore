@@ -6,6 +6,8 @@ node_modules/
 .DS_Store
 
 test-results/
+# Exported conversations hold personal content; they stay on this machine.
+docs/conversations/
 playwright-report/
 .neon
 .agent-smoke/

@@ -1,6 +1,6 @@
 # Conversation reporting
 
-Run from the Converse repository. Canonical exports and machine-readable evidence stay in their existing locations under `docs/conversations/` and `docs/comparisons/`.
+Run from the Converse repository. `docs/conversations/` is kept out of the repository because exports hold personal content: put your own exports there to use these commands. Canonical exports and machine-readable evidence stay in their existing locations under `docs/conversations/` and `docs/comparisons/`.
 
 ```powershell
 node scripts/report-conversations.js
