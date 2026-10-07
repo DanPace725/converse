@@ -4,7 +4,17 @@
 
 Converse is a chat app where GPT, Claude and Gemini can all take part in the same conversation. Ask one of them, ask all three at once, or have one check another's answer. It runs in the browser, installs like an app on a phone or computer, and uses your own API keys.
 
-[Docs](public/app-guide.md) · [Host your own](docs/HOSTED_CONTEXT.md) · [Project status](PROJECT_CONTEXT.md)
+**[Try it at converse-cyan.vercel.app](https://converse-cyan.vercel.app)** · [Docs](public/app-guide.md) · [Host your own](docs/HOSTED_CONTEXT.md) · [Project status](PROJECT_CONTEXT.md)
+
+![GPT, Claude and Gemini each answering the same question in one conversation](docs/images/chat.png)
+
+*The replies in this picture are sample text written for the screenshot.*
+
+## Try it
+
+Open [converse-cyan.vercel.app](https://converse-cyan.vercel.app) and sign in with a Google account. The first time, it asks for an API key from OpenAI, Anthropic or Google: add at least one under **API keys** and start chatting. Your conversations are billed to your own key.
+
+<img src="docs/images/splash.png" alt="The Converse sign-in page" width="640" />
 
 ## What you can do
 
@@ -100,3 +110,7 @@ The part that manages context, runs agents and talks to the models is a separate
 ## Status
 
 Converse is a personal project in active development. [PROJECT_CONTEXT.md](PROJECT_CONTEXT.md) records what works, what has been checked and how, and what has not been tried yet.
+
+## Licence
+
+[MIT](LICENSE).

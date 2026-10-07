@@ -444,8 +444,9 @@ import { effortLevels } from './effort.js';
         (purposeText ? ' · ' + purposeText : '') +
         (runMetrics ? ` · ${runMetrics.tool_calls} tool calls, ${toolErrors.length} errors · ${runMetrics.readbacks} readbacks · ${runMetrics.cached_input_tokens} reported cached input tokens (included in input)` : '') +
         (runMetrics && !runMetrics.usage_by_purpose['attention-selection'] ?
+          !capabilities?.credentials?.jev ? (capabilities?.luna_fallback?.available
+            ? ' · Selector: Luna fallback (runs under context pressure)' : ' · Selector: deterministic') :
           !agent.settings.jev ? ' · Jev: disabled for this run' :
-          !capabilities?.credentials?.jev ? ' · Jev: unavailable; deterministic selection' :
           ' · Jev: no call this run (selection runs under context pressure)' : '') +
         (runMetrics?.limit_adjustments ? ` · ${runMetrics.limit_adjustments} automatic limit increases` : '') +
         (agent.stop ? ' · ' + agent.stop.message : '') +
