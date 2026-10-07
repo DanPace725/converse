@@ -20,7 +20,7 @@
 
 ## Not verified
 
-- Nothing ran against Neon or a live provider. Migration `0004` has run on PGlite only, and no real key has been checked or saved.
+- Migration `0004` was applied to the Neon `production` branch on 2026-10-06 and `app.provider_keys` exists there, empty. Nothing else ran against Neon, and no live provider was called: no real key has been checked or saved.
 - The dialog was driven with a mocked `/api/keys`; a signed-in session against the real endpoint has not been tried in a browser.
 
 ## Limits
