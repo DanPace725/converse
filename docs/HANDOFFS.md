@@ -4,6 +4,10 @@ The online handoff implementation is prepared on `codex/conclave-handoffs`, but 
 
 The ongoing plain-language document, including ChatGPT, Claude, Gemini CLI and local app installation directions, is [the Conclave setup checklist](../../CLA/conclave/docs/HANDOFF_SETUP.md). The shared [technical contract](../../CLA/conclave/docs/HANDOFF_MCP.md) documents authorization, storage and limits.
 
+The shared server now exposes five tools: save, find, retrieve, list versions, and compare versions. Version inspection and comparison require only read access and keep exact removed constraints/questions visible. Refresh an existing connector's tools after deploying this update. Local backup/inspection/restore commands are available from the Conclave checkout; they preserve packet history with validated checksums and unverified source lineage. Those commands do not synchronize the online account.
+
+The user is considering a dedicated Conclave Vercel project. The checklist records that option and its remaining sign-in work, while retaining the existing Converse deployment instructions. No separate project has been created; the engine improvements work with either eventual hosting choice.
+
 ## Deployment settings
 
 Set `CONCLAVE_MCP_ORIGIN` to the fixed HTTPS origin of this deployment, with no trailing slash or path. The MCP handler remains disabled when this is absent. Existing `SESSION_SECRET`, `ALLOWED_EMAILS`, pooled `DATABASE_URL` and sign-in settings are required. Migration `0005_handoff_mcp` adds the packet and authorization tables; use the intended direct database connection with `npm run db:migrate` after validating an isolated branch.
