@@ -9,6 +9,7 @@ lib/context-repository.js text eol=lf
 lib/conclave-http.js text eol=lf
 lib/conclave-local.js text eol=lf
 api/conclave.js text eol=lf
+api/keys.js text eol=lf
 scripts/lib/costs.js text eol=lf
 scripts/check-engine.js text eol=lf
 public/effort.js text eol=lf
