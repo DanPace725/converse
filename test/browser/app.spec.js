@@ -695,3 +695,69 @@ test('replies keep your place: sending lifts your message and finishing does not
   expect(await chat.evaluate(el => el.scrollTop)).toBe(top);
   await expect(page.locator('.is-streaming')).toHaveCount(0);
 });
+
+test('personal API keys: first sign-in opens the dialog, a refused key stays out, a saved key shows only its ending', async ({ page }, testInfo) => {
+  const providers = [['openai', 'OpenAI'], ['anthropic', 'Anthropic'], ['gemini', 'Google Gemini'], ['jev', 'Jev']]
+    .map(([id, label]) => ({ id, label, source: null }));
+  const posted = [];
+  let catalogLoads = 0;
+  await page.route('**/api/models', route => { catalogLoads++; return route.fulfill({ json: catalog }); });
+  await page.route('**/api/keys', route => {
+    if (route.request().method() === 'GET') return route.fulfill({ json: { enabled: true, providers } });
+    const input = route.request().postDataJSON();
+    posted.push(input);
+    const row = providers.find(item => item.id === input.provider);
+    if (input.action === 'save' && input.key.includes('bad'))
+      return route.fulfill({ status: 400, json: { error: `${row.label} did not accept this key.` } });
+    Object.assign(row, input.action === 'save' ? { source: 'own', hint: input.key.slice(-4) } : { source: null, hint: undefined });
+    return route.fulfill({ json: { enabled: true, providers } });
+  });
+  await page.goto('/');
+  const dialog = page.locator('#keys-dialog');
+  await expect(dialog).toBeVisible();
+  await expect(page.locator('#keys-status')).toHaveText('Add a key for at least one provider to start chatting.');
+  await expect(dialog.locator('.key-row strong')).toHaveText(['OpenAI', 'Anthropic', 'Google Gemini', 'Jev']);
+  const openai = dialog.locator('.key-row[data-provider="openai"]');
+  await expect(openai.locator('.note')).toHaveText('No key saved');
+  await expect(openai.locator('.key-remove')).toBeHidden();
+
+  await openai.locator('input').fill('sk-bad-key-0000');
+  await openai.getByRole('button', { name: 'Save' }).click();
+  await expect(page.locator('#keys-status')).toHaveText('OpenAI did not accept this key.');
+  await expect(openai.locator('.note')).toHaveText('No key saved');
+
+  const loadsBefore = catalogLoads;
+  await openai.locator('input').fill('  sk-good-key-1234 ');
+  await openai.locator('input').press('Enter');
+  await expect(openai.locator('.note')).toHaveText('Your key ending in 1234');
+  await expect(page.locator('#keys-status')).toHaveText('OpenAI key saved.');
+  await expect(openai.locator('input')).toHaveValue('');
+  await expect(dialog).not.toContainText('sk-good');
+  // Model lists follow the saved keys.
+  await expect.poll(() => catalogLoads).toBeGreaterThan(loadsBefore);
+  await page.screenshot({ path: `.agent-smoke/api-keys-${testInfo.project.name}.png` });
+
+  await openai.locator('.key-remove').click();
+  await expect(openai.locator('.note')).toHaveText('No key saved');
+  expect(posted.map(input => input.action)).toEqual(['save', 'save', 'remove']);
+  await page.locator('#keys-close').click();
+  await expect(dialog).toBeHidden();
+
+  // With a usable key the dialog waits to be asked for.
+  providers[1].source = 'shared';
+  await page.reload();
+  await expect(page.locator('#send')).toBeEnabled();
+  await expect(dialog).toBeHidden();
+  await page.locator('#more-menu > summary').click();
+  await page.locator('#keys-open').click();
+  await expect(dialog.locator('.key-row[data-provider="anthropic"] .note')).toHaveText("Using this app's shared key");
+});
+
+test('the API keys menu item stays hidden where personal keys are off', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('#send')).toBeEnabled();
+  await expect(page.locator('#keys-dialog')).toBeHidden();
+  await page.locator('#more-menu > summary').click();
+  await expect(page.locator('#about-open')).toBeVisible();
+  await expect(page.locator('#keys-open')).toBeHidden();
+});

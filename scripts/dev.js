@@ -4,6 +4,7 @@ import chat from "../api/chat.js";
 import models from "../api/models.js";
 import session from "../api/session.js";
 import title from "../api/title.js";
+import keys from "../api/keys.js";
 import { createConclaveHandler } from "../lib/conclave-local.js";
 import { environment } from "../lib/conclave/provider.js";
 let conclave;
@@ -29,6 +30,7 @@ const routes = {
   "/api/models": models,
   "/api/session": session,
   "/api/title": title,
+  "/api/keys": keys,
   ...(conclave ? { "/api/conclave": conclave } : {}),
 };
 const types = {

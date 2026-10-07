@@ -7,7 +7,7 @@ Vercel uses the Other preset, serves `public/`, and runs `api/*.js` as Node func
 Set server environment variables:
 
 - Access: either `SESSION_SECRET` and `ALLOWED_EMAILS` for [Google sign-in](#google-sign-in), or `APP_PASSWORD` for one shared password. Rotating either secret invalidates sessions.
-- `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GEMINI_API_KEY`: enable their providers.
+- `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GEMINI_API_KEY`: enable their providers. With [personal API keys](#personal-api-keys) on, these serve only the addresses on `SHARED_KEY_EMAILS`.
 - Pooled `DATABASE_URL`: required for hosted Context/Agent persistence.
 - Optional `JEV_API_KEY` or `TYPESAFE_API_KEY`: enables the selector.
 
@@ -108,14 +108,16 @@ Create a Context conversation, reload, and confirm you can reopen it. Sign out a
 Existing Context/Agent conversations have no owner and disappear from the signed-in account's list until assigned. After your first successful login, run:
 
 ```powershell
-npm run db:claim -- you@example.com
+node --env-file-if-exists=.env scripts/claim-conversations.js you@example.com
 ```
 
 Replace the email with the account that should own the old conversations. This first command only reports how many would be assigned. If the result is what you want, run:
 
 ```powershell
-npm run db:claim -- you@example.com --apply
+node --env-file-if-exists=.env scripts/claim-conversations.js you@example.com --apply
 ```
+
+These commands call Node directly because some PowerShell/npm launchers drop the `--apply` argument. The first command should report how many conversations would be assigned; the second should print `Assigned N conversations to you@example.com.`
 
 This assigns **all currently unowned conversations in that database** to that one account. It does not move conversations already owned by someone else. Use the same branch's `DATABASE_URL_UNPOOLED`, then refresh Converse.
 
@@ -135,6 +137,37 @@ For a Google-only app, you can also disable email/password authentication in Neo
 
 Converse uses its own seven-day app cookie after Neon confirms the account. Signing out clears that browser's cookie; it does not immediately revoke a copy held elsewhere. Removing an account from `ALLOWED_EMAILS` blocks it, and rotating `SESSION_SECRET` invalidates every app cookie. The app's relay in `lib/neon-auth.js` is custom code rather than Neon's standard SDK integration; the real return flow still needs the login check above.
 
+## Personal API keys
+
+Signed-in people can each use their own provider keys. This needs Google sign-in; it is off until `KEY_ENCRYPTION_SECRET` is set, and until then everyone uses the deployment's keys as before. [Implementation, evidence and limits](archive/2026-10-06/personal-api-keys.md)
+
+Once on, a person's Chat, Context and Agent requests spend only the keys that person saved, including web search, Jev and embeddings. A provider they have no key for is unavailable to them. The deployment's environment keys are used only for addresses on `SHARED_KEY_EMAILS`; a saved key of their own still takes precedence.
+
+### Turn it on
+
+1. Apply the key table. With the direct connection in `DATABASE_URL_UNPOOLED` for the intended branch, run `npm run db:migrate`. This applies `drizzle/0004_provider_keys.sql`; do it before setting the secret.
+2. Generate a secret and keep a copy somewhere safe:
+
+   ```powershell
+   node -e "console.log(require('node:crypto').randomBytes(32).toString('hex'))"
+   ```
+
+3. Set these in `.env` locally and in Vercel's environment variables, then restart or redeploy:
+
+   | Variable | What to put in it |
+   | --- | --- |
+   | `KEY_ENCRYPTION_SECRET` | The secret from step 2, at least 32 characters. Saved keys are encrypted with it. |
+   | `SHARED_KEY_EMAILS` | Addresses that may keep using the deployment's own keys, separated by commas. Put your own here unless you want to enter your keys in the app too. Empty means nobody. |
+
+4. Sign in and open **API keys** in the menu. Paste a key and press Save: it is checked with the provider, then stored. The list shows whether each provider uses your key, the shared key or none.
+
+### What to know
+
+- A key is stored encrypted in `app.provider_keys` and is never sent back to the browser; only its last four characters are shown.
+- Changing `KEY_ENCRYPTION_SECRET` makes every saved key unreadable. The dialog says so, and each person enters theirs again. A secret shorter than 32 characters stops key use with an error instead of falling back to the deployment's keys.
+- Context and Agent use OpenAI and Anthropic keys; Chat also uses Gemini. Semantic history search needs an OpenAI key. Jev needs a Jev key or the shared allowance.
+- `ALLOWED_EMAILS` still decides who can sign in. Password and local access have no account and keep using the environment keys.
+
 ## Database
 
 Schema lives in `lib/db-schema.js` and `drizzle/`. Runtime uses the pooled connection; migrations use direct `DATABASE_URL_UNPOOLED`.
@@ -147,7 +180,7 @@ npm run db:migrate
 
 The local Neon project is `divine-bar-20917398` (`converse`), branch `production`. `neon config plan` previews service changes; `neon deploy --no-env-pull` applies service configuration; `neon env pull --file .env` refreshes local connection settings.
 
-`app.conversations` holds identities/revisions/leases and `owner_id`, the Neon Auth user who created the conversation. A signed-in user lists, opens and changes only their own rows; anything else reads as not found. Password and open local access are unscoped and create unowned rows. Migration `0003_conversation_owner` adds the nullable column and must be applied before this code runs against a database; older code keeps working after it. Conversations saved before sign-in are unowned and hidden from signed-in users until assigned: sign in once, then `npm run db:claim -- you@example.com` reports the count and `--apply` assigns them. `conclave.events` and `conclave.snapshots` hold durable history. A disposable in-memory SQLite index rehydrates from Neon per request. Mutations claim a lease; fenced event/snapshot writes commit together. Transactions end before inference. Completed retries return saved results.
+`app.conversations` holds identities/revisions/leases and `owner_id`, the Neon Auth user who created the conversation. A signed-in user lists, opens and changes only their own rows; anything else reads as not found. Password and open local access are unscoped and create unowned rows. Migration `0003_conversation_owner` adds the nullable column and must be applied before this code runs against a database; older code keeps working after it. Conversations saved before sign-in are unowned and hidden from signed-in users until assigned: sign in once, then `npm run db:claim -- you@example.com` reports the count and `--apply` assigns them. `app.provider_keys` holds one encrypted provider key per signed-in user and provider (migration `0004_provider_keys`). `conclave.events` and `conclave.snapshots` hold durable history. A disposable in-memory SQLite index rehydrates from Neon per request. Mutations claim a lease; fenced event/snapshot writes commit together. Transactions end before inference. Completed retries return saved results.
 
 ## Request and run behavior
 

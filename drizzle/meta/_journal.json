@@ -29,6 +29,13 @@
       "when": 1791319603631,
       "tag": "0003_conversation_owner",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1791332276439,
+      "tag": "0004_provider_keys",
+      "breakpoints": true
     }
   ]
 }

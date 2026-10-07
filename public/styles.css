@@ -2431,17 +2431,23 @@ button.breakdown-item:hover {
   overflow: auto;
   line-height: 1.55;
 }
-#about-dialog {
+#about-dialog,
+#keys-dialog {
   width: min(760px, calc(100vw - 32px));
   max-height: calc(var(--app-height, 100dvh) - 48px);
   padding: 0;
   overflow: hidden;
 }
-#about-dialog[open] {
+#keys-dialog {
+  width: min(520px, calc(100vw - 32px));
+}
+#about-dialog[open],
+#keys-dialog[open] {
   display: flex;
   flex-direction: column;
 }
-#about-dialog header {
+#about-dialog header,
+#keys-dialog header {
   flex: none;
   display: flex;
   align-items: center;
@@ -2450,9 +2456,53 @@ button.breakdown-item:hover {
   padding: 10px 10px 10px 20px;
   border-bottom: 1px solid var(--border);
 }
-#about-dialog header h2 {
+#about-dialog header h2,
+#keys-dialog header h2 {
   margin: 0;
   font-size: 16px;
+}
+#keys-content {
+  padding: 16px 20px 20px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.key-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 8px;
+  align-items: center;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+}
+.key-row strong,
+.key-row .note {
+  flex: 0 0 100%;
+}
+.key-row strong {
+  font-size: 15px;
+}
+.key-row input {
+  flex: 1 1 0;
+  min-width: 0;
+  margin-top: 0;
+  font-size: 16px;
+}
+.key-row button {
+  min-height: 40px;
+  padding: 0 14px;
+}
+.key-row button:not(.key-remove) {
+  background: var(--accent);
+  color: var(--accent-ink);
+  border: 0;
+  font-weight: 650;
+}
+#keys-status {
+  margin-top: 14px;
+  min-height: 1.4em;
+}
+#keys-status.error {
+  color: var(--danger);
 }
 #about-content {
   margin: 0;
