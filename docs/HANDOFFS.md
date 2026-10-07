@@ -10,6 +10,8 @@ Version inspection and comparison require only read access and keep exact remove
 
 The [plugin UI development guide](../../CLA/conclave/docs/PLUGIN_UI.md) records official ChatGPT/Claude conventions, Gemini CLI fallback, permissions and planned features. The checklist includes a synthetic local UI preview and actual-account test steps. A dedicated widget origin and verified metadata are still needed for public ChatGPT submission; no sidebar/composer extensions or public plugin listing have been registered. The compiled UI passed local desktop/narrow Edge checks, but real ChatGPT/Claude rendering remains unverified.
 
+Codex and Claude Code use the same handoff tools. Conclave now generates their connection files and private local plugin marketplaces with save/resume workflows; optional HTTPS-origin generation prepares separate online alternatives. The local Codex plugin is installed/enabled, and Claude Desktop's local MCP entry is configured with unrelated settings verified unchanged. The separate Claude Code plugin installation and fresh-session invocation remain pending. These development packages reference the Conclave checkout and its local storage, so they do not connect to Converse's online packets until a hosted connection is configured. See [coding integration details](../../CLA/conclave/docs/CODING_INTEGRATIONS.md) and the [desktop setup checklist](../../CLA/conclave/docs/HANDOFF_SETUP.md#codex-desktop-cli-and-ide).
+
 The user is considering a dedicated Conclave Vercel project. The checklist records that option and its remaining sign-in work, while retaining the existing Converse deployment instructions. No separate project has been created; the engine improvements work with either eventual hosting choice.
 
 ## Deployment settings
