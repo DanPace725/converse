@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
   "source_repository": "https://github.com/DanPace725/conclave",
-  "source_commit": "7f40fc9efffd334441d52dcdd7649abc004b1070",
+  "source_commit": "43b580a45fcb4fc4331b2b3b7d3af50e5d2f75ea",
   "source_worktree_dirty": false,
-  "migrated_at": "2026-10-07T02:30:53.387Z",
+  "migrated_at": "2026-10-07T04:18:50.772Z",
   "dependencies": {
     "@vercel/functions": "^3.9.9",
     "drizzle-orm": "^0.45.3",
@@ -30,7 +30,7 @@
     {
       "source": "src/agent.js",
       "target": "lib/conclave/agent.js",
-      "sha256": "f410f1fc106670b84715040dea57ebe13be4c14ef86b836b35bf56ddc131e7e0"
+      "sha256": "dfb04146eeb42a9b6e4f65385b773d7fd9a8fb8014212d5ffd58ef8ab59dc0b9"
     },
     {
       "source": "src/arithmetic.js",
@@ -185,7 +185,7 @@
     {
       "source": "src/memory-controller.js",
       "target": "lib/conclave/memory-controller.js",
-      "sha256": "812f825b7ca583ba507a188aceeb5f66fee11b22d7803dc40018206e7be8ff57"
+      "sha256": "c2e31db3fc3ac147d1b7fbd988d398d500446482dc1db168760ca23827d5a2c6"
     },
     {
       "source": "src/memory-evaluation.js",
@@ -210,7 +210,7 @@
     {
       "source": "src/memory-selection.js",
       "target": "lib/conclave/memory-selection.js",
-      "sha256": "42b828a43b0e3c8f2b410b9b602eec496216935444d978222b35a5d0a77d2115"
+      "sha256": "519d6599d5e5877d03fa4a5510452bf79f1ad06b6f1be4af27f6a3c3ab35ff2c"
     },
     {
       "source": "src/memory-tools.js",
@@ -250,7 +250,7 @@
     {
       "source": "src/resources/app-guide.md",
       "target": "lib/conclave/resources/app-guide.md",
-      "sha256": "d5bf944fd785fb7e9e1f9724d975cfe8379a02e751666b3c815712a76fc0d761"
+      "sha256": "90764a854dec444b5e82e0fd540a37162d2b7c4ce0a9e37995d975eee8e96534"
     },
     {
       "source": "src/resources/model-costs-2026-10-02.json",
@@ -268,6 +268,11 @@
       "sha256": "f576947d97abc433da90febcc3da2b7319ee6130b88e7c8f0cc7117dab07089d"
     },
     {
+      "source": "src/selector-fallback.js",
+      "target": "lib/conclave/selector-fallback.js",
+      "sha256": "461135e0b1eb4d9ff71c2d21e250e439b582d240e248c47e896d61132117ef96"
+    },
+    {
       "source": "src/semantic-retrieval.js",
       "target": "lib/conclave/semantic-retrieval.js",
       "sha256": "332ad9dbc0fc26acb53165ad6a03e9c4ad37eda9513465fab699af66d3e8821a"
@@ -280,7 +285,7 @@
     {
       "source": "src/service.js",
       "target": "lib/conclave/service.js",
-      "sha256": "b11ac581f2bce2ea38fe3e0cd7264f3b69a6cc1a88b78cded21d440f6659829a"
+      "sha256": "eaae7e9f344eeb0f0191097d92ccf2fd0063af320cc296c5d55bfee49efa0cb2"
     },
     {
       "source": "src/state.js",
@@ -450,7 +455,7 @@
     {
       "source": "src/resources/app-guide.md",
       "target": "public/app-guide.md",
-      "sha256": "d5bf944fd785fb7e9e1f9724d975cfe8379a02e751666b3c815712a76fc0d761"
+      "sha256": "90764a854dec444b5e82e0fd540a37162d2b7c4ce0a9e37995d975eee8e96534"
     },
     {
       "source": "src/resources/model-costs-2026-10-02.json",

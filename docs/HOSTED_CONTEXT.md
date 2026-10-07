@@ -174,7 +174,7 @@ Once on, a person's Chat, Context and Agent requests spend only the keys that pe
 
 - A key is stored encrypted in `app.provider_keys` and is never sent back to the browser; only its last four characters are shown.
 - Changing `KEY_ENCRYPTION_SECRET` makes every saved key unreadable. The dialog says so, and each person enters theirs again. A secret shorter than 32 characters stops key use with an error instead of falling back to the deployment's keys.
-- Context and Agent use OpenAI and Anthropic keys; Chat also uses Gemini. Semantic history search needs an OpenAI key. Jev needs a Jev key or the shared allowance.
+- Context and Agent use OpenAI and Anthropic keys; Chat also uses Gemini. Semantic history search needs an OpenAI key. Jev needs a Jev key or the shared allowance. Without a Jev key, bounded memory and attention selection use Luna for OpenAI conversations or Haiku for Claude conversations with that account's provider key; the shared-key email list is not required.
 - `ALLOWED_EMAILS` still decides who can sign in. Password and local access have no account and keep using the environment keys.
 
 ### Let other people sign in

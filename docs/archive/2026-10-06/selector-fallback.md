@@ -1,0 +1,11 @@
+# Selector fallback for accounts without Jev
+
+Context and Agent now use OpenAI `gpt-6-luna` for OpenAI conversations and Anthropic `claude-haiku-4-5` for Claude conversations when the account has no Jev key. The credential map is unchanged: these calls use the same provider credentials as the answer model, and accounts outside `SHARED_KEY_EMAILS` can use their own saved key. A missing personal key never becomes a deployment-key request. The selected answer model remains unchanged.
+
+Both bounded attention selection and automatic unresolved memory candidates use this policy, including Agent steps. Candidate extraction preserves complete source paragraphs and records the actual provider/model. Calls have no tools, at most 600 output tokens, a 12,000-byte request allowance and the existing batched capture limits. Attention retains its tighter 8,000-byte budget. Protection, authority and schema validation stay in code. Retrieval/classification retain deterministic behavior without Jev. Available Jev, explicit task-model extraction and direct library evaluations retain their previous behavior.
+
+Agent token totals include the selector call, and Stop aborts it through the run signal. Failed optional extraction preserves sources and deterministic commitments; invalid attention decisions fall back without mutating context. The Agent status identifies Luna/Haiku even when reload uses the lightweight transcript without full run metrics. The shell cache is v45.
+
+Source commit: `43b580a45fcb4fc4331b2b3b7d3af50e5d2f75ea`. The 90-file migration matches byte for byte. Conclave: 313 passes, one optional skip, and syntax/credential checks passed. Converse: 203 passes, one optional skip, and syntax/manifest checks passed. Six desktop/mobile Edge checks passed: Luna and Haiku Agent capture/reload plus the existing Claude provider routing/export regression. Hosted PGlite checks with provider transport fixtures verified a non-shared OpenAI account uses its own key for Luna, a Claude-only account uses its own Anthropic key for Haiku, and absent keys reach no provider.
+
+No paid model calls were made for this change. Live selection quality, latency, pricing and production deployment are unverified. This change does not modify sign-in eligibility or the shared-key email list.

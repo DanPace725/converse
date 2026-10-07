@@ -1336,6 +1336,38 @@ test("Workspace drafts survive close/reload and concurrent versions cannot overw
   }
 });
 
+for (const [provider, label, model] of [['openai', 'Luna', 'gpt-6-luna'], ['anthropic', 'Haiku', 'claude-haiku-4-5']]) {
+  test(`${label} fallback captures Agent memory without a Jev key and survives reload`, async ({ page }) => {
+    const calls = [], errors = [];
+    page.on('pageerror', error => errors.push(error.message));
+    const app = await fixture(async payload => {
+      calls.push(payload);
+      return { ...final, model: payload.model,
+        ...(payload.text?.format?.name === 'memory_candidates' ? { output: [{ type: 'message', role: 'assistant',
+          content: [{ type: 'output_text', text: '{"records":[{"passage_id":0,"kind":"preference"}]}' }] }] } : {}) };
+    }, { claude: true, memoryModel: true });
+    try {
+      await page.goto(app.url);
+      await page.getByRole('radio', { name: 'Agent' }).check();
+      await page.getByLabel('Message', { exact: true }).fill(`${provider === 'anthropic' ? '@Claude ' : ''}Budget preference: perhaps $500.`);
+      await page.locator('#send').click();
+      await expect(page.locator('#agent-status')).toContainText('completed');
+      await expect(page.locator('#agent-status')).toContainText(`Selector: ${label} fallback`);
+      const id = app.service.list()[0].conversation_id;
+      const memory = app.service.view(id).memory.records[0];
+      expect(memory.selection_source.provider).toBe(provider);
+      expect(memory.extraction_model).toBe(model);
+      expect(calls[0].model).toBe(model);
+      expect(calls.at(-1).model).toBe(provider === 'anthropic' ? 'claude-fixture' : 'fixture');
+      await page.reload();
+      await expect(page.locator('#agent-status')).toContainText('completed');
+      await page.locator('#workspace-open').click();
+      await expect(page.locator('#agent-status')).toContainText(`Selector: ${label} fallback`);
+      expect(errors).toEqual([]);
+    } finally { await app.close(); }
+  });
+}
+
 test("Claude chips and mentions route saved chat and agent runs, survive reload and export both providers", async ({
   page,
 }, testInfo) => {

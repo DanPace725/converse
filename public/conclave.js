@@ -443,9 +443,10 @@ import { effortLevels } from './effort.js';
         ` · ${Math.round(agent.elapsed_seconds || 0)}s · ${agent.limit_mode === 'adaptive' ? 'Automatic testing' : 'Fixed limits'}` +
         (purposeText ? ' · ' + purposeText : '') +
         (runMetrics ? ` · ${runMetrics.tool_calls} tool calls, ${toolErrors.length} errors · ${runMetrics.readbacks} readbacks · ${runMetrics.cached_input_tokens} reported cached input tokens (included in input)` : '') +
-        (runMetrics && !runMetrics.usage_by_purpose['attention-selection'] ?
+        (!capabilities?.credentials?.jev ? (capabilities?.selector_fallback?.[agent.settings.provider]?.available
+            ? ` · Selector: ${agent.settings.provider === 'anthropic' ? 'Haiku' : 'Luna'} fallback (runs under context pressure)` : ' · Selector: deterministic') :
+          runMetrics && !runMetrics.usage_by_purpose['attention-selection'] ?
           !agent.settings.jev ? ' · Jev: disabled for this run' :
-          !capabilities?.credentials?.jev ? ' · Jev: unavailable; deterministic selection' :
           ' · Jev: no call this run (selection runs under context pressure)' : '') +
         (runMetrics?.limit_adjustments ? ` · ${runMetrics.limit_adjustments} automatic limit increases` : '') +
         (agent.stop ? ' · ' + agent.stop.message : '') +
