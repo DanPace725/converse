@@ -149,15 +149,66 @@ function remember(entered) {
     else localStorage.removeItem(ENTERED);
   } catch {}
 }
-function firstVisit() {
+// Device chats belong to the account that made them: each signed-in address
+// has its own open chat and earlier chats in this browser. Password and local
+// access have no account and use the plain keys. Starts as the last account
+// seen here, so the app still opens offline.
+const ACCOUNT = "converse-account";
+const CHAT = "converse-chat";
+const ARCHIVE = "converse-archive";
+let account = "";
+try {
+  account = localStorage.getItem(ACCOUNT) || "";
+} catch {}
+const scoped = (key) => (account ? key + ":" + account : key);
+// Chats saved before accounts had their own space go to the first account
+// that signs in on this browser.
+function claimUnowned() {
+  if (!account) return;
   try {
-    if (localStorage.getItem(ENTERED) || !navigator.onLine) return;
-  } catch {
-    return;
-  }
-  $("#unlock").showModal();
+    for (const key of [CHAT, ARCHIVE]) {
+      const unowned = localStorage.getItem(key);
+      if (unowned === null || localStorage.getItem(scoped(key)) !== null)
+        continue;
+      localStorage.setItem(scoped(key), unowned);
+      localStorage.removeItem(key);
+    }
+  } catch {}
+}
+// A different account from the one this page opened with: put away what is on
+// screen and show that account's own chats.
+function useAccount(email) {
+  email = String(email || "").trim().toLowerCase();
+  if (email === account) return;
+  // The chat on screen stays saved under the account it belongs to.
+  messages.length = 0;
+  delete conversation.context_layer;
+  account = email;
+  try {
+    if (email) localStorage.setItem(ACCOUNT, email);
+    else localStorage.removeItem(ACCOUNT);
+  } catch {}
+  claimUnowned();
+  shelve();
+  $("#new-chat").onclick();
+}
+function adoptAccount(d) {
+  if (d.sign_in === "google") {
+    if (d.user?.email) useAccount(d.user.email);
+  } else if (d.sign_in === "password") useAccount("");
+}
+// Asked on every load: whose chats to show, and for a browser that has never
+// got in, whether to keep the splash up.
+function arrive() {
+  let fresh = false;
+  try {
+    fresh = !localStorage.getItem(ENTERED) && navigator.onLine;
+  } catch {}
+  if (fresh) $("#unlock").showModal();
   session()
     .then((d) => {
+      adoptAccount(d);
+      if (!fresh) return;
       // A request that already got through outranks a late or partial answer.
       if (d.access || admitted) return $("#unlock").close();
       signInMode = Promise.resolve(
@@ -165,13 +216,16 @@ function firstVisit() {
       );
       unlock();
     })
-    .catch(() => $("#unlock").close());
+    .catch(() => {
+      if (fresh) $("#unlock").close();
+    });
 }
 async function refreshAccount() {
   try {
-    const { user } = await session();
-    $("#sign-out").hidden = !user;
-    if (user) $("#sign-out").textContent = `Sign out (${user.email})`;
+    const d = await session();
+    adoptAccount(d);
+    $("#sign-out").hidden = !d.user;
+    if (d.user) $("#sign-out").textContent = `Sign out (${d.user.email})`;
   } catch {}
 }
 function nearBottom() {
@@ -358,7 +412,7 @@ async function loadModels() {
       $("#status").textContent = "Could not load models: " + e.message;
     });
 }
-firstVisit();
+arrive();
 loadModels();
 function renderReply(element, text, { streaming = false } = {}) {
   element.rawMarkdown = text;
@@ -912,7 +966,7 @@ $("#export").onclick = async () => {
 function saveChat() {
   try {
     localStorage.setItem(
-      "converse-chat",
+      scoped(CHAT),
       JSON.stringify({ ...conversation, messages }),
     );
   } catch {
@@ -997,20 +1051,11 @@ function loadRecord(saved) {
   updateTail();
   $("#export").disabled = !messages.length;
 }
-try {
-  const saved = JSON.parse(localStorage.getItem("converse-chat") || "[]");
-  loadRecord(saved);
-  targets = recipientsOf({ messages });
-  if (messages.length) saveChat();
-} catch {
-  if (!messages.length) showEmpty();
-}
 
 // Earlier device-local chats; context chats live on the server instead.
-const ARCHIVE = "converse-archive";
 function readArchive() {
   try {
-    const list = JSON.parse(localStorage.getItem(ARCHIVE) || "[]");
+    const list = JSON.parse(localStorage.getItem(scoped(ARCHIVE)) || "[]");
     return Array.isArray(list) ? list.filter((c) => c?.conversation_id) : [];
   } catch {
     return [];
@@ -1020,7 +1065,7 @@ function writeArchive(list) {
   list = list.slice(0, 20);
   for (;;) {
     try {
-      localStorage.setItem(ARCHIVE, JSON.stringify(list));
+      localStorage.setItem(scoped(ARCHIVE), JSON.stringify(list));
       return true;
     } catch {
       // Drop the oldest chats until the archive fits in device storage.
@@ -1036,6 +1081,42 @@ function archiveCurrent() {
   );
   list.unshift({ ...conversation, messages: [...messages], archived_at: now() });
   return writeArchive(list);
+}
+// Puts the saved open chat among the earlier chats, so the app opens on a new
+// one. A context chat is already on the server and needs no local copy. False
+// when it could not be put away and should stay open instead.
+function shelve() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(scoped(CHAT)) || "null");
+    if (saved === null) return true;
+    if (!saved.context_layer && saved.messages?.length) {
+      if (saved.schema_version !== 1 || !saved.conversation_id) return false;
+      const list = readArchive().filter(
+        (c) => c.conversation_id !== saved.conversation_id,
+      );
+      list.unshift({ ...saved, archived_at: now() });
+      if (!writeArchive(list)) return false;
+    }
+    localStorage.removeItem(scoped(CHAT));
+    return true;
+  } catch {
+    return false;
+  }
+}
+// Opening the app starts a new chat; reloading the tab keeps the open one.
+const TAB = "converse-tab";
+try {
+  const reloaded = sessionStorage.getItem(TAB) === "1";
+  sessionStorage.setItem(TAB, "1");
+  if (!reloaded) shelve();
+} catch {}
+try {
+  const saved = JSON.parse(localStorage.getItem(scoped(CHAT)) || "[]");
+  loadRecord(saved);
+  targets = recipientsOf({ messages });
+  if (messages.length) saveChat();
+} catch {
+  if (!messages.length) showEmpty();
 }
 // Restore the providers that answered the latest message.
 function recipientsOf(record) {
@@ -1136,6 +1217,11 @@ $("#reload-app").onclick = () => {
 $("#sign-out").onclick = async () => {
   await fetch("/api/session", { method: "DELETE" }).catch(() => {});
   remember(false);
+  // Nothing of this account stays on the page behind the splash.
+  try {
+    localStorage.removeItem(ACCOUNT);
+    sessionStorage.removeItem(TAB);
+  } catch {}
   location.reload();
 };
 const signInOutcome = new URLSearchParams(location.search).get("signin");

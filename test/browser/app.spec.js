@@ -827,3 +827,99 @@ test('a late sign-in answer cannot put the splash back over an app that already 
   await page.getByLabel('Message', { exact: true }).fill('Still usable');
   await expect(page.locator('#send')).toBeEnabled();
 });
+
+const reply = route => route.fulfill({ contentType: 'application/x-ndjson', body: '{"delta":"Hi"}\n{"done":true}\n' });
+async function ask(page, text) {
+  await page.getByLabel('Message', { exact: true }).fill(text);
+  await page.locator('#send').click();
+  await expect(page.locator('article.msg[data-provider]')).toHaveCount(1);
+  await expect(page.locator('#send')).toBeEnabled();
+}
+async function earlierChats(page) {
+  if (!(await page.locator('#local-chats').isVisible())) await page.locator('#menu').click();
+  return page.locator('#local-chats .chat-item');
+}
+
+test('opening the app starts a new chat and keeps the last one in the list; reloading the tab keeps it open', async ({ page, context }) => {
+  await page.route('**/api/chat', reply);
+  await page.goto('/');
+  await expect(page.locator('#send')).toBeEnabled();
+  await ask(page, 'Plan the garden');
+  await page.reload();
+  await expect(page.locator('.msg-user')).toContainText('Plan the garden');
+
+  // A new tab is a fresh opening of the app.
+  const opened = await context.newPage();
+  await opened.route('**/api/title', route => route.fulfill({ status: 503, json: { error: 'Naming unavailable in this fixture' } }));
+  await opened.route('**/api/conclave?action=status', route => route.fulfill({ json: { available: false } }));
+  await opened.route('**/api/models', route => route.fulfill({ json: catalog }));
+  await opened.goto('/');
+  await expect(opened.locator('#send')).toBeEnabled();
+  await expect(opened.locator('#empty')).toBeVisible();
+  await expect(opened.locator('.msg-user')).toHaveCount(0);
+  const earlier = (await earlierChats(opened)).filter({ hasText: 'Plan the garden' });
+  await expect(earlier).toHaveCount(1);
+  await earlier.click();
+  await expect(opened.locator('.msg-user')).toContainText('Plan the garden');
+});
+
+test('device chats stay with the Google account that made them', async ({ page, context }) => {
+  let email = 'ada@example.com';
+  const prepare = async target => {
+    await target.route('**/api/title', route => route.fulfill({ status: 503, json: { error: 'Naming unavailable in this fixture' } }));
+    await target.route('**/api/conclave?action=status', route => route.fulfill({ json: { available: false } }));
+    await target.route('**/api/models', route => route.fulfill({ json: catalog }));
+    await target.route('**/api/chat', reply);
+    await target.route('**/api/session', route => route.fulfill({ json: { sign_in: 'google', user: { email }, access: true } }));
+  };
+  await prepare(page);
+  await page.goto('/');
+  await expect(page.locator('#send')).toBeEnabled();
+  await ask(page, "Ada's private note");
+  await newChat(page);
+  await ask(page, "Ada's open question");
+  expect(await page.evaluate(() => Object.keys(localStorage).filter(key => /^converse-(chat|archive)/.test(key)).sort()))
+    .toEqual(['converse-archive:ada@example.com', 'converse-chat:ada@example.com']);
+
+  // Another account in the same tab: the saved open chat is put away before anything of Ada's stays on screen.
+  email = 'Grace@Example.com';
+  await page.reload();
+  await expect(page.locator('#status')).toHaveText(/Ready|New chat/);
+  await expect(page.locator('#empty')).toBeVisible();
+  await expect(page.locator('#chat')).not.toContainText('Ada');
+  await expect(page.locator('#local-chats .chat-item')).toHaveCount(0);
+  await ask(page, "Grace's own chat");
+
+  // Ada again, opening the app afresh: a new chat, with both of hers and none of Grace's.
+  email = 'ada@example.com';
+  const adas = await context.newPage();
+  await prepare(adas);
+  await adas.goto('/');
+  await expect(adas.locator('#send')).toBeEnabled();
+  await expect(adas.locator('#empty')).toBeVisible();
+  const list = await earlierChats(adas);
+  await expect(list).toHaveCount(2);
+  await expect(list.filter({ hasText: "Ada's private note" })).toHaveCount(1);
+  await expect(list.filter({ hasText: "Ada's open question" })).toHaveCount(1);
+  await expect(adas.locator('#sidebar')).not.toContainText('Grace');
+});
+
+test('chats saved before accounts were separated go to the first account that signs in', async ({ page }) => {
+  await page.route('**/api/session', route => route.fulfill({ json: { sign_in: 'google', user: { email: 'ada@example.com' }, access: true } }));
+  await page.addInitScript(() => {
+    if (localStorage.getItem('seeded')) return;
+    localStorage.setItem('seeded', '1');
+    const chat = (id, text) => ({ schema_version: 1, conversation_id: id, created_at: '2026-10-01T00:00:00.000Z', title: text, attachments: [],
+      messages: [{ message_id: 'm_' + id, role: 'user', content: text, timestamp: '2026-10-01T00:00:00.000Z' }] });
+    localStorage.setItem('converse-chat', JSON.stringify(chat('conv_open', 'Earlier open chat')));
+    localStorage.setItem('converse-archive', JSON.stringify([{ ...chat('conv_old', 'Earlier archived chat'), archived_at: '2026-10-01T00:00:00.000Z' }]));
+  });
+  await page.goto('/');
+  await expect(page.locator('#send')).toBeEnabled();
+  await expect(page.locator('#empty')).toBeVisible();
+  const list = await earlierChats(page);
+  await expect(list).toHaveCount(2);
+  await expect(list.filter({ hasText: 'Earlier open chat' })).toHaveCount(1);
+  await expect(list.filter({ hasText: 'Earlier archived chat' })).toHaveCount(1);
+  expect(await page.evaluate(() => [localStorage.getItem('converse-chat'), localStorage.getItem('converse-archive')])).toEqual([null, null]);
+});
