@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
   "source_repository": "https://github.com/DanPace725/conclave",
-  "source_commit": "606e8f047867d6c86c7130699ed4abe896052da2",
+  "source_commit": "090c236abb87536703fdd70686e966f1858f363f",
   "source_worktree_dirty": false,
-  "migrated_at": "2026-10-07T21:22:58.927Z",
+  "migrated_at": "2026-10-07T23:28:38.368Z",
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.32.1",
     "@vercel/functions": "^3.9.9",
@@ -138,7 +138,7 @@
     {
       "source": "src/handoff-hosted.js",
       "target": "lib/conclave/handoff-hosted.js",
-      "sha256": "f41412e266160ad04f466809db341be91982302e70ce11ba752f58a56bc1db96"
+      "sha256": "9a624ed0457da0c67d0398fbe33a8db8ba00bfa9158f4b68eab280f55b05e614"
     },
     {
       "source": "src/handoff-mcp-server.js",
