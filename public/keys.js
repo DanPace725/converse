@@ -105,10 +105,16 @@
       if (!data?.enabled) return;
       open.hidden = false;
       if (data.providers.some((provider) => provider.source)) return;
-      if (document.querySelector("dialog[open]")) return;
-      render(data.providers);
-      say("Add a key for at least one provider to start chatting.");
-      dialog.showModal();
+      const show = () => {
+        if (document.querySelector("dialog[open]")) return;
+        render(data.providers);
+        say("Add a key for at least one provider to start chatting.");
+        dialog.showModal();
+      };
+      // A first visit still has the splash up while the session is confirmed.
+      const splash = document.getElementById("unlock");
+      if (splash.open) splash.addEventListener("close", show, { once: true });
+      else show();
     })
     .catch(() => {});
 })();

@@ -115,11 +115,13 @@ function rememberModels() {
   } catch {}
 }
 let sessionGeneration = 0;
-// Which sign-in the server expects, asked when the dialog first has to open.
+const session = () =>
+  fetch("/api/session", { cache: "no-store" }).then((r) => r.json());
+// Which sign-in the server expects, asked when the splash first has to open.
 let signInMode;
+// The splash page: shown over the app until this browser is let in.
 function unlock() {
-  signInMode ||= fetch("/api/session", { cache: "no-store" })
-    .then((r) => r.json())
+  signInMode ||= session()
     .then((d) => (d.sign_in === "google" ? "google" : "password"))
     .catch(() => {
       signInMode = undefined;
@@ -129,13 +131,45 @@ function unlock() {
     $("#unlock-form").hidden = mode === "google";
     $("#unlock-google").hidden = mode !== "google";
     if (!$("#unlock").open) $("#unlock").showModal();
+    if (mode !== "google" && !$("#docs-dialog").open) $("#password").focus();
   });
+}
+// Escape does not dismiss it: the app behind cannot be used yet.
+$("#unlock").addEventListener("cancel", (e) => e.preventDefault());
+// Set once this browser has got into the app. Without it a visitor meets the
+// splash straight away, not the app followed by the splash once the first
+// request is refused.
+const ENTERED = "converse-entered";
+// Whether a request has succeeded since the page loaded.
+let admitted = false;
+function remember(entered) {
+  admitted = entered;
+  try {
+    if (entered) localStorage.setItem(ENTERED, "1");
+    else localStorage.removeItem(ENTERED);
+  } catch {}
+}
+function firstVisit() {
+  try {
+    if (localStorage.getItem(ENTERED) || !navigator.onLine) return;
+  } catch {
+    return;
+  }
+  $("#unlock").showModal();
+  session()
+    .then((d) => {
+      // A request that already got through outranks a late or partial answer.
+      if (d.access || admitted) return $("#unlock").close();
+      signInMode = Promise.resolve(
+        d.sign_in === "google" ? "google" : "password",
+      );
+      unlock();
+    })
+    .catch(() => $("#unlock").close());
 }
 async function refreshAccount() {
   try {
-    const { user } = await (
-      await fetch("/api/session", { cache: "no-store" })
-    ).json();
+    const { user } = await session();
     $("#sign-out").hidden = !user;
     if (user) $("#sign-out").textContent = `Sign out (${user.email})`;
   } catch {}
@@ -276,6 +310,7 @@ async function loadModels() {
     .then(async (r) => {
       if (generation !== sessionGeneration) return null;
       if (r.status === 401) {
+        remember(false);
         unlock();
         throw Error("Unlock to load models.");
       }
@@ -284,6 +319,8 @@ async function loadModels() {
     })
     .then((data) => {
       if (!data || generation !== sessionGeneration) return;
+      remember(true);
+      if ($("#unlock").open) $("#unlock").close();
       for (const name of names) {
         const d = data[name];
         const previous = fields[name].value || preferences[name];
@@ -321,6 +358,7 @@ async function loadModels() {
       $("#status").textContent = "Could not load models: " + e.message;
     });
 }
+firstVisit();
 loadModels();
 function renderReply(element, text, { streaming = false } = {}) {
   element.rawMarkdown = text;
@@ -1097,6 +1135,7 @@ $("#reload-app").onclick = () => {
 };
 $("#sign-out").onclick = async () => {
   await fetch("/api/session", { method: "DELETE" }).catch(() => {});
+  remember(false);
   location.reload();
 };
 const signInOutcome = new URLSearchParams(location.search).get("signin");

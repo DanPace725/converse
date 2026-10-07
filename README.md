@@ -28,7 +28,7 @@ With pooled `DATABASE_URL`, Context/Agent uses Neon. Without it, local developme
 - **Models:** hold (or right-click, or press ↓ on) a recipient name above the message box to choose that provider's model; the sidebar Models list sets the same choice.
 - **Workspace:** one panel with Files, Context and Memory tabs. In Files, upload, edit, download, remove/restore documents, or reference a filename in chat. Manual actions make no model calls. Limits: 20 active files, 100 KB/file, 500 KB active text.
 - **Context tab:** the garden map, what the last request sent split by part (each part opens to its pieces), the working pieces, and the activity report with references, protections, request counts, and saved transformations. The top-bar Context shortcut shows the last request size and opens this tab. **Memory** holds named state.
-- **About / Help:** opens the same guide available to models through `read_app_guide`.
+- **Docs:** opens the same guide available to models through `read_app_guide`. It is also linked from the splash page shown before sign-in, next to the GitHub link.
 
 Copy preserves raw Markdown. Replies render sanitized Markdown and bundled KaTeX. The thought trail shows provider-returned reasoning summaries. Export Markdown is the readable transcript; canonical JSON retains the complete historical audit. Export names use title plus UTC timestamp, with `Conversation` for an untitled chat.
 

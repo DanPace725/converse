@@ -1,4 +1,4 @@
-# About Converse
+# Converse docs
 
 Converse is a small chat app for GPT, Claude, and Gemini. Conclave is its method for managing context, not an assistant identity. Each reply retains its selected provider and model.
 

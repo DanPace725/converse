@@ -6,6 +6,7 @@ import {
   identity,
   identityRequired,
   emailAllowed,
+  guard,
 } from "../lib/access.js";
 import { startGoogle, finishGoogle, verifierOf } from "../lib/neon-auth.js";
 
@@ -51,6 +52,8 @@ export default async function handler(req, res) {
     return json(res, 200, {
       sign_in: identityRequired() ? "google" : "password",
       user: user ? { email: user.email } : null,
+      // Whether this browser is already past the sign-in or password gate.
+      access: guard(req, { writeHead() {}, end() {} }),
     });
   }
   if (!["POST", "DELETE"].includes(req.method))

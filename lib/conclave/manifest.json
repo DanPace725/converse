@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
   "source_repository": "https://github.com/DanPace725/conclave",
-  "source_commit": "1f165300ad904a48eb952bc5cf0f22c1c180a120",
+  "source_commit": "0520de4f7e0999b26e6565a87726ca6d04ee704a",
   "source_worktree_dirty": false,
-  "migrated_at": "2026-10-07T00:51:22.289Z",
+  "migrated_at": "2026-10-07T01:54:24.226Z",
   "dependencies": {
     "@vercel/functions": "^3.9.9",
     "drizzle-orm": "^0.45.3",
@@ -250,7 +250,7 @@
     {
       "source": "src/resources/app-guide.md",
       "target": "lib/conclave/resources/app-guide.md",
-      "sha256": "ac201f8639d50273df524ba6b0e44427d97b6f1fef77d732e7849ccb5665e7f9"
+      "sha256": "3546342d1c22342bcc63649b2fc3562ea2cc2fc4944feaf6b60a0136e5575554"
     },
     {
       "source": "src/resources/model-costs-2026-10-02.json",
@@ -450,7 +450,7 @@
     {
       "source": "src/resources/app-guide.md",
       "target": "public/app-guide.md",
-      "sha256": "ac201f8639d50273df524ba6b0e44427d97b6f1fef77d732e7849ccb5665e7f9"
+      "sha256": "3546342d1c22342bcc63649b2fc3562ea2cc2fc4944feaf6b60a0136e5575554"
     },
     {
       "source": "src/resources/model-costs-2026-10-02.json",

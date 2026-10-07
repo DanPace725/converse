@@ -185,7 +185,8 @@ test("late pre-login failures do not reopen unlock or hide context modes", async
     ),
   );
   await page.route("**/api/session", async (r) => {
-    signedIn = true;
+    // Only submitting the password unlocks; the splash also asks which sign-in applies.
+    if (r.request().method() === "POST") signedIn = true;
     await r.fulfill({ json: { ok: true } });
   });
   let statusRequests = 0;
@@ -295,7 +296,7 @@ test("Markdown response, attachment targeting, persistence, export and new chat"
 });
 test("expired session opens unlock and network failure is recoverable", async ({
   page,
-}) => {
+}, testInfo) => {
   await page.route("**/api/chat", (r) =>
     r.fulfill({ status: 401, json: { error: "Session expired" } }),
   );
@@ -305,6 +306,8 @@ test("expired session opens unlock and network failure is recoverable", async ({
   await page.getByLabel("Message", { exact: true }).fill("Hello");
   await page.locator("#send").click();
   await expect(page.locator("#unlock")).toBeVisible();
+  await expect(page.getByLabel("Access password", { exact: true })).toBeFocused();
+  await page.screenshot({ path: `.agent-smoke/splash-password-${testInfo.project.name}.png` });
   await page.getByLabel("Access password", { exact: true }).fill("test");
   await page.locator("#unlock-form button").click();
   await expect(page.locator("#unlock-error")).toContainText(
@@ -758,6 +761,69 @@ test('the API keys menu item stays hidden where personal keys are off', async ({
   await expect(page.locator('#send')).toBeEnabled();
   await expect(page.locator('#keys-dialog')).toBeHidden();
   await page.locator('#more-menu > summary').click();
-  await expect(page.locator('#about-open')).toBeVisible();
+  await expect(page.locator('#docs-open')).toBeVisible();
   await expect(page.locator('#keys-open')).toBeHidden();
+});
+
+test('a first visit meets the splash page: explanation, sign-in in the middle, GitHub and Docs', async ({ page }, testInfo) => {
+  let signedIn = false;
+  await page.route('**/api/models', route => route.fulfill(signedIn ? { json: catalog } : { status: 401, json: { error: 'Sign in to continue.' } }));
+  await page.route('**/api/session', route => route.fulfill({ json: { sign_in: 'google', user: signedIn ? { email: 'ada@example.com' } : null, access: signedIn } }));
+  await page.goto('/');
+  const splash = page.locator('#unlock');
+  await expect(splash).toBeVisible();
+  await expect(splash.getByRole('heading', { level: 1 })).toHaveText('Converse');
+  await expect(splash).toContainText('One conversation, several AI models.');
+  await expect(page.locator('#google-sign-in')).toBeVisible();
+  await expect(page.locator('#unlock-form')).toBeHidden();
+  // It covers the whole app, with the sign-in button in the middle of the page.
+  const view = page.viewportSize();
+  const box = await splash.boundingBox();
+  expect([Math.round(box.width), Math.round(box.height)]).toEqual([view.width, view.height]);
+  const button = await page.locator('#google-sign-in').boundingBox();
+  expect(Math.abs(button.x + button.width / 2 - view.width / 2)).toBeLessThan(2);
+  expect(Math.abs(button.y + button.height / 2 - view.height / 2)).toBeLessThan(view.height * 0.2);
+  const github = splash.getByRole('link', { name: 'GitHub' });
+  await expect(github).toHaveAttribute('href', 'https://github.com/DanPace725/converse');
+  await expect(github).toHaveAttribute('target', '_blank');
+  // Nothing starts out ringed; the first Tab reaches the sign-in button.
+  await expect(splash.locator('.splash')).toBeFocused();
+  await page.screenshot({ path: `.agent-smoke/splash-${testInfo.project.name}.png` });
+  await page.keyboard.press('Tab');
+  await expect(page.locator('#google-sign-in')).toBeFocused();
+  await page.keyboard.press('Escape');
+  await expect(splash).toBeVisible();
+
+  // Docs is readable before signing in, on top of the splash.
+  await splash.getByRole('button', { name: 'Docs' }).click();
+  await expect(page.locator('#docs-dialog')).toBeVisible();
+  await expect(page.locator('#docs-title')).toHaveText('Docs');
+  await expect(page.locator('#docs-content')).toContainText('Removal is not permanent erasure');
+  await page.locator('#docs-close').click();
+  await expect(splash).toBeVisible();
+
+  // Once in, the splash is gone at once on later visits, and Docs is in the menu.
+  signedIn = true;
+  await page.reload();
+  await expect(page.locator('#status')).toHaveText('Ready');
+  await expect(splash).toBeHidden();
+  expect(await page.evaluate(() => localStorage.getItem('converse-entered'))).toBe('1');
+  await page.locator('#more-menu > summary').click();
+  await expect(page.locator('#docs-open')).toHaveText('Docs');
+});
+
+test('a late sign-in answer cannot put the splash back over an app that already loaded', async ({ page }) => {
+  let answered = false;
+  await page.route('**/api/session', async route => {
+    await new Promise(resolve => setTimeout(resolve, 400));
+    // An older server: no access flag at all.
+    await route.fulfill({ json: { sign_in: 'password', user: null } });
+    answered = true;
+  });
+  await page.goto('/');
+  await expect(page.locator('#status')).toHaveText('Ready');
+  await expect.poll(() => answered).toBe(true);
+  await expect(page.locator('#unlock')).toBeHidden();
+  await page.getByLabel('Message', { exact: true }).fill('Still usable');
+  await expect(page.locator('#send')).toBeEnabled();
 });

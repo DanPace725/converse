@@ -91,7 +91,7 @@ const returning = "/api/session?neon_auth_session_verifier=verifier-1";
 
 test("Google sign-in relays through Neon Auth and issues an identity session", async () => {
   await withEnv(google, neonAuth(ada), async (calls) => {
-    assert.deepEqual((await call("GET")).body, { sign_in: "google", user: null });
+    assert.deepEqual((await call("GET")).body, { sign_in: "google", user: null, access: false });
     const started = await call("POST", { body: { provider: "google" } });
     assert.deepEqual(started.body, { url: "https://auth.example/init?token=t" });
     assert.equal(calls[0].url, "https://auth.example/neondb/auth/sign-in/social");
@@ -122,7 +122,7 @@ test("Google sign-in relays through Neon Auth and issues an identity session", a
     assert.deepEqual(identity(req), { id: "user-ada", email: "Ada@Example.com" });
     assert.deepEqual(
       (await call("GET", { cookie: req.headers.cookie })).body,
-      { sign_in: "google", user: { email: "Ada@Example.com" } },
+      { sign_in: "google", user: { email: "Ada@Example.com" }, access: true },
     );
     assert.equal(calls.length, 2);
   });
@@ -166,13 +166,15 @@ test("Google sign-in reports untrusted addresses and upstream failures", async (
 
 test("password access is unchanged without SESSION_SECRET, and sign-out clears the session", async () => {
   await withEnv({ APP_PASSWORD: "fixture-password" }, () => assert.fail("no upstream call"), async () => {
-    assert.deepEqual((await call("GET")).body, { sign_in: "password", user: null });
+    assert.deepEqual((await call("GET")).body, { sign_in: "password", user: null, access: false });
     assert.equal((await call("POST", { body: { password: "wrong" } })).status, 401);
     assert.equal((await call("POST", { body: { provider: "google" } })).status, 401);
     const unlocked = await call("POST", { body: { password: "fixture-password" } });
     assert.equal(unlocked.status, 200);
     const req = { headers: { cookie: pair(unlocked.cookies, "converse_session") } };
     assert.equal(guard(req, { writeHead() {}, end() {} }), true);
+    // The splash page reads this to tell an unlocked browser from a new visitor.
+    assert.equal((await call("GET", { cookie: req.headers.cookie })).body.access, true);
     const signedOut = await call("DELETE");
     assert.match(signedOut.cookies[0], /^converse_session=; .*Max-Age=0$/);
   });

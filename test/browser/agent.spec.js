@@ -464,7 +464,7 @@ async function fixture(respond, { jev = false, claude = false, claudeModel = 'cl
                 Claude: { models: claude ? [claudeModel] : [] },
                 Gemini: { models: [] },
               }
-            : { authenticated: true },
+            : { sign_in: "password", user: null, access: true },
         ),
       );
     }
@@ -519,10 +519,10 @@ test('document removal, shared help, provider counts and Claude effort are usabl
   try {
     await page.goto(app.url);
     await page.locator('#more-menu > summary').click();
-    await page.locator('#about-open').click();
-    await expect(page.locator('#about-dialog')).toBeVisible();
-    await expect(page.locator('#about-content')).toContainText('Removal is not permanent erasure');
-    await page.locator('#about-close').click();
+    await page.locator('#docs-open').click();
+    await expect(page.locator('#docs-dialog')).toBeVisible();
+    await expect(page.locator('#docs-content')).toContainText('Removal is not permanent erasure');
+    await page.locator('#docs-close').click();
     if (testInfo.project.name === 'mobile') await page.locator('#menu').click();
     await page.locator('#server-chats .chat-item').filter({ hasText: 'Control proof' }).click();
     await page.locator('#workspace-open').click();

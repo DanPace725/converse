@@ -1,10 +1,11 @@
 (() => {
-  const dialog = document.getElementById('about-dialog');
+  const dialog = document.getElementById('docs-dialog');
   let guide;
-  document.getElementById('about-open').onclick = async () => {
+  // Opened from the menu, or from the splash page before signing in.
+  const open = async () => {
     document.getElementById('more-menu').open = false;
     dialog.showModal();
-    const content = document.getElementById('about-content');
+    const content = document.getElementById('docs-content');
     content.textContent = 'Loading app guide…';
     try {
       if (!guide) {
@@ -15,5 +16,7 @@
       renderReply(content, guide);
     } catch { content.textContent = 'App guide unavailable. Reconnect and try again.'; }
   };
-  document.getElementById('about-close').onclick = () => dialog.close();
+  document.getElementById('docs-open').onclick = open;
+  document.getElementById('splash-docs').onclick = open;
+  document.getElementById('docs-close').onclick = () => dialog.close();
 })();
