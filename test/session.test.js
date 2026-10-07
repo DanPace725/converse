@@ -87,7 +87,9 @@ function neonAuth(user) {
       : Response.json(user ? { session: { id: "s1" }, user } : null);
 }
 const ada = { id: "user-ada", email: "Ada@Example.com", emailVerified: true };
-const returning = "/api/session?neon_auth_session_verifier=verifier-1";
+// The request the resume page makes; Google's own return lacks `resume`.
+const arriving = "/api/session?neon_auth_session_verifier=verifier-1";
+const returning = arriving + "&resume=1";
 
 test("Google sign-in relays through Neon Auth and issues an identity session", async () => {
   await withEnv(google, neonAuth(ada), async (calls) => {
@@ -137,17 +139,20 @@ test("Google sign-in refuses unlisted, unverified and unchallenged returns", asy
   ])
     await withEnv(google, neonAuth(user), async () => {
       const finished = await call("GET", { url: returning, cookie });
-      assert.deepEqual([finished.status, finished.location], [302, "/?signin=" + outcome]);
+      assert.deepEqual(
+        [finished.status, finished.location],
+        [302, "/?signin=" + outcome + (outcome === "failed" ? "&why=refused" : "")],
+      );
       assert.equal(pair(finished.cookies, "converse_session"), undefined);
     });
   await withEnv(google, neonAuth(ada), async (calls) => {
-    assert.equal((await call("GET", { url: returning })).location, "/?signin=failed");
+    assert.equal((await call("GET", { url: returning })).location, "/?signin=failed&why=no-challenge");
     assert.equal(calls.length, 0);
     const password = await call("POST", { body: { password: "anything" } });
     assert.deepEqual([password.status, password.cookies], [401, []]);
   });
   await withEnv({ ...google, SESSION_SECRET: undefined, APP_PASSWORD: "fixture-password" }, neonAuth(ada), async (calls) => {
-    assert.equal((await call("GET", { url: returning, cookie })).location, "/?signin=failed");
+    assert.equal((await call("GET", { url: returning, cookie })).location, "/?signin=failed&why=not-enabled");
     assert.equal(calls.length, 0);
   });
 });
@@ -204,4 +209,35 @@ test("an incomplete sign-in return names its reason in the logs without the addr
     { event: "sign_in_incomplete", reason: "exchange failed: Google sign-in is unavailable. Try again shortly." },
   ]);
   assert.doesNotMatch(JSON.stringify(logged), /example\.com|chal%2E|verifier-1/i);
+});
+
+test("Google's return is repeated as a same-site navigation before any cookie is needed", async () => {
+  const warn = console.warn,
+    logged = [];
+  console.warn = (line) => logged.push(JSON.parse(line));
+  try {
+    await withEnv(google, neonAuth(ada), async (calls) => {
+      // The arrival through the redirect chain carries no cookies here and needs none.
+      const res = { writeHead(status, headers) { this.status = status; this.headers = headers; }, end(text) { this.text = text; } };
+      await handler({ method: "GET", url: "/api/session?neon_auth_session_verifier=a%26b%22%3Cc", headers: { host: "localhost:3211" } }, res);
+      assert.equal(res.status, 200);
+      assert.match(res.headers["Content-Type"], /^text\/html/);
+      assert.equal(res.headers["Cache-Control"], "no-store");
+      assert.equal(res.headers["Set-Cookie"], undefined);
+      const target = "/api/session?neon_auth_session_verifier=a%26b%22%3Cc&amp;resume=1";
+      assert.ok(res.text.includes(`<meta http-equiv="refresh" content="0;url=${target}">`), res.text);
+      assert.ok(res.text.includes(`<a href="${target}">`));
+      assert.doesNotMatch(res.text, /<script/i);
+      assert.equal(calls.length, 0);
+
+      // Sent back with no verifier, the browser returns to the splash with a reason.
+      const gaveUp = await call("GET", { url: "/api/session?error=state_mismatch" });
+      assert.deepEqual([gaveUp.status, gaveUp.location], [302, "/?signin=failed&why=no-verifier"]);
+      // The page's own status request is not a navigation and still gets JSON.
+      assert.equal((await call("GET")).body.sign_in, "google");
+    });
+  } finally {
+    console.warn = warn;
+  }
+  assert.deepEqual(logged, [{ event: "sign_in_incomplete", reason: "returned without a verifier", error: "state_mismatch" }]);
 });

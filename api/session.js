@@ -16,13 +16,37 @@ const sessionCookie = (value, age) =>
 // Lax, not Strict: the browser must present it when Google sends it back here.
 const challengeCookie = (value, age) =>
   `converse_signin=${value}; HttpOnly; SameSite=Lax; Path=/api/session; Max-Age=${age}${secure()}`;
-function redirect(res, outcome, cookies) {
+// `why` is a short code shown beside the splash's message, so a failure on
+// someone else's device can be told apart without the server logs.
+function redirect(res, outcome, cookies, why) {
   res.writeHead(302, {
-    Location: outcome ? "/?signin=" + outcome : "/",
+    Location: outcome
+      ? "/?signin=" + outcome + (why ? "&why=" + why : "")
+      : "/",
     "Cache-Control": "no-store",
     "Set-Cookie": cookies,
   });
   res.end();
+}
+// Google's return reaches this address through a chain of cross-site
+// redirects, where browsers differ over which of this site's cookies they
+// send and keep, Safari most of all. This page repeats the request as a
+// navigation of the site's own, so the challenge cookie arrives and the
+// session cookie stays, whatever the browser's rules for the chain.
+function resume(res, url) {
+  const next = new URL(url);
+  next.searchParams.set("resume", "1");
+  const target = (next.pathname + next.search)
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/</g, "&lt;");
+  res.writeHead(200, {
+    "Content-Type": "text/html; charset=utf-8",
+    "Cache-Control": "no-store",
+  });
+  res.end(
+    `<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="refresh" content="0;url=${target}"><title>Signing in…</title><link rel="stylesheet" href="/styles.css"><p class="note"><a href="${target}">Continue to Converse</a></p></html>`,
+  );
 }
 // Google's return leg: exchange the verifier for the signed-in user.
 async function completeSignIn(req, res, origin, verifier) {
@@ -33,20 +57,22 @@ async function completeSignIn(req, res, origin, verifier) {
     ?.slice(16);
   const clear = challengeCookie("", 0);
   // Each way the return can fall short is named in the function logs.
-  const incomplete = (reason, outcome = "failed") => {
+  const incomplete = (reason, why, outcome = "failed") => {
     console.warn(JSON.stringify({ event: "sign_in_incomplete", reason }));
-    return redirect(res, outcome, [clear]);
+    return redirect(res, outcome, [clear], why);
   };
-  if (!identityRequired()) return incomplete("sign-in is not enabled");
-  if (!challenge) return incomplete("challenge cookie missing or expired");
+  if (!identityRequired())
+    return incomplete("sign-in is not enabled", "not-enabled");
+  if (!challenge)
+    return incomplete("challenge cookie missing or expired", "no-challenge");
   try {
     const user = await finishGoogle(origin, verifier, challenge);
-    if (!user) return incomplete("exchange refused");
+    if (!user) return incomplete("exchange refused", "refused");
     if (!emailAllowed(user.email))
-      return incomplete("address not allowed", "denied");
+      return incomplete("address not allowed", "", "denied");
     return redirect(res, "", [clear, sessionCookie(session(user), 604800)]);
   } catch (error) {
-    return incomplete("exchange failed: " + error.message);
+    return incomplete("exchange failed: " + error.message, "exchange-error");
   }
 }
 export default async function handler(req, res) {
@@ -54,7 +80,25 @@ export default async function handler(req, res) {
   const url = new URL(req.url, origin);
   if (req.method === "GET") {
     const verifier = verifierOf(url);
-    if (verifier) return completeSignIn(req, res, origin, verifier);
+    if (verifier)
+      return url.searchParams.get("resume") === "1"
+        ? completeSignIn(req, res, origin, verifier)
+        : resume(res, url);
+    // A browser sent here with no verifier: the sign-in service gave up
+    // before finishing, and says why in `error` when it says anything.
+    if (
+      url.searchParams.has("error") ||
+      req.headers["sec-fetch-mode"] === "navigate"
+    ) {
+      console.warn(
+        JSON.stringify({
+          event: "sign_in_incomplete",
+          reason: "returned without a verifier",
+          error: String(url.searchParams.get("error") || "").slice(0, 80),
+        }),
+      );
+      return redirect(res, "failed", [challengeCookie("", 0)], "no-verifier");
+    }
     const user = identity(req);
     return json(res, 200, {
       sign_in: identityRequired() ? "google" : "password",

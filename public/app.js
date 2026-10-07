@@ -1238,7 +1238,8 @@ $("#sign-out").onclick = async () => {
   } catch {}
   location.reload();
 };
-const signInOutcome = new URLSearchParams(location.search).get("signin");
+const returned = new URLSearchParams(location.search);
+const signInOutcome = returned.get("signin");
 if (signInOutcome) {
   history.replaceState(null, "", location.pathname);
   // A first return can fail where an immediate second pass succeeds, as seen
@@ -1250,12 +1251,15 @@ if (signInOutcome) {
     if (retry) sessionStorage.setItem(SIGN_IN_RETRY, "1");
     else sessionStorage.removeItem(SIGN_IN_RETRY);
   } catch {}
+  // The server's short code for where the return fell short.
+  const why = returned.get("why") || "";
   $("#unlock-error").textContent =
     signInOutcome === "denied"
       ? "This Google account does not have access to Converse."
       : retry
         ? ""
-        : "Google sign-in did not complete. Try again.";
+        : "Google sign-in did not complete. Try again." +
+          (/^[a-z-]{1,24}$/.test(why) ? ` (${why})` : "");
   unlock();
   if (retry) googleSignIn({ resuming: true });
 }
