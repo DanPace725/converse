@@ -142,11 +142,15 @@ $("#unlock").addEventListener("cancel", (e) => e.preventDefault());
 const ENTERED = "converse-entered";
 // Whether a request has succeeded since the page loaded.
 let admitted = false;
+// Marks the single automatic retry of a sign-in in this tab.
+const SIGN_IN_RETRY = "converse-signin-retry";
 function remember(entered) {
   admitted = entered;
   try {
-    if (entered) localStorage.setItem(ENTERED, "1");
-    else localStorage.removeItem(ENTERED);
+    if (entered) {
+      localStorage.setItem(ENTERED, "1");
+      sessionStorage.removeItem(SIGN_IN_RETRY);
+    } else localStorage.removeItem(ENTERED);
   } catch {}
 }
 // Device chats belong to the account that made them: each signed-in address
@@ -1185,10 +1189,14 @@ $("#unlock-form").onsubmit = async (e) => {
     button.disabled = false;
   }
 };
-$("#google-sign-in").onclick = async () => {
-  const button = $("#google-sign-in");
+// `resuming` is the one automatic second pass after a return that did not
+// complete; Google already knows the account, so it goes straight through.
+async function googleSignIn({ resuming = false } = {}) {
+  const button = $("#google-sign-in"),
+    note = $("#unlock-error");
   button.disabled = true;
-  $("#unlock-error").textContent = "";
+  note.classList.toggle("pending", resuming);
+  note.textContent = resuming ? "Finishing sign-in…" : "";
   try {
     const r = await fetch("/api/session", {
       method: "POST",
@@ -1198,18 +1206,24 @@ $("#google-sign-in").onclick = async () => {
     const data = await r.json();
     // The button stays disabled while the browser leaves for Google.
     if (r.ok && data.url) return location.assign(data.url);
-    $("#unlock-error").textContent =
-      data.error || "Could not start Google sign-in.";
+    note.textContent = data.error || "Could not start Google sign-in.";
   } catch {
-    $("#unlock-error").textContent =
+    note.textContent =
       "Could not connect. Check your connection and try again.";
   }
+  note.classList.remove("pending");
   button.disabled = false;
-};
-window.addEventListener(
-  "pageshow",
-  () => ($("#google-sign-in").disabled = false),
-);
+}
+$("#google-sign-in").onclick = () => googleSignIn();
+// Coming back to this page with Back leaves the splash ready to use again.
+window.addEventListener("pageshow", (e) => {
+  if (!e.persisted) return;
+  $("#google-sign-in").disabled = false;
+  if ($("#unlock-error").classList.contains("pending")) {
+    $("#unlock-error").classList.remove("pending");
+    $("#unlock-error").textContent = "";
+  }
+});
 $("#reload-app").onclick = () => {
   if (busy && !confirm("A reply is still in progress. Reload anyway?")) return;
   location.reload();
@@ -1227,11 +1241,23 @@ $("#sign-out").onclick = async () => {
 const signInOutcome = new URLSearchParams(location.search).get("signin");
 if (signInOutcome) {
   history.replaceState(null, "", location.pathname);
+  // A first return can fail where an immediate second pass succeeds, as seen
+  // with accounts new to the app. Try that once before asking the person to.
+  let retry = false;
+  try {
+    retry =
+      signInOutcome === "failed" && !sessionStorage.getItem(SIGN_IN_RETRY);
+    if (retry) sessionStorage.setItem(SIGN_IN_RETRY, "1");
+    else sessionStorage.removeItem(SIGN_IN_RETRY);
+  } catch {}
   $("#unlock-error").textContent =
     signInOutcome === "denied"
       ? "This Google account does not have access to Converse."
-      : "Google sign-in did not complete. Try again.";
+      : retry
+        ? ""
+        : "Google sign-in did not complete. Try again.";
   unlock();
+  if (retry) googleSignIn({ resuming: true });
 }
 $("#new-chat").onclick = () => {
   if (busy) return;

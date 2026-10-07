@@ -32,14 +32,21 @@ async function completeSignIn(req, res, origin, verifier) {
     .find((x) => x.startsWith("converse_signin="))
     ?.slice(16);
   const clear = challengeCookie("", 0);
-  if (!identityRequired() || !challenge) return redirect(res, "failed", [clear]);
+  // Each way the return can fall short is named in the function logs.
+  const incomplete = (reason, outcome = "failed") => {
+    console.warn(JSON.stringify({ event: "sign_in_incomplete", reason }));
+    return redirect(res, outcome, [clear]);
+  };
+  if (!identityRequired()) return incomplete("sign-in is not enabled");
+  if (!challenge) return incomplete("challenge cookie missing or expired");
   try {
     const user = await finishGoogle(origin, verifier, challenge);
-    if (!user) return redirect(res, "failed", [clear]);
-    if (!emailAllowed(user.email)) return redirect(res, "denied", [clear]);
+    if (!user) return incomplete("exchange refused");
+    if (!emailAllowed(user.email))
+      return incomplete("address not allowed", "denied");
     return redirect(res, "", [clear, sessionCookie(session(user), 604800)]);
-  } catch {
-    return redirect(res, "failed", [clear]);
+  } catch (error) {
+    return incomplete("exchange failed: " + error.message);
   }
 }
 export default async function handler(req, res) {

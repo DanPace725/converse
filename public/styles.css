@@ -1732,6 +1732,9 @@ dialog::backdrop {
   min-height: 1.4em;
   font-size: 14px;
 }
+#unlock-error.pending {
+  color: var(--muted);
+}
 .splash-links {
   display: flex;
   justify-content: center;

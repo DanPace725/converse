@@ -179,3 +179,29 @@ test("password access is unchanged without SESSION_SECRET, and sign-out clears t
     assert.match(signedOut.cookies[0], /^converse_session=; .*Max-Age=0$/);
   });
 });
+
+test("an incomplete sign-in return names its reason in the logs without the address", async () => {
+  const cookie = "converse_signin=chal%2Evalue";
+  const warn = console.warn,
+    logged = [];
+  console.warn = (line) => logged.push(JSON.parse(line));
+  try {
+    await withEnv(google, neonAuth({ ...ada, emailVerified: false }), () => call("GET", { url: returning, cookie }));
+    await withEnv(google, neonAuth(null), () => call("GET", { url: returning, cookie }));
+    await withEnv(google, neonAuth(ada), () => call("GET", { url: returning }));
+    await withEnv(google, neonAuth({ ...ada, email: "eve@example.com" }), () => call("GET", { url: returning, cookie }));
+    await withEnv(google, () => { throw Error("socket hang up"); }, () => call("GET", { url: returning, cookie }));
+  } finally {
+    console.warn = warn;
+  }
+  assert.deepEqual(logged, [
+    { event: "sign_in_exchange_refused", status: 200, user: true, email_verified: false },
+    { event: "sign_in_incomplete", reason: "exchange refused" },
+    { event: "sign_in_exchange_refused", status: 200, user: false, email_verified: false },
+    { event: "sign_in_incomplete", reason: "exchange refused" },
+    { event: "sign_in_incomplete", reason: "challenge cookie missing or expired" },
+    { event: "sign_in_incomplete", reason: "address not allowed" },
+    { event: "sign_in_incomplete", reason: "exchange failed: Google sign-in is unavailable. Try again shortly." },
+  ]);
+  assert.doesNotMatch(JSON.stringify(logged), /example\.com|chal%2E|verifier-1/i);
+});

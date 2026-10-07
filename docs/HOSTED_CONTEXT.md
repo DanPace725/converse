@@ -130,6 +130,7 @@ This assigns **all currently unowned conversations in that database** to that on
 | App says the address is not trusted | Add the app's exact origin to Neon's Domains list on the branch being used. For local use, check Allow Localhost. [Neon domain setup](https://neon.com/docs/auth/guides/configure-domains) |
 | App says access is denied | Check the chosen Google account's full email against `ALLOWED_EMAILS` in the active deployment. |
 | Google button reports unavailable, or login returns failed | Check `NEON_AUTH_BASE_URL`, the branch's Auth/provider configuration, and server logs. Start again from Converse; the temporary return cookie expires after ten minutes. |
+| A new account returns to the sign-in page after Google | The app retries once by itself. If it still asks for another try, open the Vercel function logs for `/api/session` and read the `sign_in_incomplete` line: it names the reason (challenge cookie missing or expired, exchange refused, exchange failed). `sign_in_exchange_refused` adds Neon Auth's status and whether a verified user came back. |
 | Database error mentioning `owner_id` | Apply the checked-in migration to the database that the app actually uses. |
 | Login works but old conversations are missing | Complete step 7 for the intended owner. |
 

@@ -923,3 +923,37 @@ test('chats saved before accounts were separated go to the first account that si
   await expect(list.filter({ hasText: 'Earlier archived chat' })).toHaveCount(1);
   expect(await page.evaluate(() => [localStorage.getItem('converse-chat'), localStorage.getItem('converse-archive')])).toEqual([null, null]);
 });
+
+test('a sign-in return that does not complete is retried once without another click', async ({ page }) => {
+  let signedIn = false, starts = 0, succeedOn = 2;
+  await page.route('**/api/models', route => route.fulfill(signedIn ? { json: catalog } : { status: 401, json: { error: 'Sign in to continue.' } }));
+  await page.route('**/api/session', route => {
+    if (route.request().method() !== 'POST')
+      return route.fulfill({ json: { sign_in: 'google', user: signedIn ? { email: 'new@example.com' } : null, access: signedIn } });
+    // The returned address stands in for the round trip through Google.
+    if (++starts >= succeedOn) { signedIn = true; return route.fulfill({ json: { url: '/' } }); }
+    return route.fulfill({ json: { url: '/?signin=failed' } });
+  });
+  await page.goto('/');
+  await page.locator('#google-sign-in').click();
+  // The first return fails; the second pass starts by itself and lands in the app.
+  await expect(page.locator('#status')).toHaveText('Ready');
+  await expect(page.locator('#unlock')).toBeHidden();
+  expect(starts).toBe(2);
+  expect(await page.evaluate(() => sessionStorage.getItem('converse-signin-retry'))).toBe(null);
+
+  // When the second pass fails too it stops and says so, ready for a manual try.
+  await page.evaluate(() => { localStorage.clear(); sessionStorage.clear(); });
+  signedIn = false; starts = 0; succeedOn = 99;
+  await page.goto('/');
+  await page.locator('#google-sign-in').click();
+  await expect(page.locator('#unlock-error')).toHaveText('Google sign-in did not complete. Try again.');
+  await expect(page.locator('#unlock-error')).not.toHaveClass(/pending/);
+  await expect(page.locator('#google-sign-in')).toBeEnabled();
+  await expect(page).toHaveURL(/\/$/);
+  expect(starts).toBe(2);
+  // A manual try gets its own single retry.
+  await page.locator('#google-sign-in').click();
+  await expect(page.locator('#unlock-error')).toHaveText('Google sign-in did not complete. Try again.');
+  expect(starts).toBe(4);
+});
