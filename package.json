@@ -15,6 +15,7 @@
     "db:claim": "node --env-file-if-exists=.env scripts/claim-conversations.js",
     "test:neon": "node --env-file=.env.neon-test --test test/neon.test.js",
     "test:browser": "playwright test",
+    "test:auth:browser": "playwright test --config=playwright.auth.config.js",
     "test:agent:browser": "playwright test --config=playwright.agent.config.js",
     "format": "prettier --write api lib public/app.js public/ui.js public/index.html public/styles.css public/sw.js scripts test playwright.config.js README.md package.json vercel.json"
   },

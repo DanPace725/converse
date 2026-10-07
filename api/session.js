@@ -8,7 +8,12 @@ import {
   emailAllowed,
   guard,
 } from "../lib/access.js";
-import { startGoogle, finishGoogle, verifierOf } from "../lib/neon-auth.js";
+import {
+  startGoogle,
+  finishGoogle,
+  verifierOf,
+  emailCode,
+} from "../lib/neon-auth.js";
 
 const secure = () => (process.env.VERCEL ? "; Secure" : "");
 const sessionCookie = (value, age) =>
@@ -32,7 +37,8 @@ function redirect(res, outcome, cookies, why) {
 // redirects, where browsers differ over which of this site's cookies they
 // send and keep, Safari most of all. This page repeats the request as a
 // navigation of the site's own, so the challenge cookie arrives and the
-// session cookie stays, whatever the browser's rules for the chain.
+// session cookie is set on that request. This cannot repair a failure in
+// Neon Auth's own return before it supplies the verifier.
 function resume(res, url) {
   const next = new URL(url);
   next.searchParams.set("resume", "1");
@@ -118,6 +124,44 @@ export default async function handler(req, res) {
   try {
     const input = await body(req);
     if (identityRequired()) {
+      if (input.provider === "email-code") {
+        const email =
+          typeof input.email === "string"
+            ? input.email.trim().toLowerCase()
+            : "";
+        if (email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+          return json(res, 400, { error: "Enter a valid email address." });
+        if (
+          input.otp !== undefined &&
+          (typeof input.otp !== "string" || !/^\d{4,10}$/.test(input.otp))
+        )
+          return json(res, 400, { error: "Enter the code from your email." });
+        if (!emailAllowed(email))
+          return json(res, 403, {
+            error: "This email address does not have access to Converse.",
+          });
+        try {
+          const result = await emailCode(origin, email, input.otp);
+          if (result.error)
+            return json(res, result.status, { error: result.error });
+          if (result.user) {
+            if (!emailAllowed(result.user.email))
+              return json(res, 403, {
+                error: "This email address does not have access to Converse.",
+              });
+            res.setHeader("Set-Cookie", [
+              challengeCookie("", 0),
+              sessionCookie(session(result.user), 604800),
+            ]);
+          }
+          return json(res, 200, { ok: true });
+        } catch {
+          return json(res, 502, {
+            error:
+              "Email sign-in is unavailable. Try again shortly or continue with Google.",
+          });
+        }
+      }
       if (input.provider !== "google")
         return json(res, 401, { error: "Sign in with Google to continue." });
       try {

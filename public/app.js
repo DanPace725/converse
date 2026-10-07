@@ -1215,6 +1215,70 @@ async function googleSignIn({ resuming = false } = {}) {
   button.disabled = false;
 }
 $("#google-sign-in").onclick = () => googleSignIn();
+$("#email-code-form").onsubmit = async (event) => {
+  event.preventDefault();
+  const email = $("#sign-in-email"),
+    code = $("#sign-in-code"),
+    button = $("#email-code-submit"),
+    reset = $("#email-code-reset"),
+    google = $("#google-sign-in"),
+    note = $("#unlock-error");
+  const checking = !code.disabled;
+  button.disabled = reset.disabled = google.disabled = true;
+  email.readOnly = true;
+  code.readOnly = true;
+  note.classList.add("pending");
+  note.textContent = checking ? "Checking code…" : "Sending code…";
+  try {
+    const response = await fetch("/api/session", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        provider: "email-code",
+        email: email.value,
+        ...(checking ? { otp: code.value.trim() } : {}),
+      }),
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      note.classList.remove("pending");
+      note.textContent =
+        data.error || "Email sign-in did not complete. Try again.";
+    } else if (checking) {
+      // Reload uses the same account/session restoration as Google sign-in.
+      return location.reload();
+    } else {
+      code.hidden = code.disabled = false;
+      code.required = true;
+      reset.hidden = false;
+      button.textContent = "Sign in";
+      note.textContent =
+        "Check your email for a code. Use the same address as your Google account to keep your chats.";
+      code.focus();
+    }
+  } catch {
+    note.classList.remove("pending");
+    note.textContent =
+      "Could not connect. Check your connection and try again.";
+  } finally {
+    button.disabled = reset.disabled = google.disabled = false;
+    email.readOnly = !code.disabled;
+    code.readOnly = false;
+  }
+};
+$("#email-code-reset").onclick = () => {
+  const code = $("#sign-in-code"),
+    email = $("#sign-in-email");
+  code.value = "";
+  code.hidden = code.disabled = true;
+  code.required = false;
+  email.readOnly = false;
+  $("#email-code-submit").textContent = "Send code";
+  $("#email-code-reset").hidden = true;
+  $("#unlock-error").textContent = "";
+  $("#unlock-error").classList.remove("pending");
+  email.focus();
+};
 // Coming back to this page with Back leaves the splash ready to use again.
 window.addEventListener("pageshow", (e) => {
   if (!e.persisted) return;

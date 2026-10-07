@@ -93,7 +93,7 @@ To generate a session secret, run this locally and copy the result into the sett
 node -e "console.log(require('node:crypto').randomBytes(32).toString('hex'))"
 ```
 
-Once `SESSION_SECRET` is set, Converse ignores `APP_PASSWORD`; there is no password fallback while Google mode is enabled. An empty `ALLOWED_EMAILS` lets nobody in. Removing an email blocks that account on subsequent requests once the updated environment is active. Rotating the secret invalidates all app sessions. These are Converse-specific settings, defined in `lib/conclave/access.js`.
+Once `SESSION_SECRET` is set, Converse ignores `APP_PASSWORD`; there is no shared-password fallback while account sign-in is enabled. Google and the email-code fallback both require a verified user on `ALLOWED_EMAILS`. An empty `ALLOWED_EMAILS` lets nobody in. Removing an email blocks that account on subsequent requests once the updated environment is active. Rotating the secret invalidates all app sessions. These are Converse-specific settings, defined in `lib/conclave/access.js`.
 
 ### 6. Restart or redeploy, then complete a real login
 
@@ -134,7 +134,15 @@ This assigns **all currently unowned conversations in that database** to that on
 | Database error mentioning `owner_id` | Apply the checked-in migration to the database that the app actually uses. |
 | Login works but old conversations are missing | Complete step 7 for the intended owner. |
 
-For a Google-only app, you can also disable email/password authentication in Neon's Auth configuration. It is not required to fix the Google redirect. The previous bare `neon neon-auth config email-password update` command did not specify a change; use the Console's setting or explicit CLI options. [Neon: Email/password configuration](https://neon.com/docs/cli/neon-auth#config-email-password-update)
+### Email-code fallback
+
+If Google sign-in still fails, choose **Use an email code instead**, enter the same address as the Google account, select **Send code**, then enter the received code and select **Sign in**. **Request a new code / change email** returns to the email step. Sending happens only on submission; opening the fallback sends nothing.
+
+In Neon **Settings → Auth**, keep **Sign-up and Sign-in with Email** enabled. Email OTP uses that setting; disabling email/password authentication also disables this fallback. Neon delivers, expires and rate-limits the codes. For production, configure a dedicated SMTP provider. No new Converse secret or database migration is needed. [Neon: Email OTP](https://neon.com/docs/auth/guides/plugins/email-otp), [email delivery](https://neon.com/docs/auth/production-checklist#email-provider).
+
+The app calls Neon from its server and sets the same account session after a verified response. It requires the returned address to match the requested address and the allowlist. Using an existing account's address retains Neon's user ID and conversation ownership. A different address is a different account. The browser receives neither Neon's session token nor the Google verifier in this flow.
+
+Check real delivery and an existing Google account's saved conversations before relying on the fallback in production. The automated checks use a fixture Neon service. `npm run test:auth:browser` runs the real app handler and fallback UI in desktop/mobile Edge and WebKit; install WebKit with `node node_modules/@playwright/test/cli.js install webkit` first. Windows Playwright WebKit is useful regression evidence but does not replace a real Safari device test. [Review and results](archive/2026-10-06/safari-sign-in-review.md).
 
 Converse uses its own seven-day app cookie after Neon confirms the account. Signing out clears that browser's cookie; it does not immediately revoke a copy held elsewhere. Removing an account from `ALLOWED_EMAILS` blocks it, and rotating `SESSION_SECRET` invalidates every app cookie. The app's relay in `lib/neon-auth.js` is custom code rather than Neon's standard SDK integration; the real return flow still needs the login check above.
 

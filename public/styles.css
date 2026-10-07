@@ -1726,6 +1726,25 @@ dialog::backdrop {
 #unlock-form button {
   margin-top: 10px;
 }
+#email-sign-in {
+  margin-top: 16px;
+  font-size: 14px;
+}
+#email-sign-in summary {
+  color: var(--muted);
+  cursor: pointer;
+}
+#email-code-form {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+}
+#email-code-reset {
+  background: none;
+  color: var(--muted);
+  font-size: 13px;
+  min-height: 32px;
+}
 #unlock-error {
   color: var(--danger);
   margin: 12px 0 0;

@@ -121,6 +121,36 @@
           <button type="button" id="google-sign-in">
             Continue with Google
           </button>
+          <details id="email-sign-in">
+            <summary>Use an email code instead</summary>
+            <form id="email-code-form">
+              <input
+                id="sign-in-email"
+                type="email"
+                autocomplete="email"
+                aria-label="Sign-in email"
+                placeholder="Your email address"
+                maxlength="254"
+                required
+              />
+              <input
+                id="sign-in-code"
+                type="text"
+                inputmode="numeric"
+                autocomplete="one-time-code"
+                aria-label="Email code"
+                placeholder="Code from your email"
+                pattern="[0-9]{4,10}"
+                maxlength="10"
+                hidden
+                disabled
+              />
+              <button id="email-code-submit">Send code</button>
+              <button type="button" id="email-code-reset" hidden>
+                Request a new code / change email
+              </button>
+            </form>
+          </details>
         </div>
       </div>
       <p id="unlock-error" role="status"></p>

@@ -8,7 +8,8 @@ const names = ["SESSION_SECRET", "ALLOWED_EMAILS", "NEON_AUTH_BASE_URL", "APP_PA
 // The production response headers that could interfere with the resume page.
 const policy = "default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self' data:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'";
 
-test("Google's cross-site return signs in through the same-site resume step", async ({ page }) => {
+for (const method of ["Google", "email code"])
+test(method === "Google" ? "Google's cross-site return signs in through the same-site resume step" : "email codes sign in through the real handler and restore the same identity cookie", async ({ page }) => {
   const before = Object.fromEntries(names.map((name) => [name, process.env[name]]));
   for (const name of names) delete process.env[name];
   Object.assign(process.env, {
@@ -23,10 +24,17 @@ test("Google's cross-site return signs in through the same-site resume step", as
       ? new Response(JSON.stringify({ url: "https://accounts.example/consent" }), {
           headers: { "set-cookie": "__Secure-neon-auth.session_challenge=chal%2Evalue; Max-Age=600; Path=/; HttpOnly; Secure; SameSite=None; Partitioned" },
         })
-      : Response.json({ session: { id: "s1" }, user: { id: "user-ada", email: "ada@example.com", emailVerified: true } });
+      : String(url).endsWith("/email-otp/send-verification-otp")
+        ? Response.json({ success: true })
+        : Response.json({ token: "upstream-private-token", session: { id: "s1" }, user: { id: "user-ada", email: "ada@example.com", emailVerified: true } });
   const [{ default: session }, { guard, json }] = await Promise.all([import("../../api/session.js"), import("../../lib/access.js")]);
   const returns = [];
+  const sessionHeaders = [];
   const server = createServer(async (req, res) => {
+    res.on("finish", () => {
+      const cookies = [res.getHeader("set-cookie") || []].flat();
+      sessionHeaders.push(...cookies.filter(cookie => cookie.startsWith("converse_session=")));
+    });
     const url = new URL(req.url, "http://localhost");
     res.setHeader("Content-Security-Policy", policy);
     res.setHeader("Referrer-Policy", "no-referrer");
@@ -62,11 +70,19 @@ test("Google's cross-site return signs in through the same-site resume step", as
   try {
     // The handler only follows https addresses; hand that one to the other site.
     await page.route("https://accounts.example/**", (route) =>
-      route.fulfill({ status: 302, headers: { location: `http://127.0.0.1:${elsewhere.address().port}/callback` } }),
+      route.fulfill({ contentType: "text/html", body: `<!doctype html><meta http-equiv="refresh" content="0;url=http://127.0.0.1:${elsewhere.address().port}/callback">` }),
     );
     await page.goto(app + "/");
     await expect(page.locator("#google-sign-in")).toBeVisible();
-    await page.locator("#google-sign-in").click();
+    if (method === "Google") await page.locator("#google-sign-in").click();
+    else {
+      await page.locator("#email-sign-in summary").click();
+      await page.locator("#sign-in-email").fill("ada@example.com");
+      await page.locator("#email-code-submit").click();
+      await expect(page.locator("#sign-in-code")).toBeVisible();
+      await page.locator("#sign-in-code").fill("123456");
+      await page.locator("#email-code-submit").click();
+    }
 
     await expect(page.locator("#status")).toHaveText("Ready");
     await expect(page.locator("#unlock")).toBeHidden();
@@ -75,10 +91,13 @@ test("Google's cross-site return signs in through the same-site resume step", as
     await expect(page.locator("#sign-out")).toHaveText("Sign out (ada@example.com)");
     // The arrival from the other site only hands over to this site's own
     // request, which is the one that carries the challenge.
-    expect(returns.map((entry) => [entry.resume, entry.site])).toEqual([[null, "cross-site"], ["1", "same-origin"]]);
-    expect(returns[1].challenge).toBe(true);
+    expect(returns.map((entry) => [entry.resume, entry.site])).toEqual(method === "Google" ? [[null, "cross-site"], ["1", "same-origin"]] : []);
+    if (method === "Google") expect(returns[1].challenge).toBe(true);
     const cookies = await page.context().cookies(app);
-    expect(cookies.find((cookie) => cookie.name === "converse_session")?.sameSite).toBe("Strict");
+    // Windows WebKit's cookie inspection reports SameSite as None; verify
+    // the actual response attribute and successful restoration instead.
+    expect(sessionHeaders.some(cookie => cookie.includes("SameSite=Strict"))).toBe(true);
+    expect(cookies.find((cookie) => cookie.name === "converse_session")?.httpOnly).toBe(true);
     expect(cookies.find((cookie) => cookie.name === "converse_signin")).toBeUndefined();
   } finally {
     server.close();

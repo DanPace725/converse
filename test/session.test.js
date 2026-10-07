@@ -185,6 +185,169 @@ test("password access is unchanged without SESSION_SECRET, and sign-out clears t
   });
 });
 
+test("email codes establish the same account session without an OAuth return", async () => {
+  await withEnv(
+    google,
+    (url) =>
+      url.endsWith("/send-verification-otp")
+        ? Response.json({ success: true })
+        : Response.json({ token: "upstream-private-token", user: ada }),
+    async (calls) => {
+      const sent = await call("POST", {
+        body: { provider: "email-code", email: " Ada@Example.com " },
+      });
+      assert.deepEqual(
+        [sent.status, sent.body, sent.cookies],
+        [200, { ok: true }, []],
+      );
+      assert.ok(calls[0].url.endsWith("/email-otp/send-verification-otp"));
+      assert.deepEqual(JSON.parse(calls[0].body), {
+        email: "ada@example.com",
+        type: "sign-in",
+      });
+      const signedIn = await call("POST", {
+        body: {
+          provider: "email-code",
+          email: "ada@example.com",
+          otp: "123456",
+        },
+      });
+      assert.ok(calls[1].url.endsWith("/sign-in/email-otp"));
+      assert.deepEqual(JSON.parse(calls[1].body), {
+        email: "ada@example.com",
+        otp: "123456",
+      });
+      assert.equal(calls[1].headers.origin, "http://localhost:3211");
+      assert.equal(calls[1].headers["x-neon-auth-middleware"], "true");
+      assert.deepEqual(signedIn.body, { ok: true });
+      assert.equal(signedIn.status, 200);
+      const req = {
+        headers: { cookie: pair(signedIn.cookies, "converse_session") },
+      };
+      assert.equal(guard(req, { writeHead() {}, end() {} }), true);
+      assert.deepEqual(identity(req), { id: ada.id, email: ada.email });
+      assert.match(
+        signedIn.cookies.find((c) => c.startsWith("converse_session=")),
+        /HttpOnly; SameSite=Strict/,
+      );
+      assert.doesNotMatch(
+        JSON.stringify(signedIn),
+        /upstream-private-token|123456/,
+      );
+    },
+  );
+});
+
+test("email sign-in validates inputs and the allowlist before contacting Neon", async () => {
+  await withEnv(
+    google,
+    () => assert.fail("must not call Neon"),
+    async () => {
+      for (const input of [
+        { email: "not-an-email" },
+        { email: {} },
+        { email: "ada@example.com", otp: 123456 },
+        { email: "ada@example.com", otp: "" },
+      ])
+        assert.equal(
+          (await call("POST", { body: { provider: "email-code", ...input } }))
+            .status,
+          400,
+        );
+      for (const otp of [undefined, "123456"])
+        assert.equal(
+          (
+            await call("POST", {
+              body: {
+                provider: "email-code",
+                email: "eve@example.com",
+                ...(otp ? { otp } : {}),
+              },
+            })
+          ).status,
+          403,
+        );
+    },
+  );
+  await withEnv(
+    { APP_PASSWORD: "fixture-password" },
+    () => assert.fail("must not call Neon"),
+    async () => {
+      assert.equal(
+        (
+          await call("POST", {
+            body: {
+              provider: "email-code",
+              email: "ada@example.com",
+              otp: "123456",
+            },
+          })
+        ).status,
+        401,
+      );
+    },
+  );
+});
+
+test("email sign-in never admits a refused, unverified, missing-token or different user", async () => {
+  const input = {
+    provider: "email-code",
+    email: "ada@example.com",
+    otp: "123456",
+  };
+  for (const [data, status] of [
+    [{ token: "t", user: { ...ada, emailVerified: false } }, 200],
+    [{ token: "t", user: { ...ada, email: "eve@example.com" } }, 200],
+    [{ user: ada }, 200],
+    [null, 200],
+    [{ token: "t", user: ada }, 401],
+  ])
+    await withEnv(
+      google,
+      () => Response.json(data, { status }),
+      async () => {
+        const result = await call("POST", { body: input });
+        assert.ok(result.status >= 400);
+        assert.equal(pair(result.cookies, "converse_session"), undefined);
+      },
+    );
+});
+
+test("email sign-in reports expiry, attempt limits and transport failures safely", async () => {
+  for (const [upstream, expected] of [
+    [
+      () =>
+        Response.json(
+          { code: "OTP_EXPIRED", message: "private detail" },
+          { status: 400 },
+        ),
+      400,
+    ],
+    [() => Response.json({ code: "TOO_MANY_ATTEMPTS" }, { status: 403 }), 429],
+    [() => Response.json({}, { status: 429 }), 429],
+    [() => Response.json({}, { status: 503 }), 502],
+    [
+      () => {
+        throw Error("secret transport detail");
+      },
+      502,
+    ],
+  ])
+    await withEnv(google, upstream, async () => {
+      const result = await call("POST", {
+        body: {
+          provider: "email-code",
+          email: "ada@example.com",
+          otp: "123456",
+        },
+      });
+      assert.equal(result.status, expected);
+      assert.ok(result.body.error);
+      assert.deepEqual(result.cookies, []);
+      assert.doesNotMatch(result.body.error, /private detail|secret|123456/);
+    });
+});
+
 test("an incomplete sign-in return names its reason in the logs without the address", async () => {
   const cookie = "converse_signin=chal%2Evalue";
   const warn = console.warn,
