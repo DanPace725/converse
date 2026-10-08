@@ -16,3 +16,11 @@ The [design and preview guide](../../../../CLA/conclave/docs/DASHBOARD.md) expla
 - The first app test run used the Windows sandbox's system temp directory and had seven failures (six atomic rename EPERM errors and one related local HTTP 503). Rerunning with process-only TEMP/TMP set to `E:\Coding\converse\.test-tmp` passed the full suite. No runtime workaround was added.
 
 The local preview at `http://127.0.0.1:3226/dashboard` contains synthetic packets only and reads no environment credentials or live account data. Production dashboard use, real hosted dashboard sign-in, native mobile/Safari and broad database-read scalability remain unverified. Work is committed locally on development branches; production was not changed.
+
+## Authorized Railway release
+
+The user subsequently authorized publishing both `codex/conclave-dashboard` branches and deploying Conclave. Conclave's independent Railway service successfully deployed runtime `28cd7973c5d2d66d0008f26b8164160afd5129a9` in deployment `f8051a5a-60d3-4c13-94c6-06fb7709a00f`. Its source remains pinned to that exact commit. Source `5b70ec93d1adde78112d0f9b3a87f416532ac578` records verified release evidence; this final synchronization changes only the manifest receipt, with zero managed runtime changes and 106-file parity.
+
+The live dashboard is <https://conclave-mcp-production.up.railway.app/dashboard>. Ten public health, authentication, method, origin, MCP and metadata checks passed. The browser reached the email sign-in gate without sending an email or handling account data. The user chose to test signed-in dashboard behavior later. Synthetic browser evidence does not establish real account acceptance.
+
+Draft PRs [Conclave #10](https://github.com/DanPace725/conclave/pull/10) and [Converse #27](https://github.com/DanPace725/converse/pull/27) track the published branches. No main merge or Converse production deployment occurred. Source [release evidence](../../../../CLA/conclave/docs/archive/2026-10-07/dashboard-railway-release.md) records the exact runtime, previous healthy rollback deployment and remaining account checks.

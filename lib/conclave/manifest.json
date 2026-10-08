@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
   "source_repository": "https://github.com/DanPace725/conclave",
-  "source_commit": "28cd7973c5d2d66d0008f26b8164160afd5129a9",
+  "source_commit": "5b70ec93d1adde78112d0f9b3a87f416532ac578",
   "source_worktree_dirty": false,
-  "migrated_at": "2026-10-08T02:51:15.510Z",
+  "migrated_at": "2026-10-08T02:58:05.963Z",
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.32.1",
     "@vercel/functions": "^3.9.9",
