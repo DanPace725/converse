@@ -5,6 +5,7 @@ import models from "../api/models.js";
 import session from "../api/session.js";
 import title from "../api/title.js";
 import keys from "../api/keys.js";
+import mcp from "../api/mcp.js";
 import { createConclaveHandler } from "../lib/conclave-local.js";
 import { environment } from "../lib/conclave/provider.js";
 let conclave;
@@ -31,6 +32,10 @@ const routes = {
   "/api/session": session,
   "/api/title": title,
   "/api/keys": keys,
+  ...Object.fromEntries([
+    "/api/mcp", "/mcp", "/authorize", "/token", "/register", "/revoke", "/connect",
+    "/.well-known/oauth-authorization-server", "/.well-known/oauth-protected-resource/mcp",
+  ].map(path => [path, mcp])),
   ...(conclave ? { "/api/conclave": conclave } : {}),
 };
 const types = {

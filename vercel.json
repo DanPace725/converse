@@ -2,6 +2,16 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
   "outputDirectory": "public",
+  "rewrites": [
+    { "source": "/mcp", "destination": "/api/mcp?__mcp_path=mcp" },
+    { "source": "/authorize", "destination": "/api/mcp?__mcp_path=authorize" },
+    { "source": "/token", "destination": "/api/mcp?__mcp_path=token" },
+    { "source": "/register", "destination": "/api/mcp?__mcp_path=register" },
+    { "source": "/revoke", "destination": "/api/mcp?__mcp_path=revoke" },
+    { "source": "/connect", "destination": "/api/mcp?__mcp_path=connect" },
+    { "source": "/.well-known/oauth-authorization-server", "destination": "/api/mcp?__mcp_path=.well-known/oauth-authorization-server" },
+    { "source": "/.well-known/oauth-protected-resource/mcp", "destination": "/api/mcp?__mcp_path=.well-known/oauth-protected-resource/mcp" }
+  ],
   "functions": {
     "api/conclave.js": {
       "maxDuration": 240,
