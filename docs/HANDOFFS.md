@@ -1,10 +1,10 @@
 # Conclave handoffs in Converse
 
-The online handoff implementation is prepared on `codex/conclave-handoffs`, but it has not been deployed or applied to the live database. It uses Converse's existing sign-in and PostgreSQL pool. MCP access covers only the signed-in account's handoff packets; it does not grant access to chats or provider API keys.
+The preferred online service is now independent Conclave at `https://conclave-mcp-production.up.railway.app/mcp`, with its own Neon database/Auth and Railway deployment. Follow [hosted setup](../../CLA/conclave/docs/HOSTED_HANDOFFS.md) and [the next-session handoff](../../CLA/conclave/docs/SESSION_HANDOFF.md). Converse retains the compatible shared engine and optional routes described below; those routes have not been enabled or migrated on Converse production. MCP access covers only account-scoped handoff packets.
 
 The ongoing plain-language document, including ChatGPT, Claude, Gemini CLI and local app installation directions, is [the Conclave setup checklist](../../CLA/conclave/docs/HANDOFF_SETUP.md). The shared [technical contract](../../CLA/conclave/docs/HANDOFF_MCP.md) documents authorization, storage and limits.
 
-Regular ChatGPT can also reach this PC's local packet store through OpenAI Secure MCP Tunnel, without deploying Converse. The earlier local marketplace mention supplied no callable tools in the user's regular Chat test. The local server's six tools and requested handoff revision 2 are verified; a registered ChatGPT connection, tunnel authorization/runtime key and actual chat tool call remain pending. Follow [the local ChatGPT guide](../../CLA/conclave/docs/CHATGPT_LOCAL.md). This private route uses local storage; the hosted OAuth setup below remains separate.
+Regular ChatGPT can also reach this PC's local packet store through OpenAI Secure MCP Tunnel, without deploying Converse. The earlier local marketplace mention supplied no callable tools in the user's regular Chat test. The local server's six tools and requested handoff revision 2 are verified; the user completed a registered private ChatGPT connection and a real save/retrieve round trip, independently checked by an SDK client. Follow [the local ChatGPT guide](../../CLA/conclave/docs/CHATGPT_LOCAL.md). This private route uses local storage; the hosted OAuth setup below remains separate.
 
 The shared server now exposes six tools: save, find, retrieve, list versions, compare versions, and `open_handoff_library`. The last tool supplies a compact MCP Apps card and a read-only expanded browser for compatible hosts; ordinary data tools keep working without UI. Search, packet reads, exact version comparisons and capability-gated continuation use the existing authenticated connection. The static UI resource is migrated with the engine and contains no account data or credentials. Refresh an existing connector's tools after deploying this update.
 
@@ -14,9 +14,9 @@ The [plugin UI development guide](../../CLA/conclave/docs/PLUGIN_UI.md) records 
 
 Codex and Claude Code use the same handoff tools. Conclave now generates their connection files and private local plugin marketplaces with save/resume workflows; optional HTTPS-origin generation prepares separate online alternatives. The local Codex plugin is installed/enabled, and Claude Desktop's local MCP entry is configured with unrelated settings verified unchanged. The separate Claude Code plugin installation and fresh-session invocation remain pending. These development packages reference the Conclave checkout and its local storage, so they do not connect to Converse's online packets until a hosted connection is configured. See [coding integration details](../../CLA/conclave/docs/CODING_INTEGRATIONS.md) and the [desktop setup checklist](../../CLA/conclave/docs/HANDOFF_SETUP.md#codex-desktop-cli-and-ide).
 
-The user is considering a dedicated Conclave Vercel project. The checklist records that option and its remaining sign-in work, while retaining the existing Converse deployment instructions. No separate project has been created; the engine improvements work with either eventual hosting choice.
+Conclave is deployed independently on Railway. Local development is secondary; local and hosted packets remain separate. Claude connections created before the scope-discovery fix need disconnect/reconnect and approval for read and save before the save/update tool is exposed.
 
-## Deployment settings
+## Optional Converse deployment settings
 
 Set `CONCLAVE_MCP_ORIGIN` to the fixed HTTPS origin of this deployment, with no trailing slash or path. The MCP handler remains disabled when this is absent. Existing `SESSION_SECRET`, `ALLOWED_EMAILS`, pooled `DATABASE_URL` and sign-in settings are required. Migration `0005_handoff_mcp` adds the packet and authorization tables; use the intended direct database connection with `npm run db:migrate` after validating an isolated branch.
 
