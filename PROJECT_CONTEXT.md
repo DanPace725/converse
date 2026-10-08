@@ -1,8 +1,10 @@
 # Converse project context
 
-Updated 2026-10-07. Mutable project state. [Usage](public/app-guide.md) · [Development method](docs/DEVELOPMENT_METHOD.md) · [Archive](docs/archive/README.md)
+Updated 2026-10-08. Mutable project state. [Usage](public/app-guide.md) · [Development method](docs/DEVELOPMENT_METHOD.md) · [Archive](docs/archive/README.md)
 
 ## Current capabilities
+
+- Conclave Railway now automatically deploys pushes to `codex/conclave-dashboard`, following the user's request to remove the commit pin. Deployment `3a2c5029-1d16-4a64-97ab-45631410e4c5` successfully released `f0e5e2d`, including blue dashboard/account styling, scoped packet reads and project-name filters. Ten public release checks passed. This snapshot now records source documentation receipt `0621797`; all 106 managed files match with zero runtime changes in this synchronization. Earlier pinned release details below are historical. Converse production remains unchanged; real signed-in dashboard acceptance is deferred. [Current release evidence](../CLA/conclave/docs/archive/2026-10-08/railway-auto-deploy.md)
 
 - Dashboard shared snapshot synchronized on `codex/conclave-dashboard` from Conclave `5b70ec9`: account-bound read-only discovery/detail/history/diff UI, complete saved text, source claims, older revision links, lineage, continuation copying and revision JSON export. Both dashboard branches are published with draft PRs [Conclave #10](https://github.com/DanPace725/conclave/pull/10) and [Converse #27](https://github.com/DanPace725/converse/pull/27). The independent [Railway dashboard](https://conclave-mcp-production.up.railway.app/dashboard) is deployed successfully at pinned runtime `28cd797`; later source changes record the release only. Ten public health/protection checks pass. All 106 managed files match; syntax/parity checks, 203 app tests / one optional skip, 362 Conclave tests / one optional skip and six synthetic desktop/narrow Edge cases passed. The user will test real signed-in dashboard use later. Converse production was not deployed and neither PR was merged. Project grouping, canonical state, merges and action routing remain planned. [Design](../CLA/conclave/docs/DASHBOARD.md) · [Migration and release evidence](docs/archive/2026-10-07/dashboard-snapshot-migration.md)
 
