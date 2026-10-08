@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Conclave · Handoffs</title><link rel="stylesheet" href="/dashboard/app.css"></head>
+<body>
+<header class="masthead"><a class="brand" href="/dashboard"><span class="mark" aria-hidden="true">C</span> Conclave</a><nav aria-label="Account"><a href="/connect">Connections</a><a href="/">Account</a></nav></header>
+<main>
+  <div class="intro"><div><p class="eyebrow">PROJECT CONTINUITY</p><h1>Your work, between apps.</h1><p class="muted">Find the saved context. See what changed. Pick up where you left off.</p></div><button id="refresh" type="button">Refresh</button></div>
+  <div class="workspace">
+    <section class="library" aria-labelledby="library-title"><div class="library-heading"><h2 id="library-title">Recent handoffs</h2><span id="count" class="badge">…</span></div>
+      <form id="search-form"><label for="search">Search names, apps, or keywords</label><div class="search-row"><input id="search" type="search" maxlength="300" placeholder="Find a handoff…"><button type="submit">Search</button></div></form>
+      <p id="list-status" class="muted" role="status" aria-live="polite"></p><div id="handoffs"></div><div id="pages" class="actions"></div>
+    </section>
+    <section id="detail" class="detail" aria-label="Selected handoff"><div class="welcome"><p class="eyebrow">A PLACE TO PICK UP THE THREAD</p><h2>Choose a handoff.</h2><p>Its decisions, constraints, and open questions stay together, with every saved revision available.</p></div></section>
+  </div>
+  <p id="status" role="status" aria-live="polite"></p>
+  <footer>Only explicitly saved handoffs appear here. App and model labels are reported claims; a saved packet does not show what an app currently remembers.</footer>
+</main>
+<script type="module" src="/dashboard/app.js"></script>
+</body></html>

@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
   "source_repository": "https://github.com/DanPace725/conclave",
-  "source_commit": "40128be2c325299c20a00ef145a8d61d35cc6b7a",
+  "source_commit": "7ff2bea3988702671a274699a5dee29255e15fa2",
   "source_worktree_dirty": false,
-  "migrated_at": "2026-10-08T01:04:22.772Z",
+  "migrated_at": "2026-10-08T02:16:12.975Z",
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.32.1",
     "@vercel/functions": "^3.9.9",
@@ -134,6 +134,11 @@
       "source": "src/guide.js",
       "target": "lib/conclave/guide.js",
       "sha256": "99578b7f4e00249c87768d5346c35a94a0140884f822330596345044fba4e574"
+    },
+    {
+      "source": "src/handoff-dashboard.js",
+      "target": "lib/conclave/handoff-dashboard.js",
+      "sha256": "995c3709cdd20c0bd7f19b24237fcc69b2d8edd85228e671d6d5fc7964b76e19"
     },
     {
       "source": "src/handoff-hosted.js",
@@ -294,6 +299,21 @@
       "source": "src/resources/app-guide.md",
       "target": "lib/conclave/resources/app-guide.md",
       "sha256": "148a6a9ba4fa23225607442743824f498674605cf6bb50cbef1afff89f3f907b"
+    },
+    {
+      "source": "src/resources/dashboard/app.css",
+      "target": "lib/conclave/resources/dashboard/app.css",
+      "sha256": "a4fe4d063deaa93cf3915eb534f395ca38618f0c43b1d40774df7a423fe92423"
+    },
+    {
+      "source": "src/resources/dashboard/app.js",
+      "target": "lib/conclave/resources/dashboard/app.js",
+      "sha256": "6ab458726cec2fe08ec1aab6d843c201e06dea3411f43ac25031f36358725d13"
+    },
+    {
+      "source": "src/resources/dashboard/index.html",
+      "target": "lib/conclave/resources/dashboard/index.html",
+      "sha256": "17104ae086aa02fe887aad8a8a69cf21d3de2e20dfb8780db2a8b69de1ff82ba"
     },
     {
       "source": "src/resources/handoff-app.html",
