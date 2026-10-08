@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
   "source_repository": "https://github.com/DanPace725/conclave",
-  "source_commit": "5b70ec93d1adde78112d0f9b3a87f416532ac578",
+  "source_commit": "2e6f2a0528aca8ace769b1f008bc9f850f704ad8",
   "source_worktree_dirty": false,
-  "migrated_at": "2026-10-08T02:58:05.963Z",
+  "migrated_at": "2026-10-08T03:31:46.046Z",
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.32.1",
     "@vercel/functions": "^3.9.9",
@@ -303,17 +303,17 @@
     {
       "source": "src/resources/dashboard/app.css",
       "target": "lib/conclave/resources/dashboard/app.css",
-      "sha256": "a4fe4d063deaa93cf3915eb534f395ca38618f0c43b1d40774df7a423fe92423"
+      "sha256": "24e5a141fdca72a8df89ecad3e1bf4ac26807d692e34740997a388c05908b303"
     },
     {
       "source": "src/resources/dashboard/app.js",
       "target": "lib/conclave/resources/dashboard/app.js",
-      "sha256": "6ab458726cec2fe08ec1aab6d843c201e06dea3411f43ac25031f36358725d13"
+      "sha256": "e01fdc2d896de45f03e71f457f7d11cedbf3a6be3835107fc295ce9f3c9e78aa"
     },
     {
       "source": "src/resources/dashboard/index.html",
       "target": "lib/conclave/resources/dashboard/index.html",
-      "sha256": "17104ae086aa02fe887aad8a8a69cf21d3de2e20dfb8780db2a8b69de1ff82ba"
+      "sha256": "039291fea0bc44a1127fd071245b01f5f469062a7888cb20eb1d8718eadc34dd"
     },
     {
       "source": "src/resources/handoff-app.html",
