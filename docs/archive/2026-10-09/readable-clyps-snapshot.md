@@ -16,6 +16,6 @@ reads load only the account-scoped packet. No schema or dependency change.
 - Source validation: 34 focused handoff checks, ten desktop/mobile Edge dashboard
   cases, syntax/resource checks and a three-revision independent-client rehearsal.
 
-[Pilot prompts and checks](../../../CLA/conclave/docs/CLAMP_PILOT.md) are prepared
+[Pilot prompts and checks](../../../../CLA/conclave/docs/CLAMP_PILOT.md) are prepared
 for live ChatGPT ↔ Claude acceptance. The rehearsal is synthetic, not a real
 model or hosted-account result. No push, deployment or production change.
