@@ -1,8 +1,10 @@
 # Converse project context
 
-Updated 2026-10-08. Mutable project state. [Usage](public/app-guide.md) · [Development method](docs/DEVELOPMENT_METHOD.md) · [Archive](docs/archive/README.md)
+Updated 2026-10-09. Mutable project state. [Usage](public/app-guide.md) · [Development method](docs/DEVELOPMENT_METHOD.md) · [Archive](docs/archive/README.md)
 
 ## Current capabilities
+
+- Local `codex/clamp-clyps` snapshot from Conclave `316fb30`: CLAMP 1.0 bounded handoffs stored as ORMD, complete Clyp reads, explicit revision-pinned links, dashboard token counts/ORMD export and Connections graph. All 107 managed files match; syntax/resources and 203 app tests / one optional skip pass using checkout-local temp storage. No push, deployment or live model acceptance. [Protocol](../CLA/conclave/docs/CLAMP.md) · [Migration](docs/archive/2026-10-09/clamp-snapshot.md)
 
 - ChatGPT mobile OAuth return correction published on both review branches and deployed only to independent Conclave. Railway SUCCESS `90de52e5-8586-4413-a530-785700a16337` serves runtime `58e8a2d`; its code push automatically triggered deployment without a source pin. Consent finishes with automatic callback navigation and a manual app-return link. Source browser cases, ten focused hosted checks, 364 tests / one optional skip and 14 public live checks pass; Converse syntax/parity and 203 tests / one optional skip pass. All 106 managed files match; documentation receipt is now `577ec11` with zero runtime changes. Real-phone acceptance is pending. Hosted progress tools are unavailable; the source release report retains a local handoff note. [Source evidence](../CLA/conclave/docs/archive/2026-10-08/mobile-consent-return.md)
 

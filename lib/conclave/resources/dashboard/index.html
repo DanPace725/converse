@@ -5,6 +5,8 @@
 <header class="masthead"><a class="brand" href="/dashboard"><span class="mark" aria-hidden="true">C</span> Conclave</a><nav aria-label="Account"><a href="/connect">Connections</a><a href="/">Account</a></nav></header>
 <main>
   <div class="intro"><div><p class="eyebrow">PROJECT CONTINUITY</p><h1>Your work, between apps.</h1><p class="muted">Find the saved context. See what changed. Pick up where you left off.</p></div><button id="refresh" type="button">Refresh</button></div>
+  <div class="actions"><button id="graph-toggle" type="button" aria-pressed="false" aria-controls="graph-panel">Show connections</button></div>
+  <section id="graph-panel" class="graph-panel" hidden aria-label="Handoff connections"><h2>Connections</h2><p id="graph-status" class="muted" role="status"></p><div id="graph"></div></section>
   <div class="workspace">
     <section class="library" aria-labelledby="library-title"><div class="library-heading"><h2 id="library-title">Recent handoffs</h2><span id="count" class="badge">…</span></div>
       <form id="search-form"><label for="search">Search names, apps, or keywords</label><div class="search-row"><input id="search" type="search" maxlength="300" placeholder="Find a handoff…"><button type="submit">Search</button></div></form>
