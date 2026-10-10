@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
   "source_repository": "https://github.com/DanPace725/conclave",
-  "source_commit": "3111e39c424a198c4d3cec482ffd5613b2b9a3d2",
+  "source_commit": "60df12110b551cd1d0e1e149ff141e9b835019bf",
   "source_worktree_dirty": false,
-  "migrated_at": "2026-10-09T18:42:59.050Z",
+  "migrated_at": "2026-10-10T14:00:56.186Z",
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.32.1",
     "@vercel/functions": "^3.9.9",
@@ -143,7 +143,7 @@
     {
       "source": "src/handoff-dashboard.js",
       "target": "lib/conclave/handoff-dashboard.js",
-      "sha256": "973d8dbad175315a88e53562cf9b3b239df56b98b4aae331359175f4407e8b51"
+      "sha256": "971862e3fb6650ab831f875d235a2e905ff7b4f7a8031bfa106a630ca69a541a"
     },
     {
       "source": "src/handoff-hosted.js",
@@ -153,7 +153,7 @@
     {
       "source": "src/handoff-mcp-server.js",
       "target": "lib/conclave/handoff-mcp-server.js",
-      "sha256": "ac46f65300d936a8112bfdd3ceefda297f35dfd7adbd825f558e1cc3ae814eed"
+      "sha256": "b0a07934b3633429771f5528b01028ae6f4afd211a12c4a5835f7ac8e5edc7f4"
     },
     {
       "source": "src/handoff-oauth.js",
@@ -178,7 +178,7 @@
     {
       "source": "src/handoff-ui.js",
       "target": "lib/conclave/handoff-ui.js",
-      "sha256": "0de0935ff94243b09ad2a466fad0f60f87c9a11c9b5ce5961ad76cb494ed0577"
+      "sha256": "6e3896d8b184932445eeddf010dfaec207e6dfb238cd582b23c526a55304c1c4"
     },
     {
       "source": "src/handoffs.js",
@@ -313,22 +313,32 @@
     {
       "source": "src/resources/dashboard/app.css",
       "target": "lib/conclave/resources/dashboard/app.css",
-      "sha256": "8b2e15fb5bf4f31ebf75bf6d619c1011b1c4dbeb9b8268708f3b801434d41c22"
+      "sha256": "8821332c1f86451ee88d45b21dddc50c4e8f74f7f43a40ec9f1965691ddc5fa8"
     },
     {
       "source": "src/resources/dashboard/app.js",
       "target": "lib/conclave/resources/dashboard/app.js",
-      "sha256": "0ea0bbf9ef7d7b0578d627e986f54c7a872edec113650248e6dcbc655fe1f98c"
+      "sha256": "8c9be6193ad30f38f9f74227f62e680cce4bdb31639637afa352b83af963a0ca"
+    },
+    {
+      "source": "src/resources/dashboard/graph.css",
+      "target": "lib/conclave/resources/dashboard/graph.css",
+      "sha256": "4a9573c0202f80645257a556241c430325d6e7795b22547c499ee760b6e87997"
+    },
+    {
+      "source": "src/resources/dashboard/graph.js",
+      "target": "lib/conclave/resources/dashboard/graph.js",
+      "sha256": "0345e432335d65de6ba47c1ae2690855156a06252e69c788baccd1cfea13e690"
     },
     {
       "source": "src/resources/dashboard/index.html",
       "target": "lib/conclave/resources/dashboard/index.html",
-      "sha256": "af6a0e2831ef42d6e12bd36eb71d62bc916c62d67eca83682cdfc35adb3dfae1"
+      "sha256": "695fcd3e16712e18bf861237ef226567a6b0c72fac53f78f850be17681adb1bc"
     },
     {
       "source": "src/resources/handoff-app.html",
       "target": "lib/conclave/resources/handoff-app.html",
-      "sha256": "34447936061a9b5a7d7d1492dc59de8238525229efcbb36b3f07438baa1264e2"
+      "sha256": "c4741d1659c89b7813a979a59c1dbeef8ca3bc2233ac4c40566d913204815989"
     },
     {
       "source": "src/resources/model-costs-2026-10-02.json",
